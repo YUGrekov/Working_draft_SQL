@@ -97,7 +97,6 @@ class Import_in_SQL():
             Signals.insert_many(data).execute()
     # Update Database
     def update_for_sql(self, name_db, path, data, uso):
-
         with db:
             # Checking if a column exists
             column_tabl  = []
