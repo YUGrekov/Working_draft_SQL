@@ -1,10 +1,11 @@
 from PyQt5.QtWidgets import *
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import *
 import sys
 from main_base import *
+from datetime import datetime
 
 
-
+today = datetime.now()
 class Window(QMainWindow):
     def __init__(self):
         super(Window, self).__init__()
@@ -256,6 +257,10 @@ class Window_update_sql(QWidget):
         pathbaseButton.move(10, 10) 
         pathbaseButton.clicked.connect(self.tabl_signals)
 
+        self.logTextBox = QTextEdit(self)
+        self.logTextBox.setGeometry(890,65,700,110)
+        self.logTextBox.setReadOnly(True)
+
         new_addrow_Button = QPushButton('Добавить строку', self)
         new_addrow_Button.resize(120,25)
         new_addrow_Button.move(10, 150) 
@@ -287,6 +292,7 @@ class Window_update_sql(QWidget):
 
         self.layout = QVBoxLayout()
         self.layout.addWidget(pathbaseButton)
+        self.layout.addWidget(self.logTextBox)
         self.layout.addWidget(new_addrow_Button)
         self.layout.addWidget(new_addcol_Button)
         self.layout.addWidget(remoterow_Button)
@@ -316,6 +322,8 @@ class Window_update_sql(QWidget):
         self.TableWidget.setItem(rowPos, 0, QTableWidgetItem (f'{int(text_cell) + 1}'))
 
         self.edit_SQL.add_new_row(column, self.table_used, self.hat_name)
+        # Logs
+        self.logTextBox.insertPlainText(f'{today} - Добавлена новая строка\n')
     # Removing rows
     def delete_row(self):
         row = self.TableWidget.currentRow()
@@ -409,9 +417,9 @@ class Window_update_sql(QWidget):
 
         hat_name = self.edit_SQL.column_names(self.table_used)
         self.edit_SQL.update_row_tabl(column, text_cell, text_cell_id, self.table_used, hat_name)
-
-
-    
+    # Logging fault
+    def logs_msg(self):
+        pass
 
 
 
