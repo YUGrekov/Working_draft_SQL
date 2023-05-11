@@ -1,11 +1,12 @@
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
-import sys
 from main_base import *
+from edit_window import *
 from datetime import datetime
+import sys
 
 
-today = datetime.now()
+
 class Window(QMainWindow):
     def __init__(self):
         super(Window, self).__init__()
@@ -36,8 +37,11 @@ class Window(QMainWindow):
         self.w_i_e = Window_import_exel()
         self.w_i_e.show()
     def window_create_sql(self):
-        self.w_u_s = Window_update_sql()
-        self.w_u_s.show()
+        self.edit_SQL = Editing_table_SQL()
+        list_tabl = self.edit_SQL.get_tabl()
+
+        self.w_u_c = Window_tabl_checkbox(list_tabl)
+        self.w_u_c.show()
 
 class Window_import_exel(QWidget):
     def __init__(self):
@@ -239,213 +243,6 @@ class Window_import_exel(QWidget):
         self.сolumn_title_loaded = False
     def clear_table(self):
         self.import_sql.clear_tabl()
-
-class Window_update_sql(QWidget):
-    def __init__(self):
-        super(Window_update_sql, self).__init__()
-        self.edit_SQL = Editing_table_SQL()
-        self.setWindowTitle('Редактор базы данных')
-        self.setStyleSheet("background-color: #a0b0a5;")
-        self.setWindowFlags(Qt.WindowCloseButtonHint)
-        self.resize(1600, 900)
-
-        self.TableWidget = QTableWidget(self)
-        self.TableWidget.setGeometry(10,180,1580,710)
-
-        pathbaseButton = QPushButton('Signals', self)
-        pathbaseButton.resize(120,25)
-        pathbaseButton.move(10, 10) 
-        pathbaseButton.clicked.connect(self.tabl_signals)
-
-        self.logTextBox = QTextEdit(self)
-        self.logTextBox.setGeometry(890,65,700,110)
-        self.logTextBox.setReadOnly(True)
-
-        new_addrow_Button = QPushButton('Добавить строку', self)
-        new_addrow_Button.resize(120,25)
-        new_addrow_Button.move(10, 150) 
-        new_addrow_Button.clicked.connect(self.add_row)
-
-        remoterow_Button = QPushButton('Удалить строку', self)
-        remoterow_Button.resize(120,25)
-        remoterow_Button.move(150, 150) 
-        remoterow_Button.clicked.connect(self.delete_row)
-
-        self.namecolumn = QLineEdit(self, placeholderText='Название нового столбца', clearButtonEnabled=True)
-        self.namecolumn.setStyleSheet('border: 1px solid #6f7370;')
-        self.namecolumn.move(300, 150)
-        self.namecolumn.resize(150,25)
-        new_addcol_Button = QPushButton('Добавить столбец', self)
-        new_addcol_Button.resize(120,25)
-        new_addcol_Button.move(455, 150) 
-        new_addcol_Button.clicked.connect(self.add_column)
-
-        remoterow_Button = QPushButton('Удалить столбец', self)
-        remoterow_Button.resize(120,25)
-        remoterow_Button.move(600, 150) 
-        remoterow_Button.clicked.connect(self.delete_column)
-
-        cleartab_Button = QPushButton('Очистить таблицу', self)
-        cleartab_Button.resize(120,25)
-        cleartab_Button.move(745, 150) 
-        cleartab_Button.clicked.connect(self.clear_tabl)
-
-        self.layout = QVBoxLayout()
-        self.layout.addWidget(pathbaseButton)
-        self.layout.addWidget(self.logTextBox)
-        self.layout.addWidget(new_addrow_Button)
-        self.layout.addWidget(new_addcol_Button)
-        self.layout.addWidget(remoterow_Button)
-        self.layout.addWidget(cleartab_Button)
-        self.layout.addWidget(self.TableWidget)
-    # Сompletely clear the table
-    def clear_tabl(self):
-        rowcount = self.TableWidget.rowCount()
-
-        while rowcount >= 0:
-            self.TableWidget.removeRow(rowcount)
-            rowcount -= 1
-
-        self.edit_SQL.clear_tabl(self.table_used)
-    # Adding new lines
-    def add_row(self):  
-        column = self.TableWidget.currentColumn()
-        rowPos = self.TableWidget.rowCount()
-        
-        if rowPos == 0: 
-            print('Невозможно добавить строки в пустую таблицу')
-            return
-
-        self.TableWidget.insertRow(rowPos)
-
-        text_cell = self.TableWidget.item(rowPos - 1, 0).text()
-        self.TableWidget.setItem(rowPos, 0, QTableWidgetItem (f'{int(text_cell) + 1}'))
-
-        self.edit_SQL.add_new_row(column, self.table_used, self.hat_name)
-        # Logs
-        self.logTextBox.insertPlainText(f'{today} - Добавлена новая строка\n')
-    # Removing rows
-    def delete_row(self):
-        row = self.TableWidget.currentRow()
-        print(row)
-
-        if row <= 0: 
-            print('Невозможно удалить строки из пустой таблицы')
-            return
-        
-        text_cell_id = self.TableWidget.item(int(row), 0).text()
-        if row > -1: 
-            self.TableWidget.removeRow(row)
-            self.TableWidget.selectionModel().clearCurrentIndex()
-
-        self.edit_SQL.delete_row(text_cell_id, self.models_used)
-    # Adding new column
-    def add_column(self):
-        def letters(name):
-            if len(name) == 0: name = 'newcolumn'
-            return ''.join(filter(str.isalnum, name))
-        
-        namecolumn = letters(self.namecolumn.text())
-        hat_name = self.edit_SQL.column_names(self.table_used)
-        if namecolumn in hat_name: 
-            print('Дублирующие название колонки!')
-            return
-
-        column_count = self.TableWidget.columnCount()
-        self.TableWidget.insertColumn(column_count)
-
-        self.edit_SQL.add_new_column(self.table_used, namecolumn)
-
-        hat_name = self.edit_SQL.column_names(self.table_used)
-        self.TableWidget.setHorizontalHeaderLabels(hat_name)
-    
-    
-        # Removing rows
-    # Removing column
-    def delete_column(self):
-        column = self.TableWidget.currentColumn()
-        self.TableWidget.removeColumn(column)
-
-        hat_name = self.edit_SQL.column_names(self.table_used)
-        self.edit_SQL.delete_column(column, hat_name, self.table_used)
-    # tabl: Signals
-    def tabl_signals(self):
-        self.table_used = 'signals'
-        self.models_used = Signals
-        column, row, self.hat_name, value = self.edit_SQL.editing_sql(self.table_used)
-        self.tablew(column, row, self.hat_name, value)
-    # Building the selected table
-    def tablew(self, column, row, hat_name, value):
-        self.TableWidget.setColumnCount(column)
-        self.TableWidget.setRowCount(row)
-        self.TableWidget.setHorizontalHeaderLabels(hat_name)
-        # Разрешить щелчок правой кнопкой мыши для создания меню
-        #self.TableWidget.setContextMenuPolicy(Qt.CustomContextMenu)
-        self.TableWidget.verticalHeader().setVisible(False)
-        # column size
-        #for size_column in list_size:
-        #   self.TableWidget.setColumnWidth(size_column[0], size_column[1])
-
-        for row_t in range(row):
-            for column_t in range(column):
-                if value[row_t][column_t] is None:
-                    item = QTableWidgetItem('')
-                else:
-                    item = QTableWidgetItem(str(value[row_t][column_t]))
-                # center text
-                #item.setTextAlignment(Qt.AlignHCenter)
-                # Выравнивание все столбцов по общей ширине
-                #self.TableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
-                self.TableWidget.setItem(row_t, column_t, item)
-        # Выравнивание по столбцов и строк по наибольшей длине
-        self.TableWidget.resizeColumnsToContents()
-        self.TableWidget.resizeRowsToContents()
-        # Events
-        self.TableWidget.itemChanged.connect(self.click_position)
-    # Cell change on click
-    def click_position(self):
-        row    = self.TableWidget.currentRow()
-        column = self.TableWidget.currentColumn()
-
-        for currentQTableWidgetItem in self.TableWidget.selectedItems():
-            text_cell = self.TableWidget.item(currentQTableWidgetItem.row(), column).text()
-        
-        check_cell = self.TableWidget.item(int(row), 0)
-        if check_cell is None: return
-
-        text_cell_id = self.TableWidget.item(int(row), 0).text()
-
-        hat_name = self.edit_SQL.column_names(self.table_used)
-        self.edit_SQL.update_row_tabl(column, text_cell, text_cell_id, self.table_used, hat_name)
-    # Logging fault
-    def logs_msg(self):
-        pass
-
-
-
-        
-
-
-
-
-
-
-
-
-
-
-
-
-
-# https://www.pythonguis.com/tutorials/pyqt-layouts/
-# https://www.programmersought.com/article/50577692774/
-# https://linuxhint.com/use-pyqt-qtablewidget/
-# https://www.pythontutorial.net/pyqt/pyqt-qtablewidget/
-# https://russianblogs.com/article/594578971/
-
-
-
-
        
 
 if __name__ == '__main__':
@@ -453,44 +250,3 @@ if __name__ == '__main__':
     myWin = Window()
     myWin.show()
     sys.exit(app.exec())
-
-
-
-# class Window1(QWidget):
-#     def __init__(self):
-#         super(Window1, self).__init__()
-#         self.setWindowTitle('Window1')
-#         self.setMinimumWidth(200)
-#         self.setMinimumHeight(50)
-#         self.button = QPushButton(self)
-#         self.button.setText('Ok')
-#         self.button.show()
-
-
-# class Window2(QWidget):
-#     def __init__(self):
-#         super(Window2, self).__init__()
-#         self.setWindowTitle('Window2')
-
-
-# class MainWindow(QMainWindow):
-#     def __init__(self):
-#         super(MainWindow, self).__init__()
-#         self.setWindowTitle('MainWindow')
-
-#     def show_window_1(self):
-#         self.w1 = Window1()
-#         self.w1.button.clicked.connect(self.show_window_2)
-#         self.w1.button.clicked.connect(self.w1.close)
-#         self.w1.show()
-
-#     def show_window_2(self):
-#         self.w2 = Window2()
-#         self.w2.show()
-
-# if __name__ == '__main__':
-#     app = QApplication(sys.argv)
-#     w = MainWindow()
-#     w.show()
-#     w.show_window_1()
-#     sys.exit(app.exec_())

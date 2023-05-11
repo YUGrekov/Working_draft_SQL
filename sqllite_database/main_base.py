@@ -223,7 +223,9 @@ class Editing_table_SQL():
         #table_used.insert(**{active_column: ''}).execute()
     # Removing rows
     def delete_row(self, text_cell_id, table_used):
-        table_used.get(table_used.id == text_cell_id).delete_instance()
+        self.cursor.execute(f'''DELETE FROM {table_used}
+                                WHERE id={text_cell_id}''')
+        #table_used.get(table_used.id == text_cell_id).delete_instance()
     # Adding new column
     def add_new_column(self, table_used, new_column):
         self.cursor.execute(f'''ALTER TABLE {table_used} 
@@ -237,7 +239,9 @@ class Editing_table_SQL():
     def clear_tabl(self, table_used):
         self.cursor.execute(f'''DELETE FROM {table_used}''')
         print(f'Таблица очищена: {table_used}')
-
+    # Table selection window
+    def get_tabl(self):
+        return db.get_tables()
         
         
 
