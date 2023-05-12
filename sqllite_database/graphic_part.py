@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import *
+from PyQt5.QtWidgets import QWidget
 from PyQt5.QtCore import *
 from main_base import *
 from edit_window import *
@@ -28,11 +28,36 @@ class Window(QMainWindow):
         butt_sql.resize(220,25)
         butt_sql.move(15, 70)      
         butt_sql.clicked.connect(self.window_create_sql)  
+        # Save auto path
+        self.settings = QSettings('project_development','AO_Nefteavtomatika',self)
+        self.loadSetting()
+    def saveSetting(self):
+        self.settings.setValue('path_kzfkp', self.path_xml)
+        self.settings.setValue('path_kzfkp', self.path_base)
+    def loadSetting(self):
+        pass
+
     def create_menu_bars(self):
         menuBar = self.menuBar()
         menuBar.setStyleSheet('background-color: rgb(225, 225, 225);')
-        infoMenu  = QMenu('&О программе', self)
-        menuBar.addMenu(infoMenu)
+
+        settings = QMenu('&Настройки проекта', self)
+        settings.setStyleSheet('background-color: rgb(225, 225, 225);')
+
+        menuBar.addMenu(settings)
+
+        path_kzfkp = QAction('Путь до КЗФКП', self)
+        path_base = QAction('Путь до базы данных', self)
+
+        settings.addAction(path_kzfkp)
+        settings.addAction(path_base)
+
+        path_kzfkp.triggered.connect(self.settings_kzfkp)
+        path_base.triggered.connect(self.settings_base)
+    def settings_kzfkp(self):
+        self.path_xml = QFileDialog.getOpenFileName(caption='Выберите файл КЗФКП')[0]
+    def settings_base(self):
+        self.path_base = QFileDialog.getOpenFileName(caption='Выберите файл базы данных')[0]
     def window_import_exel(self):
         self.w_i_e = Window_import_exel()
         self.w_i_e.show()

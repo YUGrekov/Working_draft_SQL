@@ -215,10 +215,9 @@ class Editing_table_SQL():
                                 WHERE id == {text_cell_id}''')
         #table_used.update(**{active_column: text_cell}).where(table_used.id == text_cell_id).execute()
     # Adding new lines
-    def add_new_row(self, column, table_used, hat_name):
-        active_column = list(hat_name)[column]
-        self.cursor.execute(f'''INSERT INTO {table_used} ({active_column}) 
-                                VALUES ("")''')
+    def add_new_row(self, table_used):
+
+        self.cursor.execute(f'''INSERT INTO {table_used} DEFAULT VALUES''')
 
         #table_used.insert(**{active_column: ''}).execute()
     # Removing rows

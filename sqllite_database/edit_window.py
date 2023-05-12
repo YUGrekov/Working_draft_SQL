@@ -1,7 +1,6 @@
-from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
-from PyQt5.QtWidgets import QWidget
+from PyQt5.QtWidgets import *
 from main_base import *
 from datetime import datetime
 
@@ -96,33 +95,37 @@ class Window_update_sql(QWidget):
     def clear_tabl(self):
         rowcount = self.TableWidget.rowCount()
 
+        if rowcount == 0: 
+            self.logs_msg(f'Таблица: {self.table_used} пустая\n', 3)
+            return
+
         while rowcount >= 0:
             self.TableWidget.removeRow(rowcount)
             rowcount -= 1
 
         self.edit_SQL.clear_tabl(self.table_used)
+         # Logs
+        self.logs_msg(f'Таблица: {self.table_used} полностью очищена!\n', 3)
     # Adding new lines
     def add_row(self):  
-        column = self.TableWidget.currentColumn()
         rowPos = self.TableWidget.rowCount()
         
         if rowPos == 0: 
-            print('Невозможно добавить строки в пустую таблицу')
-            return
+            text_cell = 0
+        else:
+            text_cell = self.TableWidget.item(rowPos - 1, 0).text()
 
         self.TableWidget.insertRow(rowPos)
-
-        text_cell = self.TableWidget.item(rowPos - 1, 0).text()
         self.TableWidget.setItem(rowPos, 0, QTableWidgetItem (f'{int(text_cell) + 1}'))
 
-        self.edit_SQL.add_new_row(column, self.table_used, self.hat_name)
+        self.edit_SQL.add_new_row(self.table_used)
         # Logs
-        self.logs_msg('В конец таблицы добавлена новая строка\n')
+        self.logs_msg('В конец таблицы добавлена новая строка\n', 1)
     # Removing rows
     def delete_row(self):
         row = self.TableWidget.currentRow()
         if row <= 0: 
-            self.logs_msg('Невозможно удалить строки из пустой таблицы\n')
+            self.logs_msg('Невозможно удалить строки из пустой таблицы\n', 2)
             return
         
         text_cell_id = self.TableWidget.item(int(row), 0).text()
@@ -132,7 +135,7 @@ class Window_update_sql(QWidget):
 
         self.edit_SQL.delete_row(text_cell_id, self.table_used)
         # Logs
-        self.logs_msg(f'Из таблицы: {self.table_used} удалена строка id={text_cell_id}\n')
+        self.logs_msg(f'Из таблицы: {self.table_used} удалена строка id={text_cell_id}\n', 3)
     # Adding new column
     def add_column(self):
         def letters(name):
@@ -142,7 +145,7 @@ class Window_update_sql(QWidget):
         namecolumn = letters(self.namecolumn.text())
         hat_name = self.edit_SQL.column_names(self.table_used)
         if namecolumn in hat_name: 
-            self.logs_msg('Дублирующие название столбца!\n')
+            self.logs_msg('Дублирующие название столбца!\n', 2)
             return
 
         column_count = self.TableWidget.columnCount()
@@ -152,9 +155,8 @@ class Window_update_sql(QWidget):
 
         hat_name = self.edit_SQL.column_names(self.table_used)
         self.TableWidget.setHorizontalHeaderLabels(hat_name)
-    
-    
-        # Removing rows
+        # Logs
+        self.logs_msg(f'В таблицу: {self.table_used} добавлен новый столбец: {namecolumn}\n', 1)
     # Removing column
     def delete_column(self):
         column = self.TableWidget.currentColumn()
@@ -162,16 +164,11 @@ class Window_update_sql(QWidget):
 
         hat_name = self.edit_SQL.column_names(self.table_used)
         self.edit_SQL.delete_column(column, hat_name, self.table_used)
-        self.logs_msg('Удален столбец\n')
-    # tabl: Signals
-    def tabl_signals(self):
-        self.models_used = Signals
-        column, row, self.hat_name, value = self.edit_SQL.editing_sql(self.table_used)
-        self.tablew(column, row, self.hat_name, value)
+        self.logs_msg(f'Из таблицы: {self.table_used} удален столбец\n', 3)
     # Building the selected table
     def tablew(self, column, row, hat_name, value):
         # Logs
-        self.logs_msg(f'Запущен редактор базы данных. Таблица: {self.table_used}\n')
+        self.logs_msg(f'Запущен редактор базы данных. Таблица: {self.table_used}\n', 1)
         # TableW
         self.TableWidget.setColumnCount(column)
         self.TableWidget.setRowCount(row)
@@ -204,8 +201,14 @@ class Window_update_sql(QWidget):
         row    = self.TableWidget.currentRow()
         column = self.TableWidget.currentColumn()
 
+        if row == 0 and column == 0: return
         for currentQTableWidgetItem in self.TableWidget.selectedItems():
             text_cell = self.TableWidget.item(currentQTableWidgetItem.row(), column).text()
+        # На случай, когда нет изменения в ячейке
+        try:
+            text_cell
+        except:
+            return
         
         check_cell = self.TableWidget.item(int(row), 0)
         if check_cell is None: return
@@ -215,7 +218,10 @@ class Window_update_sql(QWidget):
         hat_name = self.edit_SQL.column_names(self.table_used)
         self.edit_SQL.update_row_tabl(column, text_cell, text_cell_id, self.table_used, hat_name)
     # Logging messeges
-    def logs_msg(self, logs):
+    def logs_msg(self, logs, number_color):
+        if   number_color == 1: self.logTextBox.setStyleSheet("QTextEdit {color:black}")
+        elif number_color == 2: self.logTextBox.setStyleSheet("QTextEdit {color:red}")
+        elif number_color == 3: self.logTextBox.setStyleSheet("QTextEdit {color:yellow}")
         today = datetime.now()
         self.logTextBox.insertPlainText(f'{today} - {logs}')
  
