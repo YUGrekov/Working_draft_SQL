@@ -33,7 +33,7 @@ class Window(QMainWindow):
         self.loadSetting()
     def saveSetting(self):
         self.settings.setValue('path_kzfkp', self.path_xml)
-        self.settings.setValue('path_kzfkp', self.path_base)
+        self.settings.setValue('path_base', self.path_base)
     def loadSetting(self):
         pass
 
