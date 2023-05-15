@@ -1,8 +1,6 @@
 from models import *
 import openpyxl as wb
-from peewee import *
-import os
-
+from datetime import datetime
 
 
 # Work with filling in the table 'signals'
@@ -72,7 +70,10 @@ class Import_in_SQL():
     def close_connect(self):
         self.connect.close()
     # Importing into SQL
-    def import_for_sql(self, name_db, path, data):
+    def import_for_sql(self, data):
+        # Create tabl
+        with db.atomic():
+            db.create_tables([Signals])
         # Checking if a column exists
         column_tabl  = []
         new_column   = []
@@ -81,22 +82,19 @@ class Import_in_SQL():
             if data_column[0] in list_default: column_tabl.append(data_column[0])
         for lst in list_default:
             if lst not in column_tabl: 
-                print(f'Отсутствует обязательный столбец таблицы signals: {lst}')
+                #self.msg.fromkeys(f'Отсутствует обязательный столбец таблицы signals: {lst}'[2])
+                #print(f'Отсутствует обязательный столбец таблицы signals: {lst}')
                 new_column.append(lst)
         for new_name in new_column:
-            print(f'Столбец {new_name} добавлен в таблицу signals')
+            #print(f'Столбец {new_name} добавлен в таблицу signals')
+            #self.msg.fromkeys(f'Столбец {new_name} добавлен в таблицу signals'[1])
             migrate(migrator.add_column('signals', new_name, IntegerField(null=True)))
 
         # Checking for the existence of a database
-        if not os.path.exists(path):
-            print(f'База данных: {name_db} отсутствует. Создана новая база')
-        else:
-            print(f'База данных: {name_db} найдена. Создано подключение')
         with db.atomic():
-            db.create_tables([Signals])
             Signals.insert_many(data).execute()
     # Update Database
-    def update_for_sql(self, name_db, path, data, uso):
+    def update_for_sql(self, data, uso):
         with db:
             # Checking if a column exists
             column_tabl  = []
@@ -164,6 +162,8 @@ class Import_in_SQL():
         for row_sql in Signals.select().dicts():
             Signals.get(Signals.id == row_sql['id']).delete_instance()
         print('Таблица очищена')
+
+
 
 # Changing tables SQL
 class Editing_table_SQL():
@@ -241,14 +241,4 @@ class Editing_table_SQL():
     # Table selection window
     def get_tabl(self):
         return db.get_tables()
-        
-        
-
-
-
-
-
-
-# a = Editing_table_SQL()
-# a.add_new_column('signals', '125')
 

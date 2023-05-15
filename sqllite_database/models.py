@@ -1,9 +1,15 @@
 from peewee import *
 from playhouse.migrate import *
 
+from graphic_part import Window
+from PyQt5.QtWidgets import QApplication
+app = QApplication([])
+win_ = Window()
+path_kzfkp, path_base = win_.loadSetting()
 
 
-db = SqliteDatabase(f'D:\Development\Py_development\Generator_Exel\sqllite_database\\test.db')
+
+db = SqliteDatabase(path_base)
 migrator = SqliteMigrator(db)
 
 class BaseModel(Model):
