@@ -1,7 +1,7 @@
 from models import *
 import openpyxl as wb
 from datetime import datetime
-
+today = datetime.now()
 
 # Work with filling in the table 'signals'
 class Import_in_SQL():
@@ -70,7 +70,8 @@ class Import_in_SQL():
     def close_connect(self):
         self.connect.close()
     # Importing into SQL
-    def import_for_sql(self, data):
+    def import_for_sql(self, data, uso):
+        msg = {}
         # Create tabl
         with db.atomic():
             db.create_tables([Signals])
@@ -78,23 +79,27 @@ class Import_in_SQL():
         column_tabl  = []
         new_column   = []
         list_default = ['id', 'type_signal', 'uso', 'tag', 'description', 'scheme', 'klk', 'contact', 'basket', 'module', 'channel']
+        
         for data_column in db.get_columns('signals'):
             if data_column[0] in list_default: column_tabl.append(data_column[0])
+        
         for lst in list_default:
             if lst not in column_tabl: 
-                #self.msg.fromkeys(f'Отсутствует обязательный столбец таблицы signals: {lst}'[2])
-                #print(f'Отсутствует обязательный столбец таблицы signals: {lst}')
+                msg[f'{today} - Отсутствует обязательный столбец таблицы signals: {lst}'] = 2
                 new_column.append(lst)
+        
         for new_name in new_column:
-            #print(f'Столбец {new_name} добавлен в таблицу signals')
-            #self.msg.fromkeys(f'Столбец {new_name} добавлен в таблицу signals'[1])
+            msg[f'{today} - Столбец: {new_name} добавлен в таблицу signals'] = 3
             migrate(migrator.add_column('signals', new_name, IntegerField(null=True)))
-
         # Checking for the existence of a database
         with db.atomic():
             Signals.insert_many(data).execute()
+
+        msg[f'{today} - Добавлено новый шкаф: {uso}'] = 1
+        return(msg)
     # Update Database
     def update_for_sql(self, data, uso):
+        msg = {}
         with db:
             # Checking if a column exists
             column_tabl  = []
@@ -104,10 +109,10 @@ class Import_in_SQL():
                 if data_column[0] in list_default: column_tabl.append(data_column[0])
             for lst in list_default:
                 if lst not in column_tabl: 
-                    print(f'Отсутствует обязательный столбец таблицы signals: {lst}')
+                    msg[f'{today} - Отсутствует обязательный столбец таблицы signals: {lst}'] = 2
                     new_column.append(lst)
             for new_name in new_column:
-                print(f'Столбец {new_name} добавлен в таблицу signals')
+                msg[f'{today} - Столбец: {new_name} добавлен в таблицу signals'] = 3
                 migrate(migrator.add_column('signals', new_name, IntegerField(null=True)))
 
             # Filter by uso, basket, modul, channel
@@ -130,6 +135,9 @@ class Import_in_SQL():
                         module     =row_exel['module'],
                         channel    =row_exel['channel'],
                     )
+                    msg[f'''{today} - Добавлен новый сигнал: Tag - {row_exel["tag"]}, description - {row_exel["description"]}, 
+                                                             basket - {row_exel["basket"]}, module - {row_exel["module"]}, 
+                                                             channel - {row_exel["channel"]}'''] = 0
 
                 for row_sql in Signals.select().dicts():
 
@@ -146,23 +154,41 @@ class Import_in_SQL():
            
                             continue
                         else:
-                            print(row_sql['id'])
                             Signals.update(
+                                type_signal=row_exel['type_signal'],
                                 tag        =row_exel['tag'],
                                 description=row_exel['description'],
                                 scheme     =row_exel['scheme'],
                                 klk        =row_exel['klk'],
                                 contact    =row_exel['contact'],
                             ).where(Signals.id == row_sql['id']).execute()
+                            msg[f'''{today} - Обновление сигнала id = {row_sql["id"]}: Было, 
+                                                                                    uso - {row_sql['uso']}, 
+                                                                                    type_signal - {row_sql['type_signal']}, 
+                                                                                    tag - {row_sql['tag']},                      
+                                                                                    description - {row_sql['description']}, 
+                                                                                    scheme - {row_sql['scheme']}, 
+                                                                                    klk - {row_sql['klk']},
+                                                                                    contact - {row_sql['contact']} = 
+                                                                                    Стало, 
+                                                                                    uso - {row_exel['uso']}, 
+                                                                                    type_signal - {row_exel['type_signal']}, 
+                                                                                    tag - {row_exel['tag']}, 
+                                                                                    description - {row_exel['description']}, 
+                                                                                    scheme - {row_exel['scheme']}, 
+                                                                                    klk - {row_exel['klk']},
+                                                                                    contact - {row_exel['contact']}'''] = 3
                             continue
                     else:
                         continue
+        return(msg)
     # Removing all rows
     def clear_tabl(self):
+        msg = {}
         for row_sql in Signals.select().dicts():
             Signals.get(Signals.id == row_sql['id']).delete_instance()
-        print('Таблица очищена')
-
+        msg[f'{today} - Таблица: signals'] = 1
+        return(msg)
 
 
 # Changing tables SQL
@@ -216,7 +242,6 @@ class Editing_table_SQL():
         #table_used.update(**{active_column: text_cell}).where(table_used.id == text_cell_id).execute()
     # Adding new lines
     def add_new_row(self, table_used):
-
         self.cursor.execute(f'''INSERT INTO {table_used} DEFAULT VALUES''')
 
         #table_used.insert(**{active_column: ''}).execute()
