@@ -3,6 +3,8 @@ import openpyxl as wb
 from datetime import datetime
 today = datetime.now()
 
+
+
 # Work with filling in the table 'signals'
 class Import_in_SQL():
     def __init__(self, exel):
@@ -66,9 +68,6 @@ class Import_in_SQL():
             if basket is None: continue
             data_new.append(dict_column)
         return data_new
-    # Close connect Exel
-    def close_connect(self):
-        self.connect.close()
     # Importing into SQL
     def import_for_sql(self, data, uso):
         msg = {}
@@ -95,7 +94,7 @@ class Import_in_SQL():
         with db.atomic():
             Signals.insert_many(data).execute()
 
-        msg[f'{today} - Добавлено новый шкаф: {uso}'] = 1
+        msg[f'{today} - Добавлено новое УСО: {uso}'] = 1
         return(msg)
     # Update Database
     def update_for_sql(self, data, uso):
@@ -187,9 +186,72 @@ class Import_in_SQL():
         msg = {}
         for row_sql in Signals.select().dicts():
             Signals.get(Signals.id == row_sql['id']).delete_instance()
-        msg[f'{today} - Таблица: signals'] = 1
+        msg[f'{today} - Таблица: signals полностью очищена!'] = 1
         return(msg)
 
+# Work with filling in the table 'HardWare'
+class Filling_HardWare():
+    def __init__(self):
+        self.cursor = db.cursor()
+    def getting_modul(self):
+        with db:
+            for row_sql in Signals.select().dicts():
+                uso    = row_sql['uso']
+                basket = row_sql['basket']
+
+                self.cursor.execute(f'''SELECT * 
+                                        FROM signals 
+                                        WHERE uso="{uso}" AND basket="{basket}"''')
+                
+                print(self.cursor.fetchone())
+
+
+
+
+        
+    def import_for_sql(self):
+        # Logs
+        msg = {}
+
+        # Create tabl
+        with db.atomic():
+            db.create_tables([HardWare])
+
+        # Checking if a column exists
+        column_tabl  = []
+        new_column   = []
+        list_default = ['symbol', 'uso', 'basket', 'powerLink_ID', 
+                        'type_00', 'variable_00', 'type_01', 'variable_01', 'type_02', 'variable_02', 
+                        'type_03', 'variable_03', 'type_04', 'variable_04', 'type_05', 'variable_05', 
+                        'type_06', 'variable_06', 'type_07', 'variable_07', 'type_08', 'variable_08',
+                        'type_09', 'variable_09', 'type_10', 'variable_10', 'type_11', 'variable_11', 
+                        'type_12', 'variable_12', 'type_13', 'variable_13', 'type_14', 'variable_14', 
+                        'type_15', 'variable_15', 'type_16', 'variable_16', 'type_17', 'variable_17',
+                        'type_18', 'variable_18', 'type_19', 'variable_19', 'type_20', 'variable_20', 
+                        'type_21', 'variable_21', 'type_22', 'variable_22', 'type_23', 'variable_23', 
+                        'type_24', 'variable_24', 'type_25', 'variable_25', 'type_26', 'variable_26',
+                        'type_27', 'variable_27', 'type_28', 'variable_28', 'type_29', 'variable_29', 
+                        'type_30', 'variable_30', 'type_31', 'variable_31', 'type_32', 'variable_32']
+        
+        for data_column in db.get_columns('hardware'):
+            if data_column[0] in list_default: column_tabl.append(data_column[0])
+        
+        for lst in list_default:
+            if lst not in column_tabl: 
+                msg[f'{today} - Отсутствует обязательный столбец таблицы hardware: {lst}'] = 2
+                new_column.append(lst)
+        
+        for new_name in new_column:
+            msg[f'{today} - Столбец: {new_name} добавлен в таблицу hardware'] = 3
+            migrate(migrator.add_column('hardware', new_name, IntegerField(null=True)))
+        
+        self.getting_modul()
+
+        # Checking for the existence of a database
+        #with db.atomic():
+        #    Signals.insert_many(data).execute()
+
+       # msg[f'{today} - Добавлено новое УСО: {uso}'] = 1
 
 # Changing tables SQL
 class Editing_table_SQL():
@@ -266,4 +328,5 @@ class Editing_table_SQL():
     # Table selection window
     def get_tabl(self):
         return db.get_tables()
+
 

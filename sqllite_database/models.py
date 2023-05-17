@@ -2,14 +2,24 @@ from peewee import *
 from playhouse.migrate import *
 
 from graphic_part import Window
-from PyQt5.QtWidgets import QApplication
-app = QApplication([])
-win_ = Window()
-path_kzfkp, path_base = win_.split_config()
+# from PyQt5.QtWidgets import QApplication
+# app = QApplication([])
 
+# win_ = Window()
+# path_prj = win_.file_prj()
 
+path_to_exel = f'D:\\Development\\New_SQL_generator\\Working_draft_SQL\\sqllite_database\\Салым-4_кор14_ЗПСИ.xlsm'
+path_to_base = f'D:\\Development\\New_SQL_generator\\Working_draft_SQL\\sqllite_database\\asutp.db'
 
-db = SqliteDatabase(path_base)
+# with open(path_prj) as paths:
+#     for string in paths:
+#         split_str = string.strip().split(': ')
+#         if split_str[0] == 'path_to_kzfkp':
+#             path_to_exel = split_str[1]
+#         if split_str[0] == 'path_to_base':
+#             path_to_base = split_str[1]
+
+db = SqliteDatabase(path_to_base)
 migrator = SqliteMigrator(db)
 
 class BaseModel(Model):
@@ -31,51 +41,78 @@ class Signals(BaseModel):
     class Meta:
         table_name = 'signals'
 
+class HardWare(BaseModel):
+    symbol       = CharField()
+    uso          = CharField(null = True)
+    basket       = CharField(null = True)
+    powerLink_ID = CharField(null = True)
+    type_00      = CharField(null = True)
+    variable_00  = CharField(null = True)
+    type_01      = CharField(null = True)
+    variable_01  = CharField(null = True)
+    type_02      = CharField(null = True)
+    variable_02  = CharField(null = True)
+    type_03      = CharField(null = True)
+    variable_03  = CharField(null = True)
+    type_04      = CharField(null = True)
+    variable_04  = CharField(null = True)
+    type_05      = CharField(null = True)
+    variable_05  = CharField(null = True)
+    type_06      = CharField(null = True)
+    variable_06  = CharField(null = True)
+    type_07      = CharField(null = True)
+    variable_07  = CharField(null = True)
+    type_08      = CharField(null = True)
+    variable_08  = CharField(null = True)
+    type_09      = CharField(null = True)
+    variable_09  = CharField(null = True)
+    type_10      = CharField(null = True)
+    variable_10  = CharField(null = True)
+    type_11      = CharField(null = True)
+    variable_11  = CharField(null = True)
+    type_12      = CharField(null = True)
+    variable_12  = CharField(null = True)
+    type_13      = CharField(null = True)
+    variable_13  = CharField(null = True)
+    type_14      = CharField(null = True)
+    variable_14  = CharField(null = True)
+    type_15      = CharField(null = True)
+    variable_15  = CharField(null = True)
+    type_16      = CharField(null = True)
+    variable_16  = CharField(null = True)
+    type_17      = CharField(null = True)
+    variable_17  = CharField(null = True)
+    type_18      = CharField(null = True)
+    variable_18  = CharField(null = True)
+    type_19      = CharField(null = True)
+    variable_19  = CharField(null = True)
+    type_20      = CharField(null = True)
+    variable_20  = CharField(null = True)
+    type_21      = CharField(null = True)
+    variable_21  = CharField(null = True)
+    type_22      = CharField(null = True)
+    variable_22  = CharField(null = True)
+    type_23      = CharField(null = True)
+    variable_23  = CharField(null = True)
+    type_24      = CharField(null = True)
+    variable_24  = CharField(null = True)
+    type_25      = CharField(null = True)
+    variable_25  = CharField(null = True)
+    type_26      = CharField(null = True)
+    variable_26  = CharField(null = True)
+    type_27      = CharField(null = True)
+    variable_27  = CharField(null = True)
+    type_28      = CharField(null = True)
+    variable_28  = CharField(null = True)
+    type_29      = CharField(null = True)
+    variable_29  = CharField(null = True)
+    type_30      = CharField(null = True)
+    variable_30  = CharField(null = True)
+    type_31      = CharField(null = True)
+    variable_31  = CharField(null = True)
+    type_32      = CharField(null = True) 
+    variable_32  = CharField(null = True)
 
-
-
-
-
-
-
-
-
-# class Diagnostics(BaseModel):
-#     Identifier   = CharField()
-#     USO          = CharField(null = True)
-#     Basket       = CharField(null = True)
-#     PowerLink_ID = CharField(null = True)
-#     _00          = CharField(null = True)
-#     _01          = CharField(null = True)
-#     _02          = CharField(null = True)
-#     _03          = CharField(null = True)
-#     _04          = CharField(null = True)
-#     _05          = CharField(null = True)
-#     _06          = CharField(null = True)
-#     _07          = CharField(null = True)
-#     _08          = CharField(null = True)
-#     _09          = CharField(null = True)
-#     _10          = CharField(null = True)
-#     _11          = CharField(null = True)
-#     _12          = CharField(null = True)
-#     _13          = CharField(null = True)
-#     _14          = CharField(null = True)
-#     _15          = CharField(null = True)
-#     _16          = CharField(null = True)
-#     _17          = CharField(null = True)
-#     _18          = CharField(null = True)
-#     _19          = CharField(null = True)
-#     _20          = CharField(null = True)
-#     _21          = CharField(null = True)
-#     _22          = CharField(null = True)
-#     _23          = CharField(null = True)
-#     _24          = CharField(null = True)
-#     _25          = CharField(null = True)
-#     _26          = CharField(null = True)
-#     _27          = CharField(null = True)
-#     _28          = CharField(null = True)
-#     _29          = CharField(null = True)
-#     _30          = CharField(null = True)
-#     _31          = CharField(null = True)
-#     _32          = CharField(null = True)
+    class Meta:
+        table_name = 'hardware'
 

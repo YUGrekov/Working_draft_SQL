@@ -6,11 +6,12 @@ from main_base import *
 
 
 
+# Главное окно программы
 class Window(QMainWindow):
     def __init__(self):
         super(Window, self).__init__()
         self.setWindowTitle('Меню разработки проекта')
-        self.setFixedSize(250, 110)
+        self.setFixedSize(250, 145)
         self.setStyleSheet("background-color: #a0b0a5;")
         self.setWindowFlags(Qt.WindowCloseButtonHint)
         # Create menu bar
@@ -21,11 +22,17 @@ class Window(QMainWindow):
         butt_import_exel.resize(220,25)
         butt_import_exel.move(15, 35)      
         butt_import_exel.clicked.connect(self.window_import_exel)  
+        # Filling tables
+        butt_fill_tabl = QPushButton('Заполнение таблиц', self)
+        butt_fill_tabl.setStyleSheet(("background-color: #a4aba6;"))
+        butt_fill_tabl.resize(220,25)
+        butt_fill_tabl.move(15, 70)      
+        butt_fill_tabl.clicked.connect(self.window_fill_tables)  
         # SQL button 
         butt_sql = QPushButton('Редактор базы данных', self)
         butt_sql.setStyleSheet(("background-color: #a4aba6;"))
         butt_sql.resize(220,25)
-        butt_sql.move(15, 70)      
+        butt_sql.move(15, 105)      
         butt_sql.clicked.connect(self.window_create_sql)  
     def create_menu_bars(self):
         menuBar = self.menuBar()
@@ -40,32 +47,22 @@ class Window(QMainWindow):
         settings.addAction(path_prj)
         path_prj.triggered.connect(self.file_prj)
     def file_prj(self):
-        self.path_prj = QFileDialog.getOpenFileName(caption='Выберите файл конфигурации проекта')[0]
-    def split_config(self):
-        with open(self.path_prj) as paths:
-            for string in paths:
-                split_str = string.strip().split(':')
-
-                if split_str[0] == 'path_to_kzfkp: ':
-                    path_to_exel        = split_str[1]
-                    print(path_to_exel)
-                
-                if split_str[0] == 'path_to_base: ':
-                    path_to_base        = split_str[1]
-                    print(path_to_base)
-            return(path_to_exel, path_to_base)
+        return(QFileDialog.getOpenFileName(caption='Выберите файл конфигурации проекта')[0])
                         
-
     def window_import_exel(self):
         self.w_i_e = Window_import_exel()
         self.w_i_e.show()
+    def window_fill_tables(self):
+        self.w_f_t = Window_Filling_tables()
+        self.w_f_t.show()
     def window_create_sql(self):
         self.edit_SQL = Editing_table_SQL()
         list_tabl = self.edit_SQL.get_tabl()
 
-        self.w_u_c = Window_tabl_checkbox(list_tabl)
-        self.w_u_c.show()
+        self.w_t_c = Window_tabl_checkbox(list_tabl)
+        self.w_t_c.show()
 
+# Окно импорта КЗФКП
 class Window_import_exel(QWidget):
     def __init__(self):
         super(Window_import_exel, self).__init__()
@@ -196,19 +193,16 @@ class Window_import_exel(QWidget):
         msg = self.import_sql.import_for_sql(data_uso, self.select_uso.currentText())
         self.logs_msg('default', 1, msg, True)
     def path_file_prj(self):
-        self.main_window = Window()
-        self.path_kzfkp, self.path_base = self.main_window.loadSetting()
-
-        self.pathbasesql.setText(self.path_base)
-        self.label1.setText(self.path_kzfkp)
+        self.pathbasesql.setText(path_to_base)
+        self.label1.setText(path_to_exel)
 
         try:
-            self.import_sql = Import_in_SQL(self.path_kzfkp)
+            self.import_sql = Import_in_SQL(path_to_exel)
             # Logs
             self.logs_msg(f'Соединение с файлом КД установленно', 1)
         except:
             # Logs
-            self.logs_msg(f'Соединение с файлом КД не установленно!Выбирите другой файл', 1)
+            self.logs_msg(f'Соединение с файлом КД не установленно! Выбирите другой файл', 2)
             return
         
         # Read tables exel
@@ -291,7 +285,47 @@ class Window_import_exel(QWidget):
             elif number_color == 3: self.logTextBox.append(warningFormat.format(f'{today} - {logs}'))
             elif number_color == 0: self.logTextBox.append(newFormat.format(f'{today} - {logs}'))
 
+# Заполнение таблиц базы данных
+class Window_Filling_tables(QWidget):
+    def __init__(self):
+        super(Window_Filling_tables, self).__init__()
+        self.setWindowTitle('Заполнение таблиц базы данных')
+        self.setStyleSheet("background-color: #a0b0a5;")
+        self.resize(500, 200)
 
+        b_io_basket = QPushButton('HardWare', self)
+        b_io_basket.setStyleSheet("background-color: #a087d4;")
+        b_io_basket.resize(130,23)
+        b_io_basket.move(10, 10) 
+        b_io_basket.clicked.connect(self.filling_hardware)
+    # HardWare
+    def filling_hardware(self):
+        hw_table = Filling_HardWare()
+        hw_table.import_for_sql()
+    # Logging messeges
+    def logs_msg(self, logs=None, number_color=1, buffer_msg=None, msg=False):
+        today = datetime.now()
+        errorFormat   = '<span style="color:red;">{}</span>'
+        warningFormat = '<span style="color:yellow;">{}</span>'
+        validFormat   = '<span style="color:black;">{}</span>'
+        newFormat     = '<span style="color:green;">{}</span>'
+        if msg:
+            for string_msg, value in buffer_msg.items():
+                if   value == 1: 
+                    self.logTextBox.append(validFormat.format(string_msg))
+                elif value == 2: 
+                    self.logTextBox.append(errorFormat.format(string_msg))
+                elif value == 3: 
+                    self.logTextBox.append(warningFormat.format(string_msg))
+                elif value == 0: 
+                    self.logTextBox.append(newFormat.format(string_msg))
+        else:
+            if   number_color == 1: self.logTextBox.append(validFormat.format(f'{today} - {logs}'))
+            elif number_color == 2: self.logTextBox.append(errorFormat.format(f'{today} - {logs}'))
+            elif number_color == 3: self.logTextBox.append(warningFormat.format(f'{today} - {logs}'))
+            elif number_color == 0: self.logTextBox.append(newFormat.format(f'{today} - {logs}'))
+
+# Просмотр и редактирование таблиц
 class Window_tabl_checkbox(QWidget):
     def __init__(self, list_tabl):
         super(Window_tabl_checkbox, self).__init__()
@@ -320,7 +354,6 @@ class Window_tabl_checkbox(QWidget):
         name_table = self.combo.currentText()
         self.ch_tabl = Window_update_sql(name_table)
         self.ch_tabl.show()
-
 class Window_update_sql(QWidget):
     def __init__(self, table_used):
         super(Window_update_sql, self).__init__()
@@ -406,12 +439,12 @@ class Window_update_sql(QWidget):
 
         self.edit_SQL.add_new_row(self.table_used)
         # Logs
-        self.logs_msg('В конец таблицы добавлена новая строка\n', 1)
+        self.logs_msg('В конец таблицы добавлена новая строка', 1)
     # Removing rows
     def delete_row(self):
         row = self.TableWidget.currentRow()
         if row <= 0: 
-            self.logs_msg('Невозможно удалить строки из пустой таблицы\n', 2)
+            self.logs_msg('Невозможно удалить строки из пустой таблицы', 2)
             return
         
         text_cell_id = self.TableWidget.item(int(row), 0).text()
@@ -421,7 +454,7 @@ class Window_update_sql(QWidget):
 
         self.edit_SQL.delete_row(text_cell_id, self.table_used)
         # Logs
-        self.logs_msg(f'Из таблицы: {self.table_used} удалена строка id={text_cell_id}\n', 3)
+        self.logs_msg(f'Из таблицы: {self.table_used} удалена строка id={text_cell_id}', 3)
     # Adding new column
     def add_column(self):
         def letters(name):
@@ -431,7 +464,7 @@ class Window_update_sql(QWidget):
         namecolumn = letters(self.namecolumn.text())
         hat_name = self.edit_SQL.column_names(self.table_used)
         if namecolumn in hat_name: 
-            self.logs_msg('Дублирующие название столбца!\n', 2)
+            self.logs_msg('Дублирующие название столбца!', 2)
             return
 
         column_count = self.TableWidget.columnCount()
@@ -442,19 +475,22 @@ class Window_update_sql(QWidget):
         hat_name = self.edit_SQL.column_names(self.table_used)
         self.TableWidget.setHorizontalHeaderLabels(hat_name)
         # Logs
-        self.logs_msg(f'В таблицу: {self.table_used} добавлен новый столбец: {namecolumn}\n', 1)
+        self.logs_msg(f'В таблицу: {self.table_used} добавлен новый столбец: {namecolumn}', 1)
     # Removing column
     def delete_column(self):
+        if self.table_used == 'signals': 
+            self.logs_msg(f'Из таблицы: signals нельзя удалять столбцы!', 3)
+            return
         column = self.TableWidget.currentColumn()
         self.TableWidget.removeColumn(column)
 
         hat_name = self.edit_SQL.column_names(self.table_used)
         self.edit_SQL.delete_column(column, hat_name, self.table_used)
-        self.logs_msg(f'Из таблицы: {self.table_used} удален столбец\n', 3)
+        self.logs_msg(f'Из таблицы: {self.table_used} удален столбец', 3)
     # Building the selected table
     def tablew(self, column, row, hat_name, value):
         # Logs
-        self.logs_msg(f'Запущен редактор базы данных. Таблица: {self.table_used}\n', 1)
+        self.logs_msg(f'Запущен редактор базы данных. Таблица: {self.table_used}', 1)
         # TableW
         self.TableWidget.setColumnCount(column)
         self.TableWidget.setRowCount(row)
@@ -472,6 +508,8 @@ class Window_update_sql(QWidget):
                     item = QTableWidgetItem('')
                 else:
                     item = QTableWidgetItem(str(value[row_t][column_t]))
+
+                if column_t == 0: item.setFlags(Qt.ItemIsEnabled)
                 # center text
                 #item.setTextAlignment(Qt.AlignHCenter)
                 # Выравнивание все столбцов по общей ширине
@@ -488,6 +526,7 @@ class Window_update_sql(QWidget):
         column = self.TableWidget.currentColumn()
 
         if row == 0 and column == 0: return
+
         for currentQTableWidgetItem in self.TableWidget.selectedItems():
             text_cell = self.TableWidget.item(currentQTableWidgetItem.row(), column).text()
         # На случай, когда нет изменения в ячейке
@@ -504,12 +543,27 @@ class Window_update_sql(QWidget):
         hat_name = self.edit_SQL.column_names(self.table_used)
         self.edit_SQL.update_row_tabl(column, text_cell, text_cell_id, self.table_used, hat_name)
     # Logging messeges
-    def logs_msg(self, logs, number_color):
+    def logs_msg(self, logs=None, number_color=1, buffer_msg=None, msg=False):
         today = datetime.now()
-        if   number_color == 1: self.logTextBox.setStyleSheet("QTextEdit {color:black}")
-        elif number_color == 2: self.logTextBox.setStyleSheet("QTextEdit {color:red}")
-        elif number_color == 3: self.logTextBox.setStyleSheet("QTextEdit {color:yellow}")
-        self.logTextBox.insertPlainText(f'{today} - {logs}')
+        errorFormat   = '<span style="color:red;">{}</span>'
+        warningFormat = '<span style="color:yellow;">{}</span>'
+        validFormat   = '<span style="color:black;">{}</span>'
+        newFormat     = '<span style="color:green;">{}</span>'
+        if msg:
+            for string_msg, value in buffer_msg.items():
+                if   value == 1: 
+                    self.logTextBox.append(validFormat.format(string_msg))
+                elif value == 2: 
+                    self.logTextBox.append(errorFormat.format(string_msg))
+                elif value == 3: 
+                    self.logTextBox.append(warningFormat.format(string_msg))
+                elif value == 0: 
+                    self.logTextBox.append(newFormat.format(string_msg))
+        else:
+            if   number_color == 1: self.logTextBox.append(validFormat.format(f'{today} - {logs}'))
+            elif number_color == 2: self.logTextBox.append(errorFormat.format(f'{today} - {logs}'))
+            elif number_color == 3: self.logTextBox.append(warningFormat.format(f'{today} - {logs}'))
+            elif number_color == 0: self.logTextBox.append(newFormat.format(f'{today} - {logs}'))
  
 
 
