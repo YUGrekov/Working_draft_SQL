@@ -193,30 +193,98 @@ class Import_in_SQL():
 class Filling_HardWare():
     def __init__(self):
         self.cursor = db.cursor()
-    def getting_modul(self):
+    # Получаем данные с таблицы Signals по количеству корзин и модулю
+    def getting_modul(self, KK_is_True):
+        list_type = {'CPU': 'MK-504-120', 
+                     'PSU': 'MK-550-024', 
+                     'CN' : 'MK-545-010', 
+                     'MN' : 'MK-546-010', 
+                     'AI' : 'MK-516-008A',
+                     'AO' : 'MK-514-008', 
+                     'DI' : 'MK-521-032', 
+                     'RS' : 'MK-541-002', 
+                     'DO' : 'MK-531-032'}
+        list_hw_def = []
+        list_hw     = []
         with db:
-            for row_sql in Signals.select().dicts():
-                uso    = row_sql['uso']
-                basket = row_sql['basket']
+            req_uso = self.cursor.execute(f'''SELECT DISTINCT uso 
+                                              FROM signals''')
+            list_uso = req_uso.fetchall()
 
-                self.cursor.execute(f'''SELECT * 
-                                        FROM signals 
-                                        WHERE uso="{uso}" AND basket="{basket}"''')
+            for uso in list_uso:
+                req_basket = self.cursor.execute(f'''SELECT DISTINCT basket 
+                                                     FROM signals
+                                                     WHERE uso="{uso[0]}"''')
+                list_basket = req_basket.fetchall()
+
+                for basket in list_basket:
+                    req_modul = self.cursor.execute(f'''SELECT DISTINCT module, type_signal 
+                                                        FROM signals
+                                                        WHERE uso="{uso[0]}" AND basket={basket[0]}
+                                                        ORDER BY module''')
+                    list_hw_def.append(dict(uso      = uso[0],
+                                            basket   = basket[0],
+                                            mod_type = req_modul.fetchall()))
+        for i in range(2):
+            uso = list_hw_def[i]['uso']
+            list_hw.append(dict(uso        = uso,
+                                basket     = i + 1,
+                                type_0     = 'MK-550-024',
+                                variable_0 = f'PSU',
+                                type_1     = f'MK-546-010',
+                                variable_1 = f'MN',
+                                type_2     = f'MK-504-120',
+                                variable_2 = f'CPU'))
+        count = 0
+        for row in list_hw_def:
+            #print(row)
+            count += 1
+            uso    = row['uso']
+            basket = row['basket']
+            # Если в проекте есть КК
+            if KK_is_True and count == 3:
+                for i in range(4, 6, 1):
+                    uso_kc = list_hw_def[0]['uso']
+                    list_hw.append(dict(uso        = uso_kc,
+                                        basket     = i + 1,
+                                        type_0     = 'MK-550-024',
+                                        variable_0 = f'PSU',
+                                        type_2     = f'MK-504-120',
+                                        variable_2 = f'CPU'))
+            
+
+
+
+            list_hw.append(dict(uso        = uso,
+                                basket     = basket,
+                                type_0     = 'MK-550-024',
+                                variable_0 = f'PSU',
+                                type_1     = f'MK-545-010',
+                                variable_1 = f'CN'))
+            a = ''
+            for number, type_mod in row['mod_type']:
+
+                # Найти по типу модуля маркировку модуля!!!!
+
+                a = f'type_{number}, variable_{number}:{type_mod}, ' + a
+            print(a)
+                #list_hw.append(dict(**{a: a}))
                 
-                print(self.cursor.fetchone())
+        for i in list_hw:
+            print(i)
 
 
 
 
-        
+
+        return list_hw
+    # Заполняем таблицу HardWare
     def import_for_sql(self):
         # Logs
         msg = {}
-
         # Create tabl
         with db.atomic():
             db.create_tables([HardWare])
-
         # Checking if a column exists
         column_tabl  = []
         new_column   = []
@@ -244,8 +312,9 @@ class Filling_HardWare():
         for new_name in new_column:
             msg[f'{today} - Столбец: {new_name} добавлен в таблицу hardware'] = 3
             migrate(migrator.add_column('hardware', new_name, IntegerField(null=True)))
-        
-        self.getting_modul()
+       
+        kk_is_true = True
+        list_hw = self.getting_modul(kk_is_true)
 
         # Checking for the existence of a database
         #with db.atomic():
