@@ -54,17 +54,25 @@ class Import_in_SQL():
         # Delete basket is None
         data_new = []
         for row in data:
-            basket = row['basket']
-            dict_column = { 'type_signal' : row['type_signal'],
-                            'uso'         : uso,
-                            'tag'         : row['tag'],
-                            'description' : row['description'],
-                            'scheme'      : row['scheme'],
-                            'klk'         : row['klk'],
-                            'contact'     : row['contact'],
-                            'basket'      : row['basket'],
-                            'module'      : row['module'],
-                            'channel'     : row['channel']}
+            type_signal = row['type_signal']
+            scheme      = row['scheme']
+            basket      = row['basket']
+
+            list_type = ['CPU', 'PSU', 'CN', 'MN', 'AI','AO', 'DI', 'RS','DO']
+            for value in list_type:
+                if str(scheme).find(value) != -1: 
+                    type_signal = value
+
+            dict_column = {'type_signal' : type_signal,
+                           'uso'         : uso,
+                           'tag'         : row['tag'],
+                           'description' : row['description'],
+                           'scheme'      : row['scheme'],
+                           'klk'         : row['klk'],
+                           'contact'     : row['contact'],
+                           'basket'      : basket,
+                           'module'      : row['module'],
+                           'channel'     : row['channel']}
             if basket is None: continue
             data_new.append(dict_column)
         return data_new
@@ -194,7 +202,8 @@ class Filling_HardWare():
     def __init__(self):
         self.cursor = db.cursor()
     # Получаем данные с таблицы Signals по количеству корзин и модулю
-    def getting_modul(self, KK_is_True):
+    def getting_modul(self, kk_is_True):
+        msg = {}
         list_type = {'CPU': 'MK-504-120', 
                      'PSU': 'MK-550-024', 
                      'CN' : 'MK-545-010', 
@@ -204,82 +213,90 @@ class Filling_HardWare():
                      'DI' : 'MK-521-032', 
                      'RS' : 'MK-541-002', 
                      'DO' : 'MK-531-032'}
-        list_hw_def = []
-        list_hw     = []
         with db:
             req_uso = self.cursor.execute(f'''SELECT DISTINCT uso 
                                               FROM signals''')
             list_uso = req_uso.fetchall()
 
+            temp_flag    = False
+            test_s       = []
+            count_basket = 0
             for uso in list_uso:
                 req_basket = self.cursor.execute(f'''SELECT DISTINCT basket 
                                                      FROM signals
                                                      WHERE uso="{uso[0]}"''')
                 list_basket = req_basket.fetchall()
 
+                # ЦК в количестве 2 - ONE!
+                if temp_flag is False:
+                    for i in range(2):
+                        uso_kk = uso[0]
+                        test_s.append(dict(uso = uso[0],
+                                           powerLink_ID ='',
+                                           basket  = i + 1,
+                                           type_0  = 'MK-550-024',  variable_0 = f'PSU', type_1 = f'MK-546-010', variable_1 = f'MN',
+                                           type_2  = f'MK-504-120', variable_2 = f'CPU', type_3 = f'',           variable_3 = f'',
+                                           type_4  = f'',           variable_4 = f'',    type_5 = f'',           variable_5 = f'',
+                                           type_6  = f'',           variable_6 = f'',    type_7 = f'',           variable_7 = f'',
+                                           type_8  = f'',           variable_8 = f'',    type_9 = f'',           variable_9 = f'',
+                                           type_10 = f'',           variable_10= f'',    type_11= f'',           variable_11= f'',
+                                           type_12 = f'',           variable_12= f'',    type_13= f'',           variable_13= f'',
+                                           type_14 = f'',           variable_14= f'',    type_15= f'',           variable_15= f'',
+                                           type_16 = f'',           variable_16= f'',    type_17= f'',           variable_17= f'',
+                                           type_18 = f'',           variable_18= f'',    type_19= f'',           variable_19= f'',
+                                           type_20 = f'',           variable_20= f'',    type_21= f'',           variable_21= f'',
+                                           type_22 = f'',           variable_22= f'',    type_23= f'',           variable_23= f'',
+                                           type_24 = f'',           variable_24= f'',    type_25= f'',           variable_25= f'',
+                                           type_26 = f'',           variable_26= f'',    type_27= f'',           variable_27= f'',
+                                           type_28 = f'',           variable_28= f'',    type_29= f'',           variable_29= f'',
+                                           type_30 = f'',           variable_30= f'',    type_31= f'',           variable_31= f'',
+                                           type_32 = f'',           variable_32= f''))
+                    temp_flag = True
                 for basket in list_basket:
+                    count_basket     += 1
+                    list_hw           = {}
+                    list_hw['uso']    = uso[0]    
+                    list_hw['basket'] = basket[0] 
+
+                    # Если в проекте есть КК
+                    if kk_is_True and count_basket == 3:
+                        for i in range(4, 6, 1):
+                            test_s.append(dict(uso         = uso_kk,
+                                               basket     = i + 1,
+                                               type_0     = 'MK-550-024',
+                                               variable_0 = f'PSU',
+                                               type_2     = f'MK-504-120',
+                                               variable_2 = f'CPU'))
+
                     req_modul = self.cursor.execute(f'''SELECT DISTINCT module, type_signal 
                                                         FROM signals
                                                         WHERE uso="{uso[0]}" AND basket={basket[0]}
                                                         ORDER BY module''')
-                    list_hw_def.append(dict(uso      = uso[0],
-                                            basket   = basket[0],
-                                            mod_type = req_modul.fetchall()))
-        for i in range(2):
-            uso = list_hw_def[i]['uso']
-            list_hw.append(dict(uso        = uso,
-                                basket     = i + 1,
-                                type_0     = 'MK-550-024',
-                                variable_0 = f'PSU',
-                                type_1     = f'MK-546-010',
-                                variable_1 = f'MN',
-                                type_2     = f'MK-504-120',
-                                variable_2 = f'CPU'))
-        count = 0
-        for row in list_hw_def:
-            #print(row)
-            count += 1
-            uso    = row['uso']
-            basket = row['basket']
-            # Если в проекте есть КК
-            if KK_is_True and count == 3:
-                for i in range(4, 6, 1):
-                    uso_kc = list_hw_def[0]['uso']
-                    list_hw.append(dict(uso        = uso_kc,
-                                        basket     = i + 1,
-                                        type_0     = 'MK-550-024',
-                                        variable_0 = f'PSU',
-                                        type_2     = f'MK-504-120',
-                                        variable_2 = f'CPU'))
-            
+                    for i in req_modul.fetchall():
+                        if i[1] is None: 
+                            type_kod = ''
+                            type_mod = ''
+                        else:
+                            for key, value in list_type.items():
+                                if str(i[1]).find(key) != -1: 
+                                    type_kod = value
+                                    type_mod = key
+                        list_hw[f'powerLink_ID']    = count_basket
+                        list_hw[f'type_0']          = 'MK-550-024'
+                        list_hw[f'variable_0']      = 'PSU'
+                        list_hw[f'type_1']          = 'MK-545-010'
+                        list_hw[f'variable_1']      = 'CN'
+                        list_hw[f'type_{i[0]}']     = type_kod
+                        list_hw[f'variable_{i[0]}'] = type_mod
+                    test_s.append(list_hw)
 
+            # Checking for the existence of a database
+            HardWare.insert_many(test_s).execute()
 
-
-            list_hw.append(dict(uso        = uso,
-                                basket     = basket,
-                                type_0     = 'MK-550-024',
-                                variable_0 = f'PSU',
-                                type_1     = f'MK-545-010',
-                                variable_1 = f'CN'))
-            a = ''
-            for number, type_mod in row['mod_type']:
-
-                # Найти по типу модуля маркировку модуля!!!!
-
-                a = f'type_{number}, variable_{number}:{type_mod}, ' + a
-            print(a)
-                #list_hw.append(dict(**{a: a}))
-                
-        for i in list_hw:
-            print(i)
-
-
-
-
-
-        return list_hw
+        msg[f'{today} - Таблица: hardware заполнена'] = 1
+        return(msg)
     # Заполняем таблицу HardWare
-    def import_for_sql(self):
+    def column_check(self):
         # Logs
         msg = {}
         # Create tabl
@@ -288,11 +305,11 @@ class Filling_HardWare():
         # Checking if a column exists
         column_tabl  = []
         new_column   = []
-        list_default = ['symbol', 'uso', 'basket', 'powerLink_ID', 
-                        'type_00', 'variable_00', 'type_01', 'variable_01', 'type_02', 'variable_02', 
-                        'type_03', 'variable_03', 'type_04', 'variable_04', 'type_05', 'variable_05', 
-                        'type_06', 'variable_06', 'type_07', 'variable_07', 'type_08', 'variable_08',
-                        'type_09', 'variable_09', 'type_10', 'variable_10', 'type_11', 'variable_11', 
+        list_default = ['uso', 'basket', 'powerLink_ID', 
+                        'type_0',  'variable_0',  'type_1',  'variable_1',  'type_2',  'variable_2', 
+                        'type_3',  'variable_3',  'type_4',  'variable_4',  'type_5',  'variable_5', 
+                        'type_6',  'variable_6',  'type_7',  'variable_7',  'type_8',  'variable_8',
+                        'type_9',  'variable_9',  'type_10', 'variable_10', 'type_11', 'variable_11', 
                         'type_12', 'variable_12', 'type_13', 'variable_13', 'type_14', 'variable_14', 
                         'type_15', 'variable_15', 'type_16', 'variable_16', 'type_17', 'variable_17',
                         'type_18', 'variable_18', 'type_19', 'variable_19', 'type_20', 'variable_20', 
@@ -312,16 +329,13 @@ class Filling_HardWare():
         for new_name in new_column:
             msg[f'{today} - Столбец: {new_name} добавлен в таблицу hardware'] = 3
             migrate(migrator.add_column('hardware', new_name, IntegerField(null=True)))
-       
-        kk_is_true = True
-        list_hw = self.getting_modul(kk_is_true)
-
-        # Checking for the existence of a database
-        #with db.atomic():
-        #    Signals.insert_many(data).execute()
-
-       # msg[f'{today} - Добавлено новое УСО: {uso}'] = 1
-
+    # Removing all rows
+    def clear_tabl(self):
+        msg = {}
+        for row_sql in HardWare.select().dicts():
+            HardWare.get(HardWare.id == row_sql['id']).delete_instance()
+        msg[f'{today} - Таблица: hardware полностью очищена'] = 1
+        return(msg)
 # Changing tables SQL
 class Editing_table_SQL():
     def __init__(self):

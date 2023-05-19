@@ -291,6 +291,7 @@ class Window_Filling_tables(QWidget):
         super(Window_Filling_tables, self).__init__()
         self.setWindowTitle('Заполнение таблиц базы данных')
         self.setStyleSheet("background-color: #a0b0a5;")
+        self.kk_is_true = False
         self.resize(500, 200)
 
         b_io_basket = QPushButton('HardWare', self)
@@ -298,10 +299,19 @@ class Window_Filling_tables(QWidget):
         b_io_basket.resize(130,23)
         b_io_basket.move(10, 10) 
         b_io_basket.clicked.connect(self.filling_hardware)
+        
+        c_kk_is_true = QCheckBox('Есть KK?', self)
+        c_kk_is_true.move(143, 13) 
+        c_kk_is_true.stateChanged.connect(self.kk_check)
+
+    def kk_check(self, checked):
+        self.kk_is_true = True if checked else False
     # HardWare
     def filling_hardware(self):
         hw_table = Filling_HardWare()
-        hw_table.import_for_sql()
+        hw_table.column_check()
+        msg = hw_table.getting_modul(self.kk_is_true)
+        self.logs_msg('default', 1, msg, True)
     # Logging messeges
     def logs_msg(self, logs=None, number_color=1, buffer_msg=None, msg=False):
         today = datetime.now()

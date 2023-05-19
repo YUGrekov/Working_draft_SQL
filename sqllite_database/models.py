@@ -8,7 +8,7 @@ from graphic_part import Window
 # win_ = Window()
 # path_prj = win_.file_prj()
 
-path_to_exel = f'D:\\Development\\New_SQL_generator\\Working_draft_SQL\\sqllite_database\\Салым-4_кор14_ЗПСИ.xlsm'
+path_to_exel = f'D:\\Development\\New_SQL_generator\\Working_draft_SQL\\sqllite_database\\П3 - КЗФКП Аксинино-2_MK500_20230405.xlsx'
 path_to_base = f'D:\\Development\\New_SQL_generator\\Working_draft_SQL\\sqllite_database\\asutp.db'
 
 # with open(path_prj) as paths:
@@ -34,9 +34,9 @@ class Signals(BaseModel):
     scheme      = CharField(null = True)
     klk         = CharField(null = True)
     contact     = CharField(null = True)
-    basket      = CharField(null = True)
-    module      = CharField(null = True)
-    channel     = CharField(null = True)
+    basket      = IntegerField()
+    module      = IntegerField()
+    channel     = IntegerField()
 
     class Meta:
         table_name = 'signals'
