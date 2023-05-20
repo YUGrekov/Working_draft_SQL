@@ -290,23 +290,47 @@ class Window_Filling_tables(QWidget):
     def __init__(self):
         super(Window_Filling_tables, self).__init__()
         self.setWindowTitle('Заполнение таблиц базы данных')
-        self.setStyleSheet("background-color: #a0b0a5;")
+        self.setStyleSheet("background-color: #e1e5e5;")
+        self.resize(600, 295)
+
+        # HardWare
         self.kk_is_true = False
-        self.resize(500, 200)
-
-        b_io_basket = QPushButton('HardWare', self)
-        b_io_basket.setStyleSheet("background-color: #a087d4;")
-        b_io_basket.resize(130,23)
-        b_io_basket.move(10, 10) 
+        l_hw = QLabel('HardWare:', self)
+        l_hw.move(10, 5)
+        b_io_basket = QPushButton('Заполнить', self)
+        b_io_basket.setStyleSheet("background: #bfd6bf; border-radius: 4px;")
+        b_io_basket.setToolTip("Заполнить таблицу HardWare")
+        b_io_basket.resize(80,23)
+        b_io_basket.move(72, 17) 
         b_io_basket.clicked.connect(self.filling_hardware)
-        
+        b_clear_tabl = QPushButton('Очистить', self)
+        b_clear_tabl.setStyleSheet("background: #bbbabf; border-radius: 4px;" )
+        b_clear_tabl.setToolTip("Очистить таблицу HardWare")
+        b_clear_tabl.resize(80,23)
+        b_clear_tabl.move(155, 17) 
+        b_clear_tabl.clicked.connect(self.clear_tabl)
         c_kk_is_true = QCheckBox('Есть KK?', self)
-        c_kk_is_true.move(143, 13) 
+        c_kk_is_true.setToolTip("Добавить в диагостику проекта коммуникационные контроллеры")
+        c_kk_is_true.move(10, 20) 
         c_kk_is_true.stateChanged.connect(self.kk_check)
-
-    def kk_check(self, checked):
-        self.kk_is_true = True if checked else False
+        
+        # Logs
+        self.logTextBox = QTextEdit(self)
+        self.logTextBox.setGeometry(10,200,580,85)
+        self.logTextBox.setReadOnly(True)
+        self.logs_msg(f'Запущена форма заполнения таблиц базы данных', 1)
     # HardWare
+    def kk_check(self, checked):
+        if checked:
+            self.kk_is_true = True
+            self.logs_msg(f'Добавить КК - флаг установлен', 3)
+        else:
+            self.kk_is_true = False
+            self.logs_msg(f'Добавить КК - флаг cнят', 3)
+    def clear_tabl(self):
+        hw_table = Filling_HardWare()
+        msg = hw_table.clear_tabl()
+        self.logs_msg('default', 1, msg, True)
     def filling_hardware(self):
         hw_table = Filling_HardWare()
         hw_table.column_check()
@@ -316,7 +340,7 @@ class Window_Filling_tables(QWidget):
     def logs_msg(self, logs=None, number_color=1, buffer_msg=None, msg=False):
         today = datetime.now()
         errorFormat   = '<span style="color:red;">{}</span>'
-        warningFormat = '<span style="color:yellow;">{}</span>'
+        warningFormat = '<span style="color:#a8c922;">{}</span>'
         validFormat   = '<span style="color:black;">{}</span>'
         newFormat     = '<span style="color:green;">{}</span>'
         if msg:

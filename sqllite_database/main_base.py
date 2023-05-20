@@ -273,9 +273,10 @@ class Filling_HardWare():
                                                         WHERE uso="{uso[0]}" AND basket={basket[0]}
                                                         ORDER BY module''')
                     for i in req_modul.fetchall():
-                        if i[1] is None: 
-                            type_kod = ''
-                            type_mod = ''
+                        if i[1] is None or i[1] == '' or i[1] == ' ': 
+                            type_kod = 'Неопределен!'
+                            type_mod = 'Неопределен!'
+                            msg[f'{today} - Таблица: hardware. {uso[0]}.A{basket[0]}.{i[0]} тип не определен!'] = 2
                         else:
                             for key, value in list_type.items():
                                 if str(i[1]).find(key) != -1: 
@@ -332,10 +333,10 @@ class Filling_HardWare():
     # Removing all rows
     def clear_tabl(self):
         msg = {}
-        for row_sql in HardWare.select().dicts():
-            HardWare.get(HardWare.id == row_sql['id']).delete_instance()
+        self.cursor.execute(f'''DELETE FROM hardware''')
         msg[f'{today} - Таблица: hardware полностью очищена'] = 1
         return(msg)
+
 # Changing tables SQL
 class Editing_table_SQL():
     def __init__(self):
@@ -407,7 +408,6 @@ class Editing_table_SQL():
     # Removing all rows
     def clear_tabl(self, table_used):
         self.cursor.execute(f'''DELETE FROM {table_used}''')
-        print(f'Таблица очищена: {table_used}')
     # Table selection window
     def get_tabl(self):
         return db.get_tables()
