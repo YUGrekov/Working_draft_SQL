@@ -292,27 +292,47 @@ class Window_Filling_tables(QWidget):
         self.setWindowTitle('Заполнение таблиц базы данных')
         self.setStyleSheet("background-color: #e1e5e5;")
         self.resize(600, 295)
+        # Size default
+        b_width_one = 8
+        b_width_two = 92
+        l_height    = 3
+        b_height    = 20
 
         # HardWare
         self.kk_is_true = False
         l_hw = QLabel('HardWare:', self)
-        l_hw.move(10, 5)
+        l_hw.move(10, l_height)
         b_io_basket = QPushButton('Заполнить', self)
         b_io_basket.setStyleSheet("background: #bfd6bf; border-radius: 4px;")
         b_io_basket.setToolTip("Заполнить таблицу HardWare")
         b_io_basket.resize(80,23)
-        b_io_basket.move(72, 17) 
+        b_io_basket.move(b_width_one, b_height) 
         b_io_basket.clicked.connect(self.filling_hardware)
         b_clear_tabl = QPushButton('Очистить', self)
         b_clear_tabl.setStyleSheet("background: #bbbabf; border-radius: 4px;" )
         b_clear_tabl.setToolTip("Очистить таблицу HardWare")
         b_clear_tabl.resize(80,23)
-        b_clear_tabl.move(155, 17) 
+        b_clear_tabl.move(b_width_two, b_height) 
         b_clear_tabl.clicked.connect(self.clear_tabl)
         c_kk_is_true = QCheckBox('Есть KK?', self)
         c_kk_is_true.setToolTip("Добавить в диагостику проекта коммуникационные контроллеры")
-        c_kk_is_true.move(10, 20) 
+        c_kk_is_true.move(70, 2) 
         c_kk_is_true.stateChanged.connect(self.kk_check)
+        # AI
+        l_hw = QLabel('AI:', self)
+        l_hw.move(10, l_height + 45)
+        b_ai_basket = QPushButton('Заполнить', self)
+        b_ai_basket.setStyleSheet("background: #bfd6bf; border-radius: 4px;")
+        b_ai_basket.setToolTip("Заполнить таблицу AI")
+        b_ai_basket.resize(80,23)
+        b_ai_basket.move(b_width_one, b_height + 45) 
+        b_ai_basket.clicked.connect(self.filling_ai)
+        b_clear_ai = QPushButton('Очистить', self)
+        b_clear_ai.setStyleSheet("background: #bbbabf; border-radius: 4px;" )
+        b_clear_ai.setToolTip("Очистить таблицу AI")
+        b_clear_ai.resize(80,23)
+        b_clear_ai.move(b_width_two, b_height + 45) 
+        b_clear_ai.clicked.connect(self.clear_ai_tabl)
         
         # Logs
         self.logTextBox = QTextEdit(self)
@@ -336,6 +356,16 @@ class Window_Filling_tables(QWidget):
         hw_table.column_check()
         msg = hw_table.getting_modul(self.kk_is_true)
         self.logs_msg('default', 1, msg, True)
+    # AI
+    def filling_ai(self):
+        ai_table = Filling_AI()
+        msg = ai_table.getting_modul()
+        self.logs_msg('default', 1, msg, True)
+    def clear_ai_tabl(self):
+        pass
+        #ai_table = Filling_AI()
+        #msg = ai_table.clear_tabl()
+        #self.logs_msg('default', 1, msg, True)
     # Logging messeges
     def logs_msg(self, logs=None, number_color=1, buffer_msg=None, msg=False):
         today = datetime.now()

@@ -6,12 +6,12 @@ from lxml import etree
 import codecs
 
 # Пути до файлов неисповедимы
-path_to_exel        = 'D:\Проекты\ЛПДС_Каракатеевы\KarkateevoIO_PT.xlsx'
+#path_to_exel        = 'D:\Проекты\ЛПДС_Каракатеевы\KarkateevoIO_PT.xlsx'
 #path_to_exel        = 'D:\Проекты\НПС-Аксинино_2\HMI\_Docs\НПС Аксинино-2 IO МК-500 v1.78.xlsx'
 #path_to_exel        = 'D:\Проекты\НПС-Аксинино_2\HMI\_Docs\KarkateevoIO.xlsx'
 #path_to_exel        = 'D:\Проекты\LPDS_Salim\HMI\_Docs\ИО_ПТ_Салым_v2.56.xlsx'
 #path_to_exel        = 'D:\Проекты\НПС-Аксинино_2\HMI\_Docs\АСУ ПТ Аксинино-2 IO_v3.72.xlsx'
-#path_to_exel        = 'D:\Проекты\LPDS_Salim\HMI\_Docs\САР (Дросселирование) IO_Салым_20230602.xlsx'
+path_to_exel        = 'D:\Проекты\LPDS_Salim\HMI\_Docs\НПС Салым-4 IO v0.38.xlsx'
 #path_to_exel        = 'D:\Проекты\LPDS_Salim\HMI_KARKAR\_Docs\KarkateevoIO.xlsx'
 
 # path_to_adressmap       = 'D:\Проекты\НПС-Аксинино_2\HMI\project\\typical_prj\ODA.xml'
@@ -115,8 +115,8 @@ New_copy = Equipment(path_to_exel, path_to_adressmap, path_to_adressmap_mb,
 #New_copy.diag_analogs_in(diag_file_MapAI_Ref, diag_file_MapKlk, diag_file_MapKont, diag_file_MapSignalName, diag_file_MapTagName)
 #New_copy.diag_clear('AIs', True, diag_file_MapAI_Ref, diag_file_MapKlk, diag_file_MapKont, diag_file_MapSignalName, diag_file_MapTagName)
 #New_copy.diag_analogs_out(diag_file_MapAI_Ref, diag_file_MapKlk, diag_file_MapKont, diag_file_MapSignalName, diag_file_MapTagName)
-#New_copy.diag_diskrets_in(diag_file_MapKlk, diag_file_MapKont, diag_file_MapSignalName, diag_file_MapTagName)
-#New_copy.diag_diskrets_out(diag_file_MapKlk, diag_file_MapKont, diag_file_MapSignalName, diag_file_MapTagName)
+New_copy.diag_diskrets_in(diag_file_MapKlk, diag_file_MapKont, diag_file_MapSignalName, diag_file_MapTagName)
+New_copy.diag_diskrets_out(diag_file_MapKlk, diag_file_MapKont, diag_file_MapSignalName, diag_file_MapTagName)
 #New_copy.diag_cpukcs()
 #New_copy.diag_cpus()
 #New_copy.diag_noc_noe()
@@ -201,7 +201,7 @@ New_copy = Equipment(path_to_exel, path_to_adressmap, path_to_adressmap_mb,
 #gen_report_table(path_to_lrxml,path_to_exel_reports,path_to_exel,['AI','VS','ZD','UMPNA'])
 
 #New_copy.search_ts_id('D:\Проекты\LPDS_Salim\HMI\_Docs\Trends\\')
-New_copy.dmz_trends_tree('D:\Проекты\ЛПДС_Каракатеевы')
+#New_copy.dmz_trends_tree('D:\Проекты\ЛПДС_Каракатеевы')
 
 
 

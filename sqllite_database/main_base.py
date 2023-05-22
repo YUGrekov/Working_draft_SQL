@@ -1,9 +1,97 @@
 from models import *
 import openpyxl as wb
 from datetime import datetime
+import re
 today = datetime.now()
 
 
+
+class general_functions():
+    # Метод для поиска в строке
+    def str_find(self, str1, arr):
+        i = 0
+        for el in arr:
+            if str(str1).find(el) > -1:
+                return True
+    def translate(self, str):
+            dict = {".":"_",
+                    "/":"_",
+                    "\\":"_",
+                    ",":"_",
+                    ":":"_",
+                    ";":"_",
+                    "А":"A",
+                    "Б":"_B",
+                    "В":"B",
+                    "Г":"G",
+                    "Д":"D",
+                    "Е":"E",
+                    "Ё":"_E",
+                    "Ж":"J",
+                    "З":"Z",
+                    "И":"I",
+                    "Й":"_I",
+                    "К":"K",
+                    "Л":"L",
+                    "М":"M",
+                    "Н":"H",
+                    "О":"O",
+                    "П":"_P",
+                    "Р":"P",
+                    "С":"C",
+                    "Т":"T",
+                    "У":"U",
+                    "Ф":"F",
+                    "Х":"X",
+                    "Ц":"C",
+                    "Ч":"CH",
+                    "Ш":"SH",
+                    "Щ":"SCH",
+                    "Ь":"b",
+                    "Ы":"_",
+                    "Ъ":"_",
+                    "Э":"E",
+                    "Ю":"U",
+                    "Я":"YA",
+                    "а":"a",
+                    "б":"_b",
+                    "в":"b",
+                    "г":"g",
+                    "д":"d",
+                    "е":"e",
+                    "ё":"_e",
+                    "ж":"j",
+                    "з":"z",
+                    "и":"i",
+                    "й":"_i",
+                    "к":"k",
+                    "л":"l",
+                    "м":"m",
+                    "н":"h",
+                    "о":"o",
+                    "п":"_p",
+                    "р":"p",
+                    "с":"c",
+                    "т":"t",
+                    "у":"u",
+                    "ф":"f",
+                    "х":"x",
+                    "ц":"c",
+                    "ч":"ch",
+                    "ш":"sh",
+                    "щ":"sch",
+                    "ь":"b",
+                    "ы":"_",
+                    "ъ":"_",
+                    "э":"e",
+                    "ю":"u",
+                    "я":"ya"}
+
+            intab = '.-пПаАфз/еЕсС'
+            outtab = '__ppaafz_eEcC'
+            trantab = str.maketrans(dict)
+            outstr = str.translate(trantab)
+            return outstr
 
 # Work with filling in the table 'signals'
 class Import_in_SQL():
@@ -221,6 +309,11 @@ class Filling_HardWare():
             temp_flag    = False
             test_s       = []
             count_basket = 0
+            count_AI     = 0
+            count_AO     = 0
+            count_DI     = 0
+            count_DO     = 0
+            count_RS     = 0
             for uso in list_uso:
                 req_basket = self.cursor.execute(f'''SELECT DISTINCT basket 
                                                      FROM signals
@@ -280,8 +373,25 @@ class Filling_HardWare():
                         else:
                             for key, value in list_type.items():
                                 if str(i[1]).find(key) != -1: 
+                                    if key == 'AI': 
+                                        count_AI += 1
+                                        type_mod = f'{key}[{count_AI}]'
+                                    elif key == 'AO': 
+                                        count_AO += 1
+                                        type_mod = f'{key}[{count_AO}]'
+                                    elif key == 'DI': 
+                                        count_DI += 1
+                                        type_mod = f'{key}[{count_DI}]'
+                                    elif key == 'DO': 
+                                        count_DO += 1
+                                        type_mod = f'{key}[{count_DO}]'
+                                    elif key == 'RS': 
+                                        count_RS += 1
+                                        type_mod = f'{key}[{count_RS}]'
+                                    else:
+                                        type_mod = key
+
                                     type_kod = value
-                                    type_mod = key
                         list_hw[f'powerLink_ID']    = count_basket
                         list_hw[f'type_0']          = 'MK-550-024'
                         list_hw[f'variable_0']      = 'PSU'
@@ -330,11 +440,196 @@ class Filling_HardWare():
         for new_name in new_column:
             msg[f'{today} - Столбец: {new_name} добавлен в таблицу hardware'] = 3
             migrate(migrator.add_column('hardware', new_name, IntegerField(null=True)))
-    # Removing all rows
+    # Clear tabl
     def clear_tabl(self):
         msg = {}
         self.cursor.execute(f'''DELETE FROM hardware''')
         msg[f'{today} - Таблица: hardware полностью очищена'] = 1
+        return(msg)
+
+# Work with filling in the table 'AI'
+class Filling_AI():
+    def __init__(self):
+        self.cursor   = db.cursor()
+        self.dop_func = general_functions()
+    # Получаем данные с таблицы Signals 
+    def getting_modul(self):
+        msg = {}
+        dop_analog = {'Аварийное отключение'  : ['', 'мА', 'Сигналы с контролем цепи'],
+                      'Аварийный максимальный': ['', 'мА', 'Сигналы с контролем цепи'],
+                      'Аварийный минимальный' : ['', 'мА', 'Сигналы с контролем цепи'],
+                      'объем'                 : ['V', 'м3', ''], 
+                      'объём'                 : ['V', 'м3', ''],
+                      'перепад'               : ['dP', 'МПа', 'Аналоги (макс1 = макс.уставка)'],
+                      'давлени'               : ['P', 'МПа', 'Аналоги (макс1 = повышенная)'],
+                      'загазованность'        : ['Газ', '%', 'Загазованность'],
+                      'вертик'                : ['Xверт', 'мм/с', 'Вибрации'],
+                      'горизонт'              : ['Xгор', 'мм/с', 'Вибрации'],
+                      'осевая'                : ['Xос', 'мм/с', 'Вибрации'],
+                      'попереч'               : ['Xпоп', 'мм/с', 'Вибрации'],
+                      'осевое'                : ['Xoc', 'мм/с', 'Вибрации'],
+                      'сила'                  : ['I', 'A', 'Аналоги (макс1 = повышенная)'],
+                      'температура'           : ['T', '°C', 'Аналоги (макс1 = повышенная)'],
+                      'уровень'               : ['L', 'мм', 'Аналоги (макс1 = макс.уставка)'],
+                      'утечк'                 : ['L', 'мм', 'Сигналы с контролем цепи'],
+                      'расход'                : ['Q', 'м3/ч', 'Аналоги (макс1 = макс.уставка)'],
+                      'положени'              : ['Q', '%', ''],
+                      'затоплен'              : ['L', 'мА', 'Сигналы с контролем цепи'],
+                      'частот'                : ['F', 'Гц', ''],
+                      'процен'                : ['Q', '%', 'Аналоги (макс1 = макс.уставка)'],
+                      'заслон'                : ['Q', '%', 'Аналоги (макс1 = макс.уставка)'],
+                     }
+        with db:
+            for row_sql in Signals.select().dicts():
+                uso_s       = row_sql['uso']    
+                tag         = row_sql['tag']
+                description = row_sql['description']
+                type_signal = row_sql['type_signal']
+                scheme      = row_sql['schema']
+                basket_s    = row_sql['basket']
+                module_s    = row_sql['module']
+
+                if self.dop_func.str_find(type_signal, {'AI'}) or self.dop_func.str_find(scheme, {'AI'}):
+                    # Сквозной номер модуля
+                    for through_module_number in HardWare.select().dicts():
+                        uso_h    = through_module_number['uso']
+                        basket_h = through_module_number['basket']
+
+                        if uso_s == uso_h and basket_s == basket_h:
+                            type_mod = through_module_number[f'variable_{module_s}']
+                            isdigit_num  = re.findall('\d+', str(type_mod))
+                            break
+                
+
+
+
+
+
+                #self.dop_func.str_find()
+
+
+
+            # req_uso = self.cursor.execute(f'''SELECT DISTINCT uso 
+            #                                   FROM signals''')
+            # list_uso = req_uso.fetchall()
+
+            # temp_flag    = False
+            # test_s       = []
+            # count_basket = 0
+            # for uso in list_uso:
+            #     req_basket = self.cursor.execute(f'''SELECT DISTINCT basket 
+            #                                          FROM signals
+            #                                          WHERE uso="{uso[0]}"''')
+            #     list_basket = req_basket.fetchall()
+
+            #     # ЦК в количестве 2 - ONE!
+            #     if temp_flag is False:
+            #         for i in range(2):
+            #             uso_kk = uso[0]
+            #             test_s.append(dict(uso = uso[0],
+            #                                powerLink_ID ='',
+            #                                basket  = i + 1,
+            #                                type_0  = 'MK-550-024',  variable_0 = f'PSU', type_1 = f'MK-546-010', variable_1 = f'MN',
+            #                                type_2  = f'MK-504-120', variable_2 = f'CPU', type_3 = f'',           variable_3 = f'',
+            #                                type_4  = f'',           variable_4 = f'',    type_5 = f'',           variable_5 = f'',
+            #                                type_6  = f'',           variable_6 = f'',    type_7 = f'',           variable_7 = f'',
+            #                                type_8  = f'',           variable_8 = f'',    type_9 = f'',           variable_9 = f'',
+            #                                type_10 = f'',           variable_10= f'',    type_11= f'',           variable_11= f'',
+            #                                type_12 = f'',           variable_12= f'',    type_13= f'',           variable_13= f'',
+            #                                type_14 = f'',           variable_14= f'',    type_15= f'',           variable_15= f'',
+            #                                type_16 = f'',           variable_16= f'',    type_17= f'',           variable_17= f'',
+            #                                type_18 = f'',           variable_18= f'',    type_19= f'',           variable_19= f'',
+            #                                type_20 = f'',           variable_20= f'',    type_21= f'',           variable_21= f'',
+            #                                type_22 = f'',           variable_22= f'',    type_23= f'',           variable_23= f'',
+            #                                type_24 = f'',           variable_24= f'',    type_25= f'',           variable_25= f'',
+            #                                type_26 = f'',           variable_26= f'',    type_27= f'',           variable_27= f'',
+            #                                type_28 = f'',           variable_28= f'',    type_29= f'',           variable_29= f'',
+            #                                type_30 = f'',           variable_30= f'',    type_31= f'',           variable_31= f'',
+            #                                type_32 = f'',           variable_32= f''))
+            #         temp_flag = True
+            #     for basket in list_basket:
+            #         count_basket     += 1
+            #         list_hw           = {}
+            #         list_hw['uso']    = uso[0]    
+            #         list_hw['basket'] = basket[0] 
+
+            #         # Если в проекте есть КК
+            #         if kk_is_True and count_basket == 3:
+            #             for i in range(4, 6, 1):
+            #                 test_s.append(dict(uso         = uso_kk,
+            #                                    basket     = i + 1,
+            #                                    type_0     = 'MK-550-024',
+            #                                    variable_0 = f'PSU',
+            #                                    type_2     = f'MK-504-120',
+            #                                    variable_2 = f'CPU'))
+
+            #         req_modul = self.cursor.execute(f'''SELECT DISTINCT module, type_signal 
+            #                                             FROM signals
+            #                                             WHERE uso="{uso[0]}" AND basket={basket[0]}
+            #                                             ORDER BY module''')
+            #         for i in req_modul.fetchall():
+            #             if i[1] is None or i[1] == '' or i[1] == ' ': 
+            #                 type_kod = 'Неопределен!'
+            #                 type_mod = 'Неопределен!'
+            #                 msg[f'{today} - Таблица: hardware. {uso[0]}.A{basket[0]}.{i[0]} тип не определен!'] = 2
+            #             else:
+            #                 for key, value in list_type.items():
+            #                     if str(i[1]).find(key) != -1: 
+            #                         type_kod = value
+            #                         type_mod = key
+            #             list_hw[f'powerLink_ID']    = count_basket
+            #             list_hw[f'type_0']          = 'MK-550-024'
+            #             list_hw[f'variable_0']      = 'PSU'
+            #             list_hw[f'type_1']          = 'MK-545-010'
+            #             list_hw[f'variable_1']      = 'CN'
+            #             list_hw[f'type_{i[0]}']     = type_kod
+            #             list_hw[f'variable_{i[0]}'] = type_mod
+            #         test_s.append(list_hw)
+
+            # # Checking for the existence of a database
+            # HardWare.insert_many(test_s).execute()
+
+        msg[f'{today} - Таблица: hardware заполнена'] = 1
+        return(msg)
+    # Заполняем таблицу AI
+    def column_check(self):
+        # Logs
+        msg = {}
+        # # Create tabl
+        # with db.atomic():
+        #     db.create_tables([HardWare])
+        # # Checking if a column exists
+        # column_tabl  = []
+        # new_column   = []
+        # list_default = ['uso', 'basket', 'powerLink_ID', 
+        #                 'type_0',  'variable_0',  'type_1',  'variable_1',  'type_2',  'variable_2', 
+        #                 'type_3',  'variable_3',  'type_4',  'variable_4',  'type_5',  'variable_5', 
+        #                 'type_6',  'variable_6',  'type_7',  'variable_7',  'type_8',  'variable_8',
+        #                 'type_9',  'variable_9',  'type_10', 'variable_10', 'type_11', 'variable_11', 
+        #                 'type_12', 'variable_12', 'type_13', 'variable_13', 'type_14', 'variable_14', 
+        #                 'type_15', 'variable_15', 'type_16', 'variable_16', 'type_17', 'variable_17',
+        #                 'type_18', 'variable_18', 'type_19', 'variable_19', 'type_20', 'variable_20', 
+        #                 'type_21', 'variable_21', 'type_22', 'variable_22', 'type_23', 'variable_23', 
+        #                 'type_24', 'variable_24', 'type_25', 'variable_25', 'type_26', 'variable_26',
+        #                 'type_27', 'variable_27', 'type_28', 'variable_28', 'type_29', 'variable_29', 
+        #                 'type_30', 'variable_30', 'type_31', 'variable_31', 'type_32', 'variable_32']
+        
+        # for data_column in db.get_columns('hardware'):
+        #     if data_column[0] in list_default: column_tabl.append(data_column[0])
+        
+        # for lst in list_default:
+        #     if lst not in column_tabl: 
+        #         msg[f'{today} - Отсутствует обязательный столбец таблицы hardware: {lst}'] = 2
+        #         new_column.append(lst)
+        
+        # for new_name in new_column:
+        #     msg[f'{today} - Столбец: {new_name} добавлен в таблицу hardware'] = 3
+        #     migrate(migrator.add_column('hardware', new_name, IntegerField(null=True)))
+    # Clear tabl
+    def clear_tabl(self):
+        msg = {}
+        #self.cursor.execute(f'''DELETE FROM ai''')
+        msg[f'{today} - Таблица: AI полностью очищена'] = 1
         return(msg)
 
 # Changing tables SQL

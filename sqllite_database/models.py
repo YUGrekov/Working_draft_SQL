@@ -31,7 +31,7 @@ class Signals(BaseModel):
     uso         = CharField(null = True)
     tag         = CharField(null = True)
     description = CharField(null = True)
-    scheme      = CharField(null = True)
+    schema      = CharField(null = True)
     klk         = CharField(null = True)
     contact     = CharField(null = True)
     basket      = IntegerField()
@@ -43,7 +43,7 @@ class Signals(BaseModel):
 
 class HardWare(BaseModel):
     uso          = CharField(null = True)
-    basket       = CharField(null = True)
+    basket       = IntegerField()
     powerLink_ID = CharField(null = True)
     type_0       = CharField(null = True)
     variable_0   = CharField(null = True)
@@ -115,3 +115,67 @@ class HardWare(BaseModel):
     class Meta:
         table_name = 'hardware'
 
+class AI(BaseModel):
+    tag              = CharField(null = True)
+    name             = CharField(null = True)
+    uso_mod_channel  = CharField(null = True)
+    service_channel  = CharField(null = True)
+    group_analog     = CharField(null = True)
+    group_ust_analog = CharField(null = True)
+    unit             = CharField(null = True)
+    sign_VU          = CharField(null = True)
+    flag_MPa_kgccm2  = CharField(null = True)
+
+    number_NA_or_aux = CharField(null = True)
+    vibration_pump   = CharField(null = True)
+    vibration_motor  = CharField(null = True)
+    current_motor    = CharField(null = True)
+    aux_outlet_pressure = CharField(null = True)
+
+    number_ust_min_avar = CharField(null = True)
+    number_ust_min_pred = CharField(null = True)
+    number_ust_max_pred = CharField(null = True)
+    number_ust_max_avar = CharField(null = True)
+
+    field_min = CharField(null = True)
+    field_max = CharField(null = True)
+    eng_min = CharField(null = True)
+    eng_max = CharField(null = True)
+    reliability_min = CharField(null = True)
+    reliability_max = CharField(null = True)
+    hysteresis = CharField(null = True)
+    filtration = CharField(null = True)
+
+    ust_min_6 = CharField(null = True)
+    ust_min_5 = CharField(null = True)
+    ust_min_4 = CharField(null = True)
+    ust_min_3 = CharField(null = True)
+    ust_min_2 = CharField(null = True)
+    ust_min = CharField(null = True)
+    ust_max = CharField(null = True)
+    ust_max_2 = CharField(null = True)
+    ust_max_3 = CharField(null = True)
+    ust_max_4 = CharField(null = True)
+    ust_max_5 = CharField(null = True)
+    ust_max_6 = CharField(null = True)
+
+    value_precision = CharField(null = True)
+    PIC = CharField(null = True)
+    group_trend = CharField(null = True)
+    hysteresis_TI = CharField(null = True)
+    unit_physical_ACP = CharField(null = True)
+    setpoint_map_rule = CharField(null = True)
+    fuse = CharField(null = True)
+
+    AlphaHMI = CharField(null = True)
+    AlphaHMI_PIC1 = CharField(null = True)
+    AlphaHMI_PIC1_Number_kont = CharField(null = True)
+    AlphaHMI_PIC2 = CharField(null = True)
+    AlphaHMI_PIC2_Number_kont = CharField(null = True)
+    AlphaHMI_PIC3 = CharField(null = True)
+    AlphaHMI_PIC3_Number_kont = CharField(null = True)
+    AlphaHMI_PIC4 = CharField(null = True)
+    AlphaHMI_PIC4_Number_kont = CharField(null = True)
+
+    class Meta:
+        table_name = 'ai'
