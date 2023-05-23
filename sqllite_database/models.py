@@ -118,7 +118,7 @@ class HardWare(BaseModel):
 class AI(BaseModel):
     tag              = CharField(null = True)
     name             = CharField(null = True)
-    uso_mod_channel  = CharField(null = True)
+    channel_value    = CharField(null = True)
     service_channel  = CharField(null = True)
     group_analog     = CharField(null = True)
     group_ust_analog = CharField(null = True)
@@ -166,6 +166,11 @@ class AI(BaseModel):
     unit_physical_ACP = CharField(null = True)
     setpoint_map_rule = CharField(null = True)
     fuse = CharField(null = True)
+
+    uso = CharField(null = True)
+    basket = IntegerField()
+    module = IntegerField()
+    channel = IntegerField()
 
     AlphaHMI = CharField(null = True)
     AlphaHMI_PIC1 = CharField(null = True)

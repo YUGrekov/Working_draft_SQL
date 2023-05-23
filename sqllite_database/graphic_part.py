@@ -180,6 +180,8 @@ class Window_import_exel(QWidget):
 
         dict_column = self.hat_list()
         data_uso = self.import_sql.import_table(self.select_uso.currentText(), self.select_row.text(), dict_column)
+        msg = self.import_sql.column_check()
+        self.logs_msg('default', 1, msg, True)
         msg = self.import_sql.update_for_sql(data_uso, self.select_uso.currentText())
         self.logs_msg('default', 1, msg, True)
     def start_fill_base(self):
@@ -190,6 +192,8 @@ class Window_import_exel(QWidget):
 
         dict_column = self.hat_list()
         data_uso = self.import_sql.import_table(self.select_uso.currentText(), self.select_row.text(), dict_column)
+        msg = self.import_sql.column_check()
+        self.logs_msg('default', 1, msg, True)
         msg = self.import_sql.import_for_sql(data_uso, self.select_uso.currentText())
         self.logs_msg('default', 1, msg, True)
     def path_file_prj(self):
@@ -250,7 +254,7 @@ class Window_import_exel(QWidget):
                        'uso'         : '',
                        'tag'         : self.q_tag.currentText(),
                        'description' : self.q_dict.currentText(),
-                       'scheme'      : self.q_schema.currentText(),
+                       'schema'      : self.q_schema.currentText(),
                        'klk'         : self.q_klk.currentText(),
                        'contact'     : self.q_kont.currentText(),
                        'basket'      : self.q_basket.currentText(),
@@ -353,12 +357,15 @@ class Window_Filling_tables(QWidget):
         self.logs_msg('default', 1, msg, True)
     def filling_hardware(self):
         hw_table = Filling_HardWare()
-        hw_table.column_check()
+        msg = hw_table.column_check()
+        self.logs_msg('default', 1, msg, True)
         msg = hw_table.getting_modul(self.kk_is_true)
         self.logs_msg('default', 1, msg, True)
     # AI
     def filling_ai(self):
         ai_table = Filling_AI()
+        msg = ai_table.column_check()
+        self.logs_msg('default', 1, msg, True)
         msg = ai_table.getting_modul()
         self.logs_msg('default', 1, msg, True)
     def clear_ai_tabl(self):

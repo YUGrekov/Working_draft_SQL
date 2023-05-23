@@ -7,7 +7,6 @@ today = datetime.now()
 
 
 class general_functions():
-    # Метод для поиска в строке
     def str_find(self, str1, arr):
         i = 0
         for el in arr:
@@ -92,7 +91,29 @@ class general_functions():
             trantab = str.maketrans(dict)
             outstr = str.translate(trantab)
             return outstr
-
+    def column_check(self, table_used_model, table_used_base, list_column):
+        today = datetime.now()
+        # Logs
+        msg = {}
+        # Create tabl
+        with db.atomic():
+            db.create_tables([table_used_model])
+        # Checking if a column exists
+        column_tabl  = []
+        new_column   = []
+        
+        for data_column in db.get_columns(table_used_base):
+            if data_column[0] in list_column: column_tabl.append(data_column[0])
+        
+        for lst in list_column:
+            if lst not in column_tabl: 
+                msg[f'{today} - Отсутствует обязательный столбец таблицы {table_used_model}: {lst}'] = 2
+                new_column.append(lst)
+        
+        for new_name in new_column:
+            msg[f'{today} - Столбец: {new_name} добавлен в таблицу {table_used_model}'] = 3
+            migrate(migrator.add_column(table_used_base, new_name, IntegerField(null=True)))
+        return msg
 # Work with filling in the table 'signals'
 class Import_in_SQL():
     def __init__(self, exel):
@@ -143,7 +164,7 @@ class Import_in_SQL():
         data_new = []
         for row in data:
             type_signal = row['type_signal']
-            scheme      = row['scheme']
+            scheme      = row['schema']
             basket      = row['basket']
 
             list_type = ['CPU', 'PSU', 'CN', 'MN', 'AI','AO', 'DI', 'RS','DO']
@@ -155,7 +176,7 @@ class Import_in_SQL():
                            'uso'         : uso,
                            'tag'         : row['tag'],
                            'description' : row['description'],
-                           'scheme'      : row['scheme'],
+                           'schema'      : row['schema'],
                            'klk'         : row['klk'],
                            'contact'     : row['contact'],
                            'basket'      : basket,
@@ -167,25 +188,6 @@ class Import_in_SQL():
     # Importing into SQL
     def import_for_sql(self, data, uso):
         msg = {}
-        # Create tabl
-        with db.atomic():
-            db.create_tables([Signals])
-        # Checking if a column exists
-        column_tabl  = []
-        new_column   = []
-        list_default = ['id', 'type_signal', 'uso', 'tag', 'description', 'scheme', 'klk', 'contact', 'basket', 'module', 'channel']
-        
-        for data_column in db.get_columns('signals'):
-            if data_column[0] in list_default: column_tabl.append(data_column[0])
-        
-        for lst in list_default:
-            if lst not in column_tabl: 
-                msg[f'{today} - Отсутствует обязательный столбец таблицы signals: {lst}'] = 2
-                new_column.append(lst)
-        
-        for new_name in new_column:
-            msg[f'{today} - Столбец: {new_name} добавлен в таблицу signals'] = 3
-            migrate(migrator.add_column('signals', new_name, IntegerField(null=True)))
         # Checking for the existence of a database
         with db.atomic():
             Signals.insert_many(data).execute()
@@ -196,20 +198,6 @@ class Import_in_SQL():
     def update_for_sql(self, data, uso):
         msg = {}
         with db:
-            # Checking if a column exists
-            column_tabl  = []
-            new_column   = []
-            list_default = ['id', 'type_signal', 'uso', 'tag', 'description', 'scheme', 'klk', 'contact', 'basket', 'module', 'channel']
-            for data_column in db.get_columns('signals'):
-                if data_column[0] in list_default: column_tabl.append(data_column[0])
-            for lst in list_default:
-                if lst not in column_tabl: 
-                    msg[f'{today} - Отсутствует обязательный столбец таблицы signals: {lst}'] = 2
-                    new_column.append(lst)
-            for new_name in new_column:
-                msg[f'{today} - Столбец: {new_name} добавлен в таблицу signals'] = 3
-                migrate(migrator.add_column('signals', new_name, IntegerField(null=True)))
-
             # Filter by uso, basket, modul, channel
             for row_exel in data:
                 exist_row = Signals.select().where(Signals.uso == uso,
@@ -284,6 +272,14 @@ class Import_in_SQL():
             Signals.get(Signals.id == row_sql['id']).delete_instance()
         msg[f'{today} - Таблица: signals полностью очищена!'] = 1
         return(msg)
+    # Column check
+    def column_check(self):
+        with db:
+            list_default = ['id', 'type_signal', 'uso', 'tag', 'description', 'schema', 'klk', 'contact', 'basket', 'module', 'channel']
+
+            self.dop_func = general_functions()
+            msg = self.dop_func.column_check(Signals, 'signals', list_default)
+        return msg
 
 # Work with filling in the table 'HardWare'
 class Filling_HardWare():
@@ -408,14 +404,6 @@ class Filling_HardWare():
         return(msg)
     # Заполняем таблицу HardWare
     def column_check(self):
-        # Logs
-        msg = {}
-        # Create tabl
-        with db.atomic():
-            db.create_tables([HardWare])
-        # Checking if a column exists
-        column_tabl  = []
-        new_column   = []
         list_default = ['uso', 'basket', 'powerLink_ID', 
                         'type_0',  'variable_0',  'type_1',  'variable_1',  'type_2',  'variable_2', 
                         'type_3',  'variable_3',  'type_4',  'variable_4',  'type_5',  'variable_5', 
@@ -429,17 +417,9 @@ class Filling_HardWare():
                         'type_27', 'variable_27', 'type_28', 'variable_28', 'type_29', 'variable_29', 
                         'type_30', 'variable_30', 'type_31', 'variable_31', 'type_32', 'variable_32']
         
-        for data_column in db.get_columns('hardware'):
-            if data_column[0] in list_default: column_tabl.append(data_column[0])
-        
-        for lst in list_default:
-            if lst not in column_tabl: 
-                msg[f'{today} - Отсутствует обязательный столбец таблицы hardware: {lst}'] = 2
-                new_column.append(lst)
-        
-        for new_name in new_column:
-            msg[f'{today} - Столбец: {new_name} добавлен в таблицу hardware'] = 3
-            migrate(migrator.add_column('hardware', new_name, IntegerField(null=True)))
+        self.dop_func = general_functions()
+        msg = self.dop_func.column_check(HardWare, 'hardware', list_default)
+        return msg
     # Clear tabl
     def clear_tabl(self):
         msg = {}
@@ -455,41 +435,85 @@ class Filling_AI():
     # Получаем данные с таблицы Signals 
     def getting_modul(self):
         msg = {}
-        dop_analog = {'Аварийное отключение'  : ['', 'мА', 'Сигналы с контролем цепи'],
-                      'Аварийный максимальный': ['', 'мА', 'Сигналы с контролем цепи'],
-                      'Аварийный минимальный' : ['', 'мА', 'Сигналы с контролем цепи'],
-                      'объем'                 : ['V', 'м3', ''], 
-                      'объём'                 : ['V', 'м3', ''],
-                      'перепад'               : ['dP', 'МПа', 'Аналоги (макс1 = макс.уставка)'],
-                      'давлени'               : ['P', 'МПа', 'Аналоги (макс1 = повышенная)'],
-                      'загазованность'        : ['Газ', '%', 'Загазованность'],
-                      'вертик'                : ['Xверт', 'мм/с', 'Вибрации'],
-                      'горизонт'              : ['Xгор', 'мм/с', 'Вибрации'],
-                      'осевая'                : ['Xос', 'мм/с', 'Вибрации'],
-                      'попереч'               : ['Xпоп', 'мм/с', 'Вибрации'],
-                      'осевое'                : ['Xoc', 'мм/с', 'Вибрации'],
-                      'сила'                  : ['I', 'A', 'Аналоги (макс1 = повышенная)'],
-                      'температура'           : ['T', '°C', 'Аналоги (макс1 = повышенная)'],
-                      'уровень'               : ['L', 'мм', 'Аналоги (макс1 = макс.уставка)'],
-                      'утечк'                 : ['L', 'мм', 'Сигналы с контролем цепи'],
-                      'расход'                : ['Q', 'м3/ч', 'Аналоги (макс1 = макс.уставка)'],
-                      'положени'              : ['Q', '%', ''],
-                      'затоплен'              : ['L', 'мА', 'Сигналы с контролем цепи'],
-                      'частот'                : ['F', 'Гц', ''],
-                      'процен'                : ['Q', '%', 'Аналоги (макс1 = макс.уставка)'],
-                      'заслон'                : ['Q', '%', 'Аналоги (макс1 = макс.уставка)'],
+        list_AI = []
+        dop_analog = {'Аварийное отключение'  : ['', 'мА', 'Сигналы с контролем цепи', 'Сигнализаторы', 'Сигналы с контролем цепи', ['4', '20'], '1'],
+                      'Аварийный максимальный': ['', 'мА', 'Сигналы с контролем цепи', 'Сигнализаторы', 'Сигналы с контролем цепи', ['4', '20'], '1'],
+                      'Аварийный минимальный' : ['', 'мА', 'Сигналы с контролем цепи', 'Сигнализаторы', 'Сигналы с контролем цепи', ['4', '20'], '1'],
+                      'объем'                 : ['V', 'м3', '', '', '', ['', ''], '1'], 
+                      'объём'                 : ['V', 'м3', '', '', '', ['', ''], '1'],
+                      'перепад'               : ['dP', 'МПа', 'Аналоги (макс1 = макс.уставка)', 'Перепад давления', '', ['0', '1'], '2'],
+                      'давлени'               : ['P', 'МПа', 'Аналоги (макс1 = повышенная)', 'Давления', '', ['0', '6'], '2'],
+                      'загазованность'        : ['Газ', '%', 'Загазованность', 'Загазованность', '', ['0', '100'], '1'],
+                      'вертик'                : ['Xверт', 'мм/с', 'Вибрации', '', '', ['0', '30'], '1'],
+                      'горизонт'              : ['Xгор', 'мм/с', 'Вибрации', '', '', ['0', '30'], '1'],
+                      'осевая'                : ['Xос', 'мм/с', 'Вибрации', '', '', ['0', '30'], '1'],
+                      'попереч'               : ['Xпоп', 'мм/с', 'Вибрации', '', '', ['0', '30'], '1'],
+                      'осевое'                : ['Xoc', 'мм/с', 'Вибрации', 'Осевые смещения', '', ['0', '30'], '1'],
+                      'сила'                  : ['I', 'A', 'Аналоги (макс1 = повышенная)', 'Общестанционные', '', ['0', '1000'], '1'],
+                      'температура'           : ['T', '°C', 'Аналоги (макс1 = повышенная)', 'Температуры', '', ['-50', '100'], '1'],
+                      'уровень'               : ['L', 'мм', 'Аналоги (макс1 = макс.уставка)', 'Уровни', '', ['200', '1000'], '1'],
+                      'утечк'                 : ['L', 'мм', 'Сигналы с контролем цепи', 'Сигнализаторы', 'Сигналы с контролем цепи', ['4', '20'], '1'],
+                      'расход'                : ['Q', 'м3/ч', 'Аналоги (макс1 = макс.уставка)', '', '', ['0', '1000'], '1'],
+                      'положени'              : ['Q', '%', '', '', '', ['0', '100'], '1'],
+                      'затоплен'              : ['L', 'мА', 'Сигналы с контролем цепи', 'Сигнализаторы', 'Сигналы с контролем цепи', ['4', '20'], '1'],
+                      'частот'                : ['F', 'Гц', '', 'Уровни', '', ['0', '100'], '1'],
+                      'процен'                : ['Q', '%', 'Аналоги (макс1 = макс.уставка)', '', '', ['0', '100'], '0'],
+                      'заслон'                : ['Q', '%', 'Аналоги (макс1 = макс.уставка)', '', '', ['0', '100'], '0'],
                      }
         with db:
             for row_sql in Signals.select().dicts():
                 uso_s       = row_sql['uso']    
                 tag         = row_sql['tag']
-                description = row_sql['description']
+                description = str(row_sql['description']).replace('"', '').replace("'", '')
                 type_signal = row_sql['type_signal']
                 scheme      = row_sql['schema']
                 basket_s    = row_sql['basket']
                 module_s    = row_sql['module']
+                channel_s   = row_sql['channel']
 
                 if self.dop_func.str_find(type_signal, {'AI'}) or self.dop_func.str_find(scheme, {'AI'}):
+
+                    # Выбор между полным заполнением или обновлением
+                    empty = self.cursor.execute('SELECT COUNT(*) FROM ai')
+                    if int(empty.fetchall()[0][0]) == 0:
+                        msg[f'{today} - Таблица: AI пуста, идет заполнение'] = 1
+                    else:
+                        msg[f'{today} - Таблица: AI не пуста, идет обновление'] = 1
+
+                    coincidence = AI.select().where(AI.uso     == uso_s,
+                                                    AI.basket  == basket_s,
+                                                    AI.module  == module_s,
+                                                    AI.channel == channel_s)
+                    if bool(coincidence):
+                        exist_tag  = AI.select().where(AI.tag == tag)
+                        exist_name = AI.select().where(AI.name == description)
+
+                        if not bool(exist_tag):
+                            select_tag = self.cursor.execute(f'''SELECT id, tag 
+                                                                 FROM ai
+                                                                 WHERE uso='{uso_s}' AND 
+                                                                       basket={basket_s} AND 
+                                                                       module={module_s} AND 
+                                                                       channel={channel_s}''')
+                            self.cursor.execute(f'''UPDATE ai
+                                                    SET tag='{tag}' 
+                                                    WHERE uso='{uso_s}' AND 
+                                                          basket={basket_s} AND 
+                                                          module={module_s} AND 
+                                                          channel={channel_s}''')
+    
+                            print(select_tag.fetchall())
+                            msg[f'{today} - Таблица: AI, у сигнала обновлен тэг: id = {select_tag.fetchall()[0][0]}, ({select_tag.fetchall()[1][0]}) {tag}'] = 1
+                        if not bool(exist_name):
+                            self.cursor.execute(f'''UPDATE ai
+                                                    SET name='{description}' 
+                                                    WHERE uso='{uso_s}' AND 
+                                                          basket={basket_s} AND 
+                                                          module={module_s} AND 
+                                                          channel={channel_s}''')
+                            print(f'обновлен {description}')
+                        continue
+
                     # Сквозной номер модуля
                     for through_module_number in HardWare.select().dicts():
                         uso_h    = through_module_number['uso']
@@ -499,132 +523,77 @@ class Filling_AI():
                             type_mod = through_module_number[f'variable_{module_s}']
                             isdigit_num  = re.findall('\d+', str(type_mod))
                             break
-                
+                    
+                    for key, short in dop_analog.items():
+                        if self.dop_func.str_find(str(description).lower(), {key}):
+                            sign = short[0]
+                            unit = short[1]
+                            rule = short[2]
+                            group_analog = short[3]
+                            group_ust_analog = short[4]
+                            eng_min = short[5][0]
+                            eng_max = short[5][1]
+                            value_precision = short[6]
+                            break
 
+                    flag_MPa_kgccm2 = '1' if self.dop_func.str_find(str(description).lower(), {'давлен'}) else '0'
+                    
+                    list_AI.append(dict(tag = tag,
+                                        name = description,
+                                        channel_value = f'mAI8[{isdigit_num[0]}, {module_s}]',
+                                        service_channel = f'mAI8_HEALTH[{isdigit_num[0]}]',
+                                        group_analog = group_analog,
+                                        group_ust_analog = group_ust_analog,
+                                        unit = unit,
+                                        sign_VU = sign,
+                                        flag_MPa_kgccm2 = flag_MPa_kgccm2,
+                                        number_NA_or_aux = '',
+                                        vibration_pump = '',
+                                        vibration_motor = '',
+                                        current_motor = '',
+                                        aux_outlet_pressure = '',
+                                        number_ust_min_avar = '',
+                                        number_ust_min_pred = '',
+                                        number_ust_max_pred = '',
+                                        number_ust_max_avar = '',
+                                        field_min = '4000',
+                                        field_max = '20000',
+                                        eng_min = eng_min,
+                                        eng_max = eng_max,
+                                        reliability_min = '3900',
+                                        reliability_max = '20100',
+                                        hysteresis = '0',
+                                        filtration = '0',
+                                        ust_min_6 = '', ust_min_5 = '', ust_min_4 = '', ust_min_3 = '', ust_min_2 = '', ust_min = '',
+                                        ust_max = '', ust_max_2 = '', ust_max_3 = '', ust_max_4 = '', ust_max_5 = '', ust_max_6 = '',
+                                        value_precision = value_precision,
+                                        PIC = '', group_trend = '', hysteresis_TI = '0,1', unit_physical_ACP = 'мкА', 
+                                        setpoint_map_rule = rule, fuse = '', uso = uso_s, basket = basket_s, module = module_s, channel = channel_s,
+                                        AlphaHMI = '', AlphaHMI_PIC1 = '', AlphaHMI_PIC1_Number_kont = '', AlphaHMI_PIC2 = '', 
+                                        AlphaHMI_PIC2_Number_kont = '', AlphaHMI_PIC3 = '', AlphaHMI_PIC3_Number_kont = '', 
+                                        AlphaHMI_PIC4 = '', AlphaHMI_PIC4_Number_kont = ''))
 
+            # Checking for the existence of a database
+            AI.insert_many(list_AI).execute()
 
-
-
-                #self.dop_func.str_find()
-
-
-
-            # req_uso = self.cursor.execute(f'''SELECT DISTINCT uso 
-            #                                   FROM signals''')
-            # list_uso = req_uso.fetchall()
-
-            # temp_flag    = False
-            # test_s       = []
-            # count_basket = 0
-            # for uso in list_uso:
-            #     req_basket = self.cursor.execute(f'''SELECT DISTINCT basket 
-            #                                          FROM signals
-            #                                          WHERE uso="{uso[0]}"''')
-            #     list_basket = req_basket.fetchall()
-
-            #     # ЦК в количестве 2 - ONE!
-            #     if temp_flag is False:
-            #         for i in range(2):
-            #             uso_kk = uso[0]
-            #             test_s.append(dict(uso = uso[0],
-            #                                powerLink_ID ='',
-            #                                basket  = i + 1,
-            #                                type_0  = 'MK-550-024',  variable_0 = f'PSU', type_1 = f'MK-546-010', variable_1 = f'MN',
-            #                                type_2  = f'MK-504-120', variable_2 = f'CPU', type_3 = f'',           variable_3 = f'',
-            #                                type_4  = f'',           variable_4 = f'',    type_5 = f'',           variable_5 = f'',
-            #                                type_6  = f'',           variable_6 = f'',    type_7 = f'',           variable_7 = f'',
-            #                                type_8  = f'',           variable_8 = f'',    type_9 = f'',           variable_9 = f'',
-            #                                type_10 = f'',           variable_10= f'',    type_11= f'',           variable_11= f'',
-            #                                type_12 = f'',           variable_12= f'',    type_13= f'',           variable_13= f'',
-            #                                type_14 = f'',           variable_14= f'',    type_15= f'',           variable_15= f'',
-            #                                type_16 = f'',           variable_16= f'',    type_17= f'',           variable_17= f'',
-            #                                type_18 = f'',           variable_18= f'',    type_19= f'',           variable_19= f'',
-            #                                type_20 = f'',           variable_20= f'',    type_21= f'',           variable_21= f'',
-            #                                type_22 = f'',           variable_22= f'',    type_23= f'',           variable_23= f'',
-            #                                type_24 = f'',           variable_24= f'',    type_25= f'',           variable_25= f'',
-            #                                type_26 = f'',           variable_26= f'',    type_27= f'',           variable_27= f'',
-            #                                type_28 = f'',           variable_28= f'',    type_29= f'',           variable_29= f'',
-            #                                type_30 = f'',           variable_30= f'',    type_31= f'',           variable_31= f'',
-            #                                type_32 = f'',           variable_32= f''))
-            #         temp_flag = True
-            #     for basket in list_basket:
-            #         count_basket     += 1
-            #         list_hw           = {}
-            #         list_hw['uso']    = uso[0]    
-            #         list_hw['basket'] = basket[0] 
-
-            #         # Если в проекте есть КК
-            #         if kk_is_True and count_basket == 3:
-            #             for i in range(4, 6, 1):
-            #                 test_s.append(dict(uso         = uso_kk,
-            #                                    basket     = i + 1,
-            #                                    type_0     = 'MK-550-024',
-            #                                    variable_0 = f'PSU',
-            #                                    type_2     = f'MK-504-120',
-            #                                    variable_2 = f'CPU'))
-
-            #         req_modul = self.cursor.execute(f'''SELECT DISTINCT module, type_signal 
-            #                                             FROM signals
-            #                                             WHERE uso="{uso[0]}" AND basket={basket[0]}
-            #                                             ORDER BY module''')
-            #         for i in req_modul.fetchall():
-            #             if i[1] is None or i[1] == '' or i[1] == ' ': 
-            #                 type_kod = 'Неопределен!'
-            #                 type_mod = 'Неопределен!'
-            #                 msg[f'{today} - Таблица: hardware. {uso[0]}.A{basket[0]}.{i[0]} тип не определен!'] = 2
-            #             else:
-            #                 for key, value in list_type.items():
-            #                     if str(i[1]).find(key) != -1: 
-            #                         type_kod = value
-            #                         type_mod = key
-            #             list_hw[f'powerLink_ID']    = count_basket
-            #             list_hw[f'type_0']          = 'MK-550-024'
-            #             list_hw[f'variable_0']      = 'PSU'
-            #             list_hw[f'type_1']          = 'MK-545-010'
-            #             list_hw[f'variable_1']      = 'CN'
-            #             list_hw[f'type_{i[0]}']     = type_kod
-            #             list_hw[f'variable_{i[0]}'] = type_mod
-            #         test_s.append(list_hw)
-
-            # # Checking for the existence of a database
-            # HardWare.insert_many(test_s).execute()
-
-        msg[f'{today} - Таблица: hardware заполнена'] = 1
+        msg[f'{today} - Таблица: AI заполнена'] = 1
         return(msg)
     # Заполняем таблицу AI
     def column_check(self):
-        # Logs
-        msg = {}
-        # # Create tabl
-        # with db.atomic():
-        #     db.create_tables([HardWare])
-        # # Checking if a column exists
-        # column_tabl  = []
-        # new_column   = []
-        # list_default = ['uso', 'basket', 'powerLink_ID', 
-        #                 'type_0',  'variable_0',  'type_1',  'variable_1',  'type_2',  'variable_2', 
-        #                 'type_3',  'variable_3',  'type_4',  'variable_4',  'type_5',  'variable_5', 
-        #                 'type_6',  'variable_6',  'type_7',  'variable_7',  'type_8',  'variable_8',
-        #                 'type_9',  'variable_9',  'type_10', 'variable_10', 'type_11', 'variable_11', 
-        #                 'type_12', 'variable_12', 'type_13', 'variable_13', 'type_14', 'variable_14', 
-        #                 'type_15', 'variable_15', 'type_16', 'variable_16', 'type_17', 'variable_17',
-        #                 'type_18', 'variable_18', 'type_19', 'variable_19', 'type_20', 'variable_20', 
-        #                 'type_21', 'variable_21', 'type_22', 'variable_22', 'type_23', 'variable_23', 
-        #                 'type_24', 'variable_24', 'type_25', 'variable_25', 'type_26', 'variable_26',
-        #                 'type_27', 'variable_27', 'type_28', 'variable_28', 'type_29', 'variable_29', 
-        #                 'type_30', 'variable_30', 'type_31', 'variable_31', 'type_32', 'variable_32']
+        list_default = ['tag', 'name', 'channel_value', 'service_channel', 'group_analog',
+                        'group_ust_analog',  'unit',  'sign_VU',  'flag_MPa_kgccm2',  'number_NA_or_aux',  
+                        'vibration_pump',  'vibration_motor',  'current_motor',  'aux_outlet_pressure', 
+                        'number_ust_min_avar',  'number_ust_min_pred',  'number_ust_max_pred',  'number_ust_max_avar', 
+                        'field_min',  'field_max',  'eng_min', 'eng_max', 'reliability_min', 'reliability_max', 
+                        'hysteresis', 'filtration', 'ust_min_6', 'ust_min_5', 'ust_min_4', 'ust_min_3', 
+                        'ust_min_2', 'ust_min', 'ust_max', 'ust_max_2', 'ust_max_3', 'ust_max_4',
+                        'ust_max_5', 'ust_max_6', 'value_precision', 'PIC', 'group_trend', 'hysteresis_TI', 
+                        'unit_physical_ACP', 'setpoint_map_rule', 'fuse', 'uso', 'basket', 'module', 'channel', 'AlphaHMI', 'AlphaHMI_PIC1', 
+                        'AlphaHMI_PIC1_Number_kont', 'AlphaHMI_PIC2', 'AlphaHMI_PIC2_Number_kont',
+                        'AlphaHMI_PIC3', 'AlphaHMI_PIC3_Number_kont', 'AlphaHMI_PIC4', 'AlphaHMI_PIC4_Number_kont']
+        msg = self.dop_func.column_check(AI, 'ai', list_default)
+        return msg
         
-        # for data_column in db.get_columns('hardware'):
-        #     if data_column[0] in list_default: column_tabl.append(data_column[0])
-        
-        # for lst in list_default:
-        #     if lst not in column_tabl: 
-        #         msg[f'{today} - Отсутствует обязательный столбец таблицы hardware: {lst}'] = 2
-        #         new_column.append(lst)
-        
-        # for new_name in new_column:
-        #     msg[f'{today} - Столбец: {new_name} добавлен в таблицу hardware'] = 3
-        #     migrate(migrator.add_column('hardware', new_name, IntegerField(null=True)))
     # Clear tabl
     def clear_tabl(self):
         msg = {}
