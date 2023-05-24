@@ -34,16 +34,16 @@ class Signals(BaseModel):
     schema      = CharField(null = True)
     klk         = CharField(null = True)
     contact     = CharField(null = True)
-    basket      = IntegerField()
-    module      = IntegerField()
-    channel     = IntegerField()
+    basket      = IntegerField(null = True)
+    module      = IntegerField(null = True)
+    channel     = IntegerField(null = True)
 
     class Meta:
         table_name = 'signals'
 
 class HardWare(BaseModel):
     uso          = CharField(null = True)
-    basket       = IntegerField()
+    basket       = IntegerField(null = True)
     powerLink_ID = CharField(null = True)
     type_0       = CharField(null = True)
     variable_0   = CharField(null = True)
@@ -168,9 +168,9 @@ class AI(BaseModel):
     fuse = CharField(null = True)
 
     uso = CharField(null = True)
-    basket = IntegerField()
-    module = IntegerField()
-    channel = IntegerField()
+    basket = IntegerField(null = True)
+    module = IntegerField(null = True)
+    channel = IntegerField(null = True)
 
     AlphaHMI = CharField(null = True)
     AlphaHMI_PIC1 = CharField(null = True)

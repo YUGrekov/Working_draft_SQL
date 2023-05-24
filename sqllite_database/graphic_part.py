@@ -12,31 +12,34 @@ class Window(QMainWindow):
         super(Window, self).__init__()
         self.setWindowTitle('Меню разработки проекта')
         self.setFixedSize(250, 145)
-        self.setStyleSheet("background-color: #a0b0a5;")
+        self.setStyleSheet("background-color: #e1e5e5;")
         self.setWindowFlags(Qt.WindowCloseButtonHint)
         # Create menu bar
         self.create_menu_bars()
         # Сreating an import button exel
         butt_import_exel = QPushButton('Импорт данных КД из Exel', self)
-        butt_import_exel.setStyleSheet(("background-color: #a4aba6;"))
+        butt_import_exel.setStyleSheet(("background: #c6c3b5; border-radius: 4px; border: 1px solid"))
+        butt_import_exel.setToolTip('Импорт сигналов из КЗФКП в базу SQL "signals"')
         butt_import_exel.resize(220,25)
         butt_import_exel.move(15, 35)      
         butt_import_exel.clicked.connect(self.window_import_exel)  
         # Filling tables
         butt_fill_tabl = QPushButton('Заполнение таблиц', self)
-        butt_fill_tabl.setStyleSheet(("background-color: #a4aba6;"))
+        butt_fill_tabl.setStyleSheet(("background: #c6c3b5; border-radius: 4px; border: 1px solid"))
+        butt_fill_tabl.setToolTip('Заполнение или очистка таблиц базы данных')
         butt_fill_tabl.resize(220,25)
         butt_fill_tabl.move(15, 70)      
         butt_fill_tabl.clicked.connect(self.window_fill_tables)  
         # SQL button 
         butt_sql = QPushButton('Редактор базы данных', self)
-        butt_sql.setStyleSheet(("background-color: #a4aba6;"))
+        butt_sql.setStyleSheet(("background: #c6c3b5; border-radius: 4px; border: 1px solid"))
+        butt_sql.setToolTip('Редактор таблиц базы данных')
         butt_sql.resize(220,25)
         butt_sql.move(15, 105)      
         butt_sql.clicked.connect(self.window_create_sql)  
     def create_menu_bars(self):
         menuBar = self.menuBar()
-        menuBar.setStyleSheet('background-color: rgb(225, 225, 225);')
+        menuBar.setStyleSheet('background-color: #c7c9c9;')
 
         settings = QMenu('&Настройки проекта', self)
         settings.setStyleSheet('background-color: rgb(225, 225, 225);')
@@ -67,7 +70,7 @@ class Window_import_exel(QWidget):
     def __init__(self):
         super(Window_import_exel, self).__init__()
         self.setWindowTitle('Заполнение и редактирование данных из КД')
-        self.setStyleSheet("background-color: #a0b0a5;")
+        self.setStyleSheet("background-color: #e1e5e5;")
         self.setWindowFlags(Qt.WindowCloseButtonHint)
         self.resize(600, 380)
 
@@ -86,7 +89,7 @@ class Window_import_exel(QWidget):
         self.label1.setStyleSheet('border: 1px solid #6f7370;')
 
         readtablbutt = QPushButton('Прочитать шапку таблицы', self)
-        readtablbutt.setStyleSheet("background-color: #a087d4;")
+        readtablbutt.setStyleSheet("background: #bfd6bf; border-radius: 4px;")
         readtablbutt.resize(150,25)
         readtablbutt.move(440, 105) 
         readtablbutt.clicked.connect(self.read_hat_tabl)
@@ -149,19 +152,19 @@ class Window_import_exel(QWidget):
         self.l_channel.move(385, 213)
         
         savebasebutt = QPushButton('Сохранить новое УСО', self)
-        savebasebutt.setStyleSheet("background-color: #a087d4;")
+        savebasebutt.setStyleSheet("background: #bfd6bf; border-radius: 4px;")
         savebasebutt.resize(150,25)
         savebasebutt.move(440, 252) 
         savebasebutt.clicked.connect(self.start_fill_base)
 
         updatebasebutt = QPushButton('Обновить данные УСО', self)
-        updatebasebutt.setStyleSheet("background-color: #a087d4;")
+        updatebasebutt.setStyleSheet("background: #b2b4eb; border-radius: 4px;")
         updatebasebutt.resize(150,25)
         updatebasebutt.move(270, 252) 
         updatebasebutt.clicked.connect(self.update_fill_base)
 
         cleartablbutt = QPushButton('Очистить таблицу', self)
-        cleartablbutt.setStyleSheet("background-color: #a087d4;")
+        cleartablbutt.setStyleSheet("background: #aeb37b; border-radius: 4px;")
         cleartablbutt.resize(150,25)
         cleartablbutt.move(10, 252) 
         cleartablbutt.clicked.connect(self.clear_table)
@@ -401,12 +404,12 @@ class Window_tabl_checkbox(QWidget):
     def __init__(self, list_tabl):
         super(Window_tabl_checkbox, self).__init__()
         self.setWindowTitle('Список таблиц')
-        self.setStyleSheet("background-color: #a0b0a5;")
+        self.setStyleSheet("background-color: #e1e5e5;")
         self.resize(260, 80)
-        #self.move(200,40)
         
         clickButton = QPushButton('Подключиться к таблице', self)
-        clickButton.resize(80,40)
+        #clickButton.setStyleSheet("background: #bfd6bf; border-radius: 1px;")
+        clickButton.resize(80,50)
         clickButton.clicked.connect(self.choose_tabl)
 
         self.combo = QComboBox()
@@ -429,15 +432,16 @@ class Window_update_sql(QWidget):
     def __init__(self, table_used):
         super(Window_update_sql, self).__init__()
         self.setWindowTitle('Редактор базы данных')
-        self.setStyleSheet("background-color: #a0b0a5;")
+        self.setStyleSheet("background-color: #e1e5e5;")
         self.setWindowFlags(Qt.WindowCloseButtonHint)
-        self.resize(1600, 870)
+        self.resize(1600, 890)
 
         self.TableWidget = QTableWidget(self)
-        self.TableWidget.setGeometry(10,50,1580,710)
+        self.TableWidget.setGeometry(10,70,1580,710)
 
         self.logTextBox = QTextEdit(self)
-        self.logTextBox.setGeometry(10,759,1580,100)
+        self.logTextBox.setGeometry(10,779,1580,100)
+        self.logTextBox.setFont(QFont('Arial', 10))
         self.logTextBox.setReadOnly(True)
 
         self.table_used = table_used
@@ -446,33 +450,54 @@ class Window_update_sql(QWidget):
         self.tablew(column, row, self.hat_name, value)
 
         new_addrow_Button = QPushButton('Добавить строку', self)
+        new_addrow_Button.setStyleSheet("background: #bfd6bf; border-radius: 4px; border: 1px solid")
         new_addrow_Button.resize(120,25)
-        new_addrow_Button.move(10, 10) 
+        new_addrow_Button.move(10, 8) 
         new_addrow_Button.clicked.connect(self.add_row)
 
         remoterow_Button = QPushButton('Удалить строку', self)
+        remoterow_Button.setStyleSheet("background: #d65860; border-radius: 4px; border: 1px solid")
         remoterow_Button.resize(120,25)
-        remoterow_Button.move(150, 10) 
+        remoterow_Button.move(10, 40) 
         remoterow_Button.clicked.connect(self.delete_row)
 
         self.namecolumn = QLineEdit(self, placeholderText='Название нового столбца', clearButtonEnabled=True)
-        self.namecolumn.setStyleSheet('border: 1px solid #6f7370;')
-        self.namecolumn.move(300, 10)
-        self.namecolumn.resize(150,25)
+        self.namecolumn.setStyleSheet('border: 1px solid #6f7370; border-radius: 4px; border: 1px solid')
+        self.namecolumn.move(160, 8)
+        self.namecolumn.resize(260,25)
         new_addcol_Button = QPushButton('Добавить столбец', self)
+        new_addcol_Button.setStyleSheet("background: #bfd6bf; border-radius: 4px; border: 1px solid")
         new_addcol_Button.resize(120,25)
-        new_addcol_Button.move(455, 10) 
+        new_addcol_Button.move(160, 40) 
         new_addcol_Button.clicked.connect(self.add_column)
 
-        remoterow_Button = QPushButton('Удалить столбец', self)
-        remoterow_Button.resize(120,25)
-        remoterow_Button.move(600, 10) 
-        remoterow_Button.clicked.connect(self.delete_column)
+        remotecolumn_Button = QPushButton('Удалить столбец', self)
+        remotecolumn_Button.setStyleSheet("background: #d65860; border-radius: 4px; border: 1px solid")
+        remotecolumn_Button.resize(120,25)
+        remotecolumn_Button.move(300, 40) 
+        remotecolumn_Button.clicked.connect(self.delete_column)
 
         cleartab_Button = QPushButton('Очистить таблицу', self)
+        cleartab_Button.setStyleSheet("background: #bbbabf; border-radius: 4px; border: 1px solid")
         cleartab_Button.resize(120,25)
-        cleartab_Button.move(745, 10) 
+        cleartab_Button.move(450, 8) 
         cleartab_Button.clicked.connect(self.clear_tabl)
+
+        self.req_base = QLineEdit(self, placeholderText='Введите запрос к текущей таблице', clearButtonEnabled=True)
+        self.req_base.setStyleSheet('border: 1px solid #6f7370; border-radius: 4px; border: 1px solid')
+        self.req_base.move(750, 8)
+        self.req_base.resize(820,25)
+        apply_query_Button = QPushButton('Применить запрос', self)
+        apply_query_Button.setStyleSheet("background: #bfd6bf; border-radius: 4px; border: 1px solid")
+        apply_query_Button.resize(120,25)
+        apply_query_Button.move(750, 40) 
+        apply_query_Button.clicked.connect(self.apply_database_query)
+        reset_request_Button = QPushButton('Сбросить запрос', self)
+        reset_request_Button.setStyleSheet("background: #bbbabf; border-radius: 4px; border: 1px solid")
+        reset_request_Button.setToolTip("Если используется выборка из таблицы!")
+        reset_request_Button.resize(120,25)
+        reset_request_Button.move(900, 40) 
+        reset_request_Button.clicked.connect(self.reset_database_query)
 
         self.layout = QVBoxLayout()
         self.layout.addWidget(self.logTextBox)
@@ -481,6 +506,8 @@ class Window_update_sql(QWidget):
         self.layout.addWidget(remoterow_Button)
         self.layout.addWidget(cleartab_Button)
         self.layout.addWidget(self.TableWidget)
+        # Logs
+        self.logs_msg(f'Запущен редактор базы данных. Таблица: {self.table_used}', 1)
     # Сompletely clear the table
     def clear_tabl(self):
         rowcount = self.TableWidget.rowCount()
@@ -558,14 +585,53 @@ class Window_update_sql(QWidget):
         hat_name = self.edit_SQL.column_names(self.table_used)
         self.edit_SQL.delete_column(column, hat_name, self.table_used)
         self.logs_msg(f'Из таблицы: {self.table_used} удален столбец', 3)
+    
+    # Changing a table while entering a query
+    def apply_database_query(self):
+        request = self.req_base.text()
+        if request == '': 
+            self.logs_msg(f'Пустой запрос!', 2)
+            return
+        # Под запрос 'select' отдельная функция
+        find = general_functions()
+        if find.str_find(str(request).lower(), {'select'}):
+            column, row, hat_name, value, msg = self.edit_SQL.apply_request_select(request, self.table_used)
+            self.logs_msg('default', 1, msg, True)
+        else:
+            msg = self.edit_SQL.other_requests(request, self.table_used)
+            self.logs_msg('default', 1, msg, True)
+            column, row, hat_name, value = self.edit_SQL.editing_sql(self.table_used)
+        # Если запрос некорректный
+        if column == 'error': return
+        # Clear
+        rowcount = self.TableWidget.rowCount()
+        if rowcount != 0: 
+            while rowcount >= 0:
+                self.TableWidget.removeRow(rowcount)
+                rowcount -= 1
+        # Filling
+        self.tablew(column, row, hat_name, value)
+        #SELECT * FROM ai WHERE uso='МНС-2.КЦ' AND basket=3 AND module=3 AND channel=1
+    # Reset a table query
+    def reset_database_query(self):
+        rowcount = self.TableWidget.rowCount()
+        if rowcount != 0: 
+            while rowcount >= 0:
+                self.TableWidget.removeRow(rowcount)
+                rowcount -= 1
+
+        column, row, self.hat_name, value = self.edit_SQL.editing_sql(self.table_used)
+        self.tablew(column, row, self.hat_name, value)
+
     # Building the selected table
     def tablew(self, column, row, hat_name, value):
-        # Logs
-        self.logs_msg(f'Запущен редактор базы данных. Таблица: {self.table_used}', 1)
         # TableW
         self.TableWidget.setColumnCount(column)
         self.TableWidget.setRowCount(row)
         self.TableWidget.setHorizontalHeaderLabels(hat_name)
+        # Color header
+        style = "::section {""background-color: #bbbabf; }"
+        self.TableWidget.horizontalHeader().setStyleSheet(style)
         # Разрешить щелчок правой кнопкой мыши для создания меню
         #self.TableWidget.setContextMenuPolicy(Qt.CustomContextMenu)
         self.TableWidget.verticalHeader().setVisible(False)
@@ -581,6 +647,7 @@ class Window_update_sql(QWidget):
                     item = QTableWidgetItem(str(value[row_t][column_t]))
 
                 if column_t == 0: item.setFlags(Qt.ItemIsEnabled)
+     
                 # center text
                 #item.setTextAlignment(Qt.AlignHCenter)
                 # Выравнивание все столбцов по общей ширине
@@ -617,7 +684,7 @@ class Window_update_sql(QWidget):
     def logs_msg(self, logs=None, number_color=1, buffer_msg=None, msg=False):
         today = datetime.now()
         errorFormat   = '<span style="color:red;">{}</span>'
-        warningFormat = '<span style="color:yellow;">{}</span>'
+        warningFormat = '<span style="color:#9ea108;">{}</span>'
         validFormat   = '<span style="color:black;">{}</span>'
         newFormat     = '<span style="color:green;">{}</span>'
         if msg:

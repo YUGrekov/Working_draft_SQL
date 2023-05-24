@@ -114,6 +114,7 @@ class general_functions():
             msg[f'{today} - Столбец: {new_name} добавлен в таблицу {table_used_model}'] = 3
             migrate(migrator.add_column(table_used_base, new_name, IntegerField(null=True)))
         return msg
+
 # Work with filling in the table 'signals'
 class Import_in_SQL():
     def __init__(self, exel):
@@ -495,6 +496,8 @@ class Filling_AI():
                                                                        basket={basket_s} AND 
                                                                        module={module_s} AND 
                                                                        channel={channel_s}''')
+                            for id_, tag_ in select_tag.fetchall():
+                                msg[f'{today} - Таблица: AI, у сигнала обновлен tag: id = {id_}, ({tag_}) {tag}'] = 2
                             self.cursor.execute(f'''UPDATE ai
                                                     SET tag='{tag}' 
                                                     WHERE uso='{uso_s}' AND 
@@ -502,16 +505,21 @@ class Filling_AI():
                                                           module={module_s} AND 
                                                           channel={channel_s}''')
     
-                            print(select_tag.fetchall())
-                            msg[f'{today} - Таблица: AI, у сигнала обновлен тэг: id = {select_tag.fetchall()[0][0]}, ({select_tag.fetchall()[1][0]}) {tag}'] = 1
                         if not bool(exist_name):
+                            select_name = self.cursor.execute(f'''SELECT id, name 
+                                                                  FROM ai
+                                                                  WHERE uso='{uso_s}' AND 
+                                                                        basket={basket_s} AND 
+                                                                        module={module_s} AND 
+                                                                        channel={channel_s}''')
+                            for id_, name_ in select_name.fetchall():
+                                msg[f'{today} - Таблица: AI, у сигнала обновлен name: id = {id_}, ({name_}) {description}'] = 2
                             self.cursor.execute(f'''UPDATE ai
                                                     SET name='{description}' 
                                                     WHERE uso='{uso_s}' AND 
                                                           basket={basket_s} AND 
                                                           module={module_s} AND 
                                                           channel={channel_s}''')
-                            print(f'обновлен {description}')
                         continue
 
                     # Сквозной номер модуля
@@ -523,7 +531,16 @@ class Filling_AI():
                             type_mod = through_module_number[f'variable_{module_s}']
                             isdigit_num  = re.findall('\d+', str(type_mod))
                             break
-                    
+
+                    sign             = ''
+                    unit             = ''
+                    rule             = ''
+                    group_analog     = ''
+                    group_ust_analog = ''
+                    eng_min          = ''
+                    eng_max          = ''
+                    value_precision  = ''
+
                     for key, short in dop_analog.items():
                         if self.dop_func.str_find(str(description).lower(), {key}):
                             sign = short[0]
@@ -643,6 +660,33 @@ class Editing_table_SQL():
     def column_names(self, table_used):
         self.cursor.execute(f'SELECT * FROM {table_used}')
         return next(zip(*self.cursor.description))
+    # Apply request 
+    def apply_request_select(self, request, table_used):
+        msg = {}
+        unpacking = []
+        try:
+            self.cursor.execute(f'''{request}''')
+            name_column = next(zip(*self.cursor.description))
+
+            records = self.cursor.fetchall()
+            unpacking.append(records)
+
+            count_column = len(name_column)
+            count_row    = len(records)
+            return count_column, count_row, name_column, records, msg
+        except:
+            msg[f'{today} - Таблица: {table_used} некорректный запрос!'] = 2
+            return 'error', 'error', 'error', 'error', msg
+    def other_requests(self, request, table_used):
+        msg = {}
+        try:
+            self.cursor.execute(f'''{request}''')
+            msg[f'{today} - Таблица: {table_used} запрос применен!'] = 1
+            return msg
+        except:
+            msg[f'{today} - Таблица: {table_used} некорректный запрос!'] = 2
+            return msg
+
     # Updating cell values
     def update_row_tabl(self, column, text_cell, text_cell_id, table_used, hat_name):
         active_column = list(hat_name)[column]
