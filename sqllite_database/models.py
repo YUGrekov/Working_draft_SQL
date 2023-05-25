@@ -26,6 +26,14 @@ class BaseModel(Model):
     class Meta:
         database = db
 
+rus_list = {'signals': ['№', 'Тип сигнала', 'Шкаф', 'Идентификатор', 'Наименование', 'Схема', 'Клеммник', 'Контакт', 'Корзина', 'Модуль', 'Канал'],
+            'di': ['№','Идентификатор','Название','pValue','pHealth','Инвертировать входное значение','Значение, выставляемое в stateDI[..].Value при неиcправности канала',
+                    'Приоритет при 0','Приоритет при 1','Выдавать сообщения по изменению сигнала','В pNC_AI должна быть ссылка на stateDI[..].state "Неисправность цепей". Значение сигнала из pValue',
+                    'В pNC_AI должна быть ссылка на stateAI[..]state. Значение из Warn, КЗ из MTMax, обрыв из LTMin. pValue игнорируется','В pNC_AI должна быть ссылка на stateAI[..]state. Значение из Avar, КЗ из MTMax, обрыв из LTMin. pValue игнорируется',
+                    'Ссылка на stateDI "Неисправность цепей" или stateAI, контролирующий обрыв или КЗ','TS ID для быстрых сигналов','При потере связи модуля с КЦ формировать сигнализацию и сообщение о неисправности',
+                    'Номера листов на которых данный сигнал участвует в формировании рамки квитирования','Имя xml файла-шаблона с сообщениями данного сигнала',
+                    'Группа для группировки сообщений в архивном журнале:Общие,Диагностика,Энергоснабжение', 'Приоритет  сообщения при 0', 'Приоритет  сообщения при 1', 'Короткое название', 
+                    'Шкаф', 'Корзина', 'Модуль', 'Канал']}
 class Signals(BaseModel):
     type_signal = CharField(null = True)
     uso         = CharField(null = True)
@@ -40,7 +48,6 @@ class Signals(BaseModel):
 
     class Meta:
         table_name = 'signals'
-
 class HardWare(BaseModel):
     uso          = CharField(null = True)
     basket       = IntegerField(null = True)
@@ -114,7 +121,6 @@ class HardWare(BaseModel):
 
     class Meta:
         table_name = 'hardware'
-
 class AI(BaseModel):
     tag              = CharField(null = True)
     name             = CharField(null = True)
@@ -184,3 +190,44 @@ class AI(BaseModel):
 
     class Meta:
         table_name = 'ai'
+class DI(BaseModel):
+    tag  = CharField(null = True)
+    name = CharField(null = True)
+    pValue  = CharField(null = True)
+    pHealth = CharField(null = True)
+
+    Inv = CharField(null = True)
+    ErrValue = CharField(null = True)
+    priority_0 = CharField(null = True)
+    priority_1 = CharField(null = True)
+    Msg = CharField(null = True)
+    isDI_NC = CharField(null = True)
+    isAI_Warn = CharField(null = True)
+    isAI_Avar = CharField(null = True)
+    pNC_AI = CharField(null = True)
+    TS_ID = CharField(null = True)
+    isModuleNC = CharField(null = True)
+    Pic = CharField(null = True)
+    tabl_msg = CharField(null = True)
+    group_diskrets = CharField(null = True)
+    msg_priority_0 = CharField(null = True)
+    msg_priority_1 = CharField(null = True)
+    short_title = CharField(null = True)
+
+    uso = CharField(null = True)
+    basket = IntegerField(null = True)
+    module = IntegerField(null = True)
+    channel = IntegerField(null = True)
+
+    AlphaHMI = CharField(null = True)
+    AlphaHMI_PIC1 = CharField(null = True)
+    AlphaHMI_PIC1_Number_kont = CharField(null = True)
+    AlphaHMI_PIC2 = CharField(null = True)
+    AlphaHMI_PIC2_Number_kont = CharField(null = True)
+    AlphaHMI_PIC3 = CharField(null = True)
+    AlphaHMI_PIC3_Number_kont = CharField(null = True)
+    AlphaHMI_PIC4 = CharField(null = True)
+    AlphaHMI_PIC4_Number_kont = CharField(null = True)
+    
+    class Meta:
+        table_name = 'di'

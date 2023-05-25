@@ -79,27 +79,28 @@ class Window_import_exel(QWidget):
         self.pathbasesql = QLabel('Каталог SQL базы', self)
         self.pathbasesql.move(10, 20)
         self.pathbasesql.resize(580,25)
-        self.pathbasesql.setStyleSheet('border: 1px solid #6f7370;')
+        self.pathbasesql.setStyleSheet('border: 1px solid #6f7370; border-radius: 4px; border: 1px solid')
 
         self.l_path_kzfkp = QLabel('Расположение КЗФКП: ', self)
         self.l_path_kzfkp.move(10, 50)
         self.label1 = QLabel('Путь до файла КД', self)
         self.label1.move(10, 65)
         self.label1.resize(580,25)
-        self.label1.setStyleSheet('border: 1px solid #6f7370;')
+        self.label1.setStyleSheet('border: 1px solid #6f7370; border-radius: 4px; border: 1px solid')
 
         readtablbutt = QPushButton('Прочитать шапку таблицы', self)
-        readtablbutt.setStyleSheet("background: #bfd6bf; border-radius: 4px;")
+        readtablbutt.setStyleSheet("background: #bfd6bf; border-radius: 4px; border: 1px solid")
         readtablbutt.resize(150,25)
         readtablbutt.move(440, 105) 
         readtablbutt.clicked.connect(self.read_hat_tabl)
         self.select_uso = QComboBox(self)
         self.select_uso.addItem('Выбери таблицу')
+        self.select_uso.setStyleSheet('border-radius: 4px; border: 1px solid')
         self.select_uso.move(10, 105)
         self.select_uso.resize(150,25)
         self.select_uso.currentIndexChanged.connect(self.click_comboBox)
         self.select_row = QLineEdit(self, placeholderText='Заполни строку заголовка', clearButtonEnabled=True)
-        self.select_row.setStyleSheet('border: 1px solid #6f7370;')
+        self.select_row.setStyleSheet('border: 1px solid #6f7370; border-radius: 4px; border: 1px solid')
         self.select_row.move(180, 105)
         self.select_row.resize(150,25)
         self.select_row.returnPressed.connect(self.read_hat_tabl)
@@ -107,30 +108,39 @@ class Window_import_exel(QWidget):
         self.q_type_sig = QComboBox(self)
         self.q_type_sig.move(10, 150)
         self.q_type_sig.resize(150,25)
+        self.q_type_sig.setStyleSheet('border-radius: 4px; border: 1px solid')
         self.q_tag = QComboBox(self)
         self.q_tag.move(170, 150)
         self.q_tag.resize(150,25)
+        self.q_tag.setStyleSheet('border-radius: 4px; border: 1px solid')
         self.q_dict = QComboBox(self)
         self.q_dict.move(330, 150)
         self.q_dict.resize(150,25)
+        self.q_dict.setStyleSheet('border-radius: 4px; border: 1px solid')
         self.q_schema = QComboBox(self)
         self.q_schema.move(10, 185)
         self.q_schema.resize(150,25)
+        self.q_schema.setStyleSheet('border-radius: 4px; border: 1px solid')
         self.q_klk = QComboBox(self)
         self.q_klk.move(170, 185)
         self.q_klk.resize(150,25)
+        self.q_klk.setStyleSheet('border-radius: 4px; border: 1px solid')
         self.q_kont = QComboBox(self)
         self.q_kont.move(330, 185)
         self.q_kont.resize(150,25)
+        self.q_kont.setStyleSheet('border-radius: 4px; border: 1px solid')
         self.q_basket = QComboBox(self)
         self.q_basket.move(10, 220)
         self.q_basket.resize(150,25)
+        self.q_basket.setStyleSheet('border-radius: 4px; border: 1px solid')
         self.q_mod = QComboBox(self)
         self.q_mod.move(170, 220)
         self.q_mod.resize(150,25)
+        self.q_mod.setStyleSheet('border-radius: 4px; border: 1px solid')
         self.q_channel = QComboBox(self)
         self.q_channel.move(330, 220)
         self.q_channel.resize(150,25)
+        self.q_channel.setStyleSheet('border-radius: 4px; border: 1px solid')
 
         self.l_type_sig = QLabel('Тип сигнала', self)
         self.l_type_sig.move(55, 144)
@@ -152,24 +162,27 @@ class Window_import_exel(QWidget):
         self.l_channel.move(385, 213)
         
         savebasebutt = QPushButton('Сохранить новое УСО', self)
-        savebasebutt.setStyleSheet("background: #bfd6bf; border-radius: 4px;")
+        savebasebutt.setStyleSheet("background: #bfd6bf; border-radius: 4px; border: 1px solid")
+        savebasebutt.setToolTip('''Добавляются новые сигналы в конец таблицы''')
         savebasebutt.resize(150,25)
         savebasebutt.move(440, 252) 
         savebasebutt.clicked.connect(self.start_fill_base)
 
         updatebasebutt = QPushButton('Обновить данные УСО', self)
-        updatebasebutt.setStyleSheet("background: #b2b4eb; border-radius: 4px;")
+        updatebasebutt.setStyleSheet("background: #b2b4eb; border-radius: 4px; border: 1px solid")
+        updatebasebutt.setToolTip('''Сигнал проверяется по шкафу, модулю, корзине и каналу. Если такой отсутствует,\nто добавляется новый в конец таблицы, иначе данные которые различаются обновляются''')
         updatebasebutt.resize(150,25)
         updatebasebutt.move(270, 252) 
         updatebasebutt.clicked.connect(self.update_fill_base)
 
-        cleartablbutt = QPushButton('Очистить таблицу', self)
-        cleartablbutt.setStyleSheet("background: #aeb37b; border-radius: 4px;")
-        cleartablbutt.resize(150,25)
+        cleartablbutt = QPushButton('Очистить таблицу signals', self)
+        cleartablbutt.setStyleSheet("background: #aeb37b; border-radius: 4px; border: 1px solid")
+        cleartablbutt.resize(170,25)
         cleartablbutt.move(10, 252) 
         cleartablbutt.clicked.connect(self.clear_table)
 
         self.logTextBox = QTextEdit(self)
+        self.logTextBox.setStyleSheet("border-radius: 4px; border: 1px solid")
         self.logTextBox.setGeometry(10,285,580,85)
         self.logTextBox.setReadOnly(True)
 
@@ -273,7 +286,7 @@ class Window_import_exel(QWidget):
     def logs_msg(self, logs=None, number_color=1, buffer_msg=None, msg=False):
         today = datetime.now()
         errorFormat   = '<span style="color:red;">{}</span>'
-        warningFormat = '<span style="color:yellow;">{}</span>'
+        warningFormat = '<span style="color:#9ea108;">{}</span>'
         validFormat   = '<span style="color:black;">{}</span>'
         newFormat     = '<span style="color:green;">{}</span>'
         if msg:
@@ -299,6 +312,10 @@ class Window_Filling_tables(QWidget):
         self.setWindowTitle('Заполнение таблиц базы данных')
         self.setStyleSheet("background-color: #e1e5e5;")
         self.resize(600, 295)
+        self.dop_function = general_functions()
+
+        self.edit_SQL = Editing_table_SQL()
+        self.list_tabl = self.edit_SQL.get_tabl()
         # Size default
         b_width_one = 8
         b_width_two = 92
@@ -310,13 +327,13 @@ class Window_Filling_tables(QWidget):
         l_hw = QLabel('HardWare:', self)
         l_hw.move(10, l_height)
         b_io_basket = QPushButton('Заполнить', self)
-        b_io_basket.setStyleSheet("background: #bfd6bf; border-radius: 4px;")
+        b_io_basket.setStyleSheet("background: #bfd6bf; border-radius: 4px; border: 1px solid")
         b_io_basket.setToolTip("Заполнить таблицу HardWare")
         b_io_basket.resize(80,23)
         b_io_basket.move(b_width_one, b_height) 
         b_io_basket.clicked.connect(self.filling_hardware)
         b_clear_tabl = QPushButton('Очистить', self)
-        b_clear_tabl.setStyleSheet("background: #bbbabf; border-radius: 4px;" )
+        b_clear_tabl.setStyleSheet("background: #bbbabf; border-radius: 4px; border: 1px solid")
         b_clear_tabl.setToolTip("Очистить таблицу HardWare")
         b_clear_tabl.resize(80,23)
         b_clear_tabl.move(b_width_two, b_height) 
@@ -326,23 +343,38 @@ class Window_Filling_tables(QWidget):
         c_kk_is_true.move(70, 2) 
         c_kk_is_true.stateChanged.connect(self.kk_check)
         # AI
-        l_hw = QLabel('AI:', self)
-        l_hw.move(10, l_height + 45)
+        l_ai = QLabel('AI:', self)
+        l_ai.move(10, l_height + 45)
         b_ai_basket = QPushButton('Заполнить', self)
-        b_ai_basket.setStyleSheet("background: #bfd6bf; border-radius: 4px;")
+        b_ai_basket.setStyleSheet("background: #bfd6bf; border-radius: 4px; border: 1px solid")
         b_ai_basket.setToolTip("Заполнить таблицу AI")
         b_ai_basket.resize(80,23)
         b_ai_basket.move(b_width_one, b_height + 45) 
         b_ai_basket.clicked.connect(self.filling_ai)
         b_clear_ai = QPushButton('Очистить', self)
-        b_clear_ai.setStyleSheet("background: #bbbabf; border-radius: 4px;" )
+        b_clear_ai.setStyleSheet("background: #bbbabf; border-radius: 4px; border: 1px solid")
         b_clear_ai.setToolTip("Очистить таблицу AI")
         b_clear_ai.resize(80,23)
         b_clear_ai.move(b_width_two, b_height + 45) 
         b_clear_ai.clicked.connect(self.clear_ai_tabl)
-        
+        # DI
+        l_di = QLabel('DI:', self)
+        l_di.move(10, l_height + 90)
+        b_di_basket = QPushButton('Заполнить', self)
+        b_di_basket.setStyleSheet("background: #bfd6bf; border-radius: 4px; border: 1px solid")
+        b_di_basket.setToolTip("Заполнить таблицу DI")
+        b_di_basket.resize(80,23)
+        b_di_basket.move(b_width_one, b_height + 90) 
+        b_di_basket.clicked.connect(self.filling_di)
+        b_clear_di = QPushButton('Очистить', self)
+        b_clear_di.setStyleSheet("background: #bbbabf; border-radius: 4px; border: 1px solid")
+        b_clear_di.setToolTip("Очистить таблицу DI")
+        b_clear_di.resize(80,23)
+        b_clear_di.move(b_width_two, b_height + 90) 
+        b_clear_di.clicked.connect(self.clear_di_tabl)
         # Logs
         self.logTextBox = QTextEdit(self)
+        self.logTextBox.setStyleSheet("border-radius: 4px; border: 1px solid")
         self.logTextBox.setGeometry(10,200,580,85)
         self.logTextBox.setReadOnly(True)
         self.logs_msg(f'Запущена форма заполнения таблиц базы данных', 1)
@@ -355,8 +387,7 @@ class Window_Filling_tables(QWidget):
             self.kk_is_true = False
             self.logs_msg(f'Добавить КК - флаг cнят', 3)
     def clear_tabl(self):
-        hw_table = Filling_HardWare()
-        msg = hw_table.clear_tabl()
+        msg = self.dop_function.clear_tabl('hardware', 'HardWare', self.list_tabl)
         self.logs_msg('default', 1, msg, True)
     def filling_hardware(self):
         hw_table = Filling_HardWare()
@@ -372,15 +403,23 @@ class Window_Filling_tables(QWidget):
         msg = ai_table.getting_modul()
         self.logs_msg('default', 1, msg, True)
     def clear_ai_tabl(self):
-        pass
-        #ai_table = Filling_AI()
-        #msg = ai_table.clear_tabl()
+        msg = self.dop_function.clear_tabl('ai', 'AI', self.list_tabl)
+        self.logs_msg('default', 1, msg, True)
+    # DI
+    def filling_di(self):
+        di_table = Filling_DI()
+        msg = di_table.column_check()
+        self.logs_msg('default', 1, msg, True)
+        #msg = di_table.getting_modul()
         #self.logs_msg('default', 1, msg, True)
+    def clear_di_tabl(self):
+        msg = self.dop_function.clear_tabl('di', 'DI', self.list_tabl)
+        self.logs_msg('default', 1, msg, True)
     # Logging messeges
     def logs_msg(self, logs=None, number_color=1, buffer_msg=None, msg=False):
         today = datetime.now()
         errorFormat   = '<span style="color:red;">{}</span>'
-        warningFormat = '<span style="color:#a8c922;">{}</span>'
+        warningFormat = '<span style="color:#9ea108;">{}</span>'
         validFormat   = '<span style="color:black;">{}</span>'
         newFormat     = '<span style="color:green;">{}</span>'
         if msg:
@@ -405,24 +444,25 @@ class Window_tabl_checkbox(QWidget):
         super(Window_tabl_checkbox, self).__init__()
         self.setWindowTitle('Список таблиц')
         self.setStyleSheet("background-color: #e1e5e5;")
-        self.resize(260, 80)
-        
-        clickButton = QPushButton('Подключиться к таблице', self)
-        #clickButton.setStyleSheet("background: #bfd6bf; border-radius: 1px;")
-        clickButton.resize(80,50)
-        clickButton.clicked.connect(self.choose_tabl)
+        self.resize(260, 100)
 
-        self.combo = QComboBox()
+        l_table = QLabel('Выберите таблицу: ', self)
+        l_table.move(10, 5)
+
+        self.combo = QComboBox(self)
+        self.combo.move(10, 20) 
+        self.combo.resize(240,25)
+        self.combo.setStyleSheet("border-radius: 4px; border: 1px solid")
         self.combo.setFont(QFont('Arial', 10))
 
+        clickButton = QPushButton('Подключиться к таблице', self)
+        clickButton.setStyleSheet("background: #bfd6bf; border-radius: 4px; border: 1px solid")
+        clickButton.resize(240,35)
+        clickButton.move(10, 55) 
+        clickButton.clicked.connect(self.choose_tabl)
+
         for tabl in list_tabl:
-            self.combo.addItem(str(tabl))
-
-        layout = QVBoxLayout()
-        layout.addWidget(self.combo)
-        layout.addWidget(clickButton)
-
-        self.setLayout(layout)
+           self.combo.addItem(str(tabl))
     # Choose table
     def choose_tabl(self):
         name_table = self.combo.currentText()
@@ -441,13 +481,16 @@ class Window_update_sql(QWidget):
 
         self.logTextBox = QTextEdit(self)
         self.logTextBox.setGeometry(10,779,1580,100)
+        self.logTextBox.setStyleSheet("border-radius: 4px; border: 1px solid")
         self.logTextBox.setFont(QFont('Arial', 10))
         self.logTextBox.setReadOnly(True)
 
         self.table_used = table_used
         self.edit_SQL = Editing_table_SQL()
         column, row, self.hat_name, value = self.edit_SQL.editing_sql(self.table_used)
-        self.tablew(column, row, self.hat_name, value)
+        
+        try   : self.tablew(column, row, self.hat_name, value, rus_list[self.table_used])
+        except: self.tablew(column, row, self.hat_name, value)
 
         new_addrow_Button = QPushButton('Добавить строку', self)
         new_addrow_Button.setStyleSheet("background: #bfd6bf; border-radius: 4px; border: 1px solid")
@@ -485,6 +528,7 @@ class Window_update_sql(QWidget):
 
         self.req_base = QLineEdit(self, placeholderText='Введите запрос к текущей таблице', clearButtonEnabled=True)
         self.req_base.setStyleSheet('border: 1px solid #6f7370; border-radius: 4px; border: 1px solid')
+        self.req_base.setToolTip('Значения типа "string" обязательно брать в "ковычки"')
         self.req_base.move(750, 8)
         self.req_base.resize(820,25)
         apply_query_Button = QPushButton('Применить запрос', self)
@@ -610,7 +654,8 @@ class Window_update_sql(QWidget):
                 self.TableWidget.removeRow(rowcount)
                 rowcount -= 1
         # Filling
-        self.tablew(column, row, hat_name, value)
+        try   : self.tablew(column, row, hat_name, value, rus_list[self.table_used])
+        except: self.tablew(column, row, hat_name, value)
         #SELECT * FROM ai WHERE uso='МНС-2.КЦ' AND basket=3 AND module=3 AND channel=1
     # Reset a table query
     def reset_database_query(self):
@@ -621,10 +666,12 @@ class Window_update_sql(QWidget):
                 rowcount -= 1
 
         column, row, self.hat_name, value = self.edit_SQL.editing_sql(self.table_used)
-        self.tablew(column, row, self.hat_name, value)
+
+        try   : self.tablew(column, row, self.hat_name, value, rus_list[self.table_used])
+        except: self.tablew(column, row, self.hat_name, value)
 
     # Building the selected table
-    def tablew(self, column, row, hat_name, value):
+    def tablew(self, column, row, hat_name, value, column_tooltip=None):
         # TableW
         self.TableWidget.setColumnCount(column)
         self.TableWidget.setRowCount(row)
@@ -632,6 +679,11 @@ class Window_update_sql(QWidget):
         # Color header
         style = "::section {""background-color: #bbbabf; }"
         self.TableWidget.horizontalHeader().setStyleSheet(style)
+        # Подсказки к столбцам
+        if column_tooltip is not None:
+            for col in range(self.TableWidget.columnCount()):
+                self.TableWidget.horizontalHeaderItem(col).setToolTip(column_tooltip[col])
+
         # Разрешить щелчок правой кнопкой мыши для создания меню
         #self.TableWidget.setContextMenuPolicy(Qt.CustomContextMenu)
         self.TableWidget.verticalHeader().setVisible(False)
