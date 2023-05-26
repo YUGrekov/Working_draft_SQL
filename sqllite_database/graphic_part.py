@@ -410,8 +410,8 @@ class Window_Filling_tables(QWidget):
         di_table = Filling_DI()
         msg = di_table.column_check()
         self.logs_msg('default', 1, msg, True)
-        #msg = di_table.getting_modul()
-        #self.logs_msg('default', 1, msg, True)
+        msg = di_table.getting_modul()
+        self.logs_msg('default', 1, msg, True)
     def clear_di_tabl(self):
         msg = self.dop_function.clear_tabl('di', 'DI', self.list_tabl)
         self.logs_msg('default', 1, msg, True)
