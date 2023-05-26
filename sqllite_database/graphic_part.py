@@ -372,6 +372,21 @@ class Window_Filling_tables(QWidget):
         b_clear_di.resize(80,23)
         b_clear_di.move(b_width_two, b_height + 90) 
         b_clear_di.clicked.connect(self.clear_di_tabl)
+        # USO
+        l_uso = QLabel('USO:', self)
+        l_uso.move(10, l_height + 135)
+        b_uso_basket = QPushButton('Заполнить', self)
+        b_uso_basket.setStyleSheet("background: #bfd6bf; border-radius: 4px; border: 1px solid")
+        b_uso_basket.setToolTip("Заполнить таблицу USO")
+        b_uso_basket.resize(80,23)
+        b_uso_basket.move(b_width_one, b_height + 135) 
+        b_uso_basket.clicked.connect(self.filling_uso)
+        b_clear_uso = QPushButton('Очистить', self)
+        b_clear_uso.setStyleSheet("background: #bbbabf; border-radius: 4px; border: 1px solid")
+        b_clear_uso.setToolTip("Очистить таблицу USO")
+        b_clear_uso.resize(80,23)
+        b_clear_uso.move(b_width_two, b_height + 135) 
+        b_clear_uso.clicked.connect(self.clear_uso_tabl)
         # Logs
         self.logTextBox = QTextEdit(self)
         self.logTextBox.setStyleSheet("border-radius: 4px; border: 1px solid")
@@ -414,6 +429,17 @@ class Window_Filling_tables(QWidget):
         self.logs_msg('default', 1, msg, True)
     def clear_di_tabl(self):
         msg = self.dop_function.clear_tabl('di', 'DI', self.list_tabl)
+        self.logs_msg('default', 1, msg, True)
+     # DI
+    # USO
+    def filling_uso(self):
+        uso_table = Filling_USO()
+        msg = uso_table.column_check()
+        self.logs_msg('default', 1, msg, True)
+        msg = uso_table.getting_modul()
+        self.logs_msg('default', 1, msg, True)
+    def clear_uso_tabl(self):
+        msg = self.dop_function.clear_tabl('uso', 'USO', self.list_tabl)
         self.logs_msg('default', 1, msg, True)
     # Logging messeges
     def logs_msg(self, logs=None, number_color=1, buffer_msg=None, msg=False):

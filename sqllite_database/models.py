@@ -46,6 +46,11 @@ rus_list = {'signals': ['№', 'Тип сигнала', 'Шкаф', 'Идент�
                          'Тип модуля 24', 'Переменная модуля 24', 'Тип модуля 25', 'Переменная модуля 25', 'Тип модуля 26', 'Переменная модуля 26',
                          'Тип модуля 27', 'Переменная модуля 27', 'Тип модуля 28', 'Переменная модуля 28', 'Тип модуля 29', 'Переменная модуля 29',
                          'Тип модуля 30', 'Переменная модуля 30', 'Тип модуля 31', 'Переменная модуля 31', 'Тип модуля 32', 'Переменная модуля 32'],
+            'uso': ['№', 'Переменная', 'Идентификатор\n(не генерится!)', 'Название', 'Температура', 
+                         'Сигнал 1', 'Сигнал 2', 'Сигнал 3', 'Сигнал 4', 'Сигнал 5', 'Сигнал 6', 'Сигнал 7', 'Сигнал 8',
+                         'Сигнал 9', 'Сигнал 10', 'Сигнал 11', 'Сигнал 12', 'Сигнал 13', 'Сигнал 14', 'Сигнал 15', 'Сигнал 16',
+                         'Сигнал 17', 'Сигнал 18', 'Сигнал 19', 'Сигнал 20', 'Сигнал 21', 'Сигнал 22', 'Сигнал 23', 'Сигнал 24',
+                         'Сигнал 25', 'Сигнал 26', 'Сигнал 27', 'Сигнал 28', 'Сигнал 29', 'Сигнал 30', 'Сигнал 31', 'Сигнал 32'],
                          
                 }
 class Signals(BaseModel):
@@ -247,3 +252,43 @@ class DI(BaseModel):
     
     class Meta:
         table_name = 'di'
+class USO(BaseModel):
+    variable = CharField(null = True)
+    tag  = CharField(null = True)
+    name = CharField(null = True)
+    temperature  = CharField(null = True)
+    signal_1 = CharField(null = True)
+    signal_2 = CharField(null = True)
+    signal_3 = CharField(null = True)
+    signal_4 = CharField(null = True)
+    signal_5 = CharField(null = True)
+    signal_6 = CharField(null = True)
+    signal_7 = CharField(null = True)
+    signal_8 = CharField(null = True)
+    signal_9 = CharField(null = True)
+    signal_10 = CharField(null = True)
+    signal_11 = CharField(null = True)
+    signal_12 = CharField(null = True)
+    signal_13 = CharField(null = True)
+    signal_14 = CharField(null = True)
+    signal_15 = CharField(null = True)
+    signal_16 = CharField(null = True)
+    signal_17 = CharField(null = True)
+    signal_18 = CharField(null = True)
+    signal_19 = CharField(null = True)
+    signal_20 = CharField(null = True)
+    signal_21 = CharField(null = True)
+    signal_22 = CharField(null = True)
+    signal_23 = CharField(null = True)
+    signal_24 = CharField(null = True)
+    signal_25 = CharField(null = True)
+    signal_26 = CharField(null = True)
+    signal_27 = CharField(null = True)
+    signal_28 = CharField(null = True)
+    signal_29 = CharField(null = True)
+    signal_30 = CharField(null = True)
+    signal_31 = CharField(null = True)
+    signal_32 = CharField(null = True)
+
+    class Meta:
+        table_name = 'uso'
