@@ -325,7 +325,7 @@ class Window_Filling_tables(QWidget):
         # HardWare
         self.kk_is_true = False
         l_hw = QLabel('HardWare:', self)
-        l_hw.move(10, l_height)
+        l_hw.move(b_width_one + 2, l_height)
         b_io_basket = QPushButton('Заполнить', self)
         b_io_basket.setStyleSheet("background: #bfd6bf; border-radius: 4px; border: 1px solid")
         b_io_basket.setToolTip("Заполнить таблицу HardWare")
@@ -342,9 +342,24 @@ class Window_Filling_tables(QWidget):
         c_kk_is_true.setToolTip("Добавить в диагостику проекта коммуникационные контроллеры")
         c_kk_is_true.move(70, 2) 
         c_kk_is_true.stateChanged.connect(self.kk_check)
+        # USO
+        l_uso = QLabel('USO:', self)
+        l_uso.move(b_width_one + 182, l_height)
+        b_uso_basket = QPushButton('Заполнить', self)
+        b_uso_basket.setStyleSheet("background: #bfd6bf; border-radius: 4px; border: 1px solid")
+        b_uso_basket.setToolTip("Сначала должны быть заполнены таблицы AI и DI")
+        b_uso_basket.resize(80,23)
+        b_uso_basket.move(b_width_one + 180, b_height) 
+        b_uso_basket.clicked.connect(self.filling_uso)
+        b_clear_uso = QPushButton('Очистить', self)
+        b_clear_uso.setStyleSheet("background: #bbbabf; border-radius: 4px; border: 1px solid")
+        b_clear_uso.setToolTip("Очистить таблицу USO")
+        b_clear_uso.resize(80,23)
+        b_clear_uso.move(b_width_two + 180, b_height) 
+        b_clear_uso.clicked.connect(self.clear_uso_tabl)
         # AI
         l_ai = QLabel('AI:', self)
-        l_ai.move(10, l_height + 45)
+        l_ai.move(b_width_one + 2, l_height + 45)
         b_ai_basket = QPushButton('Заполнить', self)
         b_ai_basket.setStyleSheet("background: #bfd6bf; border-radius: 4px; border: 1px solid")
         b_ai_basket.setToolTip("Заполнить таблицу AI")
@@ -357,9 +372,24 @@ class Window_Filling_tables(QWidget):
         b_clear_ai.resize(80,23)
         b_clear_ai.move(b_width_two, b_height + 45) 
         b_clear_ai.clicked.connect(self.clear_ai_tabl)
+        # AO
+        l_ao = QLabel('AO:', self)
+        l_ao.move(b_width_one + 182, l_height + 45)
+        b_ao_basket = QPushButton('Заполнить', self)
+        b_ao_basket.setStyleSheet("background: #bfd6bf; border-radius: 4px; border: 1px solid")
+        b_ao_basket.setToolTip("Заполнить таблицу AO")
+        b_ao_basket.resize(80,23)
+        b_ao_basket.move(b_width_one + 180, b_height + 45) 
+        b_ao_basket.clicked.connect(self.filling_ao)
+        b_clear_ao = QPushButton('Очистить', self)
+        b_clear_ao.setStyleSheet("background: #bbbabf; border-radius: 4px; border: 1px solid")
+        b_clear_ao.setToolTip("Очистить таблицу AO")
+        b_clear_ao.resize(80,23)
+        b_clear_ao.move(b_width_two + 180, b_height + 45) 
+        b_clear_ao.clicked.connect(self.clear_ao_tabl)
         # DI
         l_di = QLabel('DI:', self)
-        l_di.move(10, l_height + 90)
+        l_di.move(b_width_one + 2, l_height + 90)
         b_di_basket = QPushButton('Заполнить', self)
         b_di_basket.setStyleSheet("background: #bfd6bf; border-radius: 4px; border: 1px solid")
         b_di_basket.setToolTip("Заполнить таблицу DI")
@@ -372,21 +402,21 @@ class Window_Filling_tables(QWidget):
         b_clear_di.resize(80,23)
         b_clear_di.move(b_width_two, b_height + 90) 
         b_clear_di.clicked.connect(self.clear_di_tabl)
-        # USO
-        l_uso = QLabel('USO:', self)
-        l_uso.move(10, l_height + 135)
-        b_uso_basket = QPushButton('Заполнить', self)
-        b_uso_basket.setStyleSheet("background: #bfd6bf; border-radius: 4px; border: 1px solid")
-        b_uso_basket.setToolTip("Заполнить таблицу USO")
-        b_uso_basket.resize(80,23)
-        b_uso_basket.move(b_width_one, b_height + 135) 
-        b_uso_basket.clicked.connect(self.filling_uso)
-        b_clear_uso = QPushButton('Очистить', self)
-        b_clear_uso.setStyleSheet("background: #bbbabf; border-radius: 4px; border: 1px solid")
-        b_clear_uso.setToolTip("Очистить таблицу USO")
-        b_clear_uso.resize(80,23)
-        b_clear_uso.move(b_width_two, b_height + 135) 
-        b_clear_uso.clicked.connect(self.clear_uso_tabl)
+        # DO
+        l_do = QLabel('DO:', self)
+        l_do.move(b_width_one + 182, l_height + 90)
+        b_do_basket = QPushButton('Заполнить', self)
+        b_do_basket.setStyleSheet("background: #bfd6bf; border-radius: 4px; border: 1px solid")
+        b_do_basket.setToolTip("Заполнить таблицу DO")
+        b_do_basket.resize(80,23)
+        b_do_basket.move(b_width_one + 180, b_height + 90) 
+        b_do_basket.clicked.connect(self.filling_do)
+        b_clear_do = QPushButton('Очистить', self)
+        b_clear_do.setStyleSheet("background: #bbbabf; border-radius: 4px; border: 1px solid")
+        b_clear_do.setToolTip("Очистить таблицу DO")
+        b_clear_do.resize(80,23)
+        b_clear_do.move(b_width_two + 180, b_height + 90) 
+        b_clear_do.clicked.connect(self.clear_do_tabl)
         # Logs
         self.logTextBox = QTextEdit(self)
         self.logTextBox.setStyleSheet("border-radius: 4px; border: 1px solid")
@@ -410,6 +440,16 @@ class Window_Filling_tables(QWidget):
         self.logs_msg('default', 1, msg, True)
         msg = hw_table.getting_modul(self.kk_is_true)
         self.logs_msg('default', 1, msg, True)
+    # USO
+    def filling_uso(self):
+        uso_table = Filling_USO()
+        msg = uso_table.column_check()
+        self.logs_msg('default', 1, msg, True)
+        msg = uso_table.getting_modul()
+        self.logs_msg('default', 1, msg, True)
+    def clear_uso_tabl(self):
+        msg = self.dop_function.clear_tabl('uso', 'USO', self.list_tabl)
+        self.logs_msg('default', 1, msg, True)
     # AI
     def filling_ai(self):
         ai_table = Filling_AI()
@@ -419,6 +459,16 @@ class Window_Filling_tables(QWidget):
         self.logs_msg('default', 1, msg, True)
     def clear_ai_tabl(self):
         msg = self.dop_function.clear_tabl('ai', 'AI', self.list_tabl)
+        self.logs_msg('default', 1, msg, True)
+    # AO
+    def filling_ao(self):
+        ao_table = Filling_AO()
+        msg = ao_table.column_check()
+        self.logs_msg('default', 1, msg, True)
+        msg = ao_table.getting_modul()
+        self.logs_msg('default', 1, msg, True)
+    def clear_ao_tabl(self):
+        msg = self.dop_function.clear_tabl('ao', 'AO', self.list_tabl)
         self.logs_msg('default', 1, msg, True)
     # DI
     def filling_di(self):
@@ -430,16 +480,15 @@ class Window_Filling_tables(QWidget):
     def clear_di_tabl(self):
         msg = self.dop_function.clear_tabl('di', 'DI', self.list_tabl)
         self.logs_msg('default', 1, msg, True)
-     # DI
-    # USO
-    def filling_uso(self):
-        uso_table = Filling_USO()
-        msg = uso_table.column_check()
+    # DO
+    def filling_do(self):
+        do_table = Filling_DO()
+        msg = do_table.column_check()
         self.logs_msg('default', 1, msg, True)
-        msg = uso_table.getting_modul()
+        msg = do_table.getting_modul()
         self.logs_msg('default', 1, msg, True)
-    def clear_uso_tabl(self):
-        msg = self.dop_function.clear_tabl('uso', 'USO', self.list_tabl)
+    def clear_do_tabl(self):
+        msg = self.dop_function.clear_tabl('do', 'DO', self.list_tabl)
         self.logs_msg('default', 1, msg, True)
     # Logging messeges
     def logs_msg(self, logs=None, number_color=1, buffer_msg=None, msg=False):
@@ -494,6 +543,7 @@ class Window_tabl_checkbox(QWidget):
         name_table = self.combo.currentText()
         self.ch_tabl = Window_update_sql(name_table)
         self.ch_tabl.show()
+        self.close()
 class Window_update_sql(QWidget):
     def __init__(self, table_used):
         super(Window_update_sql, self).__init__()
@@ -549,8 +599,14 @@ class Window_update_sql(QWidget):
         cleartab_Button = QPushButton('Очистить таблицу', self)
         cleartab_Button.setStyleSheet("background: #bbbabf; border-radius: 4px; border: 1px solid")
         cleartab_Button.resize(120,25)
-        cleartab_Button.move(450, 8) 
+        cleartab_Button.move(470, 8) 
         cleartab_Button.clicked.connect(self.clear_tabl)
+
+        droptab_Button = QPushButton('Удалить таблицу', self)
+        droptab_Button.setStyleSheet("background: #bbbabf; border-radius: 4px; border: 1px solid")
+        droptab_Button.resize(120,25)
+        droptab_Button.move(470, 40) 
+        droptab_Button.clicked.connect(self.drop_tabl)
 
         self.req_base = QLineEdit(self, placeholderText='Введите запрос к текущей таблице', clearButtonEnabled=True)
         self.req_base.setStyleSheet('border: 1px solid #6f7370; border-radius: 4px; border: 1px solid')
@@ -593,6 +649,12 @@ class Window_update_sql(QWidget):
         self.edit_SQL.clear_tabl(self.table_used)
          # Logs
         self.logs_msg(f'Таблица: {self.table_used} полностью очищена!', 3)
+    # Drop the table
+    def drop_tabl(self):
+        self.close()
+        self.edit_SQL.drop_tabl(self.table_used)
+
+
     # Adding new lines
     def add_row(self):  
         rowPos = self.TableWidget.rowCount()
@@ -723,6 +785,7 @@ class Window_update_sql(QWidget):
                     item = QTableWidgetItem('')
                 else:
                     item = QTableWidgetItem(str(value[row_t][column_t]))
+                    item.setToolTip(str(value[row_t][column_t]))
 
                 if column_t == 0: item.setFlags(Qt.ItemIsEnabled)
      
