@@ -311,7 +311,7 @@ class Window_Filling_tables(QWidget):
         super(Window_Filling_tables, self).__init__()
         self.setWindowTitle('Заполнение таблиц базы данных')
         self.setStyleSheet("background-color: #e1e5e5;")
-        self.resize(600, 295)
+        self.resize(900, 295)
         self.dop_function = general_functions()
 
         self.edit_SQL = Editing_table_SQL()
@@ -417,7 +417,7 @@ class Window_Filling_tables(QWidget):
         b_clear_do.resize(80,23)
         b_clear_do.move(b_width_two + 180, b_height + 90) 
         b_clear_do.clicked.connect(self.clear_do_tabl)
-         # KTPR
+        # KTPR
         l_ktpr = QLabel('KTPR:', self)
         l_ktpr.move(b_width_one + 364, l_height)
         b_ktpr_basket = QPushButton('Подготовить', self)
@@ -477,10 +477,40 @@ class Window_Filling_tables(QWidget):
         b_clear_gmpna.resize(80,23)
         b_clear_gmpna.move(b_width_two + 360, b_height + 135) 
         b_clear_gmpna.clicked.connect(self.clear_gmpna_tabl)
+        # UMPNA
+        l_umpna = QLabel('UMPNA:', self)
+        l_umpna.move(b_width_one + 546, l_height)
+        b_umpna_basket = QPushButton('Заполнить', self)
+        b_umpna_basket.setStyleSheet("background: #bfd6bf; border-radius: 4px; border: 1px solid")
+        b_umpna_basket.setToolTip('Заполнить таблицу Насосные агрегаты(UMPNA')
+        b_umpna_basket.resize(80,23)
+        b_umpna_basket.move(b_width_one + 540, b_height) 
+        b_umpna_basket.clicked.connect(self.filling_umpna)
+        b_clear_umpna = QPushButton('Очистить', self)
+        b_clear_umpna.setStyleSheet("background: #bbbabf; border-radius: 4px; border: 1px solid")
+        b_clear_umpna.setToolTip("Очистить таблицу Насосные агрегаты(UMPNA)")
+        b_clear_umpna.resize(80,23)
+        b_clear_umpna.move(b_width_two + 540, b_height) 
+        b_clear_umpna.clicked.connect(self.clear_umpna_tabl)
+        # tmNA_UMPNA
+        l_tm_umpna = QLabel('tmNA_UMPNA:', self)
+        l_tm_umpna.move(b_width_one + 728, l_height)
+        b_tm_umpna_basket = QPushButton('Заполнить', self)
+        b_tm_umpna_basket.setStyleSheet("background: #bfd6bf; border-radius: 4px; border: 1px solid")
+        b_tm_umpna_basket.setToolTip('Заполнить таблицу Временные уставки НА')
+        b_tm_umpna_basket.resize(80,23)
+        b_tm_umpna_basket.move(b_width_one + 720, b_height) 
+        b_tm_umpna_basket.clicked.connect(self.filling_umpna)
+        b_clear_tm_umpna = QPushButton('Очистить', self)
+        b_clear_tm_umpna.setStyleSheet("background: #bbbabf; border-radius: 4px; border: 1px solid")
+        b_clear_tm_umpna.setToolTip("Очистить таблицу Временные уставки НА")
+        b_clear_tm_umpna.resize(80,23)
+        b_clear_tm_umpna.move(b_width_two + 720, b_height) 
+        b_clear_tm_umpna.clicked.connect(self.clear_umpna_tabl)
         # Logs
         self.logTextBox = QTextEdit(self)
         self.logTextBox.setStyleSheet("border-radius: 4px; border: 1px solid")
-        self.logTextBox.setGeometry(10,200,580,85)
+        self.logTextBox.setGeometry(10,200,880,85)
         self.logTextBox.setReadOnly(True)
         self.logs_msg(f'Запущена форма заполнения таблиц базы данных', 1)
     # HardWare
@@ -589,6 +619,16 @@ class Window_Filling_tables(QWidget):
         self.logs_msg('default', 1, msg, True)
     def clear_gmpna_tabl(self):
         msg = self.dop_function.clear_tabl('gmpna', 'GMPNA', self.list_tabl)
+        self.logs_msg('default', 1, msg, True)
+    # UMPNA
+    def filling_umpna(self):
+        umpna_table = Filling_UMPNA()
+        msg = umpna_table.column_check()
+        self.logs_msg('default', 1, msg, True)
+        msg = umpna_table.getting_modul()
+        self.logs_msg('default', 1, msg, True)
+    def clear_umpna_tabl(self):
+        msg = self.dop_function.clear_tabl('umpna', 'UMPNA', self.list_tabl)
         self.logs_msg('default', 1, msg, True)
     # Logging messeges
     def logs_msg(self, logs=None, number_color=1, buffer_msg=None, msg=False):

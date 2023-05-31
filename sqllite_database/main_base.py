@@ -1358,7 +1358,125 @@ class Filling_GMPNA():
         msg = self.dop_function.column_check(GMPNA, 'gmpna', list_default)
         return msg 
 
+# Work with filling in the table 'UMPNA'
+class Filling_UMPNA():
+    def __init__(self):
+        self.cursor   = db.cursor()
+        self.dop_function = general_functions()
+    # Получаем данные с таблицы Signals 
+    def getting_modul(self):
+        msg = {}
+        list_DO = []
+        count_DO = 0
+        with db:
+            if self.dop_function.empty_table('signals'): 
+                msg[f'{today} - Таблица: Signals пустая! Заполни таблицу!'] = 2
+                return msg
+            
+            for row_sql in Signals.select().dicts():
+                id_s       = row_sql['id'] 
+                uso_s       = row_sql['uso']    
+                tag         = row_sql['tag']
+                description = str(row_sql['description']).replace('"', '').replace("'", '')
+                type_signal = row_sql['type_signal']
+                scheme      = row_sql['schema']
+                basket_s    = row_sql['basket']
+                module_s    = row_sql['module']
+                channel_s   = row_sql['channel']
 
+                if self.dop_function.str_find(type_signal, {'DO'}) or self.dop_function.str_find(scheme, {'DO'}):
+                    count_DO += 1
+                    # Выбор между полным заполнением или обновлением
+                    empty = self.cursor.execute('SELECT COUNT(*) FROM do')
+                    if int(empty.fetchall()[0][0]) == 0:
+                        msg[f'{today} - Таблица: DO пуста, идет заполнение'] = 1
+                    else:
+                        msg[f'{today} - Таблица: DO не пуста, идет обновление'] = 1
+
+                    coincidence = DO.select().where(DO.uso     == uso_s,
+                                                    DO.basket  == basket_s,
+                                                    DO.module  == module_s,
+                                                    DO.channel == channel_s)
+                    if bool(coincidence):
+                        exist_tag  = DO.select().where(DO.tag == tag)
+                        exist_name = DO.select().where(DO.name == description)
+
+                        if not bool(exist_tag):
+                            select_tag = self.cursor.execute(f'''SELECT id, tag 
+                                                                 FROM do
+                                                                 WHERE uso='{uso_s}' AND 
+                                                                       basket={basket_s} AND 
+                                                                       module={module_s} AND 
+                                                                       channel={channel_s}''')
+                            for id_, tag_ in select_tag.fetchall():
+                                msg[f'{today} - Таблица: DO, у сигнала обновлен tag: id = {id_}, ({tag_}) {tag}'] = 2
+                            self.cursor.execute(f'''UPDATE do
+                                                    SET tag='{tag}' 
+                                                    WHERE uso='{uso_s}' AND 
+                                                          basket={basket_s} AND 
+                                                          module={module_s} AND 
+                                                          channel={channel_s}''')
+    
+                        if not bool(exist_name):
+                            select_name = self.cursor.execute(f'''SELECT id, name 
+                                                                  FROM do
+                                                                  WHERE uso='{uso_s}' AND 
+                                                                        basket={basket_s} AND 
+                                                                        module={module_s} AND 
+                                                                        channel={channel_s}''')
+                            for id_, name_ in select_name.fetchall():
+                                msg[f'{today} - Таблица: DO, у сигнала обновлен name: id = {id_}, ({name_}) {description}'] = 2
+                            self.cursor.execute(f'''UPDATE do
+                                                    SET name='{description}' 
+                                                    WHERE uso='{uso_s}' AND 
+                                                          basket={basket_s} AND 
+                                                          module={module_s} AND 
+                                                          channel={channel_s}''')
+                        continue
+
+                    # Сквозной номер модуля
+                    for through_module_number in HardWare.select().dicts():
+                        tag_h    = through_module_number['tag']
+                        uso_h    = through_module_number['uso']
+                        basket_h = through_module_number['basket']
+
+                        if uso_s == uso_h and basket_s == basket_h:
+                            type_mod = through_module_number[f'variable_{module_s}']
+                            isdigit_num  = re.findall('\d+', str(type_mod))
+
+                            try   : isdigit_num = isdigit_num[0]
+                            except: 
+                                isdigit_num = ''
+                                msg[f'{today} - В таблице HardWare не найден модуль сигнала: {id_s}, {tag}, {description}, {uso_s}_A{basket_s}_{module_s}_{channel_s}, "pValue" не заполнен'] = 2
+                            break
+
+                    if module_s < 10: prefix = f'0{module_s}' 
+                    else            : prefix = f'{module_s}'
+
+                    list_DO.append(dict(variable = f'DO[{count_DO}]',
+                                        tag = tag,
+                                        name = description,
+                                        pValue = f'{tag_h}_{prefix}_DO[{channel_s}]',
+                                        pHealth = f'mDO_HEALTH[{str(isdigit_num)}]',
+                                        short_title = description,
+                                        uso = uso_s, basket = basket_s, module = module_s, channel = channel_s,
+                                        AlphaHMI = '', AlphaHMI_PIC1 = '', AlphaHMI_PIC1_Number_kont = '', AlphaHMI_PIC2 = '', 
+                                        AlphaHMI_PIC2_Number_kont = '', AlphaHMI_PIC3 = '', AlphaHMI_PIC3_Number_kont = '', 
+                                        AlphaHMI_PIC4 = '', AlphaHMI_PIC4_Number_kont = ''))
+
+            # Checking for the existence of a database
+            DO.insert_many(list_DO).execute()
+
+        msg[f'{today} - Таблица: DO заполнена'] = 1
+        return(msg)
+    # Заполняем таблицу UMPNA
+    def column_check(self):
+        list_default = ['variable', 'tag', 'name', 'pValue', 'pHealth', 'short_title', 'uso', 'basket', 'module', 'channel', 
+                        'AlphaHMI', 'AlphaHMI_PIC1', 'AlphaHMI_PIC1_Number_kont', 'AlphaHMI_PIC2',
+                        'AlphaHMI_PIC2_Number_kont','AlphaHMI_PIC3', 'AlphaHMI_PIC3_Number_kont', 
+                        'AlphaHMI_PIC4', 'AlphaHMI_PIC4_Number_kont']
+        msg = self.dop_function.column_check(DO, 'do', list_default)
+        return msg 
 # Changing tables SQL
 class Editing_table_SQL():
     def __init__(self):
