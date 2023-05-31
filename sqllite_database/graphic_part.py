@@ -420,7 +420,7 @@ class Window_Filling_tables(QWidget):
          # KTPR
         l_ktpr = QLabel('KTPR:', self)
         l_ktpr.move(b_width_one + 364, l_height)
-        b_ktpr_basket = QPushButton('Заполнить', self)
+        b_ktpr_basket = QPushButton('Подготовить', self)
         b_ktpr_basket.setStyleSheet("background: #bfd6bf; border-radius: 4px; border: 1px solid")
         b_ktpr_basket.setToolTip('Сформировать таблицу Станционные защиты')
         b_ktpr_basket.resize(80,23)
@@ -435,7 +435,7 @@ class Window_Filling_tables(QWidget):
         # KTPRA
         l_ktpra = QLabel('KTPRA:', self)
         l_ktpra.move(b_width_one + 364, l_height + 45)
-        b_ktpra_basket = QPushButton('Заполнить', self)
+        b_ktpra_basket = QPushButton('Подготовить', self)
         b_ktpra_basket.setStyleSheet("background: #bfd6bf; border-radius: 4px; border: 1px solid")
         b_ktpra_basket.setToolTip('Сформировать таблицу Агрегатные защиты')
         b_ktpra_basket.resize(80,23)
@@ -450,7 +450,7 @@ class Window_Filling_tables(QWidget):
         # KTPRS
         l_ktprs = QLabel('KTPRS:', self)
         l_ktprs.move(b_width_one + 364, l_height + 90)
-        b_ktprs_basket = QPushButton('Заполнить', self)
+        b_ktprs_basket = QPushButton('Подготовить', self)
         b_ktprs_basket.setStyleSheet("background: #bfd6bf; border-radius: 4px; border: 1px solid")
         b_ktprs_basket.setToolTip('Сформировать таблицу Предельные параметры')
         b_ktprs_basket.resize(80,23)
@@ -465,7 +465,7 @@ class Window_Filling_tables(QWidget):
         # GMPNA
         l_gmpna = QLabel('GMPNA:', self)
         l_gmpna.move(b_width_one + 364, l_height + 135)
-        b_gmpna_basket = QPushButton('Заполнить', self)
+        b_gmpna_basket = QPushButton('Подготовить', self)
         b_gmpna_basket.setStyleSheet("background: #bfd6bf; border-radius: 4px; border: 1px solid")
         b_gmpna_basket.setToolTip('Сформировать таблицу Агрегатные готовности')
         b_gmpna_basket.resize(80,23)
@@ -476,7 +476,7 @@ class Window_Filling_tables(QWidget):
         b_clear_gmpna.setToolTip("Очистить таблицу GMPNA")
         b_clear_gmpna.resize(80,23)
         b_clear_gmpna.move(b_width_two + 360, b_height + 135) 
-        b_clear_ktprs.clicked.connect(self.clear_gmpna_tabl)
+        b_clear_gmpna.clicked.connect(self.clear_gmpna_tabl)
         # Logs
         self.logTextBox = QTextEdit(self)
         self.logTextBox.setStyleSheet("border-radius: 4px; border: 1px solid")
