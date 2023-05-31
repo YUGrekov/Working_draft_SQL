@@ -1125,19 +1125,87 @@ class Filling_KTPR():
     def getting_modul(self):
         msg = {}
         list_KTPR = []
-        count_DO = 0
         with db:
-            for i in 
-            list_KTPR.append(dict(variable = f'KTPR[{}]',
-                                  tag = '',
-                                  name = '',
-                                  PIC = '',
-                                    pHealth = f'mDO_HEALTH[{str(isdigit_num)}]',
-                                    short_title = description,
-                                    uso = uso_s, basket = basket_s, module = module_s, channel = channel_s,
-                                    AlphaHMI = '', AlphaHMI_PIC1 = '', AlphaHMI_PIC1_Number_kont = '', AlphaHMI_PIC2 = '', 
-                                    AlphaHMI_PIC2_Number_kont = '', AlphaHMI_PIC3 = '', AlphaHMI_PIC3_Number_kont = '', 
-                                    AlphaHMI_PIC4 = '', AlphaHMI_PIC4_Number_kont = ''))
+            for i in range(1, 97):
+                list_KTPR.append(dict(variable = f'KTPR[{i}]',
+                                      tag = '',
+                                      name = 'Резерв',
+                                      avar_parameter = '',
+                                      prohibition_masking = '',
+                                      auto_unlock_protection = '',
+                                      shutdown_PNS_a_time_delay_up_5s_after_turning_off_all_NA = '',
+                                      bitmask_protection_group_membership = '',
+                                      stop_type_NA = '',
+                                      pump_station_stop_type = '',
+                                      closing_gate_valves_at_the_inlet_NPS = '',
+                                      closing_gate_valves_at_the_outlet_NPS = '',
+                                      closing_gate_valves_between_PNS_and_MNS = '',
+                                      closing_gate_valves_between_RP_and_PNS = '',
+                                      closing_valves_inlet_and_outlet_MNS = '',
+                                      closing_valves_inlet_and_outlet_PNS = '',
+                                      closing_valves_inlet_and_outlet_MNA = '',
+                                      closing_valves_inlet_and_outlet_PNA = '',
+                                      closing_valves_inlet_RD = '',
+                                      closing_valves_outlet_RD = '',
+                                      closing_valves_inlet_SSVD = '',
+                                      closing_valves_inlet_FGU = '',
+                                      closing_secant_valve_connection_unit__oil_production_oil_refining_facility = '',
+                                      closing_valves_inlet_RP = '',
+                                      reserve_protect_14 = '',
+                                      reserve_protect_15 = '',
+                                      shutdown_oil_pumps_after_signal_stopped_NA = '',
+                                      shutdown_circulating_water_pumps = '',
+                                      shutdown_pumps_pumping_out_from_tanks_collection_of_leaks_MNS = '',
+                                      shutdown_pumps_pumping_out_from_tanks_collection_of_leaks_PNS = '',
+                                      shutdown_pumps_pumping_out_from_tanks_SSVD = '',
+                                      switching_off_the_electric_room_fans = '',
+                                      shutdown_of_booster_fans_ED = '',
+                                      shutdown_of_retaining_fans_of_the_electrical_room = '',
+                                      shutdown_of_ED_air_compressors = '',
+                                      shutdown_pumps_providing_oil_oil_product_pumping_from_oil_production_oil_refining_facilities = '',
+                                      disabling_pumps_for_pumping_oil_oil_products_through_BIC = '',
+                                      shutdown_domestic_and_drinking_water_pumps = '',
+                                      shutdown_of_art_well_pumps = '',
+                                      AVO_shutdown = '',
+                                      shutdown_of_water_cooling_fans_circulating_water_supply_system = '',
+                                      shutdown_exhaust_fans_of_the_pumping_room_of_the_MNS = '',
+                                      shutdown_of_exhaust_fans_of_the_pumping_room_PNS = '',
+                                      shutdown_of_exhaust_fans_in_the_centralized_oil_system_room = '',
+                                      shutdown_of_exhaust_fans_oil_pit_in_the_electrical_room = '',
+                                      shutdown_of_exhaust_fans_in_the_RD_room = '',
+                                      shutdown_of_exhaust_fans_in_the_SSVD_room = '',
+                                      shutdown_of_the_roof_fans_of_the_MNS_pump_room = '',
+                                      shutdown_of_the_roof_fans_of_the_PNS_pump_room = '',
+                                      switching_off_the_supply_fans_pumping_room_of_the_MNS_and_closing_the_fire_dampers = '',
+                                      switching_off_the_supply_fans_pumping_room_of_the_PNS_and_closing_the_fire_dampers = '',
+                                      switch_off_the_supply_fans_in_the_centralized_oil_system_room_and_close_the_fire_dampers = '',
+                                      switching_off_the_supply_fan_of_the_RD_room = '',
+                                      switching_off_the_supply_fan_of_the_SSVD_room = '',
+                                      switching_off_the_supply_fans_of_the_ED_air_compressor_room_and_closing_the_fire_dampers = '',
+                                      switching_off_the_supply_fan_of_the_BIK_room = '',
+                                      switching_off_the_supply_fan_of_the_SIKN_room = '',  
+                                      closing_the_air_valves_louvered_grilles_of_the_pump_room = '',
+                                      closing_of_air_valves_louvered_grilles_of_the_compressor_room_of_the_ED_air_overpressure = '',
+                                      shutdown_of_electric_oil_heaters = '',
+                                      shutdown_of_the_electric_heaters_of_the_leakage_collection_tank_MNS = '',
+                                      shutdown_of_the_electric_heaters_of_the_leakage_collection_tank_PNS = '',
+                                      shutdown_of_electric_heaters_of_the_SIKN_leak_collection_tank = '',
+                                      shutdown_of_air_coolers_of_the_locking_system_of_mechanical_seals_of_all_MNA = '',
+                                      shutdown_of_air_coolers_of_the_locking_system_of_mechanical_seals_disconnected_NA = '',
+                                      shutdown_of_the_external_cooling_circuit_ChRP_MNA = '',
+                                      shutdown_of_the_external_cooling_circuit_ChRP_PNA = '',
+                                      shutdown_of_locking_system_pumps = '',
+                                      shutdown_of_pumps_for_pumping_oil_oil_products_through_the_operational_BIK = '',
+                                      shutdown_of_pumping_pumps_from_leakage_collection_tanks_of_all_SIKN = '',
+                                      shutdown_of_anticondensation_electric_heaters_ED = '',
+                                      fire_protection = '',
+                                      reserve_aux_15 = '',
+                                      time_ust = '',
+                                      PIC = '',
+                                      group_ust = 'Временные уставки общестанционных защит',
+                                      rule_map_ust = 'Временные уставки',
+                                      number_list_VU = '',
+                                      number_protect_VU = ''))
 
             # Checking for the existence of a database
             KTPR.insert_many(list_KTPR).execute()
@@ -1146,7 +1214,37 @@ class Filling_KTPR():
         return(msg)
     # Заполняем таблицу KTPR
     def column_check(self):
-        list_default = ['variable', 'tag', 'name', 'PIC', 'group_ust', 'rule_map_ust', 'number_list_VU', 'number_protect_VU']
+        list_default = ['variable', 'tag', 'name', 
+                        'avar_parameter', 'prohibition_masking', 'auto_unlock_protection', 'shutdown_PNS_a_time_delay_up_5s_after_turning_off_all_NA',
+                        'bitmask_protection_group_membership', 'stop_type_NA', 'pump_station_stop_type',
+                        'closing_gate_valves_at_the_inlet_NPS', 'closing_gate_valves_at_the_outlet_NPS', 'closing_gate_valves_between_PNS_and_MNS',
+                        'closing_gate_valves_between_RP_and_PNS', 'closing_valves_inlet_and_outlet_MNS', 'closing_valves_inlet_and_outlet_PNS',
+                        'closing_valves_inlet_and_outlet_MNA', 'closing_valves_inlet_and_outlet_PNA', 'closing_valves_inlet_RD',
+                        'closing_valves_outlet_RD', 'closing_valves_inlet_SSVD', 'closing_valves_inlet_FGU',
+                        'closing_secant_valve_connection_unit__oil_production_oil_refining_facility', 'closing_valves_inlet_RP', 'reserve_protect_14', 'reserve_protect_15',
+                        'shutdown_oil_pumps', 'shutdown_oil_pumps_after_signal_stopped_NA', 'shutdown_circulating_water_pumps',
+                        'shutdown_pumps_pumping_out_from_tanks_collection_of_leaks_MNS', 'shutdown_pumps_pumping_out_from_tanks_collection_of_leaks_PNS',
+                        'shutdown_pumps_pumping_out_from_tanks_SSVD', 'switching_off_the_electric_room_fans', 'shutdown_of_booster_fans_ED', 
+                        'shutdown_of_retaining_fans_of_the_electrical_room', 'shutdown_of_ED_air_compressors', 
+                        'shutdown_pumps_providing_oil_oil_product_pumping_from_oil_production_oil_refining_facilities', 
+                        'disabling_pumps_for_pumping_oil_oil_products_through_BIC', 'shutdown_domestic_and_drinking_water_pumps', 'shutdown_of_art_well_pumps',
+                        'AVO_shutdown', 'shutdown_of_water_cooling_fans_circulating_water_supply_system',
+                        'shutdown_exhaust_fans_of_the_pumping_room_of_the_MNS', 'shutdown_of_exhaust_fans_of_the_pumping_room_PNS',
+                        'shutdown_of_exhaust_fans_in_the_centralized_oil_system_room', 'shutdown_of_exhaust_fans_oil_pit_in_the_electrical_room', 
+                        'shutdown_of_exhaust_fans_in_the_RD_room', 'shutdown_of_exhaust_fans_in_the_SSVD_room',
+                        'shutdown_of_the_roof_fans_of_the_MNS_pump_room', 'shutdown_of_the_roof_fans_of_the_PNS_pump_room',
+                        'switching_off_the_supply_fans_pumping_room_of_the_MNS_and_closing_the_fire_dampers', 'switching_off_the_supply_fans_pumping_room_of_the_PNS_and_closing_the_fire_dampers',
+                        'switch_off_the_supply_fans_in_the_centralized_oil_system_room_and_close_the_fire_dampers', 'switching_off_the_supply_fan_of_the_RD_room',
+                        'switching_off_the_supply_fan_of_the_SSVD_room', 'switching_off_the_supply_fans_of_the_ED_air_compressor_room_and_closing_the_fire_dampers',
+                        'switching_off_the_supply_fan_of_the_BIK_room', 'switching_off_the_supply_fan_of_the_SIKN_room',
+                        'closing_the_air_valves_louvered_grilles_of_the_pump_room', 'closing_of_air_valves_louvered_grilles_of_the_compressor_room_of_the_ED_air_overpressure',
+                        'shutdown_of_electric_oil_heaters', 'shutdown_of_the_electric_heaters_of_the_leakage_collection_tank_MNS',
+                        'shutdown_of_the_electric_heaters_of_the_leakage_collection_tank_PNS', 'shutdown_of_electric_heaters_of_the_SIKN_leak_collection_tank',
+                        'shutdown_of_air_coolers_of_the_locking_system_of_mechanical_seals_of_all_MNA', 'shutdown_of_air_coolers_of_the_locking_system_of_mechanical_seals_disconnected_NA',
+                        'shutdown_of_the_external_cooling_circuit_ChRP_MNA', 'shutdown_of_the_external_cooling_circuit_ChRP_PNA', 'shutdown_of_locking_system_pumps',
+                        'shutdown_of_pumps_for_pumping_oil_oil_products_through_the_operational_BIK',
+                        'shutdown_of_pumping_pumps_from_leakage_collection_tanks_of_all_SIKN', 'shutdown_of_anticondensation_electric_heaters_ED', 'fire_protection', 'reserve_aux_15', 
+                        'time_ust', 'PIC', 'group_ust', 'rule_map_ust', 'number_list_VU', 'number_protect_VU']
         msg = self.dop_function.column_check(KTPR, 'ktpr', list_default)
         return msg 
 # Work with filling in the table 'KTPRA'
@@ -1157,112 +1255,35 @@ class Filling_KTPRA():
     # Получаем данные с таблицы Signals 
     def getting_modul(self):
         msg = {}
-        list_DO = []
-        count_DO = 0
+        list_ktpra = []
         with db:
-            if self.dop_function.empty_table('signals'): 
-                msg[f'{today} - Таблица: Signals пустая! Заполни таблицу!'] = 2
-                return msg
-            
-            for row_sql in Signals.select().dicts():
-                id_s       = row_sql['id'] 
-                uso_s       = row_sql['uso']    
-                tag         = row_sql['tag']
-                description = str(row_sql['description']).replace('"', '').replace("'", '')
-                type_signal = row_sql['type_signal']
-                scheme      = row_sql['schema']
-                basket_s    = row_sql['basket']
-                module_s    = row_sql['module']
-                channel_s   = row_sql['channel']
-
-                if self.dop_function.str_find(type_signal, {'DO'}) or self.dop_function.str_find(scheme, {'DO'}):
-                    count_DO += 1
-                    # Выбор между полным заполнением или обновлением
-                    empty = self.cursor.execute('SELECT COUNT(*) FROM do')
-                    if int(empty.fetchall()[0][0]) == 0:
-                        msg[f'{today} - Таблица: DO пуста, идет заполнение'] = 1
-                    else:
-                        msg[f'{today} - Таблица: DO не пуста, идет обновление'] = 1
-
-                    coincidence = DO.select().where(DO.uso     == uso_s,
-                                                    DO.basket  == basket_s,
-                                                    DO.module  == module_s,
-                                                    DO.channel == channel_s)
-                    if bool(coincidence):
-                        exist_tag  = DO.select().where(DO.tag == tag)
-                        exist_name = DO.select().where(DO.name == description)
-
-                        if not bool(exist_tag):
-                            select_tag = self.cursor.execute(f'''SELECT id, tag 
-                                                                 FROM do
-                                                                 WHERE uso='{uso_s}' AND 
-                                                                       basket={basket_s} AND 
-                                                                       module={module_s} AND 
-                                                                       channel={channel_s}''')
-                            for id_, tag_ in select_tag.fetchall():
-                                msg[f'{today} - Таблица: DO, у сигнала обновлен tag: id = {id_}, ({tag_}) {tag}'] = 2
-                            self.cursor.execute(f'''UPDATE do
-                                                    SET tag='{tag}' 
-                                                    WHERE uso='{uso_s}' AND 
-                                                          basket={basket_s} AND 
-                                                          module={module_s} AND 
-                                                          channel={channel_s}''')
-    
-                        if not bool(exist_name):
-                            select_name = self.cursor.execute(f'''SELECT id, name 
-                                                                  FROM do
-                                                                  WHERE uso='{uso_s}' AND 
-                                                                        basket={basket_s} AND 
-                                                                        module={module_s} AND 
-                                                                        channel={channel_s}''')
-                            for id_, name_ in select_name.fetchall():
-                                msg[f'{today} - Таблица: DO, у сигнала обновлен name: id = {id_}, ({name_}) {description}'] = 2
-                            self.cursor.execute(f'''UPDATE do
-                                                    SET name='{description}' 
-                                                    WHERE uso='{uso_s}' AND 
-                                                          basket={basket_s} AND 
-                                                          module={module_s} AND 
-                                                          channel={channel_s}''')
-                        continue
-
-                    # Сквозной номер модуля
-                    for through_module_number in HardWare.select().dicts():
-                        tag_h    = through_module_number['tag']
-                        uso_h    = through_module_number['uso']
-                        basket_h = through_module_number['basket']
-
-                        if uso_s == uso_h and basket_s == basket_h:
-                            type_mod = through_module_number[f'variable_{module_s}']
-                            isdigit_num  = re.findall('\d+', str(type_mod))
-
-                            try   : isdigit_num = isdigit_num[0]
-                            except: 
-                                isdigit_num = ''
-                                msg[f'{today} - В таблице HardWare не найден модуль сигнала: {id_s}, {tag}, {description}, {uso_s}_A{basket_s}_{module_s}_{channel_s}, "pValue" не заполнен'] = 2
-                            break
-
-                    if module_s < 10: prefix = f'0{module_s}' 
-                    else            : prefix = f'{module_s}'
-
-                    list_DO.append(dict(variable = f'DO[{count_DO}]',
-                                        tag = tag,
-                                        name = description,
-                                        pValue = f'{tag_h}_{prefix}_DO[{channel_s}]',
-                                        pHealth = f'mDO_HEALTH[{str(isdigit_num)}]',
-                                        short_title = description,
-                                        uso = uso_s, basket = basket_s, module = module_s, channel = channel_s,
-                                        AlphaHMI = '', AlphaHMI_PIC1 = '', AlphaHMI_PIC1_Number_kont = '', AlphaHMI_PIC2 = '', 
-                                        AlphaHMI_PIC2_Number_kont = '', AlphaHMI_PIC3 = '', AlphaHMI_PIC3_Number_kont = '', 
-                                        AlphaHMI_PIC4 = '', AlphaHMI_PIC4_Number_kont = ''))
-
+            for i in range(1, 5):
+                for k in range(1, 97):
+                    list_ktpra.append(dict(variable = f'KTPRA[{i}][{k}]',
+                                            tag  = '',
+                                            name = 'Резерв',
+                                            NA = '',
+                                            avar_parameter = '',
+                                            stop_type = '',
+                                            AVR = '',
+                                            close_valves = '',
+                                            prohibition_of_masking = '',
+                                            time_setting = '',
+                                            PIC = '',
+                                            group_ust = f'Tm - Агрегатные защиты МНА{i}',
+                                            rule_map_ust = 'Временные уставки',
+                                            number_list_VU = '',
+                                            number_protect_VU = '',
+                                            number_pump_VU = f'{i}'))
             # Checking for the existence of a database
-            DO.insert_many(list_DO).execute()
-
-        msg[f'{today} - Таблица: DO заполнена'] = 1
+            KTPRA.insert_many(list_ktpra).execute()
+        msg[f'{today} - Таблица: KTPRA заполнена'] = 1
         return(msg)
     # Заполняем таблицу KTPRA
     def column_check(self):
-        list_default = ['variable', 'tag', 'name', 'prohibition_of_masking', 'time_setting', 'PIC', 
+        list_default = ['variable', 'tag', 'name', 
+                        'NA', 'avar_parameter', 'stop_type', 'AVR', 'close_valves',
+                        'prohibition_of_masking', 'time_setting', 'PIC', 
                         'group_ust', 'rule_map_ust', 'number_list_VU', 'number_protect_VU', 'number_pump_VU']
         msg = self.dop_function.column_check(KTPRA, 'ktpra', list_default)
         return msg 

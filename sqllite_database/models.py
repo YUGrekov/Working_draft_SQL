@@ -64,9 +64,47 @@ rus_list = {'signals': ['№', 'Тип сигнала', 'Шкаф', 'Идент�
                    'Отображаемая точность значения', 'Номера листов на которых данный сигнал участвует в формировании рамки квитирования', 'Группа сброса трендов', 
                    'Гистерезис ТИ', 'Единица измерения физической величины (АЦП)', 'Правило для карты уставок', 'Предохранитель',
                    'Шкаф', 'Корзина', 'Модуль', 'Канал'],
-            'ktpr': ['№','Переменная', 'Идентификатор','Название','Номера листов на которых данный сигнал участвует в формировании рамки квитирования',
+            'ktpr': ['№','Переменная', 'Идентификатор','Название',
+                     'Аварийный параметр(pInput)', 'Запрет маскирования(1 - запрет)', 'Автоматическая деблокировка защиты(1 - разрешена)', 'Отключение ПНС с выдержкой времени до 5 с после отключения всех МНА',
+                     'Битовая маска принадлежности защиты группе(1 в N бите - разрешение сработки данной защиты на N группе (плече))', 'Тип остановки НА(0-None, 1-ManageStop, 2-ElectricStop, 3-ManageStopOffVV, 4-ChRPAlarmStop, 5-StopAuto, 6-StopAuto2, 7-PovtorOtkl)',
+                     '''Тип остановки насосной станции(описание РД242, ч1, стр61, табл.9.3,п.8, 
+                     1 - StopAllInShoulder - одновремменная остановка всех НА в плече, 
+                     2 - StopOneByOneInShoulder - последовательная остановка всех НА в плече, 
+                     3 - StopFirstNextInShoulder - отключение первого по потоку нефти/нефтепродукта НА, и отключения следующего при сохранении аврийного параметра, 
+                     4 - StopOnlyirstInShoulder - отключение первого по потоку нефти/нефтепродукта НА, 
+                     5 - StopAllInSubShoulder - одновреммення остановка всех ПН в подплече)''',
+
+                     'Закрытие задвижек на входе НПС', 'Закрытие задвижек на выходе НПС', 'Закрытие задвижек между ПНС и МНС', 'Закрытие задвижек между РП и ПНС', 
+                     'Закрытие задвижек на входе и выходе МНС', 'Закрытие задвижек на входе и выходе ПНС', 'Закрытие задвижек на входе и выходе МНА', 'Закрытие задвижек на входе и выходе ПНА', 
+                     'Закрытие задвижек на входе узла РД', 'Закрытие задвижек на выходе узла РД', 'Закрытие задвижек на входе ССВД', 'Закрытие задвижек на входе ФГУ', 
+                     'Закрытие секущей задвижки узла подключения объекта нефтедобычи/ нефтепереработки', 'Закрытие задвижек на входе РП', 'Резерв(14 бит)', 'Резерв(15 бит)',
+
+                     'Отключение маслонасосов', 'Отключение маслонасосов после сигнала "остановлен" НА', 'Отключение насосов оборотного водоснабжения', 'Отключение насосов откачки из емкостей сбора утечек МНС', 
+                     'Отключение насосов откачки из емкостей сбора утечек ПНС', 'Отключение насосов откачки из емкостей ССВД', 'Отключение беспромвальных вентиляторов электрозала', 
+                     'Отключение подпорных вентиляторов ЭД', 'Отключение подпорных вентиляторов электрозала', 'Отключение компрессоров подпора воздуха ЭД', 
+                     'Отключение насосов, обеспечивающих подкачку нефти/нефтепродукта от объектов нефтедобычи/нефтепереработки', 'Отключение насосов прокачки нефти/нефтепродукта через БИК', 
+                     'Отключение насосов хозяйственно-питьевого водоснабжения', 'Отключение насосов артскважин', 'Отключение АВО', 'Отключение вентиляторов водоохлаждения системы оборотного водоснабжения', 
+                    
+                     'Отключение вытяжных вентиляторов насосного зала МНС', 'Отключение вытяжных вентиляторов насосного зала ПНС', 'Отключение вытяжных вентиляторов в помещении централизованной маслосистемы', 
+                     'Отключение вытяжных вентиляторов маслоприямка в электрозале', 'Отключение вытяжных вентиляторов в помещении РД', 'Отключение вытяжных вентиляторов в помещении ССВД', 
+                     'Отключение крышных вентиляторов насосного зала МНС', 'Отключение крышных вентиляторов насосного зала ПНС', 'Отключение приточных вентиляторов насосного зала МНС и закрытие огнезадерживающих клапанов', 
+                     'Отключение приточных вентиляторов насосного зала ПНС и закрытие огнезадерживающих клапанов', 'Отключение приточных вентиляторов в помещении централизованной маслосистемы и закрытие огнезадерживающих клапанов', 
+                     'Отключение приточного вентилятора помещения РД', 'Отключение приточного вентилятора помещения ССВД', 'Отключение приточных вентиляторов помещения компрессорной подпора воздуха ЭД и закрытие огнезадерживающих клапанов', 
+                     'Отключение приточного вентилятора помещения БИК', 'Отключение приточного вентилятора помещения СИКН', 
+
+                     'Закрытие воздушных клапанов (жалюзийных решёток) насосного зала', 'Закрытие воздушных клапанов (жалюзийных решёток) помещения компрессорной подпора воздуха ЭД', 
+                     'Отключение электронагревателей масла', 'Отключение электронагревателей емкости сбора утечек МНС', 'Отключение электронагревателей емкости сбора утечек ПНС', 
+                     'Отключение электронагревателей емкости сбора утечек СИКН', 'Отключение воздушных охладителей системы запирания торцовых уплотнений всех МНА', 
+                     'Отключение воздушных охладителей системы запирания торцовых уплотнений отключенных НА', 'Отключение внешнего контура охлаждения ЧРП МНА', 
+                     'Отключение внешнего контура охлаждения ЧРП ПНА', 'Отключение насосов системы запирания', 'Отключение насосов прокачки нефти/нефтепродукта через оперативный БИК', 
+                     'Отключение насосов откачки из емкостей сбора утечек всех СИКН', 'Отключение антиконденсационных электронагревателей ЭД', 'Защита по пожару', 'Резерв(15 бит)', 
+
+                     'Временная уставка', 'Номера листов на которых данный сигнал участвует в формировании рамки квитирования',
                    'Группа уставок', 'Правило для карты уставок', 'Номер листа (для ВУ)', 'Номер защиты (для ВУ)'],
-            'ktpra': ['№','Переменная', 'Идентификатор','Название', 'Флаг запрета маскирования', 'Временная уставка', 
+            'ktpra': ['№','Переменная', 'Идентификатор','Название', 
+                    'Имя НА', 'Аварийный параметр', '''Тип остановки(0 - None,\n1 - ManageStop,\n2 - ElectricStop,\n3 - ManageStopOffVV,\n4 - ChRPAlarmStop,\n5 - StopAuto,\n6 - StopAuto2,\n7 - PovtorOtkl1)''',  
+                    'Флаг необходимости АВР НА при срабатывании защиты' , 'Флаг необходимости закрытия агрегатных задвижек НА при срабатывании защиты', 
+                    'Флаг запрета маскирования', 'Временная уставка', 
                     'Номера листов на которых данный сигнал участвует в формировании рамки квитирования', 'Группа уставок', 'Правило для карты уставок', 
                     'Номер листа (для ВУ)', 'Номер защиты (для ВУ)', 'Номер агрегата (для ВУ)'],
             'ktprs': ['№','Переменная', 'Идентификатор','Название', 'Сработка', 'Ссылка на значение', 'Приоритет сообщ. при 0', 'Приоритет сообщ. при 1',
@@ -357,12 +395,13 @@ class KTPR(BaseModel):
     variable = CharField(null = True)
     tag  = CharField(null = True)
     name = CharField(null = True)
+
     avar_parameter = CharField(null = True)
     prohibition_masking = CharField(null = True)
     auto_unlock_protection = CharField(null = True)
-    Shutdown_PNS_a_time_delay_up_5s_after_turning_off_all_MNA = CharField(null = True)
+    shutdown_PNS_a_time_delay_up_5s_after_turning_off_all_NA = CharField(null = True)
     bitmask_protection_group_membership = CharField(null = True)
-    stop_type_MNA = CharField(null = True)
+    stop_type_NA = CharField(null = True)
     pump_station_stop_type = CharField(null = True)
     
     closing_gate_valves_at_the_inlet_NPS = CharField(null = True)
@@ -379,17 +418,66 @@ class KTPR(BaseModel):
     closing_valves_inlet_FGU = CharField(null = True)
     closing_secant_valve_connection_unit__oil_production_oil_refining_facility = CharField(null = True)
     closing_valves_inlet_RP = CharField(null = True)
-    reserve = CharField(null = True)
-    reserve = CharField(null = True)
+    reserve_protect_14 = CharField(null = True)
+    reserve_protect_15 = CharField(null = True)
 
+    shutdown_oil_pumps = CharField(null = True)
+    shutdown_oil_pumps_after_signal_stopped_NA = CharField(null = True)
+    shutdown_circulating_water_pumps = CharField(null = True)
+    shutdown_pumps_pumping_out_from_tanks_collection_of_leaks_MNS = CharField(null = True)
+    shutdown_pumps_pumping_out_from_tanks_collection_of_leaks_PNS = CharField(null = True)
+    shutdown_pumps_pumping_out_from_tanks_SSVD = CharField(null = True)
+    switching_off_the_electric_room_fans = CharField(null = True)
+    shutdown_of_booster_fans_ED = CharField(null = True)
+    shutdown_of_retaining_fans_of_the_electrical_room = CharField(null = True)
+    shutdown_of_ED_air_compressors = CharField(null = True)
+    shutdown_pumps_providing_oil_oil_product_pumping_from_oil_production_oil_refining_facilities = CharField(null = True)
+    disabling_pumps_for_pumping_oil_oil_products_through_BIC = CharField(null = True)
+    shutdown_domestic_and_drinking_water_pumps = CharField(null = True)
+    shutdown_of_art_well_pumps = CharField(null = True)
+    AVO_shutdown = CharField(null = True)
+    shutdown_of_water_cooling_fans_circulating_water_supply_system = CharField(null = True)
+
+    shutdown_exhaust_fans_of_the_pumping_room_of_the_MNS = CharField(null = True)
+    shutdown_of_exhaust_fans_of_the_pumping_room_PNS = CharField(null = True)
+    shutdown_of_exhaust_fans_in_the_centralized_oil_system_room = CharField(null = True)
+    shutdown_of_exhaust_fans_oil_pit_in_the_electrical_room = CharField(null = True)
+    shutdown_of_exhaust_fans_in_the_RD_room = CharField(null = True)
+    shutdown_of_exhaust_fans_in_the_SSVD_room = CharField(null = True)
+    shutdown_of_the_roof_fans_of_the_MNS_pump_room = CharField(null = True)
+    shutdown_of_the_roof_fans_of_the_PNS_pump_room = CharField(null = True)
+    switching_off_the_supply_fans_pumping_room_of_the_MNS_and_closing_the_fire_dampers = CharField(null = True)
+    switching_off_the_supply_fans_pumping_room_of_the_PNS_and_closing_the_fire_dampers = CharField(null = True)
+    switch_off_the_supply_fans_in_the_centralized_oil_system_room_and_close_the_fire_dampers = CharField(null = True)
+    switching_off_the_supply_fan_of_the_RD_room = CharField(null = True)
+    switching_off_the_supply_fan_of_the_SSVD_room = CharField(null = True)
+    switching_off_the_supply_fans_of_the_ED_air_compressor_room_and_closing_the_fire_dampers = CharField(null = True)
+    switching_off_the_supply_fan_of_the_BIK_room = CharField(null = True)
+    switching_off_the_supply_fan_of_the_SIKN_room = CharField(null = True)
     
+    closing_the_air_valves_louvered_grilles_of_the_pump_room = CharField(null = True)
+    closing_of_air_valves_louvered_grilles_of_the_compressor_room_of_the_ED_air_overpressure = CharField(null = True)
+    shutdown_of_electric_oil_heaters = CharField(null = True)
+    shutdown_of_the_electric_heaters_of_the_leakage_collection_tank_MNS = CharField(null = True)
+    shutdown_of_the_electric_heaters_of_the_leakage_collection_tank_PNS = CharField(null = True)
+    shutdown_of_electric_heaters_of_the_SIKN_leak_collection_tank = CharField(null = True)
+    shutdown_of_air_coolers_of_the_locking_system_of_mechanical_seals_of_all_MNA = CharField(null = True)
+    shutdown_of_air_coolers_of_the_locking_system_of_mechanical_seals_disconnected_NA = CharField(null = True)
+    shutdown_of_the_external_cooling_circuit_ChRP_MNA = CharField(null = True)
+    shutdown_of_the_external_cooling_circuit_ChRP_PNA = CharField(null = True)
+    shutdown_of_locking_system_pumps = CharField(null = True)
+    shutdown_of_pumps_for_pumping_oil_oil_products_through_the_operational_BIK = CharField(null = True)
+    shutdown_of_pumping_pumps_from_leakage_collection_tanks_of_all_SIKN = CharField(null = True)
+    shutdown_of_anticondensation_electric_heaters_ED = CharField(null = True)
+    fire_protection = CharField(null = True)
+    reserve_aux_15 = CharField(null = True)
 
-
+    time_ust = CharField(null = True)
     PIC = CharField(null = True)
     group_ust = CharField(null = True)
     rule_map_ust = CharField(null = True)
 
-    number_list_VU = CharField(null = True)
+    number_list_VU = IntegerField(null = True)
     number_protect_VU = IntegerField(null = True)
     
     class Meta:
@@ -398,13 +486,18 @@ class KTPRA(BaseModel):
     variable = CharField(null = True)
     tag  = CharField(null = True)
     name = CharField(null = True)
+    NA = CharField(null = True)
+    avar_parameter = CharField(null = True)
+    stop_type = CharField(null = True)
+    AVR = CharField(null = True)
+    close_valves = CharField(null = True)
     prohibition_of_masking = CharField(null = True)
     time_setting = CharField(null = True)
     PIC = CharField(null = True)
     group_ust = CharField(null = True)
     rule_map_ust = CharField(null = True)
 
-    number_list_VU = CharField(null = True)
+    number_list_VU = IntegerField(null = True)
     number_protect_VU = IntegerField(null = True)
     number_pump_VU = IntegerField(null = True)
     
