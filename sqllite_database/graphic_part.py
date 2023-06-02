@@ -480,6 +480,11 @@ class Window_Filling_tables(QWidget):
         # UMPNA
         l_umpna = QLabel('UMPNA:', self)
         l_umpna.move(b_width_one + 546, l_height)
+        self.l_count_NA = QLineEdit(self, placeholderText='4', clearButtonEnabled=True)
+        self.l_count_NA.setToolTip('Укажи количество НА (по умолчанию 4)')
+        self.l_count_NA.setStyleSheet('border: 1px solid #6f7370; border-radius: 4px; border: 1px solid')
+        self.l_count_NA.move(b_width_two + 540, l_height)
+        self.l_count_NA.resize(80,15)
         b_umpna_basket = QPushButton('Заполнить', self)
         b_umpna_basket.setStyleSheet("background: #bfd6bf; border-radius: 4px; border: 1px solid")
         b_umpna_basket.setToolTip('Заполнить таблицу Насосные агрегаты(UMPNA')
@@ -625,7 +630,8 @@ class Window_Filling_tables(QWidget):
         umpna_table = Filling_UMPNA()
         msg = umpna_table.column_check()
         self.logs_msg('default', 1, msg, True)
-        msg = umpna_table.getting_modul()
+        count = self.l_count_NA.text().strip() or '4'
+        msg = umpna_table.getting_modul(int(count))
         self.logs_msg('default', 1, msg, True)
     def clear_umpna_tabl(self):
         msg = self.dop_function.clear_tabl('umpna', 'UMPNA', self.list_tabl)

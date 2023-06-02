@@ -137,12 +137,22 @@ class general_functions():
         exists_tag = tabl_used_cl.select().where(tabl_used_cl.tag == tag)
         if bool(exists_tag):
             search_tag = self.cursor.execute(f'''SELECT id, tag
-                                                 FROM {tabl_used_str}
-                                                 WHERE tag="{tag}"''')
+                                                FROM {tabl_used_str}
+                                                WHERE tag="{tag}"''')
             for id_, tag in search_tag.fetchall():
                 return id_
         else:
             return 'Не найден!'
+        
+    def update_signal(self, tabl_used_cl, tabl_used_str, tag, number_NA, column_update_cl, column_update_str):
+            exist_value  = tabl_used_cl.select().where(tabl_used_cl.id == number_NA,
+                                                       column_update_cl == tag)
+            if not bool(exist_value):
+                self.cursor.execute(f'''UPDATE {tabl_used_str}
+                                        SET {column_update_str}='{tag}' 
+                                        WHERE id="{number_NA}"''')
+                print(number_NA, column_update_cl, tag)
+
 
 
 # Work with filling in the table 'Signals'
@@ -1374,11 +1384,10 @@ class Filling_UMPNA():
     def __init__(self):
         self.cursor   = db.cursor()
         self.dop_function = general_functions()
-    # Получаем данные с таблицы Signals 
-    def getting_modul(self):
+    # Получаем данные с таблицы AI и DI 
+    def getting_modul(self, count_NA):
         msg = {}
         list_UMPNA = []
-        count_DO = 0
 
         with db:
             if self.dop_function.empty_table('di') or self.dop_function.empty_table('ai'): 
@@ -1388,7 +1397,8 @@ class Filling_UMPNA():
             row_count = self.cursor.execute(f'''SELECT Count (*)
                                                 FROM umpna''')
             if row_count.fetchall()[0][0] == 0:
-                for i in range(1, 5):
+                msg[f'{today} - Таблица: UMPNA пуста, идет заполнение'] = 1
+                for i in range(1, count_NA + 1):
                     vv_included = self.dop_function.search_signal(DI, 'di', f'MBC{i}01-1')
                     vv_double_included = self.dop_function.search_signal(DI, 'di', f'MBC{i}01-2')
                     vv_disabled = self.dop_function.search_signal(DI, 'di', f'MBC{i}02-1')
@@ -1401,9 +1411,9 @@ class Filling_UMPNA():
                     stop_2 = self.dop_function.search_signal(DI, 'di', f'KKC{i}02')
                     monitoring_the_presence_of_voltage_in_the_control_current_circuits = self.dop_function.search_signal(DI, 'di', f'EC{i}08')
                     vv_trolley_rolled_out = self.dop_function.search_signal(DI, 'di', f'EC{i}04')
-                    command_to_turn_on_the_vv_only_for_UMPNA = self.dop_function.search_signal(DI, 'di', f'EC{i}04')
-                    command_to_turn_off_the_vv_output_1 = self.dop_function.search_signal(DI, 'di', f'EC{i}04')
-                    command_to_turn_off_the_vv_output_2 = self.dop_function.search_signal(DI, 'di', f'EC{i}04')
+                    command_to_turn_on_the_vv_only_for_UMPNA = self.dop_function.search_signal(DO, 'do', f'ABB{i}01')
+                    command_to_turn_off_the_vv_output_1 = self.dop_function.search_signal(DO, 'do', f'ABO{i}01-1')
+                    command_to_turn_off_the_vv_output_2 = self.dop_function.search_signal(DO, 'do', f'ABO{i}01-2')
 
                     list_UMPNA.append(dict(variable =f'NA[{i}]',
                         name ='',
@@ -1465,115 +1475,48 @@ class Filling_UMPNA():
                         replacement_uso_signal_vv_1 ='',
                         replacement_uso_signal_vv_2 =''))
                     
-
-            # Checking for the existence of a database
-            UMPNA.insert_many(list_UMPNA).execute()
-
+                # Checking for the existence of a database
+                UMPNA.insert_many(list_UMPNA).execute()
+                msg[f'{today} - Таблица: UMPNA заполнена'] = 1
+            else:
+                msg[f'{today} - Таблица: UMPNA не пуста, идет обновление'] = 1
+                for i in range(1, count_NA + 1):
+                    self.dop_function.update_signal(UMPNA, 'umpna', 
+                        f'DI[{self.dop_function.search_signal(DI, "di", f"MBC{i}01-1")}].Value', i, UMPNA.vv_included, 'vv_included')
+                    self.dop_function.update_signal(UMPNA, 'umpna', 
+                        f'DI[{self.dop_function.search_signal(DI, "di", f"MBC{i}01-2")}].Value', i, UMPNA.vv_double_included, 'vv_double_included')
+                    self.dop_function.update_signal(UMPNA, 'umpna', 
+                        f'DI[{self.dop_function.search_signal(DI, "di", f"MBC{i}02-1")}].Value', i, UMPNA.vv_disabled, 'vv_disabled')
+                    self.dop_function.update_signal(UMPNA, 'umpna', 
+                        f'DI[{self.dop_function.search_signal(DI, "di", f"MBC{i}02-2")}].Value', i, UMPNA.vv_double_disabled, 'vv_double_disabled')
+                    self.dop_function.update_signal(UMPNA, 'umpna', 
+                        f'AI[{self.dop_function.search_signal(AI, "ai", f"CT{i}01")}].Norm', i, UMPNA.current_greater_than_noload_setting, 'current_greater_than_noload_setting')
+                    self.dop_function.update_signal(UMPNA, 'umpna', 
+                        f'DI[{self.dop_function.search_signal(DI, "di", f"ECB{i}01")}].Value', i, UMPNA.serviceability_of_circuits_of_inclusion_of_VV, 'serviceability_of_circuits_of_inclusion_of_VV')
+                    self.dop_function.update_signal(UMPNA, 'umpna', 
+                        f'DI[{self.dop_function.search_signal(DI, "di", f"ECO{i}01-1")}].Value', i, UMPNA.serviceability_of_circuits_of_shutdown_of_VV, 'serviceability_of_circuits_of_shutdown_of_VV')
+                    self.dop_function.update_signal(UMPNA, 'umpna', 
+                        f'DI[{self.dop_function.search_signal(DI, "di", f"ECO{i}01-2")}].Value', i, UMPNA.serviceability_of_circuits_of_shutdown_of_VV_double, 'serviceability_of_circuits_of_shutdown_of_VV_double')
+                    self.dop_function.update_signal(UMPNA, 'umpna', 
+                        f'NOT DI[{self.dop_function.search_signal(DI, "di", f"KKC{i}01")}].Value', i, UMPNA.stop_1, 'stop_1')
+                    self.dop_function.update_signal(UMPNA, 'umpna', 
+                        f'NOT DI[{self.dop_function.search_signal(DI, "di", f"KKC{i}02")}].Value', i, UMPNA.stop_2, 'stop_2')
+                    self.dop_function.update_signal(UMPNA, 'umpna', 
+                        f'DI[{self.dop_function.search_signal(DI, "di", f"EC{i}08")}].Value', i, UMPNA.monitoring_the_presence_of_voltage_in_the_control_current_circuits, 'monitoring_the_presence_of_voltage_in_the_control_current_circuits')
+                    self.dop_function.update_signal(UMPNA, 'umpna', 
+                        f'DI[{self.dop_function.search_signal(DI, "di", f"EC{i}04")}].Value', i, UMPNA.vv_trolley_rolled_out, 'vv_trolley_rolled_out')
+                    self.dop_function.update_signal(UMPNA, 'umpna', 
+                        f'ctrlDO[{self.dop_function.search_signal(DO, "do", f"ABB{i}01")}]', i, UMPNA.command_to_turn_on_the_vv_only_for_UMPNA, 'command_to_turn_on_the_vv_only_for_UMPNA')
+                    self.dop_function.update_signal(UMPNA, 'umpna', 
+                        f'ctrlDO[{self.dop_function.search_signal(DO, "do", f"ABO{i}01-1")}]', i, UMPNA.command_to_turn_off_the_vv_output_1, 'command_to_turn_off_the_vv_output_1')
+                    self.dop_function.update_signal(UMPNA, 'umpna', 
+                        f'ctrlDO[{self.dop_function.search_signal(DO, "do", f"ABO{i}01-2")}]', i, UMPNA.command_to_turn_off_the_vv_output_2, 'command_to_turn_off_the_vv_output_2')
+                msg[f'{today} - Таблица: UMPNA обновлена'] = 1
+            
             exists_name = self.cursor.execute(f'''SELECT name FROM umpna''')
             for i in exists_name.fetchall():
                 if i[0] is None or i[0] == '' or i[0] == ' ':
-                    msg[f'{today} - Таблицы: UMPNA, необходимо заполнить название НА!'] = 3
-
-        msg[f'{today} - Таблица: UMPNA заполнена'] = 1
-                
-
-
-            
-        #     for row_sql in Signals.select().dicts():
-        #         id_s       = row_sql['id'] 
-        #         uso_s       = row_sql['uso']    
-        #         tag         = row_sql['tag']
-        #         description = str(row_sql['description']).replace('"', '').replace("'", '')
-        #         type_signal = row_sql['type_signal']
-        #         scheme      = row_sql['schema']
-        #         basket_s    = row_sql['basket']
-        #         module_s    = row_sql['module']
-        #         channel_s   = row_sql['channel']
-
-        #         if self.dop_function.str_find(type_signal, {'DO'}) or self.dop_function.str_find(scheme, {'DO'}):
-        #             count_DO += 1
-        #             # Выбор между полным заполнением или обновлением
-        #             empty = self.cursor.execute('SELECT COUNT(*) FROM do')
-        #             if int(empty.fetchall()[0][0]) == 0:
-        #                 msg[f'{today} - Таблица: DO пуста, идет заполнение'] = 1
-        #             else:
-        #                 msg[f'{today} - Таблица: DO не пуста, идет обновление'] = 1
-
-        #             coincidence = DO.select().where(DO.uso     == uso_s,
-        #                                             DO.basket  == basket_s,
-        #                                             DO.module  == module_s,
-        #                                             DO.channel == channel_s)
-        #             if bool(coincidence):
-        #                 exist_tag  = DO.select().where(DO.tag == tag)
-        #                 exist_name = DO.select().where(DO.name == description)
-
-        #                 if not bool(exist_tag):
-        #                     select_tag = self.cursor.execute(f'''SELECT id, tag 
-        #                                                          FROM do
-        #                                                          WHERE uso='{uso_s}' AND 
-        #                                                                basket={basket_s} AND 
-        #                                                                module={module_s} AND 
-        #                                                                channel={channel_s}''')
-        #                     for id_, tag_ in select_tag.fetchall():
-        #                         msg[f'{today} - Таблица: DO, у сигнала обновлен tag: id = {id_}, ({tag_}) {tag}'] = 2
-        #                     self.cursor.execute(f'''UPDATE do
-        #                                             SET tag='{tag}' 
-        #                                             WHERE uso='{uso_s}' AND 
-        #                                                   basket={basket_s} AND 
-        #                                                   module={module_s} AND 
-        #                                                   channel={channel_s}''')
-    
-        #                 if not bool(exist_name):
-        #                     select_name = self.cursor.execute(f'''SELECT id, name 
-        #                                                           FROM do
-        #                                                           WHERE uso='{uso_s}' AND 
-        #                                                                 basket={basket_s} AND 
-        #                                                                 module={module_s} AND 
-        #                                                                 channel={channel_s}''')
-        #                     for id_, name_ in select_name.fetchall():
-        #                         msg[f'{today} - Таблица: DO, у сигнала обновлен name: id = {id_}, ({name_}) {description}'] = 2
-        #                     self.cursor.execute(f'''UPDATE do
-        #                                             SET name='{description}' 
-        #                                             WHERE uso='{uso_s}' AND 
-        #                                                   basket={basket_s} AND 
-        #                                                   module={module_s} AND 
-        #                                                   channel={channel_s}''')
-        #                 continue
-
-        #             # Сквозной номер модуля
-        #             for through_module_number in HardWare.select().dicts():
-        #                 tag_h    = through_module_number['tag']
-        #                 uso_h    = through_module_number['uso']
-        #                 basket_h = through_module_number['basket']
-
-        #                 if uso_s == uso_h and basket_s == basket_h:
-        #                     type_mod = through_module_number[f'variable_{module_s}']
-        #                     isdigit_num  = re.findall('\d+', str(type_mod))
-
-        #                     try   : isdigit_num = isdigit_num[0]
-        #                     except: 
-        #                         isdigit_num = ''
-        #                         msg[f'{today} - В таблице HardWare не найден модуль сигнала: {id_s}, {tag}, {description}, {uso_s}_A{basket_s}_{module_s}_{channel_s}, "pValue" не заполнен'] = 2
-        #                     break
-
-        #             if module_s < 10: prefix = f'0{module_s}' 
-        #             else            : prefix = f'{module_s}'
-
-        #             list_UMPNA.append(dict(variable = f'DO[{count_DO}]',
-        #                                 tag = tag,
-        #                                 name = description,
-        #                                 pValue = f'{tag_h}_{prefix}_DO[{channel_s}]',
-        #                                 pHealth = f'mDO_HEALTH[{str(isdigit_num)}]',
-        #                                 short_title = description,
-        #                                 uso = uso_s, basket = basket_s, module = module_s, channel = channel_s,
-        #                                 AlphaHMI = '', AlphaHMI_PIC1 = '', AlphaHMI_PIC1_Number_kont = '', AlphaHMI_PIC2 = '', 
-        #                                 AlphaHMI_PIC2_Number_kont = '', AlphaHMI_PIC3 = '', AlphaHMI_PIC3_Number_kont = '', 
-        #                                 AlphaHMI_PIC4 = '', AlphaHMI_PIC4_Number_kont = ''))
-
-        #     # Checking for the existence of a database
-        #     UMPNA.insert_many(list_UMPNA).execute()
-
-        # msg[f'{today} - Таблица: UMPNA заполнена'] = 1
+                    msg[f'{today} - Таблица: UMPNA, необходимо заполнить название НА!'] = 3
         return(msg)
     # Заполняем таблицу UMPNA
     def column_check(self):
