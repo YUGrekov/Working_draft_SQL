@@ -140,18 +140,22 @@ class general_functions():
                                                 FROM {tabl_used_str}
                                                 WHERE tag="{tag}"''')
             for id_, tag in search_tag.fetchall():
-                return id_
+                if tabl_used_str == 'di': return (f'DI[{id_}].Value')
+                if tabl_used_str == 'do': return (f'ctrlDO[{id_}]')
+                if tabl_used_str == 'ai': return (f'AI[{id_}].Norm')
         else:
-            return 'Не найден!'
-        
+            return ''
     def update_signal(self, tabl_used_cl, tabl_used_str, tag, number_NA, column_update_cl, column_update_str):
-            exist_value  = tabl_used_cl.select().where(tabl_used_cl.id == number_NA,
-                                                       column_update_cl == tag)
-            if not bool(exist_value):
-                self.cursor.execute(f'''UPDATE {tabl_used_str}
-                                        SET {column_update_str}='{tag}' 
-                                        WHERE id="{number_NA}"''')
-                print(number_NA, column_update_cl, tag)
+        msg = {}
+        exist_value  = tabl_used_cl.select().where(tabl_used_cl.id == number_NA,
+                                                    column_update_cl == tag)
+        if not bool(exist_value):
+            self.cursor.execute(f'''UPDATE {tabl_used_str}
+                                    SET {column_update_str}='{tag}' 
+                                    WHERE id="{number_NA}"''')
+            msg[f'{today} - Таблица: UMPNA, NA[{number_NA}] обновлено {column_update_str} = {tag}'] = 3
+            return msg
+        return msg
 
 
 
@@ -1387,18 +1391,20 @@ class Filling_UMPNA():
     # Получаем данные с таблицы AI и DI 
     def getting_modul(self, count_NA):
         msg = {}
-        list_UMPNA = []
-
         with db:
             if self.dop_function.empty_table('di') or self.dop_function.empty_table('ai'): 
                 msg[f'{today} - Таблицы: AI или DI пустые! Заполни таблицы!'] = 2
                 return msg
 
-            row_count = self.cursor.execute(f'''SELECT Count (*)
-                                                FROM umpna''')
-            if row_count.fetchall()[0][0] == 0:
-                msg[f'{today} - Таблица: UMPNA пуста, идет заполнение'] = 1
-                for i in range(1, count_NA + 1):
+            row_count_req = self.cursor.execute(f'''SELECT Count (*) FROM umpna''')
+            row_count = row_count_req.fetchall()[0][0]
+
+            for i in range(1, count_NA + 1):
+
+                if row_count < i:
+                    list_UMPNA = []
+                    msg[f'{today} - Таблица: UMPNA, отсутствует NA[{i}] идет заполнение'] = 3
+
                     vv_included = self.dop_function.search_signal(DI, 'di', f'MBC{i}01-1')
                     vv_double_included = self.dop_function.search_signal(DI, 'di', f'MBC{i}01-2')
                     vv_disabled = self.dop_function.search_signal(DI, 'di', f'MBC{i}02-1')
@@ -1415,23 +1421,23 @@ class Filling_UMPNA():
                     command_to_turn_off_the_vv_output_1 = self.dop_function.search_signal(DO, 'do', f'ABO{i}01-1')
                     command_to_turn_off_the_vv_output_2 = self.dop_function.search_signal(DO, 'do', f'ABO{i}01-2')
 
-                    list_UMPNA.append(dict(variable =f'NA[{i}]',
+                    list_UMPNA.append(dict(variable = f'NA[{i}]',
                         name ='',
-                        vv_included = f'DI[{vv_included}].Value',
-                        vv_double_included = f'DI[{vv_double_included}].Value',
-                        vv_disabled = f'DI[{vv_disabled}].Value',
-                        vv_double_disabled = f'DI[{vv_double_disabled}].Value',
-                        current_greater_than_noload_setting = f'AI[{current_greater_than_noload_setting}].Norm',
-                        serviceability_of_circuits_of_inclusion_of_VV = f'DI[{serviceability_of_circuits_of_inclusion_of_VV}].Value',
-                        serviceability_of_circuits_of_shutdown_of_VV = f'DI[{serviceability_of_circuits_of_shutdown_of_VV}].Value',
-                        serviceability_of_circuits_of_shutdown_of_VV_double = f'DI[{serviceability_of_circuits_of_shutdown_of_VV_double}].Value',
-                        stop_1 = f'NOT DI[{stop_1}].Value',
-                        stop_2 = f'NOT DI[{stop_2}].Value',
+                        vv_included = vv_included,
+                        vv_double_included = vv_double_included,
+                        vv_disabled = vv_disabled,
+                        vv_double_disabled = vv_double_disabled,
+                        current_greater_than_noload_setting = current_greater_than_noload_setting,
+                        serviceability_of_circuits_of_inclusion_of_VV = serviceability_of_circuits_of_inclusion_of_VV,
+                        serviceability_of_circuits_of_shutdown_of_VV = serviceability_of_circuits_of_shutdown_of_VV,
+                        serviceability_of_circuits_of_shutdown_of_VV_double = serviceability_of_circuits_of_shutdown_of_VV_double,
+                        stop_1 = f'NOT {stop_1}',
+                        stop_2 = f'NOT {stop_2}',
                         stop_3 ='',
                         stop_4 ='',
-                        monitoring_the_presence_of_voltage_in_the_control_current_circuits = f'DI[{monitoring_the_presence_of_voltage_in_the_control_current_circuits}].Value',
+                        monitoring_the_presence_of_voltage_in_the_control_current_circuits = monitoring_the_presence_of_voltage_in_the_control_current_circuits,
                         voltage_presence_flag_in_the_ZRU_motor_cell ='',
-                        vv_trolley_rolled_out = f'DI[{vv_trolley_rolled_out}].Value',
+                        vv_trolley_rolled_out = vv_trolley_rolled_out,
                         remote_control_mode_of_the_RZiA_controller ='',
                         availability_of_communication_with_the_RZiA_controller ='',
                         the_state_of_the_causative_agent_of_ED ='',
@@ -1443,9 +1449,9 @@ class Filling_UMPNA():
                         flag_for_the_minimum_oil_level_in_the_oil_tank_for_an_individual_oil_system ='',
                         flag_for_the_presence_of_the_minimum_level_of_the_barrier_liquid_in_the_tank_of_the_locking_system ='',
                         generalized_flag_for_the_presence_of_barrier_fluid_pressure_to_the_mechanical_seal ='',
-                        command_to_turn_on_the_vv_only_for_UMPNA = f'ctrlDO[{command_to_turn_on_the_vv_only_for_UMPNA}]',
-                        command_to_turn_off_the_vv_output_1 = f'ctrlDO[{command_to_turn_off_the_vv_output_1}]',
-                        command_to_turn_off_the_vv_output_2 = f'ctrlDO[{command_to_turn_off_the_vv_output_2}]',
+                        command_to_turn_on_the_vv_only_for_UMPNA = command_to_turn_on_the_vv_only_for_UMPNA,
+                        command_to_turn_off_the_vv_output_1 = command_to_turn_off_the_vv_output_1,
+                        command_to_turn_off_the_vv_output_2 = command_to_turn_off_the_vv_output_2,
                         NA_Chrp ='',
                         type_NA_MNA ='',
                         pump_type_NM ='',
@@ -1474,44 +1480,47 @@ class Filling_UMPNA():
                         PIC ='',
                         replacement_uso_signal_vv_1 ='',
                         replacement_uso_signal_vv_2 =''))
+                        
+                    # Checking for the existence of a database
+                    UMPNA.insert_many(list_UMPNA).execute()
+                    msg[f'{today} - Таблица: UMPNA, NA[{i}] заполнен'] = 1
+
+                else:
+
+                    msg[f'{today} - Таблица: UMPNA, NA[{i}] идет обновление'] = 3
+
+                    msg.update(self.dop_function.update_signal(UMPNA, 'umpna', 
+                        self.dop_function.search_signal(DI, "di", f"MBC{i}01-1"), i, UMPNA.vv_included, 'vv_included'))
+                    msg.update(self.dop_function.update_signal(UMPNA, 'umpna', 
+                        self.dop_function.search_signal(DI, "di", f"MBC{i}01-2"), i, UMPNA.vv_double_included, 'vv_double_included'))
+                    msg.update(self.dop_function.update_signal(UMPNA, 'umpna', 
+                        self.dop_function.search_signal(DI, "di", f"MBC{i}02-1"), i, UMPNA.vv_disabled, 'vv_disabled'))
+                    msg.update(self.dop_function.update_signal(UMPNA, 'umpna', 
+                        self.dop_function.search_signal(DI, "di", f"MBC{i}02-2"), i, UMPNA.vv_double_disabled, 'vv_double_disabled'))
+                    msg.update(self.dop_function.update_signal(UMPNA, 'umpna', 
+                        self.dop_function.search_signal(AI, "ai", f"CT{i}01"), i, UMPNA.current_greater_than_noload_setting, 'current_greater_than_noload_setting'))
+                    msg.update(self.dop_function.update_signal(UMPNA, 'umpna', 
+                        self.dop_function.search_signal(DI, "di", f"ECB{i}01"), i, UMPNA.serviceability_of_circuits_of_inclusion_of_VV, 'serviceability_of_circuits_of_inclusion_of_VV'))
+                    msg.update(self.dop_function.update_signal(UMPNA, 'umpna', 
+                        self.dop_function.search_signal(DI, "di", f"ECO{i}01-1"), i, UMPNA.serviceability_of_circuits_of_shutdown_of_VV, 'serviceability_of_circuits_of_shutdown_of_VV'))
+                    msg.update(self.dop_function.update_signal(UMPNA, 'umpna', 
+                        self.dop_function.search_signal(DI, "di", f"ECO{i}01-2"), i, UMPNA.serviceability_of_circuits_of_shutdown_of_VV_double, 'serviceability_of_circuits_of_shutdown_of_VV_double'))
+                    msg.update(self.dop_function.update_signal(UMPNA, 'umpna', 
+                        f'NOT {self.dop_function.search_signal(DI, "di", f"KKC{i}01")}', i, UMPNA.stop_1, 'stop_1'))
+                    msg.update(self.dop_function.update_signal(UMPNA, 'umpna', 
+                        f'NOT {self.dop_function.search_signal(DI, "di", f"KKC{i}02")}', i, UMPNA.stop_2, 'stop_2'))
+                    msg.update(self.dop_function.update_signal(UMPNA, 'umpna', 
+                        self.dop_function.search_signal(DI, "di", f"EC{i}08"), i, UMPNA.monitoring_the_presence_of_voltage_in_the_control_current_circuits, 'monitoring_the_presence_of_voltage_in_the_control_current_circuits'))
+                    msg.update(self.dop_function.update_signal(UMPNA, 'umpna', 
+                        self.dop_function.search_signal(DI, "di", f"EC{i}04"), i, UMPNA.vv_trolley_rolled_out, 'vv_trolley_rolled_out'))
+                    msg.update(self.dop_function.update_signal(UMPNA, 'umpna', 
+                        self.dop_function.search_signal(DO, "do", f"ABB{i}01"), i, UMPNA.command_to_turn_on_the_vv_only_for_UMPNA, 'command_to_turn_on_the_vv_only_for_UMPNA'))
+                    msg.update(self.dop_function.update_signal(UMPNA, 'umpna', 
+                        self.dop_function.search_signal(DO, "do", f"ABO{i}01-1"), i, UMPNA.command_to_turn_off_the_vv_output_1, 'command_to_turn_off_the_vv_output_1'))
+                    msg.update(self.dop_function.update_signal(UMPNA, 'umpna', 
+                        self.dop_function.search_signal(DO, "do", f"ABO{i}01-2"), i, UMPNA.command_to_turn_off_the_vv_output_2, 'command_to_turn_off_the_vv_output_2'))
                     
-                # Checking for the existence of a database
-                UMPNA.insert_many(list_UMPNA).execute()
-                msg[f'{today} - Таблица: UMPNA заполнена'] = 1
-            else:
-                msg[f'{today} - Таблица: UMPNA не пуста, идет обновление'] = 1
-                for i in range(1, count_NA + 1):
-                    self.dop_function.update_signal(UMPNA, 'umpna', 
-                        f'DI[{self.dop_function.search_signal(DI, "di", f"MBC{i}01-1")}].Value', i, UMPNA.vv_included, 'vv_included')
-                    self.dop_function.update_signal(UMPNA, 'umpna', 
-                        f'DI[{self.dop_function.search_signal(DI, "di", f"MBC{i}01-2")}].Value', i, UMPNA.vv_double_included, 'vv_double_included')
-                    self.dop_function.update_signal(UMPNA, 'umpna', 
-                        f'DI[{self.dop_function.search_signal(DI, "di", f"MBC{i}02-1")}].Value', i, UMPNA.vv_disabled, 'vv_disabled')
-                    self.dop_function.update_signal(UMPNA, 'umpna', 
-                        f'DI[{self.dop_function.search_signal(DI, "di", f"MBC{i}02-2")}].Value', i, UMPNA.vv_double_disabled, 'vv_double_disabled')
-                    self.dop_function.update_signal(UMPNA, 'umpna', 
-                        f'AI[{self.dop_function.search_signal(AI, "ai", f"CT{i}01")}].Norm', i, UMPNA.current_greater_than_noload_setting, 'current_greater_than_noload_setting')
-                    self.dop_function.update_signal(UMPNA, 'umpna', 
-                        f'DI[{self.dop_function.search_signal(DI, "di", f"ECB{i}01")}].Value', i, UMPNA.serviceability_of_circuits_of_inclusion_of_VV, 'serviceability_of_circuits_of_inclusion_of_VV')
-                    self.dop_function.update_signal(UMPNA, 'umpna', 
-                        f'DI[{self.dop_function.search_signal(DI, "di", f"ECO{i}01-1")}].Value', i, UMPNA.serviceability_of_circuits_of_shutdown_of_VV, 'serviceability_of_circuits_of_shutdown_of_VV')
-                    self.dop_function.update_signal(UMPNA, 'umpna', 
-                        f'DI[{self.dop_function.search_signal(DI, "di", f"ECO{i}01-2")}].Value', i, UMPNA.serviceability_of_circuits_of_shutdown_of_VV_double, 'serviceability_of_circuits_of_shutdown_of_VV_double')
-                    self.dop_function.update_signal(UMPNA, 'umpna', 
-                        f'NOT DI[{self.dop_function.search_signal(DI, "di", f"KKC{i}01")}].Value', i, UMPNA.stop_1, 'stop_1')
-                    self.dop_function.update_signal(UMPNA, 'umpna', 
-                        f'NOT DI[{self.dop_function.search_signal(DI, "di", f"KKC{i}02")}].Value', i, UMPNA.stop_2, 'stop_2')
-                    self.dop_function.update_signal(UMPNA, 'umpna', 
-                        f'DI[{self.dop_function.search_signal(DI, "di", f"EC{i}08")}].Value', i, UMPNA.monitoring_the_presence_of_voltage_in_the_control_current_circuits, 'monitoring_the_presence_of_voltage_in_the_control_current_circuits')
-                    self.dop_function.update_signal(UMPNA, 'umpna', 
-                        f'DI[{self.dop_function.search_signal(DI, "di", f"EC{i}04")}].Value', i, UMPNA.vv_trolley_rolled_out, 'vv_trolley_rolled_out')
-                    self.dop_function.update_signal(UMPNA, 'umpna', 
-                        f'ctrlDO[{self.dop_function.search_signal(DO, "do", f"ABB{i}01")}]', i, UMPNA.command_to_turn_on_the_vv_only_for_UMPNA, 'command_to_turn_on_the_vv_only_for_UMPNA')
-                    self.dop_function.update_signal(UMPNA, 'umpna', 
-                        f'ctrlDO[{self.dop_function.search_signal(DO, "do", f"ABO{i}01-1")}]', i, UMPNA.command_to_turn_off_the_vv_output_1, 'command_to_turn_off_the_vv_output_1')
-                    self.dop_function.update_signal(UMPNA, 'umpna', 
-                        f'ctrlDO[{self.dop_function.search_signal(DO, "do", f"ABO{i}01-2")}]', i, UMPNA.command_to_turn_off_the_vv_output_2, 'command_to_turn_off_the_vv_output_2')
-                msg[f'{today} - Таблица: UMPNA обновлена'] = 1
+                    msg[f'{today} - Таблица: UMPNA, сигналы NA[{i}] обновлены'] = 1
             
             exists_name = self.cursor.execute(f'''SELECT name FROM umpna''')
             for i in exists_name.fetchall():
