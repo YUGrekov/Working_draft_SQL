@@ -157,8 +157,6 @@ class general_functions():
             return msg
         return msg
 
-
-
 # Work with filling in the table 'Signals'
 class Import_in_SQL():
     def __init__(self, exel):

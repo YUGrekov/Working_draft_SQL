@@ -487,7 +487,10 @@ class Window_Filling_tables(QWidget):
         self.l_count_NA.resize(80,15)
         b_umpna_basket = QPushButton('Заполнить', self)
         b_umpna_basket.setStyleSheet("background: #bfd6bf; border-radius: 4px; border: 1px solid")
-        b_umpna_basket.setToolTip('Заполнить таблицу Насосные агрегаты(UMPNA')
+        b_umpna_basket.setToolTip('''Заполнить или обновить данные таблицы Насосные агрегаты(UMPNA):
+        - Если таблица пустая -> добавятся и заполнятся новые ряды = количеству агрегатов;
+        - Если количество рядов < количества агрегатов -> существующие обновятся или останутся без изменения, недостающие добавятся и заполнятся;
+        - Если количество рядов = количеству агрегатов -> обновятся или останутся без изменения.''')
         b_umpna_basket.resize(80,23)
         b_umpna_basket.move(b_width_one + 540, b_height) 
         b_umpna_basket.clicked.connect(self.filling_umpna)
