@@ -1611,6 +1611,175 @@ class Filling_tmNA_UMPNA():
                         'unit', 'used', 'value_ust', 'minimum', 'maximum', 'group_ust', 'rule_map_ust']
         msg = self.dop_function.column_check(tmNA_UMPNA, 'tmna_umpna', list_default)
         return msg 
+    
+# Work with filling in the table 'ZD'
+class Filling_ZD():
+    def __init__(self):
+        self.cursor   = db.cursor()
+        self.dop_function = general_functions()
+    # Получаем данные с таблицы AI и DI 
+    def getting_modul(self):
+        msg = {}
+        with db:
+            if self.dop_function.empty_table('di') or self.dop_function.empty_table('ai'): 
+                msg[f'{today} - Таблицы: AI или DI пустые! Заполни таблицы!'] = 2
+                return msg
+            count_NA = 4
+            row_count_req = self.cursor.execute(f'''SELECT Count (*) FROM umpna''')
+            row_count = row_count_req.fetchall()[0][0]
+
+            for i in range(1, count_NA + 1):
+
+                if row_count < i:
+                    list_UMPNA = []
+                    msg[f'{today} - Таблица: UMPNA, отсутствует NA[{i}] идет заполнение'] = 3
+
+                    vv_included = self.dop_function.search_signal(DI, 'di', f'MBC{i}01-1')
+                    vv_double_included = self.dop_function.search_signal(DI, 'di', f'MBC{i}01-2')
+                    vv_disabled = self.dop_function.search_signal(DI, 'di', f'MBC{i}02-1')
+                    vv_double_disabled = self.dop_function.search_signal(DI, 'di', f'MBC{i}02-2')
+                    current_greater_than_noload_setting = self.dop_function.search_signal(AI, 'ai', f'CT{i}01')
+                    serviceability_of_circuits_of_inclusion_of_VV = self.dop_function.search_signal(DI, 'di', f'ECB{i}01')
+                    serviceability_of_circuits_of_shutdown_of_VV = self.dop_function.search_signal(DI, 'di', f'ECO{i}01-1')
+                    serviceability_of_circuits_of_shutdown_of_VV_double = self.dop_function.search_signal(DI, 'di', f'ECO{i}01-2')
+                    stop_1 = self.dop_function.search_signal(DI, 'di', f'KKC{i}01')
+                    stop_2 = self.dop_function.search_signal(DI, 'di', f'KKC{i}02')
+                    monitoring_the_presence_of_voltage_in_the_control_current_circuits = self.dop_function.search_signal(DI, 'di', f'EC{i}08')
+                    vv_trolley_rolled_out = self.dop_function.search_signal(DI, 'di', f'EC{i}04')
+                    command_to_turn_on_the_vv_only_for_UMPNA = self.dop_function.search_signal(DO, 'do', f'ABB{i}01')
+                    command_to_turn_off_the_vv_output_1 = self.dop_function.search_signal(DO, 'do', f'ABO{i}01-1')
+                    command_to_turn_off_the_vv_output_2 = self.dop_function.search_signal(DO, 'do', f'ABO{i}01-2')
+
+                    list_UMPNA.append(dict(variable = f'NA[{i}]',
+                        name ='',
+                        vv_included = vv_included,
+                        vv_double_included = vv_double_included,
+                        vv_disabled = vv_disabled,
+                        vv_double_disabled = vv_double_disabled,
+                        current_greater_than_noload_setting = current_greater_than_noload_setting,
+                        serviceability_of_circuits_of_inclusion_of_VV = serviceability_of_circuits_of_inclusion_of_VV,
+                        serviceability_of_circuits_of_shutdown_of_VV = serviceability_of_circuits_of_shutdown_of_VV,
+                        serviceability_of_circuits_of_shutdown_of_VV_double = serviceability_of_circuits_of_shutdown_of_VV_double,
+                        stop_1 = f'NOT {stop_1}',
+                        stop_2 = f'NOT {stop_2}',
+                        stop_3 ='',
+                        stop_4 ='',
+                        monitoring_the_presence_of_voltage_in_the_control_current_circuits = monitoring_the_presence_of_voltage_in_the_control_current_circuits,
+                        voltage_presence_flag_in_the_ZRU_motor_cell ='',
+                        vv_trolley_rolled_out = vv_trolley_rolled_out,
+                        remote_control_mode_of_the_RZiA_controller ='',
+                        availability_of_communication_with_the_RZiA_controller ='',
+                        the_state_of_the_causative_agent_of_ED ='',
+                        engine_prepurge_end_flag ='',
+                        flag_for_the_presence_of_safe_air_boost_pressure_in_the_engine_housing ='',
+                        flag_for_the_presence_of_safe_air_boost_pressure_in_the_exciter_housing ='',
+                        engine_purge_valve_closed_flag ='',
+                        oil_system_oil_temperature_flag_is_above_10_at_the_cooler_outlet_for_an_individual_oil_system ='',
+                        flag_for_the_minimum_oil_level_in_the_oil_tank_for_an_individual_oil_system ='',
+                        flag_for_the_presence_of_the_minimum_level_of_the_barrier_liquid_in_the_tank_of_the_locking_system ='',
+                        generalized_flag_for_the_presence_of_barrier_fluid_pressure_to_the_mechanical_seal ='',
+                        command_to_turn_on_the_vv_only_for_UMPNA = command_to_turn_on_the_vv_only_for_UMPNA,
+                        command_to_turn_off_the_vv_output_1 = command_to_turn_off_the_vv_output_1,
+                        command_to_turn_off_the_vv_output_2 = command_to_turn_off_the_vv_output_2,
+                        NA_Chrp ='',
+                        type_NA_MNA ='',
+                        pump_type_NM ='',
+                        parametr_KTPRAS_1 ='',
+                        number_of_delay_scans_of_the_analysis_of_the_health_of_the_control_circuits_NA_MNA ='',
+                        unit_number_of_the_auxiliary_system_start_up_oil_pump_for_an_individual_oil_system ='',
+                        NPS_number_1_or_2_which_the_AT_belongs ='',
+                        achr_protection_number_in_the_array_of_station_protections ='',
+                        saon_protection_number_in_the_array_of_station_protections ='',
+                        gmpna_49 ='',
+                        gmpna_50 ='',
+                        gmpna_51 ='',
+                        gmpna_52 ='',
+                        gmpna_53 ='',
+                        gmpna_54 ='',
+                        gmpna_55 ='',
+                        gmpna_56 ='',
+                        gmpna_57 ='',
+                        gmpna_58 ='',
+                        gmpna_59 ='',
+                        gmpna_60 ='',
+                        gmpna_61 ='',
+                        gmpna_62 ='',
+                        gmpna_63 ='',
+                        gmpna_64 ='',
+                        PIC ='',
+                        replacement_uso_signal_vv_1 ='',
+                        replacement_uso_signal_vv_2 =''))
+                        
+                    # Checking for the existence of a database
+                    UMPNA.insert_many(list_UMPNA).execute()
+                    msg[f'{today} - Таблица: UMPNA, NA[{i}] заполнен'] = 1
+
+                else:
+
+                    msg[f'{today} - Таблица: UMPNA, NA[{i}] идет обновление'] = 3
+
+                    msg.update(self.dop_function.update_signal(UMPNA, 'umpna', 
+                        self.dop_function.search_signal(DI, "di", f"MBC{i}01-1"), i, UMPNA.vv_included, 'vv_included'))
+                    msg.update(self.dop_function.update_signal(UMPNA, 'umpna', 
+                        self.dop_function.search_signal(DI, "di", f"MBC{i}01-2"), i, UMPNA.vv_double_included, 'vv_double_included'))
+                    msg.update(self.dop_function.update_signal(UMPNA, 'umpna', 
+                        self.dop_function.search_signal(DI, "di", f"MBC{i}02-1"), i, UMPNA.vv_disabled, 'vv_disabled'))
+                    msg.update(self.dop_function.update_signal(UMPNA, 'umpna', 
+                        self.dop_function.search_signal(DI, "di", f"MBC{i}02-2"), i, UMPNA.vv_double_disabled, 'vv_double_disabled'))
+                    msg.update(self.dop_function.update_signal(UMPNA, 'umpna', 
+                        self.dop_function.search_signal(AI, "ai", f"CT{i}01"), i, UMPNA.current_greater_than_noload_setting, 'current_greater_than_noload_setting'))
+                    msg.update(self.dop_function.update_signal(UMPNA, 'umpna', 
+                        self.dop_function.search_signal(DI, "di", f"ECB{i}01"), i, UMPNA.serviceability_of_circuits_of_inclusion_of_VV, 'serviceability_of_circuits_of_inclusion_of_VV'))
+                    msg.update(self.dop_function.update_signal(UMPNA, 'umpna', 
+                        self.dop_function.search_signal(DI, "di", f"ECO{i}01-1"), i, UMPNA.serviceability_of_circuits_of_shutdown_of_VV, 'serviceability_of_circuits_of_shutdown_of_VV'))
+                    msg.update(self.dop_function.update_signal(UMPNA, 'umpna', 
+                        self.dop_function.search_signal(DI, "di", f"ECO{i}01-2"), i, UMPNA.serviceability_of_circuits_of_shutdown_of_VV_double, 'serviceability_of_circuits_of_shutdown_of_VV_double'))
+                    msg.update(self.dop_function.update_signal(UMPNA, 'umpna', 
+                        f'NOT {self.dop_function.search_signal(DI, "di", f"KKC{i}01")}', i, UMPNA.stop_1, 'stop_1'))
+                    msg.update(self.dop_function.update_signal(UMPNA, 'umpna', 
+                        f'NOT {self.dop_function.search_signal(DI, "di", f"KKC{i}02")}', i, UMPNA.stop_2, 'stop_2'))
+                    msg.update(self.dop_function.update_signal(UMPNA, 'umpna', 
+                        self.dop_function.search_signal(DI, "di", f"EC{i}08"), i, UMPNA.monitoring_the_presence_of_voltage_in_the_control_current_circuits, 'monitoring_the_presence_of_voltage_in_the_control_current_circuits'))
+                    msg.update(self.dop_function.update_signal(UMPNA, 'umpna', 
+                        self.dop_function.search_signal(DI, "di", f"EC{i}04"), i, UMPNA.vv_trolley_rolled_out, 'vv_trolley_rolled_out'))
+                    msg.update(self.dop_function.update_signal(UMPNA, 'umpna', 
+                        self.dop_function.search_signal(DO, "do", f"ABB{i}01"), i, UMPNA.command_to_turn_on_the_vv_only_for_UMPNA, 'command_to_turn_on_the_vv_only_for_UMPNA'))
+                    msg.update(self.dop_function.update_signal(UMPNA, 'umpna', 
+                        self.dop_function.search_signal(DO, "do", f"ABO{i}01-1"), i, UMPNA.command_to_turn_off_the_vv_output_1, 'command_to_turn_off_the_vv_output_1'))
+                    msg.update(self.dop_function.update_signal(UMPNA, 'umpna', 
+                        self.dop_function.search_signal(DO, "do", f"ABO{i}01-2"), i, UMPNA.command_to_turn_off_the_vv_output_2, 'command_to_turn_off_the_vv_output_2'))
+                    
+                    msg[f'{today} - Таблица: UMPNA, сигналы NA[{i}] обновлены'] = 1
+            
+            exists_name = self.cursor.execute(f'''SELECT name FROM umpna''')
+            for i in exists_name.fetchall():
+                if i[0] is None or i[0] == '' or i[0] == ' ':
+                    msg[f'{today} - Таблица: UMPNA, необходимо заполнить название НА!'] = 3
+        return(msg)
+    # Заполняем таблицу ZD
+    def column_check(self):
+        list_default = ['variable', 'name', 'vv_included', 'vv_double_included', 'vv_disabled', 
+                        'vv_double_disabled', 'current_greater_than_noload_setting', 'serviceability_of_circuits_of_inclusion_of_VV',
+                        'serviceability_of_circuits_of_shutdown_of_VV', 'serviceability_of_circuits_of_shutdown_of_VV_double',
+                        'stop_1', 'stop_2', 'stop_3', 'stop_4',
+                        'monitoring_the_presence_of_voltage_in_the_control_current_circuits', 'voltage_presence_flag_in_the_ZRU_motor_cell',
+                        'vv_trolley_rolled_out', 'remote_control_mode_of_the_RZiA_controller', 
+                        'availability_of_communication_with_the_RZiA_controller','the_state_of_the_causative_agent_of_ED',
+                        'engine_prepurge_end_flag', 'flag_for_the_presence_of_safe_air_boost_pressure_in_the_engine_housing',
+                        'flag_for_the_presence_of_safe_air_boost_pressure_in_the_exciter_housing', 'engine_purge_valve_closed_flag',
+                        'oil_system_oil_temperature_flag_is_above_10_at_the_cooler_outlet_for_an_individual_oil_system', 
+                        'flag_for_the_minimum_oil_level_in_the_oil_tank_for_an_individual_oil_system', 
+                        'flag_for_the_presence_of_the_minimum_level_of_the_barrier_liquid_in_the_tank_of_the_locking_system',
+                        'generalized_flag_for_the_presence_of_barrier_fluid_pressure_to_the_mechanical_seal', 'command_to_turn_on_the_vv_only_for_UMPNA',
+                        'command_to_turn_off_the_vv_output_1', 'command_to_turn_off_the_vv_output_2', 'NA_Chrp', 'type_NA_MNA',
+                        'pump_type_NM','parametr_KTPRAS_1', 'number_of_delay_scans_of_the_analysis_of_the_health_of_the_control_circuits_NA_MNA',
+                        'unit_number_of_the_auxiliary_system_start_up_oil_pump_for_an_individual_oil_system', 'NPS_number_1_or_2_which_the_AT_belongs',
+                        'achr_protection_number_in_the_array_of_station_protections','saon_protection_number_in_the_array_of_station_protections', 
+                        'gmpna_49', 'gmpna_50', 'gmpna_51', 'gmpna_52','gmpna_53', 'gmpna_54', 'gmpna_55', 'gmpna_56',
+                        'gmpna_57','gmpna_58', 'gmpna_59', 'gmpna_60', 'gmpna_61', 'gmpna_62','gmpna_63', 'gmpna_64', 'PIC', 
+                        'replacement_uso_signal_vv_1', 'replacement_uso_signal_vv_2']
+        msg = self.dop_function.column_check(UMPNA, 'umpna', list_default)
+        return msg 
 
 # Changing tables SQL
 class Editing_table_SQL():

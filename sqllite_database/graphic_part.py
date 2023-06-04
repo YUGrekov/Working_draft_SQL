@@ -515,6 +515,37 @@ class Window_Filling_tables(QWidget):
         b_clear_tm_umpna.resize(80,23)
         b_clear_tm_umpna.move(b_width_two + 720, b_height) 
         b_clear_tm_umpna.clicked.connect(self.clear_tmNA_umpna_tabl)
+        # ZD
+        l_zd = QLabel('ZD:', self)
+        l_zd.move(b_width_one + 546, l_height + 45)
+        b_zd_basket = QPushButton('Заполнить', self)
+        b_zd_basket.setStyleSheet("background: #bfd6bf; border-radius: 4px; border: 1px solid")
+        b_zd_basket.setToolTip('Заполнить таблицу ZD')
+        b_zd_basket.resize(80,23)
+        b_zd_basket.move(b_width_one + 540, b_height + 45) 
+        b_zd_basket.clicked.connect(self.filling_valves)
+        b_clear_zd = QPushButton('Очистить', self)
+        b_clear_zd.setStyleSheet("background: #bbbabf; border-radius: 4px; border: 1px solid")
+        b_clear_zd.setToolTip("Очистить таблицу ZD")
+        b_clear_zd.resize(80,23)
+        b_clear_zd.move(b_width_two + 540, b_height + 45) 
+        b_clear_zd.clicked.connect(self.clear_valves_tabl)
+        # tmZD
+        l_tmzd = QLabel('tmZD:', self)
+        l_tmzd.move(b_width_one + 728, l_height + 45)
+        b_tm_zd_basket = QPushButton('Заполнить', self)
+        b_tm_zd_basket.setStyleSheet("background: #bfd6bf; border-radius: 4px; border: 1px solid")
+        b_tm_zd_basket.setToolTip('Заполнить таблицу Временные уставки ZD')
+        b_tm_zd_basket.resize(80,23)
+        b_tm_zd_basket.move(b_width_one + 720, b_height + 45) 
+        b_tm_zd_basket.clicked.connect(self.filling_tmzd)
+        b_clear_tm_zd = QPushButton('Очистить', self)
+        b_clear_tm_zd.setStyleSheet("background: #bbbabf; border-radius: 4px; border: 1px solid")
+        b_clear_tm_zd.setToolTip("Очистить таблицу Временные уставки ZD")
+        b_clear_tm_zd.resize(80,23)
+        b_clear_tm_zd.move(b_width_two + 720, b_height + 45) 
+        b_clear_tm_zd.clicked.connect(self.clear_tmzd_tabl)
+        # ZD
         # Logs
         self.logTextBox = QTextEdit(self)
         self.logTextBox.setStyleSheet("border-radius: 4px; border: 1px solid")
@@ -644,11 +675,31 @@ class Window_Filling_tables(QWidget):
         tmNA_umpna_table = Filling_tmNA_UMPNA()
         msg = tmNA_umpna_table.column_check()
         self.logs_msg('default', 1, msg, True)
-        count = self.l_count_NA.text().strip() or '4'
         msg = tmNA_umpna_table.getting_modul()
         self.logs_msg('default', 1, msg, True)
     def clear_tmNA_umpna_tabl(self):
         msg = self.dop_function.clear_tabl('tmna_umpna', 'tmNA_UMPNA', self.list_tabl)
+        self.logs_msg('default', 1, msg, True)
+    # ZD
+    def filling_valves(self):
+        zd_table = Filling_ZD()
+        msg = zd_table.column_check()
+        self.logs_msg('default', 1, msg, True)
+        msg = zd_table.getting_modul()
+        self.logs_msg('default', 1, msg, True)
+    def clear_valves_tabl(self):
+        msg = self.dop_function.clear_tabl('zd', 'ZD', self.list_tabl)
+        self.logs_msg('default', 1, msg, True)
+        # tmNA_UMPNA
+    # tmZD
+    def filling_tmzd(self):
+        tmZD_table = Filling_tmZD()
+        msg = tmZD_table.column_check()
+        self.logs_msg('default', 1, msg, True)
+        msg = tmZD_table.getting_modul()
+        self.logs_msg('default', 1, msg, True)
+    def clear_tmzd_tabl(self):
+        msg = self.dop_function.clear_tabl('tmzd', 'tmZD', self.list_tabl)
         self.logs_msg('default', 1, msg, True)
     # Logging messeges
     def logs_msg(self, logs=None, number_color=1, buffer_msg=None, msg=False):
