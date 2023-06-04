@@ -125,6 +125,8 @@ rus_list = {'signals': ['№', 'Тип сигнала', 'Шкаф', 'Идент�
                      'GMPNA_[51]', 'GMPNA_[52]', 'GMPNA_[53]', 'GMPNA_[54]', 'GMPNA_[55]', 'GMPNA_[56]', 'GMPNA_[57]', 'GMPNA_[58]', 'GMPNA_[59]', 'GMPNA_[60]', 'GMPNA_[61]', 'GMPNA_[62]', 
                      'GMPNA_[63]', 'GMPNA_[64]', 'Номера листов на которых данный сигнал участвует в формировании рамки квитирования', 'Замена %1 - УСО сигналов ВВ 1\n(Строка для замены %1 в сообщениях)', 
                      'Замена %2 - УСО сигналов ВВ 2\n(Строка для замены %2 в сообщениях)'],
+            'tmna_umpna': ['№','Переменная', 'Идентификатор', 'Название', 'Единица измерения', 'Используется', 'Значение уставки', 'Минимум', 'Максимум', 
+                           'Группа уставок', 'Правило для карты уставок'],
                 }
 class Signals(BaseModel):
     type_signal = CharField(null = True)
@@ -547,6 +549,20 @@ class GMPNA(BaseModel):
     
     class Meta:
         table_name = 'gmpna'
+class tmNA_UMPNA(BaseModel):
+    variable = CharField(null = True)
+    tag = CharField(null = True)
+    name = CharField(null = True)
+    unit = CharField(null = True)
+    used = CharField(null = True)
+    value_ust = CharField(null = True)
+    minimum = CharField(null = True)
+    maximum = CharField(null = True)
+    group_ust = CharField(null = True)
+    rule_map_ust = CharField(null = True)
+
+    class Meta:
+        table_name = 'tmna_umpna'
 class UMPNA(BaseModel):
     variable = CharField(null = True)
     name = CharField(null = True)

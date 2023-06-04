@@ -1549,6 +1549,69 @@ class Filling_UMPNA():
                         'replacement_uso_signal_vv_1', 'replacement_uso_signal_vv_2']
         msg = self.dop_function.column_check(UMPNA, 'umpna', list_default)
         return msg 
+# Work with filling in the table 'tmNA_UMPNA'
+class Filling_tmNA_UMPNA():
+    def __init__(self):
+        self.cursor   = db.cursor()
+        self.dop_function = general_functions()
+    # Получаем данные с таблицы Signals 
+    def getting_modul(self):
+        msg = {}
+        count_NA = 0
+        list_tmna_umpna = []
+        time_ust = [('Время на проверку корректности состояния цепей контроля ВВ  (с отключенным контролем по току)' , 'T1noCT', '3'), 
+                    ('Время на проверку корректности состояния цепей контроля ВВ (с включенным контролем по току)', 'T1CT', '6'),
+                    ('Время удержания команды "Включить ВВ", после получения включенного состояния ВВ', 'T2', '1'),
+                    ('Максимальное время удержания команды "Отключить ВВ"', 'T3', '1'),
+                    ('Время до выдачи команды Включить ВВ, необходимое для отработки САР во время рамповой функции', 'T4', '3'),
+                    ('Время на открытие выкидной задвижки перед выдачей команды на включение НА по программе П2', 'T5', '5'),
+                    ('Контрольное время выполнения процесса отключения ВВ НА', 'T6', '4'),
+                    ('Время на подъем силы тока ЭД после включения ВВ НА', 'T7', '3'),
+                    ('Время полного хода выкидной задвижки (используется в алгоритмах программы пуска П2)', 'T8', '600'),
+                    ('Время пускового режима работы ЭД при пуске', 'T9', '30'),
+                    ('Время перед выдачей команды повторого отключения ВВ при невыполнении программы остановки', 'T10', '3'),
+                    ('Контрольное время выполнения процесса включения ВВ НА', 'T11', '4'),
+                    ('Время снижения силы тока ЭД после отключения ВВ НА', 'T12', '3'),
+                    ('Время фильтрации сигналов цепей включения/отключения', 'T13', '3'),
+                    ('Время пускового режима работы насоса при пуске', 'T14', '300'),
+                    ('Длительность выдачи команды в САР для рамповой функции', 'T15', '5'),
+                    ('Время на выполнение АВР при получении сигнала "Электрозащита" после получения состояния ВВ отключен', 'T16', '3'),
+                    ('Время, через которое будет выдана команда "Стоп" при отсутствии электрозащиты', 'T17', '3'),
+                    ('Резерв', 'T18', '0'), 
+                    ('Размер колеса насосного агрегата', 'WheelSize', '1')] 
+        with db:
+            if self.dop_function.empty_table('umpna'): 
+                msg[f'{today} - Таблицы: UMPNA пустая! Заполни таблицу!'] = 2
+                return msg
+            exists_name = self.cursor.execute(f'''SELECT name FROM umpna''')
+            for i in exists_name.fetchall():
+                count_NA += 1
+                if i[0] is None or i[0] == '' or i[0] == ' ':
+                    msg[f'{today} - Таблица: UMPNA, необходимо заполнить название НА!'] = 3
+                else:
+                    for ust in time_ust:
+                        list_tmna_umpna.append(dict(variable = '',
+                                                tag  = f'HNA{count_NA}_{ust[1]}',
+                                                name = f'{i[0]}. {ust[0]}',
+                                                unit = 'с',
+                                                used = '1',
+                                                value_ust = f'{ust[2]}',
+                                                minimum = '0',
+                                                maximum = '65535',
+                                                group_ust = 'Временные уставки МНА',
+                                                rule_map_ust = 'Временные уставки'))
+                        
+            # Checking for the existence of a database
+            tmNA_UMPNA.insert_many(list_tmna_umpna).execute()
+        msg[f'{today} - Таблица: tmNA_UMPNA заполнена'] = 1
+        return(msg)
+    # Заполняем таблицу tmNA_UMPNA
+    def column_check(self):
+        list_default = ['variable', 'tag', 'name', 
+                        'unit', 'used', 'value_ust', 'minimum', 'maximum', 'group_ust', 'rule_map_ust']
+        msg = self.dop_function.column_check(tmNA_UMPNA, 'tmna_umpna', list_default)
+        return msg 
+
 # Changing tables SQL
 class Editing_table_SQL():
     def __init__(self):

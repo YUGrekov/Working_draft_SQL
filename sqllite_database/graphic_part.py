@@ -490,7 +490,7 @@ class Window_Filling_tables(QWidget):
         b_umpna_basket.setToolTip('''Заполнить или обновить данные таблицы Насосные агрегаты(UMPNA):
         - Если таблица пустая -> добавятся и заполнятся новые ряды = количеству агрегатов;
         - Если количество рядов < количества агрегатов -> существующие обновятся или останутся без изменения, недостающие добавятся и заполнятся;
-        - Если количество рядов = количеству агрегатов -> обновятся или останутся без изменения.''')
+        - Если количество рядов = количеству агрегатов -> обновятся или останутся без изменения''')
         b_umpna_basket.resize(80,23)
         b_umpna_basket.move(b_width_one + 540, b_height) 
         b_umpna_basket.clicked.connect(self.filling_umpna)
@@ -508,13 +508,13 @@ class Window_Filling_tables(QWidget):
         b_tm_umpna_basket.setToolTip('Заполнить таблицу Временные уставки НА')
         b_tm_umpna_basket.resize(80,23)
         b_tm_umpna_basket.move(b_width_one + 720, b_height) 
-        b_tm_umpna_basket.clicked.connect(self.filling_umpna)
+        b_tm_umpna_basket.clicked.connect(self.filling_tmNA_umpna)
         b_clear_tm_umpna = QPushButton('Очистить', self)
         b_clear_tm_umpna.setStyleSheet("background: #bbbabf; border-radius: 4px; border: 1px solid")
         b_clear_tm_umpna.setToolTip("Очистить таблицу Временные уставки НА")
         b_clear_tm_umpna.resize(80,23)
         b_clear_tm_umpna.move(b_width_two + 720, b_height) 
-        b_clear_tm_umpna.clicked.connect(self.clear_umpna_tabl)
+        b_clear_tm_umpna.clicked.connect(self.clear_tmNA_umpna_tabl)
         # Logs
         self.logTextBox = QTextEdit(self)
         self.logTextBox.setStyleSheet("border-radius: 4px; border: 1px solid")
@@ -638,6 +638,17 @@ class Window_Filling_tables(QWidget):
         self.logs_msg('default', 1, msg, True)
     def clear_umpna_tabl(self):
         msg = self.dop_function.clear_tabl('umpna', 'UMPNA', self.list_tabl)
+        self.logs_msg('default', 1, msg, True)
+    # tmNA_UMPNA
+    def filling_tmNA_umpna(self):
+        tmNA_umpna_table = Filling_tmNA_UMPNA()
+        msg = tmNA_umpna_table.column_check()
+        self.logs_msg('default', 1, msg, True)
+        count = self.l_count_NA.text().strip() or '4'
+        msg = tmNA_umpna_table.getting_modul()
+        self.logs_msg('default', 1, msg, True)
+    def clear_tmNA_umpna_tabl(self):
+        msg = self.dop_function.clear_tabl('tmna_umpna', 'tmNA_UMPNA', self.list_tabl)
         self.logs_msg('default', 1, msg, True)
     # Logging messeges
     def logs_msg(self, logs=None, number_color=1, buffer_msg=None, msg=False):
