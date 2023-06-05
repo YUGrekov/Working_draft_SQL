@@ -119,6 +119,7 @@ class general_functions():
     def empty_table(self, table_used):
         empty = self.cursor.execute(f'''SELECT COUNT(*) FROM {table_used}''')
         return True if int(empty.fetchall()[0][0]) == 0  else False
+
     # Clear tabl
     def clear_tabl(self, table_used, table_name, list_tabl):
         msg = {}
@@ -126,19 +127,19 @@ class general_functions():
             msg[f'{today} - Таблица: {table_used} отсутствует!'] = 2
             return msg
 
-        if self.empty_table(f'''{table_used}'''): 
+        if self.empty_table(table_used): 
             msg[f'{today} - Таблица: {table_name} пустая!'] = 2
             return msg
         
-        self.cursor.execute(f'''DELETE FROM {table_used}''')
+        self.cursor.execute(f'DELETE FROM {table_used}')
         msg[f'{today} - Таблица: {table_name} полностью очищена'] = 1
         return msg
     def search_signal(self, tabl_used_cl, tabl_used_str, tag):
-        exists_tag = tabl_used_cl.select().where(tabl_used_cl.tag == tag)
+        exists_tag = tabl_used_cl.select().where(tabl_used_cl.Идентификатор == tag)
         if bool(exists_tag):
-            search_tag = self.cursor.execute(f'''SELECT id, tag
+            search_tag = self.cursor.execute(f'''SELECT id, Идентификатор
                                                 FROM {tabl_used_str}
-                                                WHERE tag="{tag}"''')
+                                                WHERE Идентификатор="{tag}"''')
             for id_, tag in search_tag.fetchall():
                 if tabl_used_str == 'di': return (f'DI[{id_}].Value')
                 if tabl_used_str == 'do': return (f'ctrlDO[{id_}]')
@@ -499,9 +500,9 @@ class Filling_USO():
                 list_diag['variable'] = f'USO[{count_USO}]'
                 list_diag['name']     = f'{uso[0]}'
 
-                ai_temp = self.cursor.execute(f'''SELECT variable, name
+                ai_temp = self.cursor.execute(f'''SELECT Переменная, Название
                                                   FROM ai
-                                                  WHERE name LIKE "%{uso[0]}%"''')
+                                                  WHERE Название LIKE "%{uso[0]}%"''')
                 current_ai = ai_temp.fetchall()
                 try:
                     if len(current_ai) == 0: raise
@@ -512,11 +513,11 @@ class Filling_USO():
                     list_diag['temperature']  = ''
                     msg[f'{today} - Таблица: USO. Температура в шкафу {uso[0]} не найдена!'] = 2
 
-                door_temp = self.cursor.execute(f'''SELECT variable, name
+                door_temp = self.cursor.execute(f'''SELECT Переменная, Название
                                                     FROM di
-                                                    WHERE name LIKE "%{uso[0]}%" AND 
-                                                          (name LIKE "%двер%" OR
-                                                          name LIKE "%Двер%")''')
+                                                    WHERE Название LIKE "%{uso[0]}%" AND 
+                                                          (Название LIKE "%двер%" OR
+                                                          Название LIKE "%Двер%")''')
                 current_door = door_temp.fetchall()
                 try:
                     if len(current_door) == 0: raise
@@ -527,11 +528,11 @@ class Filling_USO():
                     list_diag['temperature']  = ''
                     msg[f'{today} - Таблица: USO. Сигнал открытой двери шкафа {uso[0]} не найден!'] = 2
 
-                di_temp = self.cursor.execute(f'''SELECT variable, name
+                di_temp = self.cursor.execute(f'''SELECT Переменная, Название
                                                   FROM di
-                                                  WHERE name LIKE "%{uso[0]}%" AND 
-                                                        (name NOT LIKE "%двер%") AND (name NOT LIKE "%Двер%") 
-                                                  ORDER BY name''')
+                                                  WHERE Название LIKE "%{uso[0]}%" AND 
+                                                        (Название NOT LIKE "%двер%") AND (Название NOT LIKE "%Двер%") 
+                                                  ORDER BY Название''')
                 current_di = di_temp.fetchall()
                 try:
                     for di in current_di:
@@ -622,45 +623,45 @@ class Filling_AI():
                     else:
                         msg[f'{today} - Таблица: AI не пуста, идет обновление'] = 1
 
-                    coincidence = AI.select().where(AI.uso     == uso_s,
-                                                    AI.basket  == basket_s,
-                                                    AI.module  == module_s,
-                                                    AI.channel == channel_s)
+                    coincidence = AI.select().where(AI.Шкаф    == uso_s,
+                                                    AI.Корзина == basket_s,
+                                                    AI.Модуль  == module_s,
+                                                    AI.Канал   == channel_s)
                     if bool(coincidence):
-                        exist_tag  = AI.select().where(AI.tag == tag)
-                        exist_name = AI.select().where(AI.name == description)
+                        exist_tag  = AI.select().where(AI.Идентификатор == tag)
+                        exist_name = AI.select().where(AI.Название == description)
 
                         if not bool(exist_tag):
-                            select_tag = self.cursor.execute(f'''SELECT id, tag 
+                            select_tag = self.cursor.execute(f'''SELECT id, Идентификатор 
                                                                  FROM ai
-                                                                 WHERE uso='{uso_s}' AND 
-                                                                       basket={basket_s} AND 
-                                                                       module={module_s} AND 
-                                                                       channel={channel_s}''')
+                                                                 WHERE Шкаф='{uso_s}' AND 
+                                                                       Корзина={basket_s} AND 
+                                                                       Модуль={module_s} AND 
+                                                                       Канал={channel_s}''')
                             for id_, tag_ in select_tag.fetchall():
-                                msg[f'{today} - Таблица: AI, у сигнала обновлен tag: id = {id_}, ({tag_}) {tag}'] = 2
+                                msg[f'{today} - Таблица: AI, у сигнала обновлен идентификатор: id = {id_}, ({tag_}) {tag}'] = 2
                             self.cursor.execute(f'''UPDATE ai
-                                                    SET tag='{tag}' 
-                                                    WHERE uso='{uso_s}' AND 
-                                                          basket={basket_s} AND 
-                                                          module={module_s} AND 
-                                                          channel={channel_s}''')
+                                                    SET Идентификатор='{tag}' 
+                                                    WHERE Шкаф='{uso_s}' AND 
+                                                          Корзина={basket_s} AND 
+                                                          Модуль={module_s} AND 
+                                                          Канал={channel_s}''')
     
                         if not bool(exist_name):
-                            select_name = self.cursor.execute(f'''SELECT id, name 
+                            select_name = self.cursor.execute(f'''SELECT id, Название 
                                                                   FROM ai
-                                                                  WHERE uso='{uso_s}' AND 
-                                                                        basket={basket_s} AND 
-                                                                        module={module_s} AND 
-                                                                        channel={channel_s}''')
+                                                                  WHERE Шкаф='{uso_s}' AND 
+                                                                        Корзина={basket_s} AND 
+                                                                        Модуль={module_s} AND 
+                                                                        Канал={channel_s}''')
                             for id_, name_ in select_name.fetchall():
-                                msg[f'{today} - Таблица: AI, у сигнала обновлен name: id = {id_}, ({name_}) {description}'] = 2
+                                msg[f'{today} - Таблица: AI, у сигнала обновлено название: id = {id_}, ({name_}) {description}'] = 2
                             self.cursor.execute(f'''UPDATE ai
-                                                    SET name='{description}' 
-                                                    WHERE uso='{uso_s}' AND 
-                                                          basket={basket_s} AND 
-                                                          module={module_s} AND 
-                                                          channel={channel_s}''')
+                                                    SET Название='{description}' 
+                                                    WHERE Шкаф='{uso_s}' AND 
+                                                          Корзина={basket_s} AND 
+                                                          Модуль={module_s} AND 
+                                                          Канал={channel_s}''')
                         continue
 
                     # Сквозной номер модуля
@@ -701,38 +702,38 @@ class Filling_AI():
 
                     flag_MPa_kgccm2 = '1' if self.dop_function.str_find(str(description).lower(), {'давлен'}) else '0'
                     
-                    list_AI.append(dict(variable = f'AI[{count_AI}]',
-                                        tag = tag,
-                                        name = description,
+                    list_AI.append(dict(Переменная = f'AI[{count_AI}]',
+                                        Идентификатор = tag,
+                                        Название = description,
                                         pValue = f'mAI8[{isdigit_num[0]}, {module_s}]',
                                         pHealth = f'mAI8_HEALTH[{isdigit_num[0]}]',
-                                        group_analog = group_analog,
-                                        group_ust_analog = group_ust_analog,
-                                        unit = unit,
-                                        sign_VU = sign,
-                                        flag_MPa_kgccm2 = flag_MPa_kgccm2,
-                                        number_NA_or_aux = '',
-                                        vibration_pump = '',
-                                        vibration_motor = '',
-                                        current_motor = '',
-                                        aux_outlet_pressure = '',
-                                        number_ust_min_avar = '',
-                                        number_ust_min_pred = '',
-                                        number_ust_max_pred = '',
-                                        number_ust_max_avar = '',
-                                        field_min = '4000',
-                                        field_max = '20000',
-                                        eng_min = eng_min,
-                                        eng_max = eng_max,
-                                        reliability_min = '3900',
-                                        reliability_max = '20100',
-                                        hysteresis = '0',
-                                        filtration = '0',
-                                        ust_min_6 = '', ust_min_5 = '', ust_min_4 = '', ust_min_3 = '', ust_min_2 = '', ust_min = '',
-                                        ust_max = '', ust_max_2 = '', ust_max_3 = '', ust_max_4 = '', ust_max_5 = '', ust_max_6 = '',
-                                        value_precision = value_precision,
-                                        PIC = '', group_trend = '', hysteresis_TI = '0,1', unit_physical_ACP = 'мкА', 
-                                        setpoint_map_rule = rule, fuse = '', uso = uso_s, basket = basket_s, module = module_s, channel = channel_s,
+                                        Группа_аналогов = group_analog,
+                                        Группа_уставок_аналогов = group_ust_analog,
+                                        Единица_измерения = unit,
+                                        Подпись_для_ВУ = sign,
+                                        Флаг_для_пересчета_в_кгс_см2 = flag_MPa_kgccm2,
+                                        Номер_НА_или_вспом = '',
+                                        Вибрация_насоса = '',
+                                        Вибрация_ЭД = '',
+                                        Ток_ЭД_НА = '',
+                                        Давление_на_выходе_вспом = '',
+                                        Номер_уставки_мин_авар = '',
+                                        Номер_уставки_мин_пред = '',
+                                        Номер_уставки_макс_авар = '',
+                                        Номер_уставки_макс_пред = '',
+                                        Полевой_мин = '4000',
+                                        Полевой_макс = '20000',
+                                        Инженерный_мин = eng_min,
+                                        Инженерный_макс = eng_max,
+                                        Достоверность_мин = '3900',
+                                        Достоверность_макс = '20100',
+                                        Гистерезис = '0',
+                                        Фильтрация = '0',
+                                        Уставка_мин_6 = '', Уставка_мин_5 = '', Уставка_мин_4 = '', Уставка_мин_3 = '', Уставка_мин_2 = '', Уставка_мин = '',
+                                        Уставка_макс = '', Уставка_макс_2 = '', Уставка_макс_3 = '', Уставка_макс_4 = '', Уставка_макс_5 = '', Уставка_макс_6 = '',
+                                        Точность_значения = value_precision,
+                                        Pic = '', Группа_сброса_трендов = '', Гистерезис_ТИ = '0,1', АЦП = 'мкА', 
+                                        Правило_для_карты_уставок = rule, Предохранитель = '', Шкаф = uso_s, Корзина = basket_s, Модуль = module_s, Канал = channel_s,
                                         AlphaHMI = '', AlphaHMI_PIC1 = '', AlphaHMI_PIC1_Number_kont = '', AlphaHMI_PIC2 = '', 
                                         AlphaHMI_PIC2_Number_kont = '', AlphaHMI_PIC3 = '', AlphaHMI_PIC3_Number_kont = '', 
                                         AlphaHMI_PIC4 = '', AlphaHMI_PIC4_Number_kont = ''))
@@ -744,15 +745,15 @@ class Filling_AI():
         return(msg)
     # Заполняем таблицу AI
     def column_check(self):
-        list_default = ['variable', 'tag', 'name', 'pValue', 'pHealth', 'group_analog',
-                        'group_ust_analog',  'unit',  'sign_VU',  'flag_MPa_kgccm2',  'number_NA_or_aux',  
-                        'vibration_pump',  'vibration_motor',  'current_motor',  'aux_outlet_pressure', 
-                        'number_ust_min_avar',  'number_ust_min_pred',  'number_ust_max_pred',  'number_ust_max_avar', 
-                        'field_min',  'field_max',  'eng_min', 'eng_max', 'reliability_min', 'reliability_max', 
-                        'hysteresis', 'filtration', 'ust_min_6', 'ust_min_5', 'ust_min_4', 'ust_min_3', 
-                        'ust_min_2', 'ust_min', 'ust_max', 'ust_max_2', 'ust_max_3', 'ust_max_4',
-                        'ust_max_5', 'ust_max_6', 'value_precision', 'PIC', 'group_trend', 'hysteresis_TI', 
-                        'unit_physical_ACP', 'setpoint_map_rule', 'fuse', 'uso', 'basket', 'module', 'channel', 'AlphaHMI', 'AlphaHMI_PIC1', 
+        list_default = ['Переменная', 'Идентификатор', 'Название', 'pValue', 'pHealth', 'Группа_аналогов',
+                        'Группа_уставок_аналогов',  'Единица_измерения',  'Подпись_для_ВУ',  'Флаг_для_пересчета_в_кгс_см2',  'Номер_НА_или_вспом',  
+                        'Вибрация_насоса',  'Вибрация_ЭД',  'Ток_ЭД_НА',  'Давление_на_выходе_вспом', 
+                        'Номер_уставки_мин_авар',  'Номер_уставки_мин_пред',  'Номер_уставки_макс_авар',  'Номер_уставки_макс_пред', 
+                        'Полевой_мин',  'Полевой_макс',  'Инженерный_мин', 'Инженерный_макс', 'Достоверность_мин', 'Достоверность_макс', 
+                        'Гистерезис', 'Фильтрация', 'Уставка_мин_6', 'Уставка_мин_5', 'Уставка_мин_4', 'Уставка_мин_3', 
+                        'Уставка_мин_2', 'Уставка_мин', 'Уставка_макс', 'Уставка_макс_2', 'Уставка_макс_3', 'Уставка_макс_4',
+                        'Уставка_макс_5', 'Уставка_макс_6', 'Точность_значения', 'Pic', 'Группа_сброса_трендов', 'Гистерезис_ТИ', 
+                        'АЦП', 'Правило_для_карты_уставок', 'Предохранитель', 'Шкаф', 'Корзина', 'Модуль', 'Канал', 'AlphaHMI', 'AlphaHMI_PIC1', 
                         'AlphaHMI_PIC1_Number_kont', 'AlphaHMI_PIC2', 'AlphaHMI_PIC2_Number_kont',
                         'AlphaHMI_PIC3', 'AlphaHMI_PIC3_Number_kont', 'AlphaHMI_PIC4', 'AlphaHMI_PIC4_Number_kont']
         msg = self.dop_function.column_check(AI, 'ai', list_default)
@@ -794,45 +795,45 @@ class Filling_AO():
                     else:
                         msg[f'{today} - Таблица: AO не пуста, идет обновление'] = 1
 
-                    coincidence = AO.select().where(AO.uso     == uso_s,
-                                                    AO.basket  == basket_s,
-                                                    AO.module  == module_s,
-                                                    AO.channel == channel_s)
+                    coincidence = AO.select().where(AO.Шкаф     == uso_s,
+                                                    AO.Корзина  == basket_s,
+                                                    AO.Модуль  == module_s,
+                                                    AO.Канал == channel_s)
                     if bool(coincidence):
-                        exist_tag  = AO.select().where(AO.tag == tag)
-                        exist_name = AO.select().where(AO.name == description)
+                        exist_tag  = AO.select().where(AO.Идентификатор == tag)
+                        exist_name = AO.select().where(AO.Название == description)
 
                         if not bool(exist_tag):
-                            select_tag = self.cursor.execute(f'''SELECT id, tag 
+                            select_tag = self.cursor.execute(f'''SELECT id, Идентификатор 
                                                                  FROM ao
-                                                                 WHERE uso='{uso_s}' AND 
-                                                                       basket={basket_s} AND 
-                                                                       module={module_s} AND 
-                                                                       channel={channel_s}''')
+                                                                 WHERE Шкаф='{uso_s}' AND 
+                                                                       Корзина={basket_s} AND 
+                                                                       Модуль={module_s} AND 
+                                                                       Канал={channel_s}''')
                             for id_, tag_ in select_tag.fetchall():
-                                msg[f'{today} - Таблица: AO, у сигнала обновлен tag: id = {id_}, ({tag_}) {tag}'] = 2
+                                msg[f'{today} - Таблица: AO, у сигнала обновлен идентификатор: id = {id_}, ({tag_}) {tag}'] = 2
                             self.cursor.execute(f'''UPDATE ao
-                                                    SET tag='{tag}' 
-                                                    WHERE uso='{uso_s}' AND 
-                                                          basket={basket_s} AND 
-                                                          module={module_s} AND 
-                                                          channel={channel_s}''')
+                                                    SET Идентификатор='{tag}' 
+                                                    WHERE Шкаф='{uso_s}' AND 
+                                                          Корзина={basket_s} AND 
+                                                          Модуль={module_s} AND 
+                                                          Канал={channel_s}''')
     
                         if not bool(exist_name):
-                            select_name = self.cursor.execute(f'''SELECT id, name 
+                            select_name = self.cursor.execute(f'''SELECT id, Название 
                                                                   FROM ao
-                                                                  WHERE uso='{uso_s}' AND 
-                                                                        basket={basket_s} AND 
-                                                                        module={module_s} AND 
-                                                                        channel={channel_s}''')
+                                                                  WHERE Шкаф='{uso_s}' AND 
+                                                                        Корзина={basket_s} AND 
+                                                                        Модуль={module_s} AND 
+                                                                        Канал={channel_s}''')
                             for id_, name_ in select_name.fetchall():
-                                msg[f'{today} - Таблица: AO, у сигнала обновлен name: id = {id_}, ({name_}) {description}'] = 2
+                                msg[f'{today} - Таблица: AO, у сигнала обновлено название: id = {id_}, ({name_}) {description}'] = 2
                             self.cursor.execute(f'''UPDATE ao
-                                                    SET name='{description}' 
-                                                    WHERE uso='{uso_s}' AND 
-                                                          basket={basket_s} AND 
-                                                          module={module_s} AND 
-                                                          channel={channel_s}''')
+                                                    SET Название='{description}' 
+                                                    WHERE Шкаф='{uso_s}' AND 
+                                                          Корзина={basket_s} AND 
+                                                          Модуль={module_s} AND 
+                                                          Канал={channel_s}''')
                         continue
 
                     # Сквозной номер модуля
@@ -854,15 +855,15 @@ class Filling_AO():
                     if module_s < 10: prefix = f'0{module_s}' 
                     else            : prefix = f'{module_s}'
                 
-                    list_AO.append(dict(variable = f'AO[{count_AO}]',
-                                        tag = tag,
-                                        name = description,
+                    list_AO.append(dict(Переменная = f'AO[{count_AO}]',
+                                        Идентификатор = tag,
+                                        Название = description,
                                         pValue = f'{tag_h}_{prefix}_AO[{channel_s}]',
                                         pHealth = f'mAO_HEALTH[{isdigit_num[0]}]',
-                                        uso = uso_s, 
-                                        basket = basket_s, 
-                                        module = module_s, 
-                                        channel = channel_s,
+                                        Шкаф = uso_s, 
+                                        Корзина = basket_s, 
+                                        Модуль = module_s, 
+                                        Канал = channel_s,
                                         ))
 
             # Checking for the existence of a database
@@ -872,7 +873,7 @@ class Filling_AO():
         return(msg)
     # Заполняем таблицу AO
     def column_check(self):
-        list_default = ['variable', 'tag', 'name', 'pValue', 'pHealth', 'uso', 'basket', 'module', 'channel']
+        list_default = ['Переменная', 'Идентификатор', 'Название', 'pValue', 'pHealth',  'Шкаф', 'Корзина', 'Модуль', 'Канал']
         msg = self.dop_function.column_check(AO, 'ao', list_default)
         return msg 
 
@@ -911,45 +912,45 @@ class Filling_DI():
                     else:
                         msg[f'{today} - Таблица: DI не пуста, идет обновление'] = 1
 
-                    coincidence = DI.select().where(DI.uso     == uso_s,
-                                                    DI.basket  == basket_s,
-                                                    DI.module  == module_s,
-                                                    DI.channel == channel_s)
+                    coincidence = DI.select().where(DI.Шкаф    == uso_s,
+                                                    DI.Корзина == basket_s,
+                                                    DI.Модуль  == module_s,
+                                                    DI.Канал   == channel_s)
                     if bool(coincidence):
-                        exist_tag  = DI.select().where(DI.tag == tag)
-                        exist_name = DI.select().where(DI.name == description)
+                        exist_tag  = DI.select().where(DI.Идентификатор == tag)
+                        exist_name = DI.select().where(DI.Название == description)
 
                         if not bool(exist_tag):
-                            select_tag = self.cursor.execute(f'''SELECT id, tag 
+                            select_tag = self.cursor.execute(f'''SELECT id, Идентификатор 
                                                                  FROM di
-                                                                 WHERE uso='{uso_s}' AND 
-                                                                       basket={basket_s} AND 
-                                                                       module={module_s} AND 
-                                                                       channel={channel_s}''')
+                                                                 WHERE Шкаф='{uso_s}' AND 
+                                                                       Корзина={basket_s} AND 
+                                                                       Модуль={module_s} AND 
+                                                                       Канал={channel_s}''')
                             for id_, tag_ in select_tag.fetchall():
-                                msg[f'{today} - Таблица: DI, у сигнала обновлен tag: id = {id_}, ({tag_}) {tag}'] = 2
+                                msg[f'{today} - Таблица: DI, у сигнала обновлен идентификатор: id = {id_}, ({tag_}) {tag}'] = 2
                             self.cursor.execute(f'''UPDATE di
-                                                    SET tag='{tag}' 
-                                                    WHERE uso='{uso_s}' AND 
-                                                          basket={basket_s} AND 
-                                                          module={module_s} AND 
-                                                          channel={channel_s}''')
+                                                    SET Идентификатор='{tag}' 
+                                                    WHERE Шкаф='{uso_s}' AND 
+                                                          Корзина={basket_s} AND 
+                                                          Модуль={module_s} AND 
+                                                          Канал={channel_s}''')
     
                         if not bool(exist_name):
-                            select_name = self.cursor.execute(f'''SELECT id, name 
+                            select_name = self.cursor.execute(f'''SELECT id, Название 
                                                                   FROM di
-                                                                  WHERE uso='{uso_s}' AND 
-                                                                        basket={basket_s} AND 
-                                                                        module={module_s} AND 
-                                                                        channel={channel_s}''')
+                                                                  WHERE Шкаф='{uso_s}' AND 
+                                                                        Корзина={basket_s} AND 
+                                                                        Модуль={module_s} AND 
+                                                                        Канал={channel_s}''')
                             for id_, name_ in select_name.fetchall():
-                                msg[f'{today} - Таблица: DI, у сигнала обновлен name: id = {id_}, ({name_}) {description}'] = 2
+                                msg[f'{today} - Таблица: DI, у сигнала обновлено название: id = {id_}, ({name_}) {description}'] = 2
                             self.cursor.execute(f'''UPDATE di
-                                                    SET name='{description}' 
-                                                    WHERE uso='{uso_s}' AND 
-                                                          basket={basket_s} AND 
-                                                          module={module_s} AND 
-                                                          channel={channel_s}''')
+                                                    SET Название='{description}' 
+                                                    WHERE Шкаф='{uso_s}' AND 
+                                                          Корзина={basket_s} AND 
+                                                          Модуль={module_s} AND 
+                                                          Канал={channel_s}''')
                         continue
 
                     # Сквозной номер модуля
@@ -975,9 +976,9 @@ class Filling_DI():
                     elif self.dop_function.str_find(str(tag).lower(), {'ec'}): group_diskrets = 'Электроснабжение'
                     else: group_diskrets = 'Общие'
                     
-                    list_DI.append(dict(variable = f'DI[{count_DI}]',
-                                        tag = tag,
-                                        name = description,
+                    list_DI.append(dict(Переменная = f'DI[{count_DI}]',
+                                        Идентификатор = tag,
+                                        Название = description,
                                         pValue = f'{tag_h}_{prefix}_DI[{channel_s}]',
                                         pHealth = f'mDI_HEALTH[{str(isdigit_num)}]',
                                         Inv = '0',
@@ -992,12 +993,12 @@ class Filling_DI():
                                         TS_ID = '',
                                         isModuleNC = '',
                                         Pic = '',
-                                        tabl_msg = 'TblDiscretes',
-                                        group_diskrets = group_diskrets,
-                                        msg_priority_0 = '',
-                                        msg_priority_1 = '',
-                                        short_title = description,
-                                        uso = uso_s, basket = basket_s, module = module_s, channel = channel_s,
+                                        Таблица_сообщений = 'TblDiscretes',
+                                        Группа_дискретов = group_diskrets,
+                                        Приоритет_сообщения_при_0 = '',
+                                        Приоритет_сообщения_при_1 = '',
+                                        Короткое_название = description,
+                                        Шкаф = uso_s, Корзина = basket_s, Модуль = module_s, Канал = channel_s,
                                         AlphaHMI = '', AlphaHMI_PIC1 = '', AlphaHMI_PIC1_Number_kont = '', AlphaHMI_PIC2 = '', 
                                         AlphaHMI_PIC2_Number_kont = '', AlphaHMI_PIC3 = '', AlphaHMI_PIC3_Number_kont = '', 
                                         AlphaHMI_PIC4 = '', AlphaHMI_PIC4_Number_kont = ''))
@@ -1009,11 +1010,11 @@ class Filling_DI():
         return(msg)
     # Заполняем таблицу DI
     def column_check(self):
-        list_default = ['variable', 'tag', 'name', 'pValue', 'pHealth', 'Inv',
+        list_default = ['Переменная', 'Идентификатор', 'Название', 'pValue', 'pHealth', 'Inv',
                         'ErrValue', 'priority_0', 'priority_1', 'Msg', 'isDI_NC',  
                         'isAI_Warn', 'isAI_Avar', 'pNC_AI',  'TS_ID', 
-                        'isModuleNC',  'Pic',  'tabl_msg',  'group_diskrets', 
-                        'msg_priority_0',  'msg_priority_1', 'short_title', 'uso', 'basket', 'module', 'channel', 
+                        'isModuleNC',  'Pic',  'Таблица_сообщений',  'Группа_дискретов', 
+                        'Приоритет_сообщения_при_0',  'Приоритет_сообщения_при_1', 'Короткое_название', 'Шкаф', 'Корзина', 'Модуль', 'Канал', 
                         'AlphaHMI', 'AlphaHMI_PIC1', 'AlphaHMI_PIC1_Number_kont', 'AlphaHMI_PIC2',
                         'AlphaHMI_PIC2_Number_kont','AlphaHMI_PIC3', 'AlphaHMI_PIC3_Number_kont', 
                         'AlphaHMI_PIC4', 'AlphaHMI_PIC4_Number_kont']
@@ -1055,45 +1056,45 @@ class Filling_DO():
                     else:
                         msg[f'{today} - Таблица: DO не пуста, идет обновление'] = 1
 
-                    coincidence = DO.select().where(DO.uso     == uso_s,
-                                                    DO.basket  == basket_s,
-                                                    DO.module  == module_s,
-                                                    DO.channel == channel_s)
+                    coincidence = DO.select().where(DO.Шкаф    == uso_s,
+                                                    DO.Корзина == basket_s,
+                                                    DO.Модуль  == module_s,
+                                                    DO.Канал   == channel_s)
                     if bool(coincidence):
-                        exist_tag  = DO.select().where(DO.tag == tag)
-                        exist_name = DO.select().where(DO.name == description)
+                        exist_tag  = DO.select().where(DO.Идентификатор == tag)
+                        exist_name = DO.select().where(DO.Название == description)
 
                         if not bool(exist_tag):
-                            select_tag = self.cursor.execute(f'''SELECT id, tag 
+                            select_tag = self.cursor.execute(f'''SELECT id, Идентификатор 
                                                                  FROM do
-                                                                 WHERE uso='{uso_s}' AND 
-                                                                       basket={basket_s} AND 
-                                                                       module={module_s} AND 
-                                                                       channel={channel_s}''')
+                                                                 WHERE Шкаф='{uso_s}' AND 
+                                                                       Корзина={basket_s} AND 
+                                                                       Модуль={module_s} AND 
+                                                                       Канал={channel_s}''')
                             for id_, tag_ in select_tag.fetchall():
-                                msg[f'{today} - Таблица: DO, у сигнала обновлен tag: id = {id_}, ({tag_}) {tag}'] = 2
+                                msg[f'{today} - Таблица: DO, у сигнала обновлен идентификатор: id = {id_}, ({tag_}) {tag}'] = 2
                             self.cursor.execute(f'''UPDATE do
-                                                    SET tag='{tag}' 
-                                                    WHERE uso='{uso_s}' AND 
-                                                          basket={basket_s} AND 
-                                                          module={module_s} AND 
-                                                          channel={channel_s}''')
+                                                    SET Идентификатор='{tag}' 
+                                                    WHERE Шкаф='{uso_s}' AND 
+                                                          Корзина={basket_s} AND 
+                                                          Модуль={module_s} AND 
+                                                          Канал={channel_s}''')
     
                         if not bool(exist_name):
-                            select_name = self.cursor.execute(f'''SELECT id, name 
+                            select_name = self.cursor.execute(f'''SELECT id, Название 
                                                                   FROM do
-                                                                  WHERE uso='{uso_s}' AND 
-                                                                        basket={basket_s} AND 
-                                                                        module={module_s} AND 
-                                                                        channel={channel_s}''')
+                                                                  WHERE Шкаф='{uso_s}' AND 
+                                                                        Корзина={basket_s} AND 
+                                                                        Модуль={module_s} AND 
+                                                                        Канал={channel_s}''')
                             for id_, name_ in select_name.fetchall():
-                                msg[f'{today} - Таблица: DO, у сигнала обновлен name: id = {id_}, ({name_}) {description}'] = 2
+                                msg[f'{today} - Таблица: DO, у сигнала обновлено название: id = {id_}, ({name_}) {description}'] = 2
                             self.cursor.execute(f'''UPDATE do
-                                                    SET name='{description}' 
-                                                    WHERE uso='{uso_s}' AND 
-                                                          basket={basket_s} AND 
-                                                          module={module_s} AND 
-                                                          channel={channel_s}''')
+                                                    SET Название='{description}' 
+                                                    WHERE Шкаф='{uso_s}' AND 
+                                                          Корзина={basket_s} AND 
+                                                          Модуль={module_s} AND 
+                                                          Канал={channel_s}''')
                         continue
 
                     # Сквозной номер модуля
@@ -1115,13 +1116,13 @@ class Filling_DO():
                     if module_s < 10: prefix = f'0{module_s}' 
                     else            : prefix = f'{module_s}'
 
-                    list_DO.append(dict(variable = f'DO[{count_DO}]',
-                                        tag = tag,
-                                        name = description,
+                    list_DO.append(dict(Переменная = f'DO[{count_DO}]',
+                                        Идентификатор = tag,
+                                        Название = description,
                                         pValue = f'{tag_h}_{prefix}_DO[{channel_s}]',
                                         pHealth = f'mDO_HEALTH[{str(isdigit_num)}]',
-                                        short_title = description,
-                                        uso = uso_s, basket = basket_s, module = module_s, channel = channel_s,
+                                        Короткое_название = description,
+                                        Шкаф = uso_s, Корзина = basket_s, Модуль = module_s, Канал = channel_s,
                                         AlphaHMI = '', AlphaHMI_PIC1 = '', AlphaHMI_PIC1_Number_kont = '', AlphaHMI_PIC2 = '', 
                                         AlphaHMI_PIC2_Number_kont = '', AlphaHMI_PIC3 = '', AlphaHMI_PIC3_Number_kont = '', 
                                         AlphaHMI_PIC4 = '', AlphaHMI_PIC4_Number_kont = ''))
@@ -1133,7 +1134,7 @@ class Filling_DO():
         return(msg)
     # Заполняем таблицу DO
     def column_check(self):
-        list_default = ['variable', 'tag', 'name', 'pValue', 'pHealth', 'short_title', 'uso', 'basket', 'module', 'channel', 
+        list_default = ['Переменная', 'Идентификатор', 'Название', 'pValue', 'pHealth', 'Короткое_название', 'Шкаф', 'Корзина', 'Модуль', 'Канал', 
                         'AlphaHMI', 'AlphaHMI_PIC1', 'AlphaHMI_PIC1_Number_kont', 'AlphaHMI_PIC2',
                         'AlphaHMI_PIC2_Number_kont','AlphaHMI_PIC3', 'AlphaHMI_PIC3_Number_kont', 
                         'AlphaHMI_PIC4', 'AlphaHMI_PIC4_Number_kont']
@@ -1390,8 +1391,12 @@ class Filling_UMPNA():
     def getting_modul(self, count_NA):
         msg = {}
         with db:
-            if self.dop_function.empty_table('di') or self.dop_function.empty_table('ai'): 
-                msg[f'{today} - Таблицы: AI или DI пустые! Заполни таблицы!'] = 2
+            try:
+                if self.dop_function.empty_table('di') or self.dop_function.empty_table('ai'): 
+                    msg[f'{today} - Таблицы: AI или DI пустые! Заполни таблицы!'] = 2
+                    return msg
+            except:
+                msg[f'{today} - Таблицы: AI или DI отсутсвует!'] = 2
                 return msg
 
             row_count_req = self.cursor.execute(f'''SELECT Count (*) FROM umpna''')
@@ -1620,165 +1625,171 @@ class Filling_ZD():
     # Получаем данные с таблицы AI и DI 
     def getting_modul(self):
         msg = {}
+        array_tag_zd = ('OKC', 'CKC', 'ODC', 'CDC', 'MC', 'OPC', 'DC', 'DCK', 'MCO', 'MCC', 'KKC', 'KKS')
         with db:
-            if self.dop_function.empty_table('di') or self.dop_function.empty_table('ai'): 
-                msg[f'{today} - Таблицы: AI или DI пустые! Заполни таблицы!'] = 2
+            try:
+                if self.dop_function.empty_table('di'): 
+                    msg[f'{today} - Таблица: DI пустая! Заполни таблицу!'] = 2
+                    return msg
+            except:
+                msg[f'{today} - Таблицы: DI отсутсвует! Заполни таблицу!'] = 2
                 return msg
-            count_NA = 4
-            row_count_req = self.cursor.execute(f'''SELECT Count (*) FROM umpna''')
-            row_count = row_count_req.fetchall()[0][0]
-
-            for i in range(1, count_NA + 1):
-
-                if row_count < i:
-                    list_UMPNA = []
-                    msg[f'{today} - Таблица: UMPNA, отсутствует NA[{i}] идет заполнение'] = 3
-
-                    vv_included = self.dop_function.search_signal(DI, 'di', f'MBC{i}01-1')
-                    vv_double_included = self.dop_function.search_signal(DI, 'di', f'MBC{i}01-2')
-                    vv_disabled = self.dop_function.search_signal(DI, 'di', f'MBC{i}02-1')
-                    vv_double_disabled = self.dop_function.search_signal(DI, 'di', f'MBC{i}02-2')
-                    current_greater_than_noload_setting = self.dop_function.search_signal(AI, 'ai', f'CT{i}01')
-                    serviceability_of_circuits_of_inclusion_of_VV = self.dop_function.search_signal(DI, 'di', f'ECB{i}01')
-                    serviceability_of_circuits_of_shutdown_of_VV = self.dop_function.search_signal(DI, 'di', f'ECO{i}01-1')
-                    serviceability_of_circuits_of_shutdown_of_VV_double = self.dop_function.search_signal(DI, 'di', f'ECO{i}01-2')
-                    stop_1 = self.dop_function.search_signal(DI, 'di', f'KKC{i}01')
-                    stop_2 = self.dop_function.search_signal(DI, 'di', f'KKC{i}02')
-                    monitoring_the_presence_of_voltage_in_the_control_current_circuits = self.dop_function.search_signal(DI, 'di', f'EC{i}08')
-                    vv_trolley_rolled_out = self.dop_function.search_signal(DI, 'di', f'EC{i}04')
-                    command_to_turn_on_the_vv_only_for_UMPNA = self.dop_function.search_signal(DO, 'do', f'ABB{i}01')
-                    command_to_turn_off_the_vv_output_1 = self.dop_function.search_signal(DO, 'do', f'ABO{i}01-1')
-                    command_to_turn_off_the_vv_output_2 = self.dop_function.search_signal(DO, 'do', f'ABO{i}01-2')
-
-                    list_UMPNA.append(dict(variable = f'NA[{i}]',
-                        name ='',
-                        vv_included = vv_included,
-                        vv_double_included = vv_double_included,
-                        vv_disabled = vv_disabled,
-                        vv_double_disabled = vv_double_disabled,
-                        current_greater_than_noload_setting = current_greater_than_noload_setting,
-                        serviceability_of_circuits_of_inclusion_of_VV = serviceability_of_circuits_of_inclusion_of_VV,
-                        serviceability_of_circuits_of_shutdown_of_VV = serviceability_of_circuits_of_shutdown_of_VV,
-                        serviceability_of_circuits_of_shutdown_of_VV_double = serviceability_of_circuits_of_shutdown_of_VV_double,
-                        stop_1 = f'NOT {stop_1}',
-                        stop_2 = f'NOT {stop_2}',
-                        stop_3 ='',
-                        stop_4 ='',
-                        monitoring_the_presence_of_voltage_in_the_control_current_circuits = monitoring_the_presence_of_voltage_in_the_control_current_circuits,
-                        voltage_presence_flag_in_the_ZRU_motor_cell ='',
-                        vv_trolley_rolled_out = vv_trolley_rolled_out,
-                        remote_control_mode_of_the_RZiA_controller ='',
-                        availability_of_communication_with_the_RZiA_controller ='',
-                        the_state_of_the_causative_agent_of_ED ='',
-                        engine_prepurge_end_flag ='',
-                        flag_for_the_presence_of_safe_air_boost_pressure_in_the_engine_housing ='',
-                        flag_for_the_presence_of_safe_air_boost_pressure_in_the_exciter_housing ='',
-                        engine_purge_valve_closed_flag ='',
-                        oil_system_oil_temperature_flag_is_above_10_at_the_cooler_outlet_for_an_individual_oil_system ='',
-                        flag_for_the_minimum_oil_level_in_the_oil_tank_for_an_individual_oil_system ='',
-                        flag_for_the_presence_of_the_minimum_level_of_the_barrier_liquid_in_the_tank_of_the_locking_system ='',
-                        generalized_flag_for_the_presence_of_barrier_fluid_pressure_to_the_mechanical_seal ='',
-                        command_to_turn_on_the_vv_only_for_UMPNA = command_to_turn_on_the_vv_only_for_UMPNA,
-                        command_to_turn_off_the_vv_output_1 = command_to_turn_off_the_vv_output_1,
-                        command_to_turn_off_the_vv_output_2 = command_to_turn_off_the_vv_output_2,
-                        NA_Chrp ='',
-                        type_NA_MNA ='',
-                        pump_type_NM ='',
-                        parametr_KTPRAS_1 ='',
-                        number_of_delay_scans_of_the_analysis_of_the_health_of_the_control_circuits_NA_MNA ='',
-                        unit_number_of_the_auxiliary_system_start_up_oil_pump_for_an_individual_oil_system ='',
-                        NPS_number_1_or_2_which_the_AT_belongs ='',
-                        achr_protection_number_in_the_array_of_station_protections ='',
-                        saon_protection_number_in_the_array_of_station_protections ='',
-                        gmpna_49 ='',
-                        gmpna_50 ='',
-                        gmpna_51 ='',
-                        gmpna_52 ='',
-                        gmpna_53 ='',
-                        gmpna_54 ='',
-                        gmpna_55 ='',
-                        gmpna_56 ='',
-                        gmpna_57 ='',
-                        gmpna_58 ='',
-                        gmpna_59 ='',
-                        gmpna_60 ='',
-                        gmpna_61 ='',
-                        gmpna_62 ='',
-                        gmpna_63 ='',
-                        gmpna_64 ='',
-                        PIC ='',
-                        replacement_uso_signal_vv_1 ='',
-                        replacement_uso_signal_vv_2 =''))
-                        
-                    # Checking for the existence of a database
-                    UMPNA.insert_many(list_UMPNA).execute()
-                    msg[f'{today} - Таблица: UMPNA, NA[{i}] заполнен'] = 1
-
-                else:
-
-                    msg[f'{today} - Таблица: UMPNA, NA[{i}] идет обновление'] = 3
-
-                    msg.update(self.dop_function.update_signal(UMPNA, 'umpna', 
-                        self.dop_function.search_signal(DI, "di", f"MBC{i}01-1"), i, UMPNA.vv_included, 'vv_included'))
-                    msg.update(self.dop_function.update_signal(UMPNA, 'umpna', 
-                        self.dop_function.search_signal(DI, "di", f"MBC{i}01-2"), i, UMPNA.vv_double_included, 'vv_double_included'))
-                    msg.update(self.dop_function.update_signal(UMPNA, 'umpna', 
-                        self.dop_function.search_signal(DI, "di", f"MBC{i}02-1"), i, UMPNA.vv_disabled, 'vv_disabled'))
-                    msg.update(self.dop_function.update_signal(UMPNA, 'umpna', 
-                        self.dop_function.search_signal(DI, "di", f"MBC{i}02-2"), i, UMPNA.vv_double_disabled, 'vv_double_disabled'))
-                    msg.update(self.dop_function.update_signal(UMPNA, 'umpna', 
-                        self.dop_function.search_signal(AI, "ai", f"CT{i}01"), i, UMPNA.current_greater_than_noload_setting, 'current_greater_than_noload_setting'))
-                    msg.update(self.dop_function.update_signal(UMPNA, 'umpna', 
-                        self.dop_function.search_signal(DI, "di", f"ECB{i}01"), i, UMPNA.serviceability_of_circuits_of_inclusion_of_VV, 'serviceability_of_circuits_of_inclusion_of_VV'))
-                    msg.update(self.dop_function.update_signal(UMPNA, 'umpna', 
-                        self.dop_function.search_signal(DI, "di", f"ECO{i}01-1"), i, UMPNA.serviceability_of_circuits_of_shutdown_of_VV, 'serviceability_of_circuits_of_shutdown_of_VV'))
-                    msg.update(self.dop_function.update_signal(UMPNA, 'umpna', 
-                        self.dop_function.search_signal(DI, "di", f"ECO{i}01-2"), i, UMPNA.serviceability_of_circuits_of_shutdown_of_VV_double, 'serviceability_of_circuits_of_shutdown_of_VV_double'))
-                    msg.update(self.dop_function.update_signal(UMPNA, 'umpna', 
-                        f'NOT {self.dop_function.search_signal(DI, "di", f"KKC{i}01")}', i, UMPNA.stop_1, 'stop_1'))
-                    msg.update(self.dop_function.update_signal(UMPNA, 'umpna', 
-                        f'NOT {self.dop_function.search_signal(DI, "di", f"KKC{i}02")}', i, UMPNA.stop_2, 'stop_2'))
-                    msg.update(self.dop_function.update_signal(UMPNA, 'umpna', 
-                        self.dop_function.search_signal(DI, "di", f"EC{i}08"), i, UMPNA.monitoring_the_presence_of_voltage_in_the_control_current_circuits, 'monitoring_the_presence_of_voltage_in_the_control_current_circuits'))
-                    msg.update(self.dop_function.update_signal(UMPNA, 'umpna', 
-                        self.dop_function.search_signal(DI, "di", f"EC{i}04"), i, UMPNA.vv_trolley_rolled_out, 'vv_trolley_rolled_out'))
-                    msg.update(self.dop_function.update_signal(UMPNA, 'umpna', 
-                        self.dop_function.search_signal(DO, "do", f"ABB{i}01"), i, UMPNA.command_to_turn_on_the_vv_only_for_UMPNA, 'command_to_turn_on_the_vv_only_for_UMPNA'))
-                    msg.update(self.dop_function.update_signal(UMPNA, 'umpna', 
-                        self.dop_function.search_signal(DO, "do", f"ABO{i}01-1"), i, UMPNA.command_to_turn_off_the_vv_output_1, 'command_to_turn_off_the_vv_output_1'))
-                    msg.update(self.dop_function.update_signal(UMPNA, 'umpna', 
-                        self.dop_function.search_signal(DO, "do", f"ABO{i}01-2"), i, UMPNA.command_to_turn_off_the_vv_output_2, 'command_to_turn_off_the_vv_output_2'))
-                    
-                    msg[f'{today} - Таблица: UMPNA, сигналы NA[{i}] обновлены'] = 1
             
-            exists_name = self.cursor.execute(f'''SELECT name FROM umpna''')
-            for i in exists_name.fetchall():
-                if i[0] is None or i[0] == '' or i[0] == ' ':
-                    msg[f'{today} - Таблица: UMPNA, необходимо заполнить название НА!'] = 3
+            count_zd = self.cursor.execute(f'''SELECT Название 
+                                               FROM di
+                                               WHERE Название LIKE "%задвижк%" OR Название LIKE "%Задвижк%"''')
+            list_zd = count_zd.fetchall()
+            list_zd_name_split = []
+            for i in list_zd: 
+                list_zd_name_split.append(str(i[0]).split(' - ')[0])
+
+            unique_name = set(list_zd_name_split)
+
+            for name in unique_name:
+                for tag in array_tag_zd:
+                    count_zd = self.cursor.execute(f'''SELECT Идентификатор, Название 
+                                                       FROM di
+                                                       WHERE Название LIKE "%{name}%" AND Идентификатор LIKE "%{tag}%"''')
+
+
+            #     if row_count < i:
+            #         list_UMPNA = []
+            #         msg[f'{today} - Таблица: UMPNA, отсутствует NA[{i}] идет заполнение'] = 3
+
+            #         vv_included = self.dop_function.search_signal(DI, 'di', f'MBC{i}01-1')
+            #         vv_double_included = self.dop_function.search_signal(DI, 'di', f'MBC{i}01-2')
+            #         vv_disabled = self.dop_function.search_signal(DI, 'di', f'MBC{i}02-1')
+            #         vv_double_disabled = self.dop_function.search_signal(DI, 'di', f'MBC{i}02-2')
+            #         current_greater_than_noload_setting = self.dop_function.search_signal(AI, 'ai', f'CT{i}01')
+            #         serviceability_of_circuits_of_inclusion_of_VV = self.dop_function.search_signal(DI, 'di', f'ECB{i}01')
+            #         serviceability_of_circuits_of_shutdown_of_VV = self.dop_function.search_signal(DI, 'di', f'ECO{i}01-1')
+            #         serviceability_of_circuits_of_shutdown_of_VV_double = self.dop_function.search_signal(DI, 'di', f'ECO{i}01-2')
+            #         stop_1 = self.dop_function.search_signal(DI, 'di', f'KKC{i}01')
+            #         stop_2 = self.dop_function.search_signal(DI, 'di', f'KKC{i}02')
+            #         monitoring_the_presence_of_voltage_in_the_control_current_circuits = self.dop_function.search_signal(DI, 'di', f'EC{i}08')
+            #         vv_trolley_rolled_out = self.dop_function.search_signal(DI, 'di', f'EC{i}04')
+            #         command_to_turn_on_the_vv_only_for_UMPNA = self.dop_function.search_signal(DO, 'do', f'ABB{i}01')
+            #         command_to_turn_off_the_vv_output_1 = self.dop_function.search_signal(DO, 'do', f'ABO{i}01-1')
+            #         command_to_turn_off_the_vv_output_2 = self.dop_function.search_signal(DO, 'do', f'ABO{i}01-2')
+
+            #         list_UMPNA.append(dict(variable = f'NA[{i}]',
+            #             name ='',
+            #             vv_included = vv_included,
+            #             vv_double_included = vv_double_included,
+            #             vv_disabled = vv_disabled,
+            #             vv_double_disabled = vv_double_disabled,
+            #             current_greater_than_noload_setting = current_greater_than_noload_setting,
+            #             serviceability_of_circuits_of_inclusion_of_VV = serviceability_of_circuits_of_inclusion_of_VV,
+            #             serviceability_of_circuits_of_shutdown_of_VV = serviceability_of_circuits_of_shutdown_of_VV,
+            #             serviceability_of_circuits_of_shutdown_of_VV_double = serviceability_of_circuits_of_shutdown_of_VV_double,
+            #             stop_1 = f'NOT {stop_1}',
+            #             stop_2 = f'NOT {stop_2}',
+            #             stop_3 ='',
+            #             stop_4 ='',
+            #             monitoring_the_presence_of_voltage_in_the_control_current_circuits = monitoring_the_presence_of_voltage_in_the_control_current_circuits,
+            #             voltage_presence_flag_in_the_ZRU_motor_cell ='',
+            #             vv_trolley_rolled_out = vv_trolley_rolled_out,
+            #             remote_control_mode_of_the_RZiA_controller ='',
+            #             availability_of_communication_with_the_RZiA_controller ='',
+            #             the_state_of_the_causative_agent_of_ED ='',
+            #             engine_prepurge_end_flag ='',
+            #             flag_for_the_presence_of_safe_air_boost_pressure_in_the_engine_housing ='',
+            #             flag_for_the_presence_of_safe_air_boost_pressure_in_the_exciter_housing ='',
+            #             engine_purge_valve_closed_flag ='',
+            #             oil_system_oil_temperature_flag_is_above_10_at_the_cooler_outlet_for_an_individual_oil_system ='',
+            #             flag_for_the_minimum_oil_level_in_the_oil_tank_for_an_individual_oil_system ='',
+            #             flag_for_the_presence_of_the_minimum_level_of_the_barrier_liquid_in_the_tank_of_the_locking_system ='',
+            #             generalized_flag_for_the_presence_of_barrier_fluid_pressure_to_the_mechanical_seal ='',
+            #             command_to_turn_on_the_vv_only_for_UMPNA = command_to_turn_on_the_vv_only_for_UMPNA,
+            #             command_to_turn_off_the_vv_output_1 = command_to_turn_off_the_vv_output_1,
+            #             command_to_turn_off_the_vv_output_2 = command_to_turn_off_the_vv_output_2,
+            #             NA_Chrp ='',
+            #             type_NA_MNA ='',
+            #             pump_type_NM ='',
+            #             parametr_KTPRAS_1 ='',
+            #             number_of_delay_scans_of_the_analysis_of_the_health_of_the_control_circuits_NA_MNA ='',
+            #             unit_number_of_the_auxiliary_system_start_up_oil_pump_for_an_individual_oil_system ='',
+            #             NPS_number_1_or_2_which_the_AT_belongs ='',
+            #             achr_protection_number_in_the_array_of_station_protections ='',
+            #             saon_protection_number_in_the_array_of_station_protections ='',
+            #             gmpna_49 ='',
+            #             gmpna_50 ='',
+            #             gmpna_51 ='',
+            #             gmpna_52 ='',
+            #             gmpna_53 ='',
+            #             gmpna_54 ='',
+            #             gmpna_55 ='',
+            #             gmpna_56 ='',
+            #             gmpna_57 ='',
+            #             gmpna_58 ='',
+            #             gmpna_59 ='',
+            #             gmpna_60 ='',
+            #             gmpna_61 ='',
+            #             gmpna_62 ='',
+            #             gmpna_63 ='',
+            #             gmpna_64 ='',
+            #             PIC ='',
+            #             replacement_uso_signal_vv_1 ='',
+            #             replacement_uso_signal_vv_2 =''))
+                        
+            #         # Checking for the existence of a database
+            #         UMPNA.insert_many(list_UMPNA).execute()
+            #         msg[f'{today} - Таблица: UMPNA, NA[{i}] заполнен'] = 1
+
+            #     else:
+
+            #         msg[f'{today} - Таблица: UMPNA, NA[{i}] идет обновление'] = 3
+
+            #         msg.update(self.dop_function.update_signal(UMPNA, 'umpna', 
+            #             self.dop_function.search_signal(DI, "di", f"MBC{i}01-1"), i, UMPNA.vv_included, 'vv_included'))
+            #         msg.update(self.dop_function.update_signal(UMPNA, 'umpna', 
+            #             self.dop_function.search_signal(DI, "di", f"MBC{i}01-2"), i, UMPNA.vv_double_included, 'vv_double_included'))
+            #         msg.update(self.dop_function.update_signal(UMPNA, 'umpna', 
+            #             self.dop_function.search_signal(DI, "di", f"MBC{i}02-1"), i, UMPNA.vv_disabled, 'vv_disabled'))
+            #         msg.update(self.dop_function.update_signal(UMPNA, 'umpna', 
+            #             self.dop_function.search_signal(DI, "di", f"MBC{i}02-2"), i, UMPNA.vv_double_disabled, 'vv_double_disabled'))
+            #         msg.update(self.dop_function.update_signal(UMPNA, 'umpna', 
+            #             self.dop_function.search_signal(AI, "ai", f"CT{i}01"), i, UMPNA.current_greater_than_noload_setting, 'current_greater_than_noload_setting'))
+            #         msg.update(self.dop_function.update_signal(UMPNA, 'umpna', 
+            #             self.dop_function.search_signal(DI, "di", f"ECB{i}01"), i, UMPNA.serviceability_of_circuits_of_inclusion_of_VV, 'serviceability_of_circuits_of_inclusion_of_VV'))
+            #         msg.update(self.dop_function.update_signal(UMPNA, 'umpna', 
+            #             self.dop_function.search_signal(DI, "di", f"ECO{i}01-1"), i, UMPNA.serviceability_of_circuits_of_shutdown_of_VV, 'serviceability_of_circuits_of_shutdown_of_VV'))
+            #         msg.update(self.dop_function.update_signal(UMPNA, 'umpna', 
+            #             self.dop_function.search_signal(DI, "di", f"ECO{i}01-2"), i, UMPNA.serviceability_of_circuits_of_shutdown_of_VV_double, 'serviceability_of_circuits_of_shutdown_of_VV_double'))
+            #         msg.update(self.dop_function.update_signal(UMPNA, 'umpna', 
+            #             f'NOT {self.dop_function.search_signal(DI, "di", f"KKC{i}01")}', i, UMPNA.stop_1, 'stop_1'))
+            #         msg.update(self.dop_function.update_signal(UMPNA, 'umpna', 
+            #             f'NOT {self.dop_function.search_signal(DI, "di", f"KKC{i}02")}', i, UMPNA.stop_2, 'stop_2'))
+            #         msg.update(self.dop_function.update_signal(UMPNA, 'umpna', 
+            #             self.dop_function.search_signal(DI, "di", f"EC{i}08"), i, UMPNA.monitoring_the_presence_of_voltage_in_the_control_current_circuits, 'monitoring_the_presence_of_voltage_in_the_control_current_circuits'))
+            #         msg.update(self.dop_function.update_signal(UMPNA, 'umpna', 
+            #             self.dop_function.search_signal(DI, "di", f"EC{i}04"), i, UMPNA.vv_trolley_rolled_out, 'vv_trolley_rolled_out'))
+            #         msg.update(self.dop_function.update_signal(UMPNA, 'umpna', 
+            #             self.dop_function.search_signal(DO, "do", f"ABB{i}01"), i, UMPNA.command_to_turn_on_the_vv_only_for_UMPNA, 'command_to_turn_on_the_vv_only_for_UMPNA'))
+            #         msg.update(self.dop_function.update_signal(UMPNA, 'umpna', 
+            #             self.dop_function.search_signal(DO, "do", f"ABO{i}01-1"), i, UMPNA.command_to_turn_off_the_vv_output_1, 'command_to_turn_off_the_vv_output_1'))
+            #         msg.update(self.dop_function.update_signal(UMPNA, 'umpna', 
+            #             self.dop_function.search_signal(DO, "do", f"ABO{i}01-2"), i, UMPNA.command_to_turn_off_the_vv_output_2, 'command_to_turn_off_the_vv_output_2'))
+                    
+            #         msg[f'{today} - Таблица: UMPNA, сигналы NA[{i}] обновлены'] = 1
+            
+            # exists_name = self.cursor.execute(f'''SELECT name FROM umpna''')
+            # for i in exists_name.fetchall():
+            #     if i[0] is None or i[0] == '' or i[0] == ' ':
+            #         msg[f'{today} - Таблица: UMPNA, необходимо заполнить название НА!'] = 3
         return(msg)
     # Заполняем таблицу ZD
     def column_check(self):
-        list_default = ['variable', 'name', 'vv_included', 'vv_double_included', 'vv_disabled', 
-                        'vv_double_disabled', 'current_greater_than_noload_setting', 'serviceability_of_circuits_of_inclusion_of_VV',
-                        'serviceability_of_circuits_of_shutdown_of_VV', 'serviceability_of_circuits_of_shutdown_of_VV_double',
-                        'stop_1', 'stop_2', 'stop_3', 'stop_4',
-                        'monitoring_the_presence_of_voltage_in_the_control_current_circuits', 'voltage_presence_flag_in_the_ZRU_motor_cell',
-                        'vv_trolley_rolled_out', 'remote_control_mode_of_the_RZiA_controller', 
-                        'availability_of_communication_with_the_RZiA_controller','the_state_of_the_causative_agent_of_ED',
-                        'engine_prepurge_end_flag', 'flag_for_the_presence_of_safe_air_boost_pressure_in_the_engine_housing',
-                        'flag_for_the_presence_of_safe_air_boost_pressure_in_the_exciter_housing', 'engine_purge_valve_closed_flag',
-                        'oil_system_oil_temperature_flag_is_above_10_at_the_cooler_outlet_for_an_individual_oil_system', 
-                        'flag_for_the_minimum_oil_level_in_the_oil_tank_for_an_individual_oil_system', 
-                        'flag_for_the_presence_of_the_minimum_level_of_the_barrier_liquid_in_the_tank_of_the_locking_system',
-                        'generalized_flag_for_the_presence_of_barrier_fluid_pressure_to_the_mechanical_seal', 'command_to_turn_on_the_vv_only_for_UMPNA',
-                        'command_to_turn_off_the_vv_output_1', 'command_to_turn_off_the_vv_output_2', 'NA_Chrp', 'type_NA_MNA',
-                        'pump_type_NM','parametr_KTPRAS_1', 'number_of_delay_scans_of_the_analysis_of_the_health_of_the_control_circuits_NA_MNA',
-                        'unit_number_of_the_auxiliary_system_start_up_oil_pump_for_an_individual_oil_system', 'NPS_number_1_or_2_which_the_AT_belongs',
-                        'achr_protection_number_in_the_array_of_station_protections','saon_protection_number_in_the_array_of_station_protections', 
-                        'gmpna_49', 'gmpna_50', 'gmpna_51', 'gmpna_52','gmpna_53', 'gmpna_54', 'gmpna_55', 'gmpna_56',
-                        'gmpna_57','gmpna_58', 'gmpna_59', 'gmpna_60', 'gmpna_61', 'gmpna_62','gmpna_63', 'gmpna_64', 'PIC', 
-                        'replacement_uso_signal_vv_1', 'replacement_uso_signal_vv_2']
-        msg = self.dop_function.column_check(UMPNA, 'umpna', list_default)
+        list_default = ['Переменная', 'Идентификатор', 'Название', 'Короткое_название', 'Наличие_ИНТЕРФЕЙСА', 'КВО', 'КВЗ', 'МПО', 'МПЗ', 'Дист_ф',
+                        'Муфта', 'Авария_привода', 'Открыть', 'Закрыть', 'Остановить', 'Откртие_остановить', 'Закрытие_остановить', 'КВО_и', 'КВЗ_и',
+                        'МПО_и', 'МПЗ_и', 'Дист_и', 'Муфта_и', 'Авария_привода_и', 'Открыть_и', 'Закрыть_и', 'Остановить_и', 'Открытие_остановить_и',
+                        'Закрытие_остановить_и', 'Отсутствие_связи', 'Закрыть_с_БРУ', 'Стоп_с_БРУ', 'Напряжение', 'Напряжение_ЩСУ', 
+                        'Напряжение_в_цепях_сигнализации', 'Исправность_цепей_открытия', 'Исправность_цепей_закрытия', 'ВММО', 'ВММЗ', 
+                        'Замораживать_при_подозрительном_изм', 'Это_клапан', 'Процент_открытия', 'Pic', 'Тип_БУР_задвижки', 
+                        'AlphaHMI', 'AlphaHMI_PIC1', 'AlphaHMI_PIC1_Number_kont', 'AlphaHMI_PIC2',
+                        'AlphaHMI_PIC2_Number_kont','AlphaHMI_PIC3', 'AlphaHMI_PIC3_Number_kont', 
+                        'AlphaHMI_PIC4', 'AlphaHMI_PIC4_Number_kont']
+        msg = self.dop_function.column_check(ZD, 'zd', list_default)
         return msg 
 
 # Changing tables SQL

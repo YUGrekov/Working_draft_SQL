@@ -693,7 +693,7 @@ class Window_Filling_tables(QWidget):
         # tmNA_UMPNA
     # tmZD
     def filling_tmzd(self):
-        tmZD_table = Filling_tmZD()
+        tmZD_table = Filling_ZD()
         msg = tmZD_table.column_check()
         self.logs_msg('default', 1, msg, True)
         msg = tmZD_table.getting_modul()
@@ -864,7 +864,6 @@ class Window_update_sql(QWidget):
     def drop_tabl(self):
         self.close()
         self.edit_SQL.drop_tabl(self.table_used)
-
 
     # Adding new lines
     def add_row(self):  
