@@ -7,11 +7,11 @@ import codecs
 
 # Пути до файлов неисповедимы
 #path_to_exel        = 'D:\Проекты\ЛПДС_Каракатеевы\KarkateevoIO_PT.xlsx'
-#path_to_exel        = 'D:\Проекты\НПС-Аксинино_2\HMI\_Docs\НПС Аксинино-2 IO МК-500 v1.78.xlsx'
+path_to_exel        = 'D:\Проекты\НПС-Аксинино_2\HMI\_Docs\НПС Аксинино-2 IO МК-500 v1.78.xlsx'
 #path_to_exel        = 'D:\Проекты\НПС-Аксинино_2\HMI\_Docs\KarkateevoIO.xlsx'
 #path_to_exel        = 'D:\Проекты\LPDS_Salim\HMI\_Docs\ИО_ПТ_Салым_v2.56.xlsx'
 #path_to_exel        = 'D:\Проекты\НПС-Аксинино_2\HMI\_Docs\АСУ ПТ Аксинино-2 IO_v3.72.xlsx'
-path_to_exel        = 'D:\Проекты\LPDS_Salim\HMI\_Docs\НПС Салым-4 IO v0.38.xlsx'
+#path_to_exel        = 'D:\Проекты\LPDS_Salim\HMI\_Docs\НПС Салым-4 IO v0.38.xlsx'
 #path_to_exel        = 'D:\Проекты\LPDS_Salim\HMI_KARKAR\_Docs\KarkateevoIO.xlsx'
 
 # path_to_adressmap       = 'D:\Проекты\НПС-Аксинино_2\HMI\project\\typical_prj\ODA.xml'
@@ -115,8 +115,8 @@ New_copy = Equipment(path_to_exel, path_to_adressmap, path_to_adressmap_mb,
 #New_copy.diag_analogs_in(diag_file_MapAI_Ref, diag_file_MapKlk, diag_file_MapKont, diag_file_MapSignalName, diag_file_MapTagName)
 #New_copy.diag_clear('AIs', True, diag_file_MapAI_Ref, diag_file_MapKlk, diag_file_MapKont, diag_file_MapSignalName, diag_file_MapTagName)
 #New_copy.diag_analogs_out(diag_file_MapAI_Ref, diag_file_MapKlk, diag_file_MapKont, diag_file_MapSignalName, diag_file_MapTagName)
-New_copy.diag_diskrets_in(diag_file_MapKlk, diag_file_MapKont, diag_file_MapSignalName, diag_file_MapTagName)
-New_copy.diag_diskrets_out(diag_file_MapKlk, diag_file_MapKont, diag_file_MapSignalName, diag_file_MapTagName)
+#New_copy.diag_diskrets_in(diag_file_MapKlk, diag_file_MapKont, diag_file_MapSignalName, diag_file_MapTagName)
+#New_copy.diag_diskrets_out(diag_file_MapKlk, diag_file_MapKont, diag_file_MapSignalName, diag_file_MapTagName)
 #New_copy.diag_cpukcs()
 #New_copy.diag_cpus()
 #New_copy.diag_noc_noe()
@@ -151,7 +151,7 @@ New_copy.diag_diskrets_out(diag_file_MapKlk, diag_file_MapKont, diag_file_MapSig
 #New_copy.gen_cfg_pic('D:\Проекты\НПС-Аксинино_2\HMI\_Docs\SU\\', 'MNS')
 #New_copy.gen_cfg_ktprs('D:\Проекты\НПС-Аксинино_2\HMI\_Docs\SU\\')
 #New_copy.gen_cfg_ktpr('D:\Проекты\НПС-Аксинино_2\HMI\_Docs\SU\\')
-#New_copy.gen_cfg_ZD('D:\Проекты\НПС-Аксинино_2\HMI\_Docs\SU\\')
+New_copy.gen_cfg_ZD('D:\Проекты\НПС-Аксинино_2\HMI\_Docs\SU\\')
 #New_copy.gen_gv_diag('D:\Проекты\НПС-Аксинино_2\HMI\_Docs\SU\\')
 #New_copy.gen_cfg_na('D:\Проекты\НПС-Аксинино_2\HMI\_Docs\SU\\')
 #New_copy.gen_cfg_TS('D:\Проекты\НПС-Аксинино_2\HMI\_Docs\SU\\')

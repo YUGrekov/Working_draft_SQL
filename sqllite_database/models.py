@@ -633,7 +633,6 @@ class UMPNA(BaseModel):
         table_name = 'umpna'
 class ZD(BaseModel):
     Переменная = CharField(null = True)
-    Идентификатор = CharField(null = True)
     Название = CharField(null = True)
     Короткое_название = CharField(null = True)
     Наличие_ИНТЕРФЕЙСА = CharField(null = True)
@@ -648,7 +647,7 @@ class ZD(BaseModel):
     Открыть = CharField(null = True)
     Закрыть = CharField(null = True)
     Остановить = CharField(null = True)
-    Откртие_остановить = CharField(null = True)
+    Открытие_остановить = CharField(null = True)
     Закрытие_остановить = CharField(null = True)
 
     КВО_и = CharField(null = True)
@@ -692,6 +691,20 @@ class ZD(BaseModel):
 
     class Meta:
         table_name = 'zd'
+class ZD_tm(BaseModel):
+    Переменная = CharField(null = True)
+    Идентификатор = CharField(null = True)
+    Название = CharField(null = True)
+    Единица_измерения = CharField(null = True)
+    Используется = CharField(null = True)
+    Значение_уставки = CharField(null = True)
+    Минимум = CharField(null = True)
+    Максимум = CharField(null = True)
+    Группа_уставок = CharField(null = True)
+    Правило_для_карты_уставок = CharField(null = True)
+
+    class Meta:
+        table_name = 'zd_tm'
         
 # class ZD(BaseModel):
 #     variable = CharField(null = True)

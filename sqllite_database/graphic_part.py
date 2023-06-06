@@ -312,7 +312,7 @@ class Window_Filling_tables(QWidget):
         self.setWindowTitle('Заполнение таблиц базы данных')
         self.setStyleSheet("background-color: #e1e5e5;")
         self.resize(900, 295)
-        self.dop_function = general_functions()
+        self.dop_function = General_functions()
 
         self.edit_SQL = Editing_table_SQL()
         self.list_tabl = self.edit_SQL.get_tabl()
@@ -693,13 +693,13 @@ class Window_Filling_tables(QWidget):
         # tmNA_UMPNA
     # tmZD
     def filling_tmzd(self):
-        tmZD_table = Filling_ZD()
+        tmZD_table = Filling_ZD_tm()
         msg = tmZD_table.column_check()
         self.logs_msg('default', 1, msg, True)
         msg = tmZD_table.getting_modul()
         self.logs_msg('default', 1, msg, True)
     def clear_tmzd_tabl(self):
-        msg = self.dop_function.clear_tabl('tmzd', 'tmZD', self.list_tabl)
+        msg = self.dop_function.clear_tabl('zd_tm', 'ZD_tm', self.list_tabl)
         self.logs_msg('default', 1, msg, True)
     # Logging messeges
     def logs_msg(self, logs=None, number_color=1, buffer_msg=None, msg=False):
@@ -935,7 +935,7 @@ class Window_update_sql(QWidget):
             self.logs_msg(f'Пустой запрос!', 2)
             return
         # Под запрос 'select' отдельная функция
-        find = general_functions()
+        find = General_functions()
         if find.str_find(str(request).lower(), {'select'}):
             column, row, hat_name, value, msg = self.edit_SQL.apply_request_select(request, self.table_used)
             self.logs_msg('default', 1, msg, True)
