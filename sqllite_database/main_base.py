@@ -8,8 +8,6 @@ today = datetime.now()
 
 # Additional general features
 class General_functions():
-    def __init__(self):
-        self.cursor = db.cursor()
     def str_find(self, str1, arr):
         i = 0
         for el in arr:
@@ -117,12 +115,14 @@ class General_functions():
             migrate(migrator.add_column(table_used_base, new_name, IntegerField(null=True)))
         return msg
     def empty_table(self, table_used):
-        empty = self.cursor.execute(f'''SELECT COUNT(*) FROM {table_used}''')
+        cursor = db.cursor()
+        empty = cursor.execute(f'''SELECT COUNT(*) FROM {table_used}''')
         return True if int(empty.fetchall()[0][0]) == 0  else False
 
     # Clear tabl
     def clear_tabl(self, table_used, table_name, list_tabl):
         msg = {}
+        cursor = db.cursor()
         if not table_used in list_tabl:
             msg[f'{today} - Таблица: {table_used} отсутствует!'] = 2
             return msg
@@ -131,15 +131,16 @@ class General_functions():
             msg[f'{today} - Таблица: {table_name} пустая!'] = 2
             return msg
         
-        self.cursor.execute(f'DELETE FROM {table_used}')
+        cursor.execute(f'DELETE FROM {table_used}')
         msg[f'{today} - Таблица: {table_name} полностью очищена'] = 1
         return msg
     def search_signal(self, tabl_used_cl, tabl_used_str, tag):
         exists_tag = tabl_used_cl.select().where(tabl_used_cl.Идентификатор == tag)
         if bool(exists_tag):
-            search_tag = self.cursor.execute(f'''SELECT id, Идентификатор
-                                                 FROM {tabl_used_str}
-                                                 WHERE Идентификатор="{tag}"''')
+            cursor = db.cursor()
+            search_tag = cursor.execute(f'''SELECT id, Идентификатор
+                                            FROM {tabl_used_str}
+                                            WHERE Идентификатор="{tag}"''')
             for id_, tag in search_tag.fetchall():
                 if tabl_used_str == 'di': return (f'DI[{id_}].Value')
                 if tabl_used_str == 'do': return (f'ctrlDO[{id_}]')
@@ -151,9 +152,10 @@ class General_functions():
         exist_value  = tabl_used_cl.select().where(tabl_used_cl.id == number_NA,
                                                     column_update_cl == tag)
         if not bool(exist_value):
-            self.cursor.execute(f'''UPDATE {tabl_used_str}
-                                    SET {column_update_str}='{tag}' 
-                                    WHERE id="{number_NA}"''')
+            cursor = db.cursor()
+            cursor.execute(f'''UPDATE {tabl_used_str}
+                               SET {column_update_str}='{tag}' 
+                               WHERE id="{number_NA}"''')
             msg[f'{today} - Таблица: UMPNA, NA[{number_NA}] обновлено {column_update_str} = {tag}'] = 3
             return msg
         return msg
@@ -163,9 +165,10 @@ class General_functions():
         exist_value  = tabl_used_cl.select().where(tabl_used_cl.Название == name,
                                                     column_update_cl == value)
         if not bool(exist_value):
-            self.cursor.execute(f'''UPDATE {tabl_used_str}
-                                    SET {column_update_str}='{value}' 
-                                    WHERE Название="{name}"''')
+            cursor = db.cursor()
+            cursor.execute(f'''UPDATE {tabl_used_str}
+                               SET {column_update_str}='{value}' 
+                               WHERE Название="{name}"''')
             msg[f'{today} - Таблица: {tabl_used_str}, обновлен: {name},  {column_update_str} = {value}'] = 3
             return msg
         return msg
@@ -1062,6 +1065,9 @@ class Filling_DO():
                 module_s    = row_sql['module']
                 channel_s   = row_sql['channel']
 
+                tag_translate = self.dop_function.translate(str(tag))
+                if tag_translate == 'None': tag_translate = ''
+
                 if self.dop_function.str_find(type_signal, {'DO'}) or self.dop_function.str_find(scheme, {'DO'}):
                     count_DO += 1
                     # Выбор между полным заполнением или обновлением
@@ -1132,7 +1138,7 @@ class Filling_DO():
                     else            : prefix = f'{module_s}'
 
                     list_DO.append(dict(Переменная = f'DO[{count_DO}]',
-                                        Идентификатор = tag,
+                                        Идентификатор = tag_translate,
                                         Название = description,
                                         pValue = f'{tag_h}_{prefix}_DO[{channel_s}]',
                                         pHealth = f'mDO_HEALTH[{str(isdigit_num)}]',
@@ -1673,7 +1679,7 @@ class Filling_ZD():
             # Количество строк в таблице
             row = self.cursor.execute(f'''SELECT COUNT(*) FROM zd''')
             count_row = row.fetchall()[0][0]
-
+                    
             for name in sorted(unique_name):
                 list_zd = []
 
@@ -1720,6 +1726,11 @@ class Filling_ZD():
                 
                 if kvo == '' and kvz == '': continue
 
+                if self.dop_function.str_find(str(name).lower, {'клапа'}) or self.dop_function.str_find(str(name).lower, {'клоп'}):
+                    klapan = '1'
+                else: 
+                    klapan = '0'
+
                 if name in tabl_zd_name:
                     msg.update(self.dop_function.update_signal_dop(ZD, 'zd', name, ZD.КВО, 'КВО', kvo))
                     msg.update(self.dop_function.update_signal_dop(ZD, 'zd', name, ZD.КВЗ, 'КВЗ', kvz))
@@ -1737,11 +1748,11 @@ class Filling_ZD():
                     msg.update(self.dop_function.update_signal_dop(ZD, 'zd', name, ZD.Исправность_цепей_открытия, 'Исправность_цепей_открытия', isp_opening_chain))
                     msg.update(self.dop_function.update_signal_dop(ZD, 'zd', name, ZD.Исправность_цепей_закрытия, 'Исправность_цепей_закрытия', isp_closing_chain))
 
-                    msg.update(self.dop_function.update_signal_dop(ZD, 'zd', name, ZD.Открыть, 'Дист_ф', open_zd))
-                    msg.update(self.dop_function.update_signal_dop(ZD, 'zd', name, ZD.Закрыть, 'ВММО', close_zd))
-                    msg.update(self.dop_function.update_signal_dop(ZD, 'zd', name, ZD.Остановить, 'ВММЗ', stop_zd))
-                    msg.update(self.dop_function.update_signal_dop(ZD, 'zd', name, ZD.Открытие_остановить, 'Закрыть_с_БРУ', open_stop))
-                    msg.update(self.dop_function.update_signal_dop(ZD, 'zd', name, ZD.Закрытие_остановить, 'Стоп_с_БРУ', close_stop))
+                    msg.update(self.dop_function.update_signal_dop(ZD, 'zd', name, ZD.Открыть, 'Открыть', open_zd))
+                    msg.update(self.dop_function.update_signal_dop(ZD, 'zd', name, ZD.Закрыть, 'Закрыть', close_zd))
+                    msg.update(self.dop_function.update_signal_dop(ZD, 'zd', name, ZD.Остановить, 'Остановить', stop_zd))
+                    msg.update(self.dop_function.update_signal_dop(ZD, 'zd', name, ZD.Открытие_остановить, 'Открытие_остановить', open_stop))
+                    msg.update(self.dop_function.update_signal_dop(ZD, 'zd', name, ZD.Закрытие_остановить, 'Закрытие_остановить', close_stop))
 
                 else:
                     count_row += 1
@@ -1786,7 +1797,7 @@ class Filling_ZD():
                                         ВММО = vmmo,
                                         ВММЗ = vmmz,
                                         Замораживать_при_подозрительном_изм = '',
-                                        Это_клапан = '0',
+                                        Это_клапан = klapan,
                                         Процент_открытия = '',
                                         Pic = '',
 
@@ -1797,6 +1808,12 @@ class Filling_ZD():
 
                     # Checking for the existence of a database
                     ZD.insert_many(list_zd).execute()
+            if len(msg) == 0: msg[f'{today} - Таблица: ZD, обновление завершено, изменений не обнаружено!'] = 1
+            
+            # Существование ZD в таблице ZD
+            for zd in tabl_zd_name:
+                if zd not in unique_name:
+                    msg[f'{today} - Таблица: ZD, {zd} не существует в таблице DI'] = 3
         return(msg)
     # Заполняем таблицу ZD
     def column_check(self):
@@ -1846,16 +1863,16 @@ class Filling_ZD_tm():
                 count_ZD += 1
                 for ust in time_ust:
                     used = '0' if ust[0] == 'Резерв' else '1' 
-                    list_zd_tm.append(dict( Переменная = '',
-                                            Идентификатор  = f'HZD{count_ZD}_{ust[1]}',
-                                            Название = f'{i[0]}. {ust[0]}',
-                                            Единица_измерения = ust[3],
-                                            Используется = used,
-                                            Значение_уставки = f'{ust[2]}',
-                                            Минимум = '0',
-                                            Максимум = '65535',
-                                            Группа_уставок = 'Временные уставки задвижек',
-                                            Правило_для_карты_уставок = 'Временные уставки'))
+                    list_zd_tm.append(dict(Переменная = '',
+                                           Идентификатор  = f'HZD{count_ZD}_{ust[1]}',
+                                           Название = f'{i[0]}. {ust[0]}',
+                                           Единица_измерения = ust[3],
+                                           Используется = used,
+                                           Значение_уставки = f'{ust[2]}',
+                                           Минимум = '0',
+                                           Максимум = '65535',
+                                           Группа_уставок = 'Временные уставки задвижек',
+                                           Правило_для_карты_уставок = 'Временные уставки'))
                         
             # Checking for the existence of a database
             ZD_tm.insert_many(list_zd_tm).execute()
@@ -1866,6 +1883,223 @@ class Filling_ZD_tm():
         list_default = ['Переменная', 'Идентификатор', 'Название', 'Единица_измерения', 'Используется', 
                         'Значение_уставки', 'Минимум', 'Максимум', 'Группа_уставок', 'Правило_для_карты_уставок']
         msg = self.dop_function.column_check(ZD_tm, 'zd_tm', list_default)
+        return msg 
+    
+# Work with filling in the table 'VS'
+class Filling_VS():
+    def __init__(self):
+        self.cursor   = db.cursor()
+        self.dop_function = General_functions()
+    # Получаем данные с таблицы AI и DI 
+    def getting_modul(self):
+        msg = {}
+        array_di_tag_vs = ('MPC', 'EC')
+        array_do_tag_vs = ('ABB', 'ABO')
+        array_tag_opc_vs = ('авар', 'Авар', 'исправн', 'Исправн')
+        with db:
+            try:
+                if self.dop_function.empty_table('di') or self.dop_function.empty_table('do'): 
+                    msg[f'{today} - Таблицы: DI или DO пустая! Заполни таблицу!'] = 2
+                    return msg
+            except:
+                msg[f'{today} - Таблицы: DI или DO пустая! Заполни таблицу!'] = 2
+                return msg
+            
+            # Новый список задвижек из таблицы DI
+            count_vs_new = self.cursor.execute(f'''SELECT Идентификатор, Название 
+                                                   FROM di
+                                                   WHERE Идентификатор LIKE "%MPC%"''')
+            name_vs_new = count_vs_new.fetchall()
+            list_vs_name_split = []
+            for i in name_vs_new: 
+                if   self.dop_function.str_find(i[1], {'- сигнал от МП'}):
+                    list_vs_name_split.append(str(i[1]).split('- сигнал от МП')[0])
+                elif self.dop_function.str_find(i, {'-сигнал от МП'}):
+                    list_vs_name_split.append(str(i[1]).split('-сигнал от МП')[0])
+                elif self.dop_function.str_find(i, {'- включен'}):
+                    list_vs_name_split.append(str(i[1]).split('- включен')[0])
+                elif self.dop_function.str_find(i, {'-включен'}):
+                    list_vs_name_split.append(str(i[1]).split('-включен')[0])
+                elif self.dop_function.str_find(i, {'.Включен'}):
+                    list_vs_name_split.append(str(i[1]).split('.Включен')[0])
+                elif self.dop_function.str_find(i, {'. Включен'}):
+                    list_vs_name_split.append(str(i[1]).split('. Включен')[0])
+            unique_name = set(list_vs_name_split)
+
+            # Существующий список задвижек из таблицы ZD
+            count_vs_old = self.cursor.execute(f'''SELECT Название FROM vs''')
+            name_vs_old = count_vs_old.fetchall()
+            tabl_vs_name = []
+            for i in name_vs_old:
+                tabl_vs_name.append(i[0])
+
+            # Количество строк в таблице
+            row = self.cursor.execute(f'''SELECT COUNT(*) FROM vs''')
+            count_row = row.fetchall()[0][0]
+                    
+            for name in sorted(unique_name):
+                list_vs = []
+                mp, voltage, isp_opening_chain, open_vs, close_vs, error = '', '', '', '', '', ''
+
+                # Принадлежность OPC тега
+                for tag in array_tag_opc_vs:  
+                    opc_tag_vs_di = self.cursor.execute(f'''SELECT id, Идентификатор, Название 
+                                                            FROM di
+                                                            WHERE Название LIKE "%{name}%" AND Название LIKE "%{tag}%" AND Идентификатор LIKE "%OPC%"''')
+                    
+                    try   : number_id = opc_tag_vs_di.fetchall()[0][0]
+                    except: continue
+
+                    if tag == 'авар': 
+                        error = f'DI[{number_id}].Value'
+                    elif tag == 'Авар' : 
+                        error = f'DI[{number_id}].Value'
+                    elif tag == 'исправн' : 
+                        isp_opening_chain = f'DI[{number_id}].Value'
+                    elif tag == 'Исправн' : 
+                        isp_opening_chain = f'DI[{number_id}].Value'
+
+                for tag in array_di_tag_vs:
+                    count_vs_di = self.cursor.execute(f'''SELECT id, Идентификатор, Название 
+                                                          FROM di
+                                                          WHERE Название LIKE "%{name}%" AND Идентификатор LIKE "%{tag}%"''')
+                    
+                    try   : number_id = count_vs_di.fetchall()[0][0]
+                    except: continue
+
+                    if tag == 'MPC': mp                = f'DI[{number_id}].Value'
+                    if tag == 'EC' : voltage           = f'DI[{number_id}].Value'
+                    
+                for tag in array_do_tag_vs:    
+                    count_vs_do = self.cursor.execute(f'''SELECT id, Идентификатор, Название 
+                                                          FROM do
+                                                          WHERE Название LIKE "%{name}%" AND Идентификатор LIKE "%{tag}%"''')
+                    
+                    try   : number_id = count_vs_do.fetchall()[0][0]
+                    except: continue
+                    
+                    if tag == 'ABB': open_vs  = f'ctrlDO[{number_id}]'
+                    if tag == 'ABO': close_vs = f'ctrlDO[{number_id}]'
+   
+                pressure_vs_ai = self.cursor.execute(f'''SELECT id, Название 
+                                                         FROM ai
+                                                         WHERE Название LIKE "%{name}%"''')
+                try: 
+                    number_id = pressure_vs_ai.fetchall()[0][0]
+                    pressure_norm = f'AI[{number_id}].Norm'
+                    pressure_ndv  = f'AI[{number_id}].Ndv'
+                except:
+                    pressure_norm = f''
+                    pressure_ndv  = f''
+                
+
+                if name in tabl_vs_name:
+                    msg.update(self.dop_function.update_signal_dop(VS, 'vs', name, VS.МП, 'МП', mp))
+                    msg.update(self.dop_function.update_signal_dop(VS, 'vs', name, VS.Напряжение, 'Напряжение', voltage))
+                    msg.update(self.dop_function.update_signal_dop(VS, 'vs', name, VS.Исправность_цепей_включения, 'Исправность_цепей_включения', isp_opening_chain))
+                    msg.update(self.dop_function.update_signal_dop(VS, 'vs', name, VS.Внешняя_авария, 'Внешняя_авария', error))
+
+                    msg.update(self.dop_function.update_signal_dop(VS, 'vs', name, VS.Включить, 'Включить', open_vs))
+                    msg.update(self.dop_function.update_signal_dop(VS, 'vs', name, VS.Отключить, 'Отключить', close_vs))
+
+                    msg.update(self.dop_function.update_signal_dop(VS, 'vs', name, VS.Давление_норма, 'Давление_норма', pressure_norm))
+                    msg.update(self.dop_function.update_signal_dop(VS, 'vs', name, VS.Датчик_давления_неисправен, 'Датчик_давления_неисправен', pressure_ndv))
+
+                else:
+                    count_row += 1
+                    
+                    msg[f'{today} - Таблица: VS, добавлена новая вспомсистема: VS[{count_row}], {name}'] = 1
+                    list_vs.append(dict(Переменная = f'ZD[{count_row}]',
+                                        Название = name,
+                                        Короткое_название = '',
+                                        Группа = '',
+                                        Номер_в_группе = '',
+                                        МП = mp,
+                                        Давление_норма = pressure_norm,
+                                        Напряжение = voltage,
+                                        Напряжение_СШ = '',
+                                        Исправность_цепей_включения = isp_opening_chain,
+                                        Внешняя_авария = error,
+                                        Датчик_давления_неисправен = pressure_ndv,
+                                        Включить = open_vs,
+                                        Отключить = close_vs,
+                                        АПВ_не_требуется = '0',
+                                        Pic = '',
+                                        Таблица_сообщений = 'TblAuxSyses',
+                                        Это_клапан_интерфейсная_вспомсистема = '0',
+                                        
+                                        AlphaHMI = '',AlphaHMI_PIC1 = '',AlphaHMI_PIC1_Number_kont = '',
+                                        AlphaHMI_PIC2 = '',AlphaHMI_PIC2_Number_kont = '',AlphaHMI_PIC3 = '',
+                                        AlphaHMI_PIC3_Number_kont = '',AlphaHMI_PIC4 = '',AlphaHMI_PIC4_Number_kont = ''))
+
+                    # Checking for the existence of a database
+                    VS.insert_many(list_vs).execute()
+            if len(msg) == 0: msg[f'{today} - Таблица: VS, обновление завершено, изменений не обнаружено!'] = 1
+            
+            # Существование ZD в таблице ZD
+            for vs in tabl_vs_name:
+                if vs not in unique_name:
+                    msg[f'{today} - Таблица: VS, {vs} не существует в таблице DI'] = 3
+        return(msg)
+    # Заполняем таблицу VS
+    def column_check(self):
+        list_default = ['Переменная', 'Название', 'Короткое_название', 'Группа', 'Номер_в_группе', 'МП', 'Давление_норма', 'Напряжение', 'Напряжение_СШ', 
+                        'Исправность_цепей_включения', 'Внешняя_авария', 'Датчик_давления_неисправен', 'Включить', 'Отключить', 'АПВ_не_требуется',
+                        'Pic', 'Таблица_сообщений', 'Это_клапан_интерфейсная_вспомсистема',
+                        'AlphaHMI', 'AlphaHMI_PIC1', 'AlphaHMI_PIC1_Number_kont', 'AlphaHMI_PIC2',
+                        'AlphaHMI_PIC2_Number_kont','AlphaHMI_PIC3', 'AlphaHMI_PIC3_Number_kont', 
+                        'AlphaHMI_PIC4', 'AlphaHMI_PIC4_Number_kont']
+        msg = self.dop_function.column_check(VS, 'vs', list_default)
+        return msg 
+# Work with filling in the table 'VS_tm'
+class Filling_VS_tm():
+    def __init__(self):
+        self.cursor   = db.cursor()
+        self.dop_function = General_functions()
+    # Получаем данные с таблицы VS
+    def getting_modul(self):
+        msg = {}
+        count_VS = 0
+        list_vs_tm = []
+
+        time_ust = [('Выдержка времени на ожидание срабатывания / исчезновения МП после включения / отключения' , 'T1', '2', 'с'), 
+                    ('Выдержка времени на ожидание набора давления после появления сигнала МП в процессе пуска агрегата вспомсистемы', 'T2', '10', 'c'),
+                    ('Выдержка времени на ожидание спада давления после снятия сигнала МП в процессе остановки агрегата вспомсистемы', 'T3', '5', 'c'),
+                    ('Выдержка времени на возврат напряжения при стопе по месту', 'T4', '3', 'c'),
+                    ('Выдержка времени на контроль давления во время работы', 'T5', '5', 'c'),
+                    ('Выдержка времени для перевода неработающего агрегата вспомсистемы в режим ремонтный при исчезновении напряжения в схеме управления', 'T6', '40', 'c'),
+                    ('Выдержка времени на запаздывание сигналов исчезновения МП и сигнала наличия напряжения от СШ (при кратковременных исчезновениях напряжения на секции шин)', 'T7', '0', 'c'),
+                    ('Выдержка времени на перевод пожарного насоса в ремонтный режим при неисправности цепей включения', 'T8', '40', 'c')] 
+        with db:
+            if self.dop_function.empty_table('vs'): 
+                msg[f'{today} - Таблицы: VS пустая! Заполни таблицу!'] = 2
+                return msg
+            
+            exists_name = self.cursor.execute(f'''SELECT Название FROM vs''')
+            for i in exists_name.fetchall():
+                count_VS += 1
+                for ust in time_ust:
+                    used = '0' if ust[0] == 'Резерв' else '1' 
+                    list_vs_tm.append(dict(Переменная = '',
+                                           Идентификатор  = f'HVS{count_VS}_{ust[1]}',
+                                           Название = f'{i[0]}. {ust[0]}',
+                                           Единица_измерения = ust[3],
+                                           Используется = used,
+                                           Значение_уставки = f'{ust[2]}',
+                                           Минимум = '0',
+                                           Максимум = '65535',
+                                           Группа_уставок = 'Временные уставки вспомсистем',
+                                           Правило_для_карты_уставок = 'Временные уставки'))
+                        
+            # Checking for the existence of a database
+            VS_tm.insert_many(list_vs_tm).execute()
+        msg[f'{today} - Таблица: VS_tm заполнена'] = 1
+        return(msg)
+    # Заполняем таблицу zd_tm
+    def column_check(self):
+        list_default = ['Переменная', 'Идентификатор', 'Название', 'Единица_измерения', 'Используется', 
+                        'Значение_уставки', 'Минимум', 'Максимум', 'Группа_уставок', 'Правило_для_карты_уставок']
+        msg = self.dop_function.column_check(VS_tm, 'vs_tm', list_default)
         return msg 
 
 # Changing tables SQL

@@ -705,6 +705,76 @@ class ZD_tm(BaseModel):
 
     class Meta:
         table_name = 'zd_tm'
+class VS(BaseModel):
+    Переменная = CharField(null = True)
+    Название = CharField(null = True)
+    Короткое_название = CharField(null = True)
+    Группа = CharField(null = True)
+    Номер_в_группе = CharField(null = True)
+    МП = CharField(null = True)
+    Давление_норма = CharField(null = True)
+    Напряжение = CharField(null = True)
+    Напряжение_СШ = CharField(null = True)
+    Исправность_цепей_включения = CharField(null = True)
+    Внешняя_авария = CharField(null = True)
+    Датчик_давления_неисправен = CharField(null = True)
+    Включить = CharField(null = True)
+    Отключить = CharField(null = True)
+    АПВ_не_требуется = CharField(null = True)
+    Pic = CharField(null = True)
+    Таблица_сообщений = CharField(null = True)
+    Это_клапан_интерфейсная_вспомсистема = CharField(null = True)
+    
+    AlphaHMI = CharField(null = True)
+    AlphaHMI_PIC1 = CharField(null = True)
+    AlphaHMI_PIC1_Number_kont = CharField(null = True)
+    AlphaHMI_PIC2 = CharField(null = True)
+    AlphaHMI_PIC2_Number_kont = CharField(null = True)
+    AlphaHMI_PIC3 = CharField(null = True)
+    AlphaHMI_PIC3_Number_kont = CharField(null = True)
+    AlphaHMI_PIC4 = CharField(null = True)
+    AlphaHMI_PIC4_Number_kont = CharField(null = True)
+
+    class Meta:
+        table_name = 'vs'
+class VS_tm(BaseModel):
+    Переменная = CharField(null = True)
+    Идентификатор = CharField(null = True)
+    Название = CharField(null = True)
+    Единица_измерения = CharField(null = True)
+    Используется = CharField(null = True)
+    Значение_уставки = CharField(null = True)
+    Минимум = CharField(null = True)
+    Максимум = CharField(null = True)
+    Группа_уставок = CharField(null = True)
+    Правило_для_карты_уставок = CharField(null = True)
+
+    class Meta:
+        table_name = 'vs_tm'   
+class VSGRP(BaseModel):
+    Переменная = CharField(null = True)
+    Идентификатор = CharField(null = True)
+    Название = CharField(null = True)
+    Пож_или_водоорош = CharField(null = True)
+    Количество_вспомсистем_в_группе = CharField(null = True)
+    Требуется_выставлять_флаг_WarnOff_если_работает_одна_вспомсистема_в_группе = CharField(null = True)
+
+    class Meta:
+        table_name = 'vsgrp'
+class VSGRP_tm(BaseModel):
+    Переменная = CharField(null = True)
+    Идентификатор = CharField(null = True)
+    Название = CharField(null = True)
+    Единица_измерения = CharField(null = True)
+    Используется = CharField(null = True)
+    Значение_уставки = CharField(null = True)
+    Минимум = CharField(null = True)
+    Максимум = CharField(null = True)
+    Группа_уставок = CharField(null = True)
+    Правило_для_карты_уставок = CharField(null = True)
+
+    class Meta:
+        table_name = 'vs_tm'
         
 # class ZD(BaseModel):
 #     variable = CharField(null = True)

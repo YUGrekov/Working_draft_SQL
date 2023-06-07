@@ -520,7 +520,16 @@ class Window_Filling_tables(QWidget):
         l_zd.move(b_width_one + 546, l_height + 45)
         b_zd_basket = QPushButton('Заполнить', self)
         b_zd_basket.setStyleSheet("background: #bfd6bf; border-radius: 4px; border: 1px solid")
-        b_zd_basket.setToolTip('Заполнить таблицу ZD')
+        b_zd_basket.setToolTip('''Заполнить или обновить данные таблицы Задвижки(ZD):
+        Название задвижки определяется по тире(дефис) "-", если в строке 2 тире(дефиса) " - *** - " вероятнее всего название получится неккоректное -> данная задвижка не заполнится!
+        Необходимо поправить сигналы названия задвижки в таблицах Signals, а затем в DI и DO, либо заполнить вручную!
+        Могут заполниться столбцы: 
+        ** КВО, КВЗ, МПО, МПЗ, Муфта, Авария_привода, Дист_ф, ВММО, ВММЗ, Закрыть_с_БРУ, Стоп_с_БРУ, Напряжение, Исправность_цепей_открытия, 
+        ** Исправность_цепей_закрытия, Открыть, Закрыть, Остановить, Открытие_остановить, Закрытие_остановить;
+        - Если таблица пустая -> добавятся и заполнятся новые ряды = найденным задвижкам(поиск происходит по тегам РД!);
+        - Если появилась новая задвижка то добавится в конец таблицы;
+        - Если есть изменения у задвижки в таблице DI или DO -> они будут найдены и заменены на новые;
+        - Если задвижка больше не существует в проекте -> будет сообщение, что задвижки не существует!''')
         b_zd_basket.resize(80,23)
         b_zd_basket.move(b_width_one + 540, b_height + 45) 
         b_zd_basket.clicked.connect(self.filling_valves)
@@ -545,7 +554,66 @@ class Window_Filling_tables(QWidget):
         b_clear_tm_zd.resize(80,23)
         b_clear_tm_zd.move(b_width_two + 720, b_height + 45) 
         b_clear_tm_zd.clicked.connect(self.clear_tmzd_tabl)
-        # ZD
+        # VS
+        l_vs = QLabel('VS:', self)
+        l_vs.move(b_width_one + 546, l_height + 90)
+        b_vs_basket = QPushButton('Заполнить', self)
+        b_vs_basket.setStyleSheet("background: #bfd6bf; border-radius: 4px; border: 1px solid")
+        b_vs_basket.setToolTip('Заполнить таблицу VS')
+        b_vs_basket.resize(80,23)
+        b_vs_basket.move(b_width_one + 540, b_height + 90) 
+        b_vs_basket.clicked.connect(self.filling_vs)
+        b_clear_vs = QPushButton('Очистить', self)
+        b_clear_vs.setStyleSheet("background: #bbbabf; border-radius: 4px; border: 1px solid")
+        b_clear_vs.setToolTip("Очистить таблицу VS")
+        b_clear_vs.resize(80,23)
+        b_clear_vs.move(b_width_two + 540, b_height + 90) 
+        b_clear_vs.clicked.connect(self.clear_vs_tabl)
+        # tmVS
+        l_tmvs = QLabel('tmVS:', self)
+        l_tmvs.move(b_width_one + 728, l_height + 90)
+        b_tm_vs_basket = QPushButton('Заполнить', self)
+        b_tm_vs_basket.setStyleSheet("background: #bfd6bf; border-radius: 4px; border: 1px solid")
+        b_tm_vs_basket.setToolTip('Заполнить таблицу Временные уставки VS')
+        b_tm_vs_basket.resize(80,23)
+        b_tm_vs_basket.move(b_width_one + 720, b_height + 90) 
+        b_tm_vs_basket.clicked.connect(self.filling_tmvs)
+        b_clear_tm_vs = QPushButton('Очистить', self)
+        b_clear_tm_vs.setStyleSheet("background: #bbbabf; border-radius: 4px; border: 1px solid")
+        b_clear_tm_vs.setToolTip("Очистить таблицу Временные уставки VS")
+        b_clear_tm_vs.resize(80,23)
+        b_clear_tm_vs.move(b_width_two + 720, b_height + 90) 
+        b_clear_tm_vs.clicked.connect(self.clear_tmvs_tabl)
+        # VSGRP
+        l_vsgrp = QLabel('VSGRP:', self)
+        l_vsgrp.move(b_width_one + 546, l_height + 135)
+        b_vsgrp_basket = QPushButton('Сформировать', self)
+        b_vsgrp_basket.setStyleSheet("background: #bfd6bf; border-radius: 4px; border: 1px solid")
+        b_vsgrp_basket.setToolTip('Создает таблицу и добавляет столбцы')
+        b_vsgrp_basket.resize(80,23)
+        b_vsgrp_basket.move(b_width_one + 540, b_height + 135) 
+        b_vsgrp_basket.clicked.connect(self.filling_vsgrp)
+        b_clear_vsgrp = QPushButton('Очистить', self)
+        b_clear_vsgrp.setStyleSheet("background: #bbbabf; border-radius: 4px; border: 1px solid")
+        b_clear_vsgrp.setToolTip("Очистить таблицу VSGRP")
+        b_clear_vsgrp.resize(80,23)
+        b_clear_vsgrp.move(b_width_two + 540, b_height + 135) 
+        b_clear_vsgrp.clicked.connect(self.clear_vsgrp_tabl)
+        # tmVSGRP
+        l_tmvsgrp = QLabel('tmVSGRP:', self)
+        l_tmvsgrp.move(b_width_one + 728, l_height + 135)
+        b_tm_vsgrp_basket = QPushButton('Заполнить', self)
+        b_tm_vsgrp_basket.setStyleSheet("background: #bfd6bf; border-radius: 4px; border: 1px solid")
+        b_tm_vsgrp_basket.setToolTip('Заполнить таблицу Временные уставки VSGRP')
+        b_tm_vsgrp_basket.resize(80,23)
+        b_tm_vsgrp_basket.move(b_width_one + 720, b_height + 135) 
+        b_tm_vsgrp_basket.clicked.connect(self.filling_tmvs)
+        b_clear_tm_vsgrp = QPushButton('Очистить', self)
+        b_clear_tm_vsgrp.setStyleSheet("background: #bbbabf; border-radius: 4px; border: 1px solid")
+        b_clear_tm_vsgrp.setToolTip("Очистить таблицу Временные уставки VSGRP")
+        b_clear_tm_vsgrp.resize(80,23)
+        b_clear_tm_vsgrp.move(b_width_two + 720, b_height + 135) 
+        b_clear_tm_vsgrp.clicked.connect(self.clear_tmvs_tabl)
         # Logs
         self.logTextBox = QTextEdit(self)
         self.logTextBox.setStyleSheet("border-radius: 4px; border: 1px solid")
@@ -690,7 +758,6 @@ class Window_Filling_tables(QWidget):
     def clear_valves_tabl(self):
         msg = self.dop_function.clear_tabl('zd', 'ZD', self.list_tabl)
         self.logs_msg('default', 1, msg, True)
-        # tmNA_UMPNA
     # tmZD
     def filling_tmzd(self):
         tmZD_table = Filling_ZD_tm()
@@ -700,6 +767,36 @@ class Window_Filling_tables(QWidget):
         self.logs_msg('default', 1, msg, True)
     def clear_tmzd_tabl(self):
         msg = self.dop_function.clear_tabl('zd_tm', 'ZD_tm', self.list_tabl)
+        self.logs_msg('default', 1, msg, True)
+    # VS
+    def filling_vs(self):
+        vs_table = Filling_VS()
+        msg = vs_table.column_check()
+        self.logs_msg('default', 1, msg, True)
+        msg = vs_table.getting_modul()
+        self.logs_msg('default', 1, msg, True)
+    def clear_vs_tabl(self):
+        msg = self.dop_function.clear_tabl('vs', 'VS', self.list_tabl)
+        self.logs_msg('default', 1, msg, True)
+    # tmVS
+    def filling_tmvs(self):
+        tmvs_table = Filling_VS_tm()
+        msg = tmvs_table.column_check()
+        self.logs_msg('default', 1, msg, True)
+        msg = tmvs_table.getting_modul()
+        self.logs_msg('default', 1, msg, True)
+    def clear_tmvs_tabl(self):
+        msg = self.dop_function.clear_tabl('vs_tm', 'VS_tm', self.list_tabl)
+        self.logs_msg('default', 1, msg, True)
+    # VSGRP
+    def filling_vsgrp(self):
+        vsgrp_table = Filling_VSGRP()
+        msg = vsgrp_table.column_check()
+        self.logs_msg('default', 1, msg, True)
+        msg = vsgrp_table.getting_modul()
+        self.logs_msg('default', 1, msg, True)
+    def clear_vsgrp_tabl(self):
+        msg = self.dop_function.clear_tabl('vsgrp', 'VSGRP', self.list_tabl)
         self.logs_msg('default', 1, msg, True)
     # Logging messeges
     def logs_msg(self, logs=None, number_color=1, buffer_msg=None, msg=False):
