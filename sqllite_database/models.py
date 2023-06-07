@@ -774,60 +774,34 @@ class VSGRP_tm(BaseModel):
     Правило_для_карты_уставок = CharField(null = True)
 
     class Meta:
-        table_name = 'vs_tm'
-        
-# class ZD(BaseModel):
-#     variable = CharField(null = True)
-#     tag = CharField(null = True)
-#     name = CharField(null = True)
-#     exists_interface = CharField(null = True)
+        table_name = 'vsgrp_tm'
+class UTS(BaseModel):
+    Переменная = CharField(null = True)
+    Идентификатор = CharField(null = True)
+    Название = CharField(null = True)
+    Место_установки = CharField(null = True)
+    Включить = CharField(null = True)
+    Сирена = CharField(null = True)
+    Не_требует_автоотключения = CharField(null = True)
+    Проверка = CharField(null = True)
+    Квитирование = CharField(null = True)
+    Pic = CharField(null = True)
+    Номер_листа_для_ВУ = CharField(null = True)
+    Номер_порядка_для_ВУ = CharField(null = True)
 
-#     KVO = CharField(null = True)
-#     KVZ = CharField(null = True)
-#     MPO = CharField(null = True)
-#     MPZ = CharField(null = True)
-#     Dist = CharField(null = True)
-#     Mufta = CharField(null = True)
-#     Drive_failure = CharField(null = True)
-#     Open = CharField(null = True)
-#     Close = CharField(null = True)
-#     Stop = CharField(null = True)
-#     Opening_stop = CharField(null = True)
-#     Closeing_stop = CharField(null = True)
+    class Meta:
+        table_name = 'uts'
+class UTS_tm(BaseModel):
+    Переменная = CharField(null = True)
+    Идентификатор = CharField(null = True)
+    Название = CharField(null = True)
+    Единица_измерения = CharField(null = True)
+    Используется = CharField(null = True)
+    Значение_уставки = CharField(null = True)
+    Минимум = CharField(null = True)
+    Максимум = CharField(null = True)
+    Группа_уставок = CharField(null = True)
+    Правило_для_карты_уставок = CharField(null = True)
 
-#     KVO_i = CharField(null = True)
-#     KVZ_i  = CharField(null = True)
-#     MPO_i  = CharField(null = True)
-#     MPZ_i  = CharField(null = True)
-#     Dist_i  = CharField(null = True)
-#     Mufta_i  = CharField(null = True)
-#     Drive_failure_i  = CharField(null = True)
-#     Open_i  = CharField(null = True)
-#     Close_i  = CharField(null = True)
-#     Stop_i  = CharField(null = True)
-#     Opening_stop_i  = CharField(null = True)
-#     Closeing_stop_i  = CharField(null = True)
-    
-
-#     No_connection = CharField(null = True)
-#     Close_BRU = CharField(null = True)
-#     Stop_BRU = CharField(null = True)
-#     Voltage = CharField(null = True)
-#     Voltage_CHSU= CharField(null = True)
-#     Voltage_in_signaling_circuits = CharField(null = True)
-#     Serviceability_opening_circuits = CharField(null = True)
-#     Испр_цепей_откр = CharField(null = True)
-#      = CharField(null = True)
-#      = CharField(null = True)
-#      = CharField(null = True)
-#      = CharField(null = True)
-#      = CharField(null = True)
-#      = CharField(null = True)
-#      = CharField(null = True)
-#      = CharField(null = True)
-#      = CharField(null = True)
-
-    
-
-#     class Meta:
-#         table_name = 'zd'
+    class Meta:
+        table_name = 'uts_tm'   

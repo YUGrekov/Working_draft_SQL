@@ -417,6 +417,36 @@ class Window_Filling_tables(QWidget):
         b_clear_do.resize(80,23)
         b_clear_do.move(b_width_two + 180, b_height + 90) 
         b_clear_do.clicked.connect(self.clear_do_tabl)
+        # UTS
+        l_uts = QLabel('UTS:', self)
+        l_uts.move(b_width_one + 2, l_height + 135)
+        b_uts_basket = QPushButton('Заполнить', self)
+        b_uts_basket.setStyleSheet("background: #bfd6bf; border-radius: 4px; border: 1px solid")
+        b_uts_basket.setToolTip("Таблицу UTS")
+        b_uts_basket.resize(80,23)
+        b_uts_basket.move(b_width_one, b_height + 135) 
+        b_uts_basket.clicked.connect(self.filling_uts)
+        b_clear_uts = QPushButton('Очистить', self)
+        b_clear_uts.setStyleSheet("background: #bbbabf; border-radius: 4px; border: 1px solid")
+        b_clear_uts.setToolTip("Очистить таблицу UTS")
+        b_clear_uts.resize(80,23)
+        b_clear_uts.move(b_width_two, b_height + 135) 
+        b_clear_uts.clicked.connect(self.clear_uts_tabl)
+         # UTS_tm
+        l_utstm = QLabel('UTS_tm:', self)
+        l_utstm.move(b_width_one + 182, l_height + 135)
+        b_utstm_basket = QPushButton('Заполнить', self)
+        b_utstm_basket.setStyleSheet("background: #bfd6bf; border-radius: 4px; border: 1px solid")
+        b_utstm_basket.setToolTip("Таблицу Временные уставки(UTS)")
+        b_utstm_basket.resize(80,23)
+        b_utstm_basket.move(b_width_one + 180, b_height + 135) 
+        b_utstm_basket.clicked.connect(self.filling_uts_tm)
+        b_clear_utstm = QPushButton('Очистить', self)
+        b_clear_utstm.setStyleSheet("background: #bbbabf; border-radius: 4px; border: 1px solid")
+        b_clear_utstm.setToolTip("Очистить таблицу Временные уставки (UTS)")
+        b_clear_utstm.resize(80,23)
+        b_clear_utstm.move(b_width_two + 180, b_height + 135) 
+        b_clear_utstm.clicked.connect(self.clear_uts_tm_tabl)
         # KTPR
         l_ktpr = QLabel('KTPR:', self)
         l_ktpr.move(b_width_one + 364, l_height)
@@ -587,7 +617,7 @@ class Window_Filling_tables(QWidget):
         # VSGRP
         l_vsgrp = QLabel('VSGRP:', self)
         l_vsgrp.move(b_width_one + 546, l_height + 135)
-        b_vsgrp_basket = QPushButton('Сформировать', self)
+        b_vsgrp_basket = QPushButton('Подготовить', self)
         b_vsgrp_basket.setStyleSheet("background: #bfd6bf; border-radius: 4px; border: 1px solid")
         b_vsgrp_basket.setToolTip('Создает таблицу и добавляет столбцы')
         b_vsgrp_basket.resize(80,23)
@@ -607,13 +637,13 @@ class Window_Filling_tables(QWidget):
         b_tm_vsgrp_basket.setToolTip('Заполнить таблицу Временные уставки VSGRP')
         b_tm_vsgrp_basket.resize(80,23)
         b_tm_vsgrp_basket.move(b_width_one + 720, b_height + 135) 
-        b_tm_vsgrp_basket.clicked.connect(self.filling_tmvs)
+        b_tm_vsgrp_basket.clicked.connect(self.filling_tmvsgrp)
         b_clear_tm_vsgrp = QPushButton('Очистить', self)
         b_clear_tm_vsgrp.setStyleSheet("background: #bbbabf; border-radius: 4px; border: 1px solid")
         b_clear_tm_vsgrp.setToolTip("Очистить таблицу Временные уставки VSGRP")
         b_clear_tm_vsgrp.resize(80,23)
         b_clear_tm_vsgrp.move(b_width_two + 720, b_height + 135) 
-        b_clear_tm_vsgrp.clicked.connect(self.clear_tmvs_tabl)
+        b_clear_tm_vsgrp.clicked.connect(self.clear_tmvsgrp_tabl)
         # Logs
         self.logTextBox = QTextEdit(self)
         self.logTextBox.setStyleSheet("border-radius: 4px; border: 1px solid")
@@ -793,10 +823,38 @@ class Window_Filling_tables(QWidget):
         vsgrp_table = Filling_VSGRP()
         msg = vsgrp_table.column_check()
         self.logs_msg('default', 1, msg, True)
-        msg = vsgrp_table.getting_modul()
-        self.logs_msg('default', 1, msg, True)
     def clear_vsgrp_tabl(self):
         msg = self.dop_function.clear_tabl('vsgrp', 'VSGRP', self.list_tabl)
+        self.logs_msg('default', 1, msg, True)
+    # tmVSGRP
+    def filling_tmvsgrp(self):
+        tmvsgrp_table = Filling_VSGRP_tm()
+        msg = tmvsgrp_table.column_check()
+        self.logs_msg('default', 1, msg, True)
+        msg = tmvsgrp_table.getting_modul()
+        self.logs_msg('default', 1, msg, True)
+    def clear_tmvsgrp_tabl(self):
+        msg = self.dop_function.clear_tabl('vsgrp_tm', 'VSGRP_tm', self.list_tabl)
+        self.logs_msg('default', 1, msg, True)
+    # UTS
+    def filling_uts(self):
+        uts_table = Filling_UTS()
+        msg = uts_table.column_check()
+        self.logs_msg('default', 1, msg, True)
+        msg = uts_table.getting_modul()
+        self.logs_msg('default', 1, msg, True)
+    def clear_uts_tabl(self):
+        msg = self.dop_function.clear_tabl('uts', 'UTS', self.list_tabl)
+        self.logs_msg('default', 1, msg, True)
+    # tmUTS
+    def filling_uts_tm(self):
+        vs_table = Filling_UTS_tm()
+        msg = vs_table.column_check()
+        self.logs_msg('default', 1, msg, True)
+        msg = vs_table.getting_modul()
+        self.logs_msg('default', 1, msg, True)
+    def clear_uts_tm_tabl(self):
+        msg = self.dop_function.clear_tabl('uts_tm', 'UTS_tm', self.list_tabl)
         self.logs_msg('default', 1, msg, True)
     # Logging messeges
     def logs_msg(self, logs=None, number_color=1, buffer_msg=None, msg=False):
