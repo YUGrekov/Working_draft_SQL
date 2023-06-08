@@ -788,6 +788,10 @@ class UTS(BaseModel):
     Pic = CharField(null = True)
     Номер_листа_для_ВУ = CharField(null = True)
     Номер_порядка_для_ВУ = CharField(null = True)
+    Шкаф = CharField(null = True)
+    Корзина = IntegerField(null = True)
+    Модуль = IntegerField(null = True)
+    Канал = IntegerField(null = True)
 
     class Meta:
         table_name = 'uts'
