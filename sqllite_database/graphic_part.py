@@ -311,7 +311,8 @@ class Window_Filling_tables(QWidget):
         super(Window_Filling_tables, self).__init__()
         self.setWindowTitle('Заполнение таблиц базы данных')
         self.setStyleSheet("background-color: #e1e5e5;")
-        self.resize(900, 295)
+        # +182, +180
+        self.resize(1080, 330)
         self.dop_function = General_functions()
 
         self.edit_SQL = Editing_table_SQL()
@@ -328,7 +329,7 @@ class Window_Filling_tables(QWidget):
         l_hw.move(b_width_one + 2, l_height)
         b_io_basket = QPushButton('Заполнить', self)
         b_io_basket.setStyleSheet("background: #bfd6bf; border-radius: 4px; border: 1px solid")
-        b_io_basket.setToolTip("Таблицу HardWare")
+        b_io_basket.setToolTip('''Конфигурация корзин в проекте CodeSys. Обновления таблицы нет! При новом заполнении строки добавляются в конец таблицы''')
         b_io_basket.resize(80,23)
         b_io_basket.move(b_width_one, b_height) 
         b_io_basket.clicked.connect(self.filling_hardware)
@@ -347,7 +348,7 @@ class Window_Filling_tables(QWidget):
         l_uso.move(b_width_one + 182, l_height)
         b_uso_basket = QPushButton('Заполнить', self)
         b_uso_basket.setStyleSheet("background: #bfd6bf; border-radius: 4px; border: 1px solid")
-        b_uso_basket.setToolTip("Должны быть заполнены таблицы AI и DI")
+        b_uso_basket.setToolTip("Шкафная дигностика. Должны быть заполнены таблицы AI и DI")
         b_uso_basket.resize(80,23)
         b_uso_basket.move(b_width_one + 180, b_height) 
         b_uso_basket.clicked.connect(self.filling_uso)
@@ -362,7 +363,7 @@ class Window_Filling_tables(QWidget):
         l_ai.move(b_width_one + 2, l_height + 45)
         b_ai_basket = QPushButton('Заполнить', self)
         b_ai_basket.setStyleSheet("background: #bfd6bf; border-radius: 4px; border: 1px solid")
-        b_ai_basket.setToolTip("Таблицу AI")
+        b_ai_basket.setToolTip("Для корректного заполнения таблицы AI, необходимо указать тип сигнала в таблице signals")
         b_ai_basket.resize(80,23)
         b_ai_basket.move(b_width_one, b_height + 45) 
         b_ai_basket.clicked.connect(self.filling_ai)
@@ -377,7 +378,7 @@ class Window_Filling_tables(QWidget):
         l_ao.move(b_width_one + 182, l_height + 45)
         b_ao_basket = QPushButton('Заполнить', self)
         b_ao_basket.setStyleSheet("background: #bfd6bf; border-radius: 4px; border: 1px solid")
-        b_ao_basket.setToolTip("Таблицу AO")
+        b_ao_basket.setToolTip("Для корректного заполнения таблицы AO, необходимо указать тип сигнала в таблице signals")
         b_ao_basket.resize(80,23)
         b_ao_basket.move(b_width_one + 180, b_height + 45) 
         b_ao_basket.clicked.connect(self.filling_ao)
@@ -392,7 +393,8 @@ class Window_Filling_tables(QWidget):
         l_di.move(b_width_one + 2, l_height + 90)
         b_di_basket = QPushButton('Заполнить', self)
         b_di_basket.setStyleSheet("background: #bfd6bf; border-radius: 4px; border: 1px solid")
-        b_di_basket.setToolTip("Таблицу DI")
+        b_di_basket.setToolTip('''Для корректного заполнения таблицы DI, необходимо указать тип сигнала в таблице signals, 
+        а также заполнить таблицу hardware, и подписать идентификатор шкафа!''')
         b_di_basket.resize(80,23)
         b_di_basket.move(b_width_one, b_height + 90) 
         b_di_basket.clicked.connect(self.filling_di)
@@ -407,7 +409,8 @@ class Window_Filling_tables(QWidget):
         l_do.move(b_width_one + 182, l_height + 90)
         b_do_basket = QPushButton('Заполнить', self)
         b_do_basket.setStyleSheet("background: #bfd6bf; border-radius: 4px; border: 1px solid")
-        b_do_basket.setToolTip("Таблицу DO")
+        b_do_basket.setToolTip('''Для корректного заполнения таблицы DO, необходимо указать тип сигнала в таблице signals, 
+        а также заполнить таблицу hardware, и подписать идентификатор шкафа!''')
         b_do_basket.resize(80,23)
         b_do_basket.move(b_width_one + 180, b_height + 90) 
         b_do_basket.clicked.connect(self.filling_do)
@@ -422,7 +425,10 @@ class Window_Filling_tables(QWidget):
         l_uts.move(b_width_one + 2, l_height + 135)
         b_uts_basket = QPushButton('Заполнить', self)
         b_uts_basket.setStyleSheet("background: #bfd6bf; border-radius: 4px; border: 1px solid")
-        b_uts_basket.setToolTip("Таблицу UTS")
+        b_uts_basket.setToolTip('''Происходит поиск по ключевым словам: 'сирен' и 'табл', и также по тегам 'ВВ'. 
+        Существование сигнала определяется по шкафу,корзине, модулю и каналу. 
+        - Если сигнал существует -> происходит проверка по названию, тегу и команде включения;
+        - Если нет -> добавляется новый сигнал.''')
         b_uts_basket.resize(80,23)
         b_uts_basket.move(b_width_one, b_height + 135) 
         b_uts_basket.clicked.connect(self.filling_uts)
@@ -432,18 +438,39 @@ class Window_Filling_tables(QWidget):
         b_clear_uts.resize(80,23)
         b_clear_uts.move(b_width_two, b_height + 135) 
         b_clear_uts.clicked.connect(self.clear_uts_tabl)
-         # UTS_tm
-        l_utstm = QLabel('UTS_tm:', self)
+        # VV
+        l_vv = QLabel('VV:', self)
+        l_vv.move(b_width_one + 2, l_height + 180)
+        b_vv_basket = QPushButton('Заполнить', self)
+        b_vv_basket.setStyleSheet("background: #bfd6bf; border-radius: 4px; border: 1px solid")
+        b_vv_basket.setToolTip('''Происходит поиск по ключевым словам: 'ввода','СВВ', 'ССВ' и также по тегам 'MBC'. 
+        Для сигнала применяем замену и формируем короткое название, убираем дублирование и для каждого сигнала ищем DI. 
+        Существование сигнала проходт по названию.
+        - Если сигнал существует -> происходит проверка по включению и отключению;
+        - Если нет -> добавляется новый сигнал.''')
+        b_vv_basket.resize(80,23)
+        b_vv_basket.move(b_width_one, b_height + 180) 
+        b_vv_basket.clicked.connect(self.filling_vv)
+        b_clear_vv = QPushButton('Очистить', self)
+        b_clear_vv.setStyleSheet("background: #bbbabf; border-radius: 4px; border: 1px solid")
+        b_clear_vv.setToolTip("Очистить таблицу VV")
+        b_clear_vv.resize(80,23)
+        b_clear_vv.move(b_width_two, b_height + 180) 
+        b_clear_vv.clicked.connect(self.clear_vv_tabl)
+         # tmUTS
+        l_utstm = QLabel('tmUTS:', self)
         l_utstm.move(b_width_one + 182, l_height + 135)
         b_utstm_basket = QPushButton('Заполнить', self)
         b_utstm_basket.setStyleSheet("background: #bfd6bf; border-radius: 4px; border: 1px solid")
-        b_utstm_basket.setToolTip("Таблицу Временные уставки(UTS)")
+        b_utstm_basket.setToolTip('''Временные уставки UTS.
+        Должна быть заполнена таблица UTS, откуда берется название и по умолчанию добавляются уставки.
+        Проверки нет! Для нового заполнения необходимо очистить таблицу, иначе новые записи добавятся в конец таблицы!''')
         b_utstm_basket.resize(80,23)
         b_utstm_basket.move(b_width_one + 180, b_height + 135) 
         b_utstm_basket.clicked.connect(self.filling_uts_tm)
         b_clear_utstm = QPushButton('Очистить', self)
         b_clear_utstm.setStyleSheet("background: #bbbabf; border-radius: 4px; border: 1px solid")
-        b_clear_utstm.setToolTip("Очистить таблицу Временные уставки (UTS)")
+        b_clear_utstm.setToolTip("Очистить таблицу Временные уставки UTS")
         b_clear_utstm.resize(80,23)
         b_clear_utstm.move(b_width_two + 180, b_height + 135) 
         b_clear_utstm.clicked.connect(self.clear_uts_tm_tabl)
@@ -452,7 +479,8 @@ class Window_Filling_tables(QWidget):
         l_ktpr.move(b_width_one + 364, l_height)
         b_ktpr_basket = QPushButton('Подготовить', self)
         b_ktpr_basket.setStyleSheet("background: #bfd6bf; border-radius: 4px; border: 1px solid")
-        b_ktpr_basket.setToolTip('Сформировать таблицу Станционные защиты')
+        b_ktpr_basket.setToolTip('''Станционные защиты. Таблица не заполняется! 
+        - Если отсутствует в базе, то добавиться новая со строками на 96 защит''')
         b_ktpr_basket.resize(80,23)
         b_ktpr_basket.move(b_width_one + 360, b_height) 
         b_ktpr_basket.clicked.connect(self.filling_ktpr)
@@ -467,7 +495,8 @@ class Window_Filling_tables(QWidget):
         l_ktpra.move(b_width_one + 364, l_height + 45)
         b_ktpra_basket = QPushButton('Подготовить', self)
         b_ktpra_basket.setStyleSheet("background: #bfd6bf; border-radius: 4px; border: 1px solid")
-        b_ktpra_basket.setToolTip('Сформировать таблицу Агрегатные защиты')
+        b_ktpra_basket.setToolTip('''Агрегатные защиты. Таблица не заполняется! 
+        - Если отсутствует в базе, то добавиться новая со строками на 4 агрегата и 96 защит''')
         b_ktpra_basket.resize(80,23)
         b_ktpra_basket.move(b_width_one + 360, b_height + 45) 
         b_ktpra_basket.clicked.connect(self.filling_ktpra)
@@ -482,7 +511,8 @@ class Window_Filling_tables(QWidget):
         l_ktprs.move(b_width_one + 364, l_height + 90)
         b_ktprs_basket = QPushButton('Подготовить', self)
         b_ktprs_basket.setStyleSheet("background: #bfd6bf; border-radius: 4px; border: 1px solid")
-        b_ktprs_basket.setToolTip('Сформировать таблицу Предельные параметры')
+        b_ktprs_basket.setToolTip('''Предельные защиты. Таблица не заполняется! 
+        - Если отсутствует в базе, то добавиться новая со строками на 20 защит''')
         b_ktprs_basket.resize(80,23)
         b_ktprs_basket.move(b_width_one + 360, b_height + 90) 
         b_ktprs_basket.clicked.connect(self.filling_ktprs)
@@ -497,7 +527,8 @@ class Window_Filling_tables(QWidget):
         l_gmpna.move(b_width_one + 364, l_height + 135)
         b_gmpna_basket = QPushButton('Подготовить', self)
         b_gmpna_basket.setStyleSheet("background: #bfd6bf; border-radius: 4px; border: 1px solid")
-        b_gmpna_basket.setToolTip('Сформировать таблицу Агрегатные готовности')
+        b_gmpna_basket.setToolTip('''Агрегатные готовности. Таблица не заполняется! 
+        - Если отсутствует в базе, то добавиться новая со строками на 4 агрегата и 64 готовности''')
         b_gmpna_basket.resize(80,23)
         b_gmpna_basket.move(b_width_one + 360, b_height + 135) 
         b_gmpna_basket.clicked.connect(self.filling_gmpna)
@@ -517,7 +548,7 @@ class Window_Filling_tables(QWidget):
         self.l_count_NA.resize(80,15)
         b_umpna_basket = QPushButton('Заполнить', self)
         b_umpna_basket.setStyleSheet("background: #bfd6bf; border-radius: 4px; border: 1px solid")
-        b_umpna_basket.setToolTip('''Заполнить или обновить данные таблицы Насосные агрегаты(UMPNA):
+        b_umpna_basket.setToolTip('''Насосные агрегаты UMPNA:
         - Если таблица пустая -> добавятся и заполнятся новые ряды = количеству агрегатов;
         - Если количество рядов < количества агрегатов -> существующие обновятся или останутся без изменения, недостающие добавятся и заполнятся;
         - Если количество рядов = количеству агрегатов -> обновятся или останутся без изменения''')
@@ -526,7 +557,7 @@ class Window_Filling_tables(QWidget):
         b_umpna_basket.clicked.connect(self.filling_umpna)
         b_clear_umpna = QPushButton('Очистить', self)
         b_clear_umpna.setStyleSheet("background: #bbbabf; border-radius: 4px; border: 1px solid")
-        b_clear_umpna.setToolTip("Очистить таблицу Насосные агрегаты(UMPNA)")
+        b_clear_umpna.setToolTip("Очистить таблицу Насосные агрегаты UMPNA")
         b_clear_umpna.resize(80,23)
         b_clear_umpna.move(b_width_two + 540, b_height) 
         b_clear_umpna.clicked.connect(self.clear_umpna_tabl)
@@ -535,13 +566,15 @@ class Window_Filling_tables(QWidget):
         l_tm_umpna.move(b_width_one + 728, l_height)
         b_tm_umpna_basket = QPushButton('Заполнить', self)
         b_tm_umpna_basket.setStyleSheet("background: #bfd6bf; border-radius: 4px; border: 1px solid")
-        b_tm_umpna_basket.setToolTip('Заполнить таблицу Временные уставки НА')
+        b_tm_umpna_basket.setToolTip('''Временные уставки UMPNA.
+        Должна быть заполнена таблица UMPNA, откуда берется название и по умолчанию добавляются уставки.
+        Проверки нет! Для нового заполнения необходимо очистить таблицу, иначе новые записи добавятся в конец таблицы!''')
         b_tm_umpna_basket.resize(80,23)
         b_tm_umpna_basket.move(b_width_one + 720, b_height) 
         b_tm_umpna_basket.clicked.connect(self.filling_tmNA_umpna)
         b_clear_tm_umpna = QPushButton('Очистить', self)
         b_clear_tm_umpna.setStyleSheet("background: #bbbabf; border-radius: 4px; border: 1px solid")
-        b_clear_tm_umpna.setToolTip("Очистить таблицу Временные уставки НА")
+        b_clear_tm_umpna.setToolTip("Очистить таблицу Временные уставки UMPNA")
         b_clear_tm_umpna.resize(80,23)
         b_clear_tm_umpna.move(b_width_two + 720, b_height) 
         b_clear_tm_umpna.clicked.connect(self.clear_tmNA_umpna_tabl)
@@ -574,7 +607,9 @@ class Window_Filling_tables(QWidget):
         l_tmzd.move(b_width_one + 728, l_height + 45)
         b_tm_zd_basket = QPushButton('Заполнить', self)
         b_tm_zd_basket.setStyleSheet("background: #bfd6bf; border-radius: 4px; border: 1px solid")
-        b_tm_zd_basket.setToolTip('Заполнить таблицу Временные уставки ZD')
+        b_tm_zd_basket.setToolTip('''Временные уставки ZD.
+        Должна быть заполнена таблица ZD, откуда берется название и по умолчанию добавляются уставки.
+        Проверки нет! Для нового заполнения необходимо очистить таблицу, иначе новые записи добавятся в конец таблицы!''')
         b_tm_zd_basket.resize(80,23)
         b_tm_zd_basket.move(b_width_one + 720, b_height + 45) 
         b_tm_zd_basket.clicked.connect(self.filling_tmzd)
@@ -589,7 +624,15 @@ class Window_Filling_tables(QWidget):
         l_vs.move(b_width_one + 546, l_height + 90)
         b_vs_basket = QPushButton('Заполнить', self)
         b_vs_basket.setStyleSheet("background: #bfd6bf; border-radius: 4px; border: 1px solid")
-        b_vs_basket.setToolTip('Заполнить таблицу VS')
+        b_vs_basket.setToolTip('''Заполнить или обновить данные таблицы Вспомсистемы VS:
+        Название вспомсистемы определяется по тире(дефис) "-", если в строке 2 тире(дефиса) " - *** - " вероятнее всего название получится неккоректное -> данная вспомсистема не заполнится!
+        Необходимо поправить сигналы названия вспомсистемы в таблицах Signals, а затем в DI и DO, либо заполнить вручную!
+        Могут заполниться столбцы: Группы впомсистем не заполняются!
+        ** МП, Напряжение, Включить, Отключить, Внешняя авария, Исправность цепей открытия, Давление(может некорректно заполниться!);
+        - Если таблица пустая -> добавятся и заполнятся новые ряды = найденным вспомсистемам(поиск происходит по тегам РД!);
+        - Если появилась новая вспомсистема то добавится в конец таблицы;
+        - Если есть изменения у вспомсистемы в таблице DI или DO -> они будут найдены и заменены на новые;
+        - Если вспомсистемы больше не существует в проекте -> будет сообщение, что вспомсистемы не существует!''')
         b_vs_basket.resize(80,23)
         b_vs_basket.move(b_width_one + 540, b_height + 90) 
         b_vs_basket.clicked.connect(self.filling_vs)
@@ -604,7 +647,9 @@ class Window_Filling_tables(QWidget):
         l_tmvs.move(b_width_one + 728, l_height + 90)
         b_tm_vs_basket = QPushButton('Заполнить', self)
         b_tm_vs_basket.setStyleSheet("background: #bfd6bf; border-radius: 4px; border: 1px solid")
-        b_tm_vs_basket.setToolTip('Заполнить таблицу Временные уставки VS')
+        b_tm_vs_basket.setToolTip('''Временные уставки VS.
+        Должна быть заполнена таблица VS, откуда берется название и по умолчанию добавляются уставки.
+        Проверки нет! Для нового заполнения необходимо очистить таблицу, иначе новые записи добавятся в конец таблицы!''')
         b_tm_vs_basket.resize(80,23)
         b_tm_vs_basket.move(b_width_one + 720, b_height + 90) 
         b_tm_vs_basket.clicked.connect(self.filling_tmvs)
@@ -619,7 +664,8 @@ class Window_Filling_tables(QWidget):
         l_vsgrp.move(b_width_one + 546, l_height + 135)
         b_vsgrp_basket = QPushButton('Подготовить', self)
         b_vsgrp_basket.setStyleSheet("background: #bfd6bf; border-radius: 4px; border: 1px solid")
-        b_vsgrp_basket.setToolTip('Создает таблицу и добавляет столбцы')
+        b_vsgrp_basket.setToolTip('''Группы вспомсистем VSGRP. Таблица не заполняется! 
+        - Если отсутствует в базе, то добавиться новая таблица''')
         b_vsgrp_basket.resize(80,23)
         b_vsgrp_basket.move(b_width_one + 540, b_height + 135) 
         b_vsgrp_basket.clicked.connect(self.filling_vsgrp)
@@ -634,7 +680,9 @@ class Window_Filling_tables(QWidget):
         l_tmvsgrp.move(b_width_one + 728, l_height + 135)
         b_tm_vsgrp_basket = QPushButton('Заполнить', self)
         b_tm_vsgrp_basket.setStyleSheet("background: #bfd6bf; border-radius: 4px; border: 1px solid")
-        b_tm_vsgrp_basket.setToolTip('Заполнить таблицу Временные уставки VSGRP')
+        b_tm_vsgrp_basket.setToolTip('''Временные уставки VSGRP.
+        Должна быть заполнена таблица VSGRP, откуда берется название и по умолчанию добавляются уставки.
+        Проверки нет! Для нового заполнения необходимо очистить таблицу, иначе новые записи добавятся в конец таблицы!''')
         b_tm_vsgrp_basket.resize(80,23)
         b_tm_vsgrp_basket.move(b_width_one + 720, b_height + 135) 
         b_tm_vsgrp_basket.clicked.connect(self.filling_tmvsgrp)
@@ -644,10 +692,33 @@ class Window_Filling_tables(QWidget):
         b_clear_tm_vsgrp.resize(80,23)
         b_clear_tm_vsgrp.move(b_width_two + 720, b_height + 135) 
         b_clear_tm_vsgrp.clicked.connect(self.clear_tmvsgrp_tabl)
+        # PI
+        l_pi = QLabel('PI:', self)
+        l_pi.move(b_width_one + 910, l_height)
+        b_pi_basket = QPushButton('Заполнить', self)
+        b_pi_basket.setStyleSheet("background: #bfd6bf; border-radius: 4px; border: 1px solid")
+        b_pi_basket.setToolTip('''Заполнить или обновить данные таблицы Вспомсистемы VS:
+        Название вспомсистемы определяется по тире(дефис) "-", если в строке 2 тире(дефиса) " - *** - " вероятнее всего название получится неккоректное -> данная вспомсистема не заполнится!
+        Необходимо поправить сигналы названия вспомсистемы в таблицах Signals, а затем в DI и DO, либо заполнить вручную!
+        Могут заполниться столбцы: Группы впомсистем не заполняются!
+        ** МП, Напряжение, Включить, Отключить, Внешняя авария, Исправность цепей открытия, Давление(может некорректно заполниться!);
+        - Если таблица пустая -> добавятся и заполнятся новые ряды = найденным вспомсистемам(поиск происходит по тегам РД!);
+        - Если появилась новая вспомсистема то добавится в конец таблицы;
+        - Если есть изменения у вспомсистемы в таблице DI или DO -> они будут найдены и заменены на новые;
+        - Если вспомсистемы больше не существует в проекте -> будет сообщение, что вспомсистемы не существует!''')
+        b_pi_basket.resize(80,23)
+        b_pi_basket.move(b_width_one + 900, b_height) 
+        b_pi_basket.clicked.connect(self.filling_pi)
+        b_clear_pi = QPushButton('Очистить', self)
+        b_clear_pi.setStyleSheet("background: #bbbabf; border-radius: 4px; border: 1px solid")
+        b_clear_pi.setToolTip("Очистить таблицу PI")
+        b_clear_pi.resize(80,23)
+        b_clear_pi.move(b_width_two + 900, b_height) 
+        b_clear_pi.clicked.connect(self.clear_pi_tabl)
         # Logs
         self.logTextBox = QTextEdit(self)
         self.logTextBox.setStyleSheet("border-radius: 4px; border: 1px solid")
-        self.logTextBox.setGeometry(10,200,880,85)
+        self.logTextBox.setGeometry(10,235,1060,85)
         self.logTextBox.setReadOnly(True)
         self.logs_msg(f'Запущена форма заполнения таблиц базы данных', 1)
     # HardWare
@@ -855,6 +926,26 @@ class Window_Filling_tables(QWidget):
         self.logs_msg('default', 1, msg, True)
     def clear_uts_tm_tabl(self):
         msg = self.dop_function.clear_tabl('uts_tm', 'UTS_tm', self.list_tabl)
+        self.logs_msg('default', 1, msg, True)
+    # VV
+    def filling_vv(self):
+        vv_table = Filling_VV()
+        msg = vv_table.column_check()
+        self.logs_msg('default', 1, msg, True)
+        msg = vv_table.getting_modul()
+        self.logs_msg('default', 1, msg, True)
+    def clear_vv_tabl(self):
+        msg = self.dop_function.clear_tabl('vv', 'VV', self.list_tabl)
+        self.logs_msg('default', 1, msg, True)
+    # VV
+    def filling_pi(self):
+        pi_table = Filling_PI()
+        msg = pi_table.column_check()
+        self.logs_msg('default', 1, msg, True)
+        msg = pi_table.getting_modul()
+        self.logs_msg('default', 1, msg, True)
+    def clear_pi_tabl(self):
+        msg = self.dop_function.clear_tabl('pi', 'PI', self.list_tabl)
         self.logs_msg('default', 1, msg, True)
     # Logging messeges
     def logs_msg(self, logs=None, number_color=1, buffer_msg=None, msg=False):
