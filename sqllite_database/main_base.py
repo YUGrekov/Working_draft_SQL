@@ -130,23 +130,23 @@ class General_functions():
         msg = {}
         cursor = db.cursor()
         if not table_used in list_tabl:
-            msg[f'{today} - Таблица: {table_name} отсутствует!'] = 2
+            msg[f'{today} - Таблица: {table_used} отсутствует!'] = 2
             return msg
 
         if self.empty_table(table_used): 
-            msg[f'{today} - Таблица: {table_name} пустая!'] = 2
+            msg[f'{today} - Таблица: {table_used} пустая!'] = 2
             return msg
         
         cursor.execute(f'DELETE FROM {table_used}')
-        msg[f'{today} - Таблица: {table_name} полностью очищена'] = 1
+        msg[f'{today} - Таблица: {table_used} полностью очищена'] = 1
         return msg
     def search_signal(self, tabl_used_cl, tabl_used_str, tag):
-        exists_tag = tabl_used_cl.select().where(tabl_used_cl.Идентификатор == tag)
+        exists_tag = tabl_used_cl.select().where(tabl_used_cl.tag == tag)
         if bool(exists_tag):
             cursor = db.cursor()
-            search_tag = cursor.execute(f'''SELECT id, Идентификатор
+            search_tag = cursor.execute(f'''SELECT id, tag
                                             FROM {tabl_used_str}
-                                            WHERE Идентификатор="{tag}"''')
+                                            WHERE tag="{tag}"''')
             for id_, tag in search_tag.fetchall():
                 if tabl_used_str == 'di': return (f'DI[{id_}].Value')
                 if tabl_used_str == 'do': return (f'ctrlDO[{id_}]')
@@ -168,13 +168,13 @@ class General_functions():
     
     def update_signal_dop(self, tabl_used_cl, tabl_used_str, name, column_update_cl, column_update_str, value):
         msg = {}
-        exist_value  = tabl_used_cl.select().where(tabl_used_cl.Название == name,
+        exist_value  = tabl_used_cl.select().where(tabl_used_cl.name == name,
                                                     column_update_cl == value)
         if not bool(exist_value):
             cursor = db.cursor()
             cursor.execute(f'''UPDATE {tabl_used_str}
                                SET {column_update_str}='{value}' 
-                               WHERE Название="{name}"''')
+                               WHERE name="{name}"''')
             msg[f'{today} - Таблица: {tabl_used_str}, обновлен: {name},  {column_update_str} = {value}'] = 3
             return msg
         return msg
@@ -526,9 +526,9 @@ class Filling_USO():
                     list_diag['variable'] = f'USO[{count_USO}]'
                     list_diag['name']     = f'{uso[0]}'
 
-                    ai_temp = self.cursor.execute(f'''SELECT Переменная, Название
+                    ai_temp = self.cursor.execute(f'''SELECT variable, name
                                                     FROM ai
-                                                    WHERE Название LIKE "%{uso[0]}%"''')
+                                                    WHERE name LIKE "%{uso[0]}%"''')
                     current_ai = ai_temp.fetchall()
                     try:
                         if len(current_ai) == 0: raise
@@ -539,11 +539,11 @@ class Filling_USO():
                         list_diag['temperature']  = ''
                         msg[f'{today} - Таблица: uso. Температура в шкафу {uso[0]} не найдена!'] = 2
 
-                    door_temp = self.cursor.execute(f'''SELECT Переменная, Название
+                    door_temp = self.cursor.execute(f'''SELECT variable, name
                                                         FROM di
-                                                        WHERE Название LIKE "%{uso[0]}%" AND 
-                                                            (Название LIKE "%двер%" OR
-                                                            Название LIKE "%Двер%")''')
+                                                        WHERE name LIKE "%{uso[0]}%" AND 
+                                                            (name LIKE "%двер%" OR
+                                                            name LIKE "%Двер%")''')
                     current_door = door_temp.fetchall()
                     try:
                         if len(current_door) == 0: raise
@@ -554,11 +554,11 @@ class Filling_USO():
                         list_diag['temperature']  = ''
                         msg[f'{today} - Таблица: uso. Сигнал открытой двери шкафа {uso[0]} не найден!'] = 2
 
-                    di_temp = self.cursor.execute(f'''SELECT Переменная, Название
+                    di_temp = self.cursor.execute(f'''SELECT variable, name
                                                     FROM di
-                                                    WHERE Название LIKE "%{uso[0]}%" AND 
-                                                            (Название NOT LIKE "%двер%") AND (Название NOT LIKE "%Двер%") 
-                                                    ORDER BY Название''')
+                                                    WHERE name LIKE "%{uso[0]}%" AND 
+                                                            (name NOT LIKE "%двер%") AND (name NOT LIKE "%Двер%") 
+                                                    ORDER BY name''')
                     current_di = di_temp.fetchall()
                     try:
                         for di in current_di:
@@ -657,7 +657,7 @@ class Filling_AI():
                                                         AI.Канал   == channel_s)
                         if bool(coincidence):
                             exist_tag  = AI.select().where(AI.Идентификатор == tag)
-                            exist_name = AI.select().where(AI.Название == description)
+                            exist_name = AI.select().where(AI.name == description)
 
                             if not bool(exist_tag):
                                 select_tag = self.cursor.execute(f'''SELECT id, Идентификатор 
@@ -676,16 +676,16 @@ class Filling_AI():
                                                             Канал={channel_s}''')
         
                             if not bool(exist_name):
-                                select_name = self.cursor.execute(f'''SELECT id, Название 
+                                select_name = self.cursor.execute(f'''SELECT id, name 
                                                                     FROM ai
                                                                     WHERE Шкаф='{uso_s}' AND 
                                                                             Корзина={basket_s} AND 
                                                                             Модуль={module_s} AND 
                                                                             Канал={channel_s}''')
                                 for id_, name_ in select_name.fetchall():
-                                    msg[f'{today} - Таблица: ai, у сигнала обновлено название: id = {id_}, ({name_}) {description}'] = 2
+                                    msg[f'{today} - Таблица: ai, у сигнала обновлено name: id = {id_}, ({name_}) {description}'] = 2
                                 self.cursor.execute(f'''UPDATE ai
-                                                        SET Название='{description}' 
+                                                        SET name='{description}' 
                                                         WHERE Шкаф='{uso_s}' AND 
                                                             Корзина={basket_s} AND 
                                                             Модуль={module_s} AND 
@@ -737,7 +737,7 @@ class Filling_AI():
                         
                         list_AI.append(dict(Переменная = f'AI[{count_AI}]',
                                             Идентификатор = tag,
-                                            Название = description,
+                                            name = description,
                                             pValue = f'mAI8[{isdigit_num[0]}, {module_s}]',
                                             pHealth = f'mAI8_HEALTH[{isdigit_num[0]}]',
                                             Группа_аналогов = group_analog,
@@ -779,7 +779,7 @@ class Filling_AI():
         return(msg)
     # Заполняем таблицу AI
     def column_check(self):
-        list_default = ['Переменная', 'Идентификатор', 'Название', 'pValue', 'pHealth', 'Группа_аналогов',
+        list_default = ['Переменная', 'Идентификатор', 'name', 'pValue', 'pHealth', 'Группа_аналогов',
                         'Группа_уставок_аналогов',  'Единица_измерения',  'Подпись_для_ВУ',  'Флаг_для_пересчета_в_кгс_см2',  'Номер_НА_или_вспом',  
                         'Вибрация_насоса',  'Вибрация_ЭД',  'Ток_ЭД_НА',  'Давление_на_выходе_вспом', 
                         'Номер_уставки_мин_авар',  'Номер_уставки_мин_пред',  'Номер_уставки_макс_авар',  'Номер_уставки_макс_пред', 
@@ -836,7 +836,7 @@ class Filling_AO():
                                                         AO.Канал == channel_s)
                         if bool(coincidence):
                             exist_tag  = AO.select().where(AO.Идентификатор == tag)
-                            exist_name = AO.select().where(AO.Название == description)
+                            exist_name = AO.select().where(AO.name == description)
 
                             if not bool(exist_tag):
                                 select_tag = self.cursor.execute(f'''SELECT id, Идентификатор 
@@ -855,16 +855,16 @@ class Filling_AO():
                                                             Канал={channel_s}''')
         
                             if not bool(exist_name):
-                                select_name = self.cursor.execute(f'''SELECT id, Название 
+                                select_name = self.cursor.execute(f'''SELECT id, name 
                                                                     FROM ao
                                                                     WHERE Шкаф='{uso_s}' AND 
                                                                             Корзина={basket_s} AND 
                                                                             Модуль={module_s} AND 
                                                                             Канал={channel_s}''')
                                 for id_, name_ in select_name.fetchall():
-                                    msg[f'{today} - Таблица: ao, у сигнала обновлено название: id = {id_}, ({name_}) {description}'] = 2
+                                    msg[f'{today} - Таблица: ao, у сигнала обновлено name: id = {id_}, ({name_}) {description}'] = 2
                                 self.cursor.execute(f'''UPDATE ao
-                                                        SET Название='{description}' 
+                                                        SET name='{description}' 
                                                         WHERE Шкаф='{uso_s}' AND 
                                                             Корзина={basket_s} AND 
                                                             Модуль={module_s} AND 
@@ -897,7 +897,7 @@ class Filling_AO():
                     
                         list_AO.append(dict(Переменная = f'AO[{count_AO}]',
                                             Идентификатор = tag,
-                                            Название = description,
+                                            name = description,
                                             pValue = f'{tag_h}_{prefix}_AO[{channel_s}]',
                                             pHealth = f'mAO_HEALTH[{isdigit_num[0]}]',
                                             Шкаф = uso_s, 
@@ -914,7 +914,7 @@ class Filling_AO():
         return(msg)
     # Заполняем таблицу AO
     def column_check(self):
-        list_default = ['Переменная', 'Идентификатор', 'Название', 'pValue', 'pHealth',  'Шкаф', 'Корзина', 'Модуль', 'Канал']
+        list_default = ['Переменная', 'Идентификатор', 'name', 'pValue', 'pHealth',  'Шкаф', 'Корзина', 'Модуль', 'Канал']
         msg = self.dop_function.column_check(AO, 'ao', list_default)
         return msg 
 
@@ -962,8 +962,8 @@ class Filling_DI():
                                                         DI.Модуль  == module_s,
                                                         DI.Канал   == channel_s)
                         if bool(coincidence):
-                            exist_tag  = DI.select().where(DI.Идентификатор == tag)
-                            exist_name = DI.select().where(DI.Название == description)
+                            exist_tag  = DI.select().where(DI.Идентификатор == tag_translate)
+                            exist_name = DI.select().where(DI.name == description)
 
                             if not bool(exist_tag):
                                 select_tag = self.cursor.execute(f'''SELECT id, Идентификатор 
@@ -973,25 +973,25 @@ class Filling_DI():
                                                                         Модуль={module_s} AND 
                                                                         Канал={channel_s}''')
                                 for id_, tag_ in select_tag.fetchall():
-                                    msg[f'{today} - Таблица: di, у сигнала обновлен идентификатор: id = {id_}, ({tag_}) {tag}'] = 2
+                                    msg[f'{today} - Таблица: di, у сигнала обновлен идентификатор: id = {id_}, ({tag_}) {tag_translate}'] = 2
                                 self.cursor.execute(f'''UPDATE di
-                                                        SET Идентификатор='{tag}' 
+                                                        SET Идентификатор='{tag_translate}' 
                                                         WHERE Шкаф='{uso_s}' AND 
                                                             Корзина={basket_s} AND 
                                                             Модуль={module_s} AND 
                                                             Канал={channel_s}''')
         
                             if not bool(exist_name):
-                                select_name = self.cursor.execute(f'''SELECT id, Название 
+                                select_name = self.cursor.execute(f'''SELECT id, name 
                                                                     FROM di
                                                                     WHERE Шкаф='{uso_s}' AND 
                                                                             Корзина={basket_s} AND 
                                                                             Модуль={module_s} AND 
                                                                             Канал={channel_s}''')
                                 for id_, name_ in select_name.fetchall():
-                                    msg[f'{today} - Таблица: di, у сигнала обновлено название: id = {id_}, ({name_}) {description}'] = 2
+                                    msg[f'{today} - Таблица: di, у сигнала обновлено name: id = {id_}, ({name_}) {description}'] = 2
                                 self.cursor.execute(f'''UPDATE di
-                                                        SET Название='{description}' 
+                                                        SET name='{description}' 
                                                         WHERE Шкаф='{uso_s}' AND 
                                                             Корзина={basket_s} AND 
                                                             Модуль={module_s} AND 
@@ -1028,7 +1028,7 @@ class Filling_DI():
                         
                         list_DI.append(dict(Переменная = f'DI[{count_DI}]',
                                             Идентификатор = tag_translate,
-                                            Название = description,
+                                            name = description,
                                             pValue = f'{tag_h}_{prefix}_DI[{channel_s}]',
                                             pHealth = f'mDI_HEALTH[{str(isdigit_num)}]',
                                             Inv = '0',
@@ -1047,7 +1047,7 @@ class Filling_DI():
                                             Группа_дискретов = group_diskrets,
                                             Приоритет_сообщения_при_0 = '',
                                             Приоритет_сообщения_при_1 = '',
-                                            Короткое_название = description,
+                                            Короткое_name = description,
                                             Шкаф = uso_s, Корзина = basket_s, Модуль = module_s, Канал = channel_s,
                                             AlphaHMI = '', AlphaHMI_PIC1 = '', AlphaHMI_PIC1_Number_kont = '', AlphaHMI_PIC2 = '', 
                                             AlphaHMI_PIC2_Number_kont = '', AlphaHMI_PIC3 = '', AlphaHMI_PIC3_Number_kont = '', 
@@ -1061,11 +1061,11 @@ class Filling_DI():
         return(msg)
     # Заполняем таблицу DI
     def column_check(self):
-        list_default = ['Переменная', 'Идентификатор', 'Название', 'pValue', 'pHealth', 'Inv',
+        list_default = ['Переменная', 'Идентификатор', 'name', 'pValue', 'pHealth', 'Inv',
                         'ErrValue', 'priority_0', 'priority_1', 'Msg', 'isDI_NC',  
                         'isAI_Warn', 'isAI_Avar', 'pNC_AI',  'TS_ID', 
                         'isModuleNC',  'Pic',  'Таблица_сообщений',  'Группа_дискретов', 
-                        'Приоритет_сообщения_при_0',  'Приоритет_сообщения_при_1', 'Короткое_название', 'Шкаф', 'Корзина', 'Модуль', 'Канал', 
+                        'Приоритет_сообщения_при_0',  'Приоритет_сообщения_при_1', 'Короткое_name', 'Шкаф', 'Корзина', 'Модуль', 'Канал', 
                         'AlphaHMI', 'AlphaHMI_PIC1', 'AlphaHMI_PIC1_Number_kont', 'AlphaHMI_PIC2',
                         'AlphaHMI_PIC2_Number_kont','AlphaHMI_PIC3', 'AlphaHMI_PIC3_Number_kont', 
                         'AlphaHMI_PIC4', 'AlphaHMI_PIC4_Number_kont']
@@ -1116,8 +1116,8 @@ class Filling_DO():
                                                         DO.Модуль  == module_s,
                                                         DO.Канал   == channel_s)
                         if bool(coincidence):
-                            exist_tag  = DO.select().where(DO.Идентификатор == tag)
-                            exist_name = DO.select().where(DO.Название == description)
+                            exist_tag  = DO.select().where(DO.Идентификатор == tag_translate)
+                            exist_name = DO.select().where(DO.name == description)
 
                             if not bool(exist_tag):
                                 select_tag = self.cursor.execute(f'''SELECT id, Идентификатор 
@@ -1127,25 +1127,25 @@ class Filling_DO():
                                                                         Модуль={module_s} AND 
                                                                         Канал={channel_s}''')
                                 for id_, tag_ in select_tag.fetchall():
-                                    msg[f'{today} - Таблица: do, у сигнала обновлен идентификатор: id = {id_}, ({tag_}) {tag}'] = 2
+                                    msg[f'{today} - Таблица: do, у сигнала обновлен идентификатор: id = {id_}, ({tag_}) {tag_translate}'] = 2
                                 self.cursor.execute(f'''UPDATE do
-                                                        SET Идентификатор='{tag}' 
+                                                        SET Идентификатор='{tag_translate}' 
                                                         WHERE Шкаф='{uso_s}' AND 
                                                             Корзина={basket_s} AND 
                                                             Модуль={module_s} AND 
                                                             Канал={channel_s}''')
         
                             if not bool(exist_name):
-                                select_name = self.cursor.execute(f'''SELECT id, Название 
+                                select_name = self.cursor.execute(f'''SELECT id, name 
                                                                     FROM do
                                                                     WHERE Шкаф='{uso_s}' AND 
                                                                             Корзина={basket_s} AND 
                                                                             Модуль={module_s} AND 
                                                                             Канал={channel_s}''')
                                 for id_, name_ in select_name.fetchall():
-                                    msg[f'{today} - Таблица: do, у сигнала обновлено название: id = {id_}, ({name_}) {description}'] = 2
+                                    msg[f'{today} - Таблица: do, у сигнала обновлено name: id = {id_}, ({name_}) {description}'] = 2
                                 self.cursor.execute(f'''UPDATE do
-                                                        SET Название='{description}' 
+                                                        SET name='{description}' 
                                                         WHERE Шкаф='{uso_s}' AND 
                                                             Корзина={basket_s} AND 
                                                             Модуль={module_s} AND 
@@ -1178,10 +1178,10 @@ class Filling_DO():
 
                         list_DO.append(dict(Переменная = f'DO[{count_DO}]',
                                             Идентификатор = tag_translate,
-                                            Название = description,
+                                            name = description,
                                             pValue = f'{tag_h}_{prefix}_DO[{channel_s}]',
                                             pHealth = f'mDO_HEALTH[{str(isdigit_num)}]',
-                                            Короткое_название = description,
+                                            Короткое_name = description,
                                             Шкаф = uso_s, Корзина = basket_s, Модуль = module_s, Канал = channel_s,
                                             AlphaHMI = '', AlphaHMI_PIC1 = '', AlphaHMI_PIC1_Number_kont = '', AlphaHMI_PIC2 = '', 
                                             AlphaHMI_PIC2_Number_kont = '', AlphaHMI_PIC3 = '', AlphaHMI_PIC3_Number_kont = '', 
@@ -1856,12 +1856,12 @@ class Filling_ZD():
         return(msg)
     # Заполняем таблицу ZD
     def column_check(self):
-        list_default = ['Переменная', 'Название', 'Короткое_название', 'Наличие_ИНТЕРФЕЙСА', 'КВО', 'КВЗ', 'МПО', 'МПЗ', 'Дист_ф',
-                        'Муфта', 'Авария_привода', 'Открыть', 'Закрыть', 'Остановить', 'Открытие_остановить', 'Закрытие_остановить', 'КВО_и', 'КВЗ_и',
-                        'МПО_и', 'МПЗ_и', 'Дист_и', 'Муфта_и', 'Авария_привода_и', 'Открыть_и', 'Закрыть_и', 'Остановить_и', 'Открытие_остановить_и',
-                        'Закрытие_остановить_и', 'Отсутствие_связи', 'Закрыть_с_БРУ', 'Стоп_с_БРУ', 'Напряжение', 'Напряжение_ЩСУ', 
-                        'Напряжение_в_цепях_сигнализации', 'Исправность_цепей_открытия', 'Исправность_цепей_закрытия', 'ВММО', 'ВММЗ', 
-                        'Замораживать_при_подозрительном_изм', 'Это_клапан', 'Процент_открытия', 'Pic', 'Тип_БУР_задвижки', 
+        list_default = ['variable', 'name', 'short_name', 'exists_interface', 'KVO', 'KVZ', 'MPO', 'MPZ', 'Dist',
+                        'Mufta', 'Drive_failure', 'Open', 'Close', 'Stop', 'Opening_stop', 'Closeing_stop', 'KVO_i', 'KVZ_i',
+                        'MPO_i', 'MPZ_i', 'Dist_i', 'Mufta_i', 'Drive_failure_i', 'Open_i', 'Close_i', 'Stop_i', 'Opening_stop_i',
+                        'Closeing_stop_i', 'No_connection', 'Close_BRU', 'Stop_BRU', 'Voltage', 'Voltage_CHSU', 
+                        'Voltage_in_signaling_circuits', 'Serviceability_opening_circuits', 'Serviceability_closening_circuits', 'VMMO', 'VMMZ', 
+                        'Freeze_on_suspicious_change', 'Is_klapan', 'Opening_percent', 'Pic', 'Type_BUR_ZD', 
                         'AlphaHMI', 'AlphaHMI_PIC1', 'AlphaHMI_PIC1_Number_kont', 'AlphaHMI_PIC2',
                         'AlphaHMI_PIC2_Number_kont','AlphaHMI_PIC3', 'AlphaHMI_PIC3_Number_kont', 
                         'AlphaHMI_PIC4', 'AlphaHMI_PIC4_Number_kont']
@@ -1919,8 +1919,8 @@ class Filling_ZD_tm():
         return(msg)
     # Заполняем таблицу zd_tm
     def column_check(self):
-        list_default = ['Переменная', 'Идентификатор', 'Название', 'Единица_измерения', 'Используется', 
-                        'Значение_уставки', 'Минимум', 'Максимум', 'Группа_уставок', 'Правило_для_карты_уставок']
+        list_default = ['variable', 'tag', 'name', 'unit', 'used', 
+                        'value_ust', 'minimum', 'maximum', 'group_ust', 'rule_map_ust']
         msg = self.dop_function.column_check(ZD_tm, 'zd_tm', list_default)
         return msg 
     
@@ -2098,9 +2098,9 @@ class Filling_VS():
         return(msg)
     # Заполняем таблицу VS
     def column_check(self):
-        list_default = ['Переменная', 'Название', 'Короткое_название', 'Группа', 'Номер_в_группе', 'МП', 'Давление_норма', 'Напряжение', 'Напряжение_СШ', 
-                        'Исправность_цепей_включения', 'Внешняя_авария', 'Датчик_давления_неисправен', 'Включить', 'Отключить', 'АПВ_не_требуется',
-                        'Pic', 'Таблица_сообщений', 'Это_клапан_интерфейсная_вспомсистема',
+        list_default = ['variable', 'name', 'short_name', 'group', 'number_in_group', 'MP', 'Pressure_is_True', 'Voltage', 'Voltage_Sch', 
+                        'Serviceability_of_circuits_of_inclusion', 'External_alarm', 'Pressure_sensor_defective', 'VKL', 'OTKL', 'Not_APV',
+                        'Pic', 'Table_msg', 'Is_klapana_interface_auxsystem',
                         'AlphaHMI', 'AlphaHMI_PIC1', 'AlphaHMI_PIC1_Number_kont', 'AlphaHMI_PIC2',
                         'AlphaHMI_PIC2_Number_kont','AlphaHMI_PIC3', 'AlphaHMI_PIC3_Number_kont', 
                         'AlphaHMI_PIC4', 'AlphaHMI_PIC4_Number_kont']
@@ -2152,8 +2152,8 @@ class Filling_VS_tm():
         return(msg)
     # Заполняем таблицу vs_tm
     def column_check(self):
-        list_default = ['Переменная', 'Идентификатор', 'Название', 'Единица_измерения', 'Используется', 
-                        'Значение_уставки', 'Минимум', 'Максимум', 'Группа_уставок', 'Правило_для_карты_уставок']
+        list_default = ['variable', 'tag', 'name', 'unit', 'used', 
+                        'value_ust', 'minimum', 'maximum', 'group_ust', 'rule_map_ust']
         msg = self.dop_function.column_check(VS_tm, 'vs_tm', list_default)
         return msg 
 # Work with filling in the table 'VSGRP'
@@ -2163,8 +2163,8 @@ class Filling_VSGRP():
         self.dop_function = General_functions()
     # Заполняем таблицу VSGRP
     def column_check(self):
-        list_default = ['Переменная', 'Идентификатор', 'Название', 'Пож_или_водоорош', 'Количество_вспомсистем_в_группе',
-                        'Требуется_выставлять_флаг_WarnOff_если_работает_одна_вспомсистема_в_группе']
+        list_default = ['variable', 'tag', 'name', 'fire_or_watering', 'Number_of_auxsystem_in_group',
+                        'WarnOff_flag_if_one_auxsystem_in_the_group_is_running']
         msg = self.dop_function.column_check(VSGRP, 'vsgrp', list_default)
         return msg 
 # Work with filling in the table 'VSGRP_tm'
@@ -2206,8 +2206,8 @@ class Filling_VSGRP_tm():
         return(msg)
     # Заполняем таблицу vsgrp_tm
     def column_check(self):
-        list_default = ['Переменная', 'Идентификатор', 'Название', 'Единица_измерения', 'Используется', 
-                        'Значение_уставки', 'Минимум', 'Максимум', 'Группа_уставок', 'Правило_для_карты_уставок']
+        list_default = ['variable', 'tag', 'name', 'unit', 'used', 
+                        'value_ust', 'minimum', 'maximum', 'group_ust', 'rule_map_ust']
         msg = self.dop_function.column_check(VSGRP_tm, 'vsgrp_tm', list_default)
         return msg 
     
@@ -2328,8 +2328,8 @@ class Filling_UTS():
         return(msg)
     # Заполняем таблицу UTS
     def column_check(self):
-        list_default = ['Переменная', 'Идентификатор', 'Название', 'Место_установки', 'Включить', 'Сирена', 'Не_требует_автоотключения', 'Проверка',
-                        'Квитирование', 'Pic', 'Номер_листа_для_ВУ', 'Номер_порядка_для_ВУ', 'Шкаф', 'Корзина', 'Модуль', 'Канал']
+        list_default = ['variable', 'tag', 'name', 'location', 'VKL', 'siren', 'Does_not_require_autoshutdown', 'Examination',
+                        'Kvit', 'Pic', 'number_list_VU', 'order_number_for_VU', 'uso', 'basket', 'module', 'channel']
         msg = self.dop_function.column_check(UTS, 'uts', list_default)
         return msg 
 # Work with filling in the table 'UTS_tm'
@@ -2372,8 +2372,8 @@ class Filling_UTS_tm():
         return(msg)
     # Заполняем таблицу uts_tm
     def column_check(self):
-        list_default = ['Переменная', 'Идентификатор', 'Название', 'Единица_измерения', 'Используется', 
-                        'Значение_уставки', 'Минимум', 'Максимум', 'Группа_уставок', 'Правило_для_карты_уставок']
+        list_default = ['variable', 'tag', 'name', 'unit', 'used', 
+                        'value_ust', 'minimum', 'maximum', 'group_ust', 'rule_map_ust']
         msg = self.dop_function.column_check(UTS_tm, 'uts_tm', list_default)
         return msg 
 
@@ -2461,7 +2461,7 @@ class Filling_VV():
         return(msg)
     # Заполняем таблицу VV
     def column_check(self):
-        list_default = ['Переменная', 'Название', 'Высоковольтный_выключатель_включен', 'Высоковольтный_выключатель_отключен', 'Pic']
+        list_default = ['variable', 'name', 'VV_vkl', 'VV_otkl', 'Pic']
         msg = self.dop_function.column_check(VV, 'vv', list_default)
         return msg 
 
@@ -2639,13 +2639,14 @@ class Filling_PI():
         return(msg)
     # Заполняем таблицу VS
     def column_check(self):
-        list_default = ['Переменная', 'Идентификатор', 'Название', 'Тип_ПИ', 'Пожар_0', 'Внимание_1', 'Неисправность_1_загрязнение_стекла_обрыв_2', 
-                        'Неисправность_2_неисправность_КЗ_3', 'Есть_связь_4', 'Неисправность_генератора_частоты_5', 
-                        'Ошибка_загрузки_параметров_6', 'Ошибка_связи_с_модулем_ИПП_7', 'Неисправность_напряжения_питания_8', 'Загрязнение_оптики_9',
-                        'Неисправность_ИК_канала_10', 'Неисправность_УФ_канала_11', 'Загрузка_12', 'Тест_13', 'Резерв_14',
-                        'Сброс_ссылка', 'Сброс_запроса', 'Сквозной_номер_шлейфа_для_интерфейсных', 'Место_установки', 'Pic','Норма']
+        list_default = ['variable', 'tag', 'name', 'Type_PI', 'Fire_0', 'Attention_1', 'Fault_1_glass_pollution_broken_2', 
+                        'Fault_2_fault_KZ_3', 'Yes_connection_4', 'Frequency_generator_failure_5', 
+                        'Parameter_loading_error_6', 'Communication_error_module_IPP_7', 'Supply_voltage_fault_8', 'Optics_contamination_9',
+                        'IK_channel_failure_10', 'UF_channel_failure_11', 'Loading_12', 'Test_13', 'Reserve_14',
+                        'Reset_Link', 'Reset_Request', 'Through_loop_number_for_interface', 'location', 'Pic','Normal']
         msg = self.dop_function.column_check(PI, 'pi', list_default)
         return msg 
+
 # Changing tables SQL
 class Editing_table_SQL():
     def __init__(self):
