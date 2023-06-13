@@ -651,45 +651,45 @@ class Filling_AI():
                         else:
                             msg[f'{today} - Таблица: ai не пуста, идет обновление'] = 1
 
-                        coincidence = AI.select().where(AI.Шкаф    == uso_s,
-                                                        AI.Корзина == basket_s,
-                                                        AI.Модуль  == module_s,
-                                                        AI.Канал   == channel_s)
+                        coincidence = AI.select().where(AI.uso    == uso_s,
+                                                        AI.basket == basket_s,
+                                                        AI.module  == module_s,
+                                                        AI.channel   == channel_s)
                         if bool(coincidence):
-                            exist_tag  = AI.select().where(AI.Идентификатор == tag)
+                            exist_tag  = AI.select().where(AI.tag == tag)
                             exist_name = AI.select().where(AI.name == description)
 
                             if not bool(exist_tag):
-                                select_tag = self.cursor.execute(f'''SELECT id, Идентификатор 
-                                                                    FROM ai
-                                                                    WHERE Шкаф='{uso_s}' AND 
-                                                                        Корзина={basket_s} AND 
-                                                                        Модуль={module_s} AND 
-                                                                        Канал={channel_s}''')
+                                select_tag = self.cursor.execute(f'''SELECT id, tag 
+                                                                     FROM ai
+                                                                     WHERE uso='{uso_s}' AND 
+                                                                           basket={basket_s} AND 
+                                                                           module={module_s} AND 
+                                                                           channel={channel_s}''')
                                 for id_, tag_ in select_tag.fetchall():
-                                    msg[f'{today} - Таблица: ai, у сигнала обновлен идентификатор: id = {id_}, ({tag_}) {tag}'] = 2
+                                    msg[f'{today} - Таблица: ai, у сигнала обновлен tag: id = {id_}, ({tag_}) {tag}'] = 2
                                 self.cursor.execute(f'''UPDATE ai
-                                                        SET Идентификатор='{tag}' 
-                                                        WHERE Шкаф='{uso_s}' AND 
-                                                            Корзина={basket_s} AND 
-                                                            Модуль={module_s} AND 
-                                                            Канал={channel_s}''')
+                                                        SET tag='{tag}' 
+                                                        WHERE uso='{uso_s}' AND 
+                                                            basket={basket_s} AND 
+                                                            module={module_s} AND 
+                                                            channel={channel_s}''')
         
                             if not bool(exist_name):
                                 select_name = self.cursor.execute(f'''SELECT id, name 
-                                                                    FROM ai
-                                                                    WHERE Шкаф='{uso_s}' AND 
-                                                                            Корзина={basket_s} AND 
-                                                                            Модуль={module_s} AND 
-                                                                            Канал={channel_s}''')
+                                                                      FROM ai
+                                                                      WHERE uso='{uso_s}' AND 
+                                                                            basket={basket_s} AND 
+                                                                            module={module_s} AND 
+                                                                            channel={channel_s}''')
                                 for id_, name_ in select_name.fetchall():
                                     msg[f'{today} - Таблица: ai, у сигнала обновлено name: id = {id_}, ({name_}) {description}'] = 2
                                 self.cursor.execute(f'''UPDATE ai
                                                         SET name='{description}' 
-                                                        WHERE Шкаф='{uso_s}' AND 
-                                                            Корзина={basket_s} AND 
-                                                            Модуль={module_s} AND 
-                                                            Канал={channel_s}''')
+                                                        WHERE uso='{uso_s}' AND 
+                                                            basket={basket_s} AND 
+                                                            module={module_s} AND 
+                                                            channel={channel_s}''')
                             continue
 
                         # Сквозной номер модуля
@@ -734,42 +734,42 @@ class Filling_AI():
                                 break
 
                         flag_MPa_kgccm2 = '1' if self.dop_function.str_find(str(description).lower(), {'давлен'}) else '0'
-                        
-                        list_AI.append(dict(Переменная = f'AI[{count_AI}]',
-                                            Идентификатор = tag,
-                                            name = description,
-                                            pValue = f'mAI8[{isdigit_num[0]}, {module_s}]',
-                                            pHealth = f'mAI8_HEALTH[{isdigit_num[0]}]',
-                                            Группа_аналогов = group_analog,
-                                            Группа_уставок_аналогов = group_ust_analog,
-                                            Единица_измерения = unit,
-                                            Подпись_для_ВУ = sign,
-                                            Флаг_для_пересчета_в_кгс_см2 = flag_MPa_kgccm2,
-                                            Номер_НА_или_вспом = '',
-                                            Вибрация_насоса = '',
-                                            Вибрация_ЭД = '',
-                                            Ток_ЭД_НА = '',
-                                            Давление_на_выходе_вспом = '',
-                                            Номер_уставки_мин_авар = '',
-                                            Номер_уставки_мин_пред = '',
-                                            Номер_уставки_макс_авар = '',
-                                            Номер_уставки_макс_пред = '',
-                                            Полевой_мин = '4000',
-                                            Полевой_макс = '20000',
-                                            Инженерный_мин = eng_min,
-                                            Инженерный_макс = eng_max,
-                                            Достоверность_мин = '3900',
-                                            Достоверность_макс = '20100',
-                                            Гистерезис = '0',
-                                            Фильтрация = '0',
-                                            Уставка_мин_6 = '', Уставка_мин_5 = '', Уставка_мин_4 = '', Уставка_мин_3 = '', Уставка_мин_2 = '', Уставка_мин = '',
-                                            Уставка_макс = '', Уставка_макс_2 = '', Уставка_макс_3 = '', Уставка_макс_4 = '', Уставка_макс_5 = '', Уставка_макс_6 = '',
-                                            Точность_значения = value_precision,
-                                            Pic = '', Группа_сброса_трендов = '', Гистерезис_ТИ = '0,1', АЦП = 'мкА', 
-                                            Правило_для_карты_уставок = rule, Предохранитель = '', Шкаф = uso_s, Корзина = basket_s, Модуль = module_s, Канал = channel_s,
-                                            AlphaHMI = '', AlphaHMI_PIC1 = '', AlphaHMI_PIC1_Number_kont = '', AlphaHMI_PIC2 = '', 
-                                            AlphaHMI_PIC2_Number_kont = '', AlphaHMI_PIC3 = '', AlphaHMI_PIC3_Number_kont = '', 
-                                            AlphaHMI_PIC4 = '', AlphaHMI_PIC4_Number_kont = ''))
+
+                        list_AI.append(dict(variable = f'AI[{count_AI}]',
+                                        tag = tag,
+                                        name = description,
+                                        pValue = f'mAI8[{isdigit_num[0]}, {module_s}]',
+                                        pHealth = f'mAI8_HEALTH[{isdigit_num[0]}]',
+                                        group_analog = group_analog,
+                                        group_ust_analog = group_ust_analog,
+                                        unit = unit,
+                                        sign_VU = sign,
+                                        flag_MPa_kgccm2 = flag_MPa_kgccm2,
+                                        number_NA_or_aux = '',
+                                        vibration_pump = '',
+                                        vibration_motor = '',
+                                        current_motor = '',
+                                        aux_outlet_pressure = '',
+                                        number_ust_min_avar = '',
+                                        number_ust_min_pred = '',
+                                        number_ust_max_pred = '',
+                                        number_ust_max_avar = '',
+                                        field_min = '4000',
+                                        field_max = '20000',
+                                        eng_min = eng_min,
+                                        eng_max = eng_max,
+                                        reliability_min = '3900',
+                                        reliability_max = '20100',
+                                        hysteresis = '0',
+                                        filtration = '0',
+                                        ust_min_6 = '', ust_min_5 = '', ust_min_4 = '', ust_min_3 = '', ust_min_2 = '', ust_min = '',
+                                        ust_max = '', ust_max_2 = '', ust_max_3 = '', ust_max_4 = '', ust_max_5 = '', ust_max_6 = '',
+                                        value_precision = value_precision,
+                                        Pic = '', group_trend = '', hysteresis_TI = '0,1', unit_physical_ACP = 'мкА', 
+                                        setpoint_map_rule = rule, fuse = '', uso = uso_s, basket = basket_s, module = module_s, channel = channel_s,
+                                        AlphaHMI = '', AlphaHMI_PIC1 = '', AlphaHMI_PIC1_Number_kont = '', AlphaHMI_PIC2 = '', 
+                                        AlphaHMI_PIC2_Number_kont = '', AlphaHMI_PIC3 = '', AlphaHMI_PIC3_Number_kont = '', 
+                                        AlphaHMI_PIC4 = '', AlphaHMI_PIC4_Number_kont = ''))
 
                 # Checking for the existence of a database
                 AI.insert_many(list_AI).execute()
@@ -779,15 +779,15 @@ class Filling_AI():
         return(msg)
     # Заполняем таблицу AI
     def column_check(self):
-        list_default = ['Переменная', 'Идентификатор', 'name', 'pValue', 'pHealth', 'Группа_аналогов',
-                        'Группа_уставок_аналогов',  'Единица_измерения',  'Подпись_для_ВУ',  'Флаг_для_пересчета_в_кгс_см2',  'Номер_НА_или_вспом',  
-                        'Вибрация_насоса',  'Вибрация_ЭД',  'Ток_ЭД_НА',  'Давление_на_выходе_вспом', 
-                        'Номер_уставки_мин_авар',  'Номер_уставки_мин_пред',  'Номер_уставки_макс_авар',  'Номер_уставки_макс_пред', 
-                        'Полевой_мин',  'Полевой_макс',  'Инженерный_мин', 'Инженерный_макс', 'Достоверность_мин', 'Достоверность_макс', 
-                        'Гистерезис', 'Фильтрация', 'Уставка_мин_6', 'Уставка_мин_5', 'Уставка_мин_4', 'Уставка_мин_3', 
-                        'Уставка_мин_2', 'Уставка_мин', 'Уставка_макс', 'Уставка_макс_2', 'Уставка_макс_3', 'Уставка_макс_4',
-                        'Уставка_макс_5', 'Уставка_макс_6', 'Точность_значения', 'Pic', 'Группа_сброса_трендов', 'Гистерезис_ТИ', 
-                        'АЦП', 'Правило_для_карты_уставок', 'Предохранитель', 'Шкаф', 'Корзина', 'Модуль', 'Канал', 'AlphaHMI', 'AlphaHMI_PIC1', 
+        list_default = ['variable', 'tag', 'name', 'pValue', 'pHealth', 'group_analog',
+                        'group_ust_analog',  'unit',  'sign_VU',  'flag_MPa_kgccm2',  'number_NA_or_aux',  
+                        'vibration_pump',  'vibration_motor',  'current_motor',  'aux_outlet_pressure', 
+                        'number_ust_min_avar',  'number_ust_min_pred',  'number_ust_max_pred',  'number_ust_max_avar', 
+                        'field_min',  'field_max',  'eng_min', 'eng_max', 'reliability_min', 'reliability_max', 
+                        'hysteresis', 'filtration', 'ust_min_6', 'ust_min_5', 'ust_min_4', 'ust_min_3', 
+                        'ust_min_2', 'ust_min', 'ust_max', 'ust_max_2', 'ust_max_3', 'ust_max_4',
+                        'ust_max_5', 'ust_max_6', 'value_precision', 'Pic', 'group_trend', 'hysteresis_TI', 
+                        'unit_physical_ACP', 'setpoint_map_rule', 'fuse', 'uso', 'basket', 'module', 'channel', 'AlphaHMI', 'AlphaHMI_PIC1', 
                         'AlphaHMI_PIC1_Number_kont', 'AlphaHMI_PIC2', 'AlphaHMI_PIC2_Number_kont',
                         'AlphaHMI_PIC3', 'AlphaHMI_PIC3_Number_kont', 'AlphaHMI_PIC4', 'AlphaHMI_PIC4_Number_kont']
         msg = self.dop_function.column_check(AI, 'ai', list_default)
@@ -830,45 +830,45 @@ class Filling_AO():
                         else:
                             msg[f'{today} - Таблица: ao не пуста, идет обновление'] = 1
 
-                        coincidence = AO.select().where(AO.Шкаф     == uso_s,
-                                                        AO.Корзина  == basket_s,
-                                                        AO.Модуль  == module_s,
-                                                        AO.Канал == channel_s)
+                        coincidence = AO.select().where(AO.uso     == uso_s,
+                                                        AO.basket  == basket_s,
+                                                        AO.module  == module_s,
+                                                        AO.channel == channel_s)
                         if bool(coincidence):
-                            exist_tag  = AO.select().where(AO.Идентификатор == tag)
+                            exist_tag  = AO.select().where(AO.tag == tag)
                             exist_name = AO.select().where(AO.name == description)
 
                             if not bool(exist_tag):
-                                select_tag = self.cursor.execute(f'''SELECT id, Идентификатор 
-                                                                    FROM ao
-                                                                    WHERE Шкаф='{uso_s}' AND 
-                                                                        Корзина={basket_s} AND 
-                                                                        Модуль={module_s} AND 
-                                                                        Канал={channel_s}''')
+                                select_tag = self.cursor.execute(f'''SELECT id, tag 
+                                                                     FROM ao
+                                                                     WHERE uso='{uso_s}' AND 
+                                                                           basket={basket_s} AND 
+                                                                           module={module_s} AND 
+                                                                           channel={channel_s}''')
                                 for id_, tag_ in select_tag.fetchall():
-                                    msg[f'{today} - Таблица: ao, у сигнала обновлен идентификатор: id = {id_}, ({tag_}) {tag}'] = 2
+                                    msg[f'{today} - Таблица: ao, у сигнала обновлен tag: id = {id_}, ({tag_}) {tag}'] = 2
                                 self.cursor.execute(f'''UPDATE ao
-                                                        SET Идентификатор='{tag}' 
-                                                        WHERE Шкаф='{uso_s}' AND 
-                                                            Корзина={basket_s} AND 
-                                                            Модуль={module_s} AND 
-                                                            Канал={channel_s}''')
+                                                        SET tag='{tag}' 
+                                                        WHERE uso='{uso_s}' AND 
+                                                            basket={basket_s} AND 
+                                                            module={module_s} AND 
+                                                            channel={channel_s}''')
         
                             if not bool(exist_name):
                                 select_name = self.cursor.execute(f'''SELECT id, name 
-                                                                    FROM ao
-                                                                    WHERE Шкаф='{uso_s}' AND 
-                                                                            Корзина={basket_s} AND 
-                                                                            Модуль={module_s} AND 
-                                                                            Канал={channel_s}''')
+                                                                      FROM ao
+                                                                      WHERE uso='{uso_s}' AND 
+                                                                            basket={basket_s} AND 
+                                                                            module={module_s} AND 
+                                                                            channel={channel_s}''')
                                 for id_, name_ in select_name.fetchall():
                                     msg[f'{today} - Таблица: ao, у сигнала обновлено name: id = {id_}, ({name_}) {description}'] = 2
                                 self.cursor.execute(f'''UPDATE ao
                                                         SET name='{description}' 
-                                                        WHERE Шкаф='{uso_s}' AND 
-                                                            Корзина={basket_s} AND 
-                                                            Модуль={module_s} AND 
-                                                            Канал={channel_s}''')
+                                                        WHERE uso='{uso_s}' AND 
+                                                              basket={basket_s} AND 
+                                                              module={module_s} AND 
+                                                              channel={channel_s}''')
                             continue
 
                         # Сквозной номер модуля
@@ -894,17 +894,17 @@ class Filling_AO():
                             msg[f'{today} - Таблица: ao, ошибка при заполнении. Заполнение продолжится: {traceback.format_exc()}'] = 2
                             msg[f'{today} - Таблица: signals, ошибка в этой строке. Строка пропусается: {row_sql}'] = 2
                             continue
-                    
-                        list_AO.append(dict(Переменная = f'AO[{count_AO}]',
-                                            Идентификатор = tag,
-                                            name = description,
-                                            pValue = f'{tag_h}_{prefix}_AO[{channel_s}]',
-                                            pHealth = f'mAO_HEALTH[{isdigit_num[0]}]',
-                                            Шкаф = uso_s, 
-                                            Корзина = basket_s, 
-                                            Модуль = module_s, 
-                                            Канал = channel_s,
-                                            ))
+
+                        list_AO.append(dict(variable = f'AO[{count_AO}]',
+                                        tag = tag,
+                                        name = description,
+                                        pValue = f'{tag_h}_{prefix}_AO[{channel_s}]',
+                                        pHealth = f'mAO_HEALTH[{isdigit_num[0]}]',
+                                        uso = uso_s, 
+                                        basket = basket_s, 
+                                        module = module_s, 
+                                        channel = channel_s,
+                                        ))
 
                 # Checking for the existence of a database
                 AO.insert_many(list_AO).execute()
@@ -914,7 +914,7 @@ class Filling_AO():
         return(msg)
     # Заполняем таблицу AO
     def column_check(self):
-        list_default = ['Переменная', 'Идентификатор', 'name', 'pValue', 'pHealth',  'Шкаф', 'Корзина', 'Модуль', 'Канал']
+        list_default = ['variable', 'tag', 'name', 'pValue', 'pHealth', 'uso', 'basket', 'module', 'channel']
         msg = self.dop_function.column_check(AO, 'ao', list_default)
         return msg 
 
@@ -957,45 +957,45 @@ class Filling_DI():
                         else:
                             msg[f'{today} - Таблица: di не пуста, идет обновление'] = 1
 
-                        coincidence = DI.select().where(DI.Шкаф    == uso_s,
-                                                        DI.Корзина == basket_s,
-                                                        DI.Модуль  == module_s,
-                                                        DI.Канал   == channel_s)
+                        coincidence = DI.select().where(DI.uso     == uso_s,
+                                                        DI.basket  == basket_s,
+                                                        DI.module  == module_s,
+                                                        DI.channel == channel_s)
                         if bool(coincidence):
-                            exist_tag  = DI.select().where(DI.Идентификатор == tag_translate)
+                            exist_tag  = DI.select().where(DI.tag  == tag_translate)
                             exist_name = DI.select().where(DI.name == description)
 
                             if not bool(exist_tag):
-                                select_tag = self.cursor.execute(f'''SELECT id, Идентификатор 
+                                select_tag = self.cursor.execute(f'''SELECT id, tag 
                                                                     FROM di
-                                                                    WHERE Шкаф='{uso_s}' AND 
-                                                                        Корзина={basket_s} AND 
-                                                                        Модуль={module_s} AND 
-                                                                        Канал={channel_s}''')
+                                                                    WHERE uso='{uso_s}' AND 
+                                                                          basket={basket_s} AND 
+                                                                          module={module_s} AND 
+                                                                          channel={channel_s}''')
                                 for id_, tag_ in select_tag.fetchall():
-                                    msg[f'{today} - Таблица: di, у сигнала обновлен идентификатор: id = {id_}, ({tag_}) {tag_translate}'] = 2
+                                    msg[f'{today} - Таблица: di, у сигнала обновлен tag: id = {id_}, ({tag_}) {tag_translate}'] = 2
                                 self.cursor.execute(f'''UPDATE di
-                                                        SET Идентификатор='{tag_translate}' 
-                                                        WHERE Шкаф='{uso_s}' AND 
-                                                            Корзина={basket_s} AND 
-                                                            Модуль={module_s} AND 
-                                                            Канал={channel_s}''')
+                                                        SET tag='{tag_translate}' 
+                                                        WHERE uso='{uso_s}' AND 
+                                                              basket={basket_s} AND 
+                                                              Модуль={module_s} AND 
+                                                              channel={channel_s}''')
         
                             if not bool(exist_name):
                                 select_name = self.cursor.execute(f'''SELECT id, name 
-                                                                    FROM di
-                                                                    WHERE Шкаф='{uso_s}' AND 
-                                                                            Корзина={basket_s} AND 
-                                                                            Модуль={module_s} AND 
-                                                                            Канал={channel_s}''')
+                                                                      FROM di
+                                                                      WHERE uso='{uso_s}' AND 
+                                                                            basket={basket_s} AND 
+                                                                            module={module_s} AND 
+                                                                            channel={channel_s}''')
                                 for id_, name_ in select_name.fetchall():
                                     msg[f'{today} - Таблица: di, у сигнала обновлено name: id = {id_}, ({name_}) {description}'] = 2
                                 self.cursor.execute(f'''UPDATE di
                                                         SET name='{description}' 
-                                                        WHERE Шкаф='{uso_s}' AND 
-                                                            Корзина={basket_s} AND 
-                                                            Модуль={module_s} AND 
-                                                            Канал={channel_s}''')
+                                                        WHERE uso='{uso_s}' AND 
+                                                              basket={basket_s} AND 
+                                                              module={module_s} AND 
+                                                              channel={channel_s}''')
                             continue
 
                         # Сквозной номер модуля
@@ -1025,33 +1025,33 @@ class Filling_DI():
                         if self.dop_function.str_find(str(tag).lower(), {'csc'}) : group_diskrets = 'Диагностика'
                         elif self.dop_function.str_find(str(tag).lower(), {'ec'}): group_diskrets = 'Электроснабжение'
                         else: group_diskrets = 'Общие'
-                        
-                        list_DI.append(dict(Переменная = f'DI[{count_DI}]',
-                                            Идентификатор = tag_translate,
-                                            name = description,
-                                            pValue = f'{tag_h}_{prefix}_DI[{channel_s}]',
-                                            pHealth = f'mDI_HEALTH[{str(isdigit_num)}]',
-                                            Inv = '0',
-                                            ErrValue = '0',
-                                            priority_0 = '1',
-                                            priority_1 = '1',
-                                            Msg = '1',
-                                            isDI_NC = '',
-                                            isAI_Warn = '',
-                                            isAI_Avar = '',
-                                            pNC_AI = '',
-                                            TS_ID = '',
-                                            isModuleNC = '',
-                                            Pic = '',
-                                            Таблица_сообщений = 'TblDiscretes',
-                                            Группа_дискретов = group_diskrets,
-                                            Приоритет_сообщения_при_0 = '',
-                                            Приоритет_сообщения_при_1 = '',
-                                            Короткое_name = description,
-                                            Шкаф = uso_s, Корзина = basket_s, Модуль = module_s, Канал = channel_s,
-                                            AlphaHMI = '', AlphaHMI_PIC1 = '', AlphaHMI_PIC1_Number_kont = '', AlphaHMI_PIC2 = '', 
-                                            AlphaHMI_PIC2_Number_kont = '', AlphaHMI_PIC3 = '', AlphaHMI_PIC3_Number_kont = '', 
-                                            AlphaHMI_PIC4 = '', AlphaHMI_PIC4_Number_kont = ''))
+
+                        list_DI.append(dict(variable = f'DI[{count_DI}]',
+                                        tag = tag_translate,
+                                        name = description,
+                                        pValue = f'{tag_h}_{prefix}_DI[{channel_s}]',
+                                        pHealth = f'mDI_HEALTH[{str(isdigit_num)}]',
+                                        Inv = '0',
+                                        ErrValue = '0',
+                                        priority_0 = '1',
+                                        priority_1 = '1',
+                                        Msg = '1',
+                                        isDI_NC = '',
+                                        isAI_Warn = '',
+                                        isAI_Avar = '',
+                                        pNC_AI = '',
+                                        TS_ID = '',
+                                        isModuleNC = '',
+                                        Pic = '',
+                                        tabl_msg = 'TblDiscretes',
+                                        group_diskrets = group_diskrets,
+                                        msg_priority_0 = '',
+                                        msg_priority_1 = '',
+                                        short_title = description,
+                                        uso = uso_s, basket = basket_s, module = module_s, channel = channel_s,
+                                        AlphaHMI = '', AlphaHMI_PIC1 = '', AlphaHMI_PIC1_Number_kont = '', AlphaHMI_PIC2 = '', 
+                                        AlphaHMI_PIC2_Number_kont = '', AlphaHMI_PIC3 = '', AlphaHMI_PIC3_Number_kont = '', 
+                                        AlphaHMI_PIC4 = '', AlphaHMI_PIC4_Number_kont = ''))
 
                 # Checking for the existence of a database
                 DI.insert_many(list_DI).execute()
@@ -1061,11 +1061,11 @@ class Filling_DI():
         return(msg)
     # Заполняем таблицу DI
     def column_check(self):
-        list_default = ['Переменная', 'Идентификатор', 'name', 'pValue', 'pHealth', 'Inv',
+        list_default = ['variable', 'tag', 'name', 'pValue', 'pHealth', 'Inv',
                         'ErrValue', 'priority_0', 'priority_1', 'Msg', 'isDI_NC',  
                         'isAI_Warn', 'isAI_Avar', 'pNC_AI',  'TS_ID', 
-                        'isModuleNC',  'Pic',  'Таблица_сообщений',  'Группа_дискретов', 
-                        'Приоритет_сообщения_при_0',  'Приоритет_сообщения_при_1', 'Короткое_name', 'Шкаф', 'Корзина', 'Модуль', 'Канал', 
+                        'isModuleNC',  'Pic',  'tabl_msg',  'group_diskrets', 
+                        'msg_priority_0',  'msg_priority_1', 'short_title', 'uso', 'basket', 'module', 'channel', 
                         'AlphaHMI', 'AlphaHMI_PIC1', 'AlphaHMI_PIC1_Number_kont', 'AlphaHMI_PIC2',
                         'AlphaHMI_PIC2_Number_kont','AlphaHMI_PIC3', 'AlphaHMI_PIC3_Number_kont', 
                         'AlphaHMI_PIC4', 'AlphaHMI_PIC4_Number_kont']
@@ -1111,45 +1111,45 @@ class Filling_DO():
                         else:
                             msg[f'{today} - Таблица: do не пуста, идет обновление'] = 1
 
-                        coincidence = DO.select().where(DO.Шкаф    == uso_s,
-                                                        DO.Корзина == basket_s,
-                                                        DO.Модуль  == module_s,
-                                                        DO.Канал   == channel_s)
+                        coincidence = DO.select().where(DO.uso    == uso_s,
+                                                        DO.basket == basket_s,
+                                                        DO.module  == module_s,
+                                                        DO.channel   == channel_s)
                         if bool(coincidence):
-                            exist_tag  = DO.select().where(DO.Идентификатор == tag_translate)
+                            exist_tag  = DO.select().where(DO.tag == tag_translate)
                             exist_name = DO.select().where(DO.name == description)
 
                             if not bool(exist_tag):
-                                select_tag = self.cursor.execute(f'''SELECT id, Идентификатор 
-                                                                    FROM do
-                                                                    WHERE Шкаф='{uso_s}' AND 
-                                                                        Корзина={basket_s} AND 
-                                                                        Модуль={module_s} AND 
-                                                                        Канал={channel_s}''')
+                                select_tag = self.cursor.execute(f'''SELECT id, tag 
+                                                                     FROM do
+                                                                     WHERE uso='{uso_s}' AND 
+                                                                           basket={basket_s} AND 
+                                                                           module={module_s} AND 
+                                                                           channel={channel_s}''')
                                 for id_, tag_ in select_tag.fetchall():
-                                    msg[f'{today} - Таблица: do, у сигнала обновлен идентификатор: id = {id_}, ({tag_}) {tag_translate}'] = 2
+                                    msg[f'{today} - Таблица: do, у сигнала обновлен tag: id = {id_}, ({tag_}) {tag_translate}'] = 2
                                 self.cursor.execute(f'''UPDATE do
-                                                        SET Идентификатор='{tag_translate}' 
-                                                        WHERE Шкаф='{uso_s}' AND 
-                                                            Корзина={basket_s} AND 
-                                                            Модуль={module_s} AND 
-                                                            Канал={channel_s}''')
+                                                        SET tag='{tag_translate}' 
+                                                        WHERE uso='{uso_s}' AND 
+                                                              basket={basket_s} AND 
+                                                              module={module_s} AND 
+                                                              channel={channel_s}''')
         
                             if not bool(exist_name):
                                 select_name = self.cursor.execute(f'''SELECT id, name 
-                                                                    FROM do
-                                                                    WHERE Шкаф='{uso_s}' AND 
-                                                                            Корзина={basket_s} AND 
-                                                                            Модуль={module_s} AND 
-                                                                            Канал={channel_s}''')
+                                                                      FROM do
+                                                                      WHERE uso='{uso_s}' AND 
+                                                                            basket={basket_s} AND 
+                                                                            module={module_s} AND 
+                                                                            channel={channel_s}''')
                                 for id_, name_ in select_name.fetchall():
                                     msg[f'{today} - Таблица: do, у сигнала обновлено name: id = {id_}, ({name_}) {description}'] = 2
                                 self.cursor.execute(f'''UPDATE do
                                                         SET name='{description}' 
-                                                        WHERE Шкаф='{uso_s}' AND 
-                                                            Корзина={basket_s} AND 
-                                                            Модуль={module_s} AND 
-                                                            Канал={channel_s}''')
+                                                        WHERE uso='{uso_s}' AND 
+                                                              basket={basket_s} AND 
+                                                              module={module_s} AND 
+                                                              channel={channel_s}''')
                             continue
 
                         # Сквозной номер модуля
@@ -1176,16 +1176,16 @@ class Filling_DO():
                             msg[f'{today} - Таблица: signals, ошибка в этой строке. Строка пропусается: {row_sql}'] = 2
                             continue
 
-                        list_DO.append(dict(Переменная = f'DO[{count_DO}]',
-                                            Идентификатор = tag_translate,
-                                            name = description,
-                                            pValue = f'{tag_h}_{prefix}_DO[{channel_s}]',
-                                            pHealth = f'mDO_HEALTH[{str(isdigit_num)}]',
-                                            Короткое_name = description,
-                                            Шкаф = uso_s, Корзина = basket_s, Модуль = module_s, Канал = channel_s,
-                                            AlphaHMI = '', AlphaHMI_PIC1 = '', AlphaHMI_PIC1_Number_kont = '', AlphaHMI_PIC2 = '', 
-                                            AlphaHMI_PIC2_Number_kont = '', AlphaHMI_PIC3 = '', AlphaHMI_PIC3_Number_kont = '', 
-                                            AlphaHMI_PIC4 = '', AlphaHMI_PIC4_Number_kont = ''))
+                        list_DO.append(dict(variable = f'DO[{count_DO}]',
+                                        tag = tag_translate,
+                                        name = description,
+                                        pValue = f'{tag_h}_{prefix}_DO[{channel_s}]',
+                                        pHealth = f'mDO_HEALTH[{str(isdigit_num)}]',
+                                        short_title = description,
+                                        uso = uso_s, basket = basket_s, module = module_s, channel = channel_s,
+                                        AlphaHMI = '', AlphaHMI_PIC1 = '', AlphaHMI_PIC1_Number_kont = '', AlphaHMI_PIC2 = '', 
+                                        AlphaHMI_PIC2_Number_kont = '', AlphaHMI_PIC3 = '', AlphaHMI_PIC3_Number_kont = '', 
+                                        AlphaHMI_PIC4 = '', AlphaHMI_PIC4_Number_kont = ''))
 
                 # Checking for the existence of a database
                 DO.insert_many(list_DO).execute()
@@ -1195,7 +1195,7 @@ class Filling_DO():
         return(msg)
     # Заполняем таблицу DO
     def column_check(self):
-        list_default = ['Переменная', 'Идентификатор', 'Название', 'pValue', 'pHealth', 'Короткое_название', 'Шкаф', 'Корзина', 'Модуль', 'Канал', 
+        list_default = ['variable', 'tag', 'name', 'pValue', 'pHealth', 'short_title', 'uso', 'basket', 'module', 'channel', 
                         'AlphaHMI', 'AlphaHMI_PIC1', 'AlphaHMI_PIC1_Number_kont', 'AlphaHMI_PIC2',
                         'AlphaHMI_PIC2_Number_kont','AlphaHMI_PIC3', 'AlphaHMI_PIC3_Number_kont', 
                         'AlphaHMI_PIC4', 'AlphaHMI_PIC4_Number_kont']
@@ -1697,11 +1697,11 @@ class Filling_ZD():
                 return msg
             
             # Новый список задвижек из таблицы DI
-            count_zd_new = self.cursor.execute(f'''SELECT Название 
+            count_zd_new = self.cursor.execute(f'''SELECT name 
                                                    FROM di
-                                                   WHERE Название LIKE "%задвижк%" OR Название LIKE "%Задвижк%" OR 
-                                                         Название LIKE "%клап%" OR Название LIKE "%Клап%" OR
-                                                         Название LIKE "%клоп%" OR Название LIKE "%КЛОП%"''')
+                                                   WHERE name LIKE "%задвижк%" OR name LIKE "%Задвижк%" OR 
+                                                         name LIKE "%клап%" OR name LIKE "%Клап%" OR
+                                                         name LIKE "%клоп%" OR name LIKE "%КЛОП%"''')
             name_zd_new = count_zd_new.fetchall()
             list_zd_name_split = []
             for i in name_zd_new: 
@@ -1709,7 +1709,7 @@ class Filling_ZD():
             unique_name = set(list_zd_name_split)
 
             # Существующий список задвижек из таблицы ZD
-            count_zd_old = self.cursor.execute(f'''SELECT Название FROM zd''')
+            count_zd_old = self.cursor.execute(f'''SELECT name FROM zd''')
             name_zd_old = count_zd_old.fetchall()
             tabl_zd_name = []
             for i in name_zd_old:
@@ -1727,9 +1727,9 @@ class Filling_ZD():
                 open_zd, close_zd, stop_zd, open_stop, close_stop = '', '', '', '', ''
 
                 for tag in array_di_tag_zd:
-                    count_zd_di = self.cursor.execute(f'''SELECT id, Идентификатор, Название 
+                    count_zd_di = self.cursor.execute(f'''SELECT id, tag, name 
                                                           FROM di
-                                                          WHERE Название LIKE "%{name}%" AND Идентификатор LIKE "%{tag}%"''')
+                                                          WHERE name LIKE "%{name}%" AND tag LIKE "%{tag}%"''')
                     
                     try   : number_id = count_zd_di.fetchall()[0][0]
                     except: continue
@@ -1750,9 +1750,9 @@ class Filling_ZD():
                     if tag == 'CFC':  isp_closing_chain = f'DI[{number_id}].Value'
 
                 for tag in array_do_tag_zd:    
-                    count_zd_do = self.cursor.execute(f'''SELECT id, Идентификатор, Название 
+                    count_zd_do = self.cursor.execute(f'''SELECT id, tag, name 
                                                           FROM do
-                                                          WHERE Название LIKE "%{name}%" AND Идентификатор LIKE "%{tag}%"''')
+                                                          WHERE name LIKE "%{name}%" AND tag LIKE "%{tag}%"''')
                     
                     try   : number_id = count_zd_do.fetchall()[0][0]
                     except: continue
@@ -1795,52 +1795,52 @@ class Filling_ZD():
 
                 else:
                     count_row += 1
-                    
+    
                     msg[f'{today} - Таблица: zd, добавлена новая задвижка: ZD[{count_row}], {name}'] = 1
-                    list_zd.append(dict(Переменная = f'ZD[{count_row}]',
-                                        Название = name,
-                                        Короткое_название = '',
-                                        Наличие_ИНТЕРФЕЙСА = '',
-                                        КВО = kvo,
-                                        КВЗ = kvz,
-                                        МПО = mpo,
-                                        МПЗ = mpz,
-                                        Дист_ф = dist,
-                                        Муфта = mufta,
-                                        Авария_привода = error,
-                                        Открыть = open_zd,
-                                        Закрыть = close_zd,
-                                        Остановить = stop_zd,
-                                        Открытие_остановить = open_stop,
-                                        Закрытие_остановить = close_stop,
-                                        КВО_и = '',
-                                        КВЗ_и = '',
-                                        МПО_и = '',
-                                        МПЗ_и = '',
-                                        Дист_и = '',
-                                        Муфта_и = '',
-                                        Авария_привода_и = '',
-                                        Открыть_и = '',
-                                        Закрыть_и = '',
-                                        Остановить_и = '',
-                                        Открытие_остановить_и = '',
-                                        Закрытие_остановить_и = '',
-                                        Отсутствие_связи = '',
-                                        Закрыть_с_БРУ = close_bru,
-                                        Стоп_с_БРУ = stop_bru,
-                                        Напряжение = voltage,
-                                        Напряжение_ЩСУ = '',
-                                        Напряжение_в_цепях_сигнализации = '',
-                                        Исправность_цепей_открытия = isp_opening_chain,
-                                        Исправность_цепей_закрытия = isp_closing_chain,
-                                        ВММО = vmmo,
-                                        ВММЗ = vmmz,
-                                        Замораживать_при_подозрительном_изм = '',
-                                        Это_клапан = klapan,
-                                        Процент_открытия = '',
+                    list_zd.append(dict(variable = f'ZD[{count_row}]',
+                                        name = name,
+                                        short_name = '',
+                                        exists_interface = '',
+                                        KVO = kvo,
+                                        KVZ = kvz,
+                                        MPO = mpo,
+                                        MPZ = mpz,
+                                        Dist = dist,
+                                        Mufta = mufta,
+                                        Drive_failure = error,
+                                        Open = open_zd,
+                                        Close = close_zd,
+                                        Stop = stop_zd,
+                                        Opening_stop = open_stop,
+                                        Closeing_stop = close_stop,
+                                        KVO_i = '',
+                                        KVZ_i = '',
+                                        MPO_i = '',
+                                        MPZ_i = '',
+                                        Dist_i = '',
+                                        Mufta_i = '',
+                                        Drive_failure_i = '',
+                                        Open_i = '',
+                                        Close_i = '',
+                                        Stop_i = '',
+                                        Opening_stop_i = '',
+                                        Closeing_stop_i = '',
+                                        No_connection = '',
+                                        Close_BRU = close_bru,
+                                        Stop_BRU = stop_bru,
+                                        Voltage = voltage,
+                                        Voltage_CHSU = '',
+                                        Voltage_in_signaling_circuits = '',
+                                        Serviceability_opening_circuits = isp_opening_chain,
+                                        Serviceability_closening_circuits = isp_closing_chain,
+                                        VMMO = vmmo,
+                                        VMMZ = vmmz,
+                                        Freeze_on_suspicious_change = '',
+                                        Is_klapan = klapan,
+                                        Opening_percent = '',
                                         Pic = '',
 
-                                        Тип_БУР_задвижки = '',
+                                        Type_BUR_ZD = '',
                                         AlphaHMI = '',AlphaHMI_PIC1 = '',AlphaHMI_PIC1_Number_kont = '',
                                         AlphaHMI_PIC2 = '',AlphaHMI_PIC2_Number_kont = '',AlphaHMI_PIC3 = '',
                                         AlphaHMI_PIC3_Number_kont = '',AlphaHMI_PIC4 = '',AlphaHMI_PIC4_Number_kont = ''))
@@ -1897,21 +1897,21 @@ class Filling_ZD_tm():
                 msg[f'{today} - Таблицы: zd пустая! Заполни таблицу!'] = 2
                 return msg
             
-            exists_name = self.cursor.execute(f'''SELECT Название FROM zd''')
+            exists_name = self.cursor.execute(f'''SELECT name FROM zd''')
             for i in exists_name.fetchall():
                 count_ZD += 1
                 for ust in time_ust:
                     used = '0' if ust[0] == 'Резерв' else '1' 
-                    list_zd_tm.append(dict(Переменная = '',
-                                           Идентификатор  = f'HZD{count_ZD}_{ust[1]}',
-                                           Название = f'{i[0]}. {ust[0]}',
-                                           Единица_измерения = ust[3],
-                                           Используется = used,
-                                           Значение_уставки = f'{ust[2]}',
-                                           Минимум = '0',
-                                           Максимум = '65535',
-                                           Группа_уставок = 'Временные уставки задвижек',
-                                           Правило_для_карты_уставок = 'Временные уставки'))
+                    list_zd_tm.append(dict(variable = '',
+                                           tag  = f'HZD{count_ZD}_{ust[1]}',
+                                           name = f'{i[0]}. {ust[0]}',
+                                           unit = ust[3],
+                                           used = used,
+                                           value_ust = f'{ust[2]}',
+                                           minimum = '0',
+                                           maximum = '65535',
+                                           group_ust = 'Временные уставки задвижек',
+                                           rule_map_ust = 'Временные уставки'))
                         
             # Checking for the existence of a database
             ZD_tm.insert_many(list_zd_tm).execute()
@@ -1946,9 +1946,9 @@ class Filling_VS():
                 return msg
             
             # Новый список вспомсистем из таблицы DI
-            count_vs_new = self.cursor.execute(f'''SELECT Идентификатор, Название 
+            count_vs_new = self.cursor.execute(f'''SELECT tag, name 
                                                    FROM di
-                                                   WHERE Идентификатор LIKE "%MPC%"''')
+                                                   WHERE tag LIKE "%MPC%"''')
             name_vs_new = count_vs_new.fetchall()
             list_vs_name_split = []
             for i in name_vs_new: 
@@ -1967,7 +1967,7 @@ class Filling_VS():
             unique_name = set(list_vs_name_split)
 
             # Существующий список вспомсистем из таблицы VS
-            count_vs_old = self.cursor.execute(f'''SELECT Название FROM vs''')
+            count_vs_old = self.cursor.execute(f'''SELECT name FROM vs''')
             name_vs_old = count_vs_old.fetchall()
             tabl_vs_name = []
             for i in name_vs_old:
@@ -1983,9 +1983,9 @@ class Filling_VS():
 
                 # Принадлежность OPC тега
                 for tag in array_tag_opc_vs:  
-                    opc_tag_vs_di = self.cursor.execute(f'''SELECT id, Идентификатор, Название 
+                    opc_tag_vs_di = self.cursor.execute(f'''SELECT id, tag, name 
                                                             FROM di
-                                                            WHERE Название LIKE "%{name}%" AND Название LIKE "%{tag}%" AND Идентификатор LIKE "%OPC%"''')
+                                                            WHERE name LIKE "%{name}%" AND name LIKE "%{tag}%" AND tag LIKE "%OPC%"''')
                     
                     try   : number_id = opc_tag_vs_di.fetchall()[0][0]
                     except: continue
@@ -2000,9 +2000,9 @@ class Filling_VS():
                         isp_opening_chain = f'DI[{number_id}].Value'
 
                 for tag in array_di_tag_vs:
-                    count_vs_di = self.cursor.execute(f'''SELECT id, Идентификатор, Название 
+                    count_vs_di = self.cursor.execute(f'''SELECT id, tag, name
                                                           FROM di
-                                                          WHERE Название LIKE "%{name}%" AND Идентификатор LIKE "%{tag}%"''')
+                                                          WHERE name LIKE "%{name}%" AND tag LIKE "%{tag}%"''')
                     
                     try   : number_id = count_vs_di.fetchall()[0][0]
                     except: continue
@@ -2011,9 +2011,9 @@ class Filling_VS():
                     if tag == 'EC' : voltage           = f'DI[{number_id}].Value'
                     
                 for tag in array_do_tag_vs:    
-                    count_vs_do = self.cursor.execute(f'''SELECT id, Идентификатор, Название 
+                    count_vs_do = self.cursor.execute(f'''SELECT id, tag, name 
                                                           FROM do
-                                                          WHERE Название LIKE "%{name}%" AND Идентификатор LIKE "%{tag}%"''')
+                                                          WHERE name LIKE "%{name}%" AND tag LIKE "%{tag}%"''')
                     
                     try   : number_id = count_vs_do.fetchall()[0][0]
                     except: continue
@@ -2036,9 +2036,9 @@ class Filling_VS():
                 new_name = str(new_name).replace('Прит', 'прит')
                 new_name = str(new_name).replace('Вытяж', 'вытяж')
 
-                pressure_vs_ai = self.cursor.execute(f'''SELECT id, Название 
+                pressure_vs_ai = self.cursor.execute(f'''SELECT id, name 
                                                          FROM ai
-                                                         WHERE Название LIKE "%{new_name}%"''')
+                                                         WHERE name LIKE "%{new_name}%"''')
                 try: 
                     number_id = pressure_vs_ai.fetchall()[0][0]
                     pressure_norm = f'AI[{number_id}].Norm'
@@ -2046,7 +2046,6 @@ class Filling_VS():
                 except:
                     pressure_norm = f''
                     pressure_ndv  = f''
-                
 
                 if name in tabl_vs_name:
                     msg.update(self.dop_function.update_signal_dop(VS, 'vs', name, VS.МП, 'МП', mp))
@@ -2064,24 +2063,24 @@ class Filling_VS():
                     count_row += 1
                     
                     msg[f'{today} - Таблица: vs, добавлена новая вспомсистема: VS[{count_row}], {name}'] = 1
-                    list_vs.append(dict(Переменная = f'ZD[{count_row}]',
-                                        Название = name,
-                                        Короткое_название = '',
-                                        Группа = '',
-                                        Номер_в_группе = '',
-                                        МП = mp,
-                                        Давление_норма = pressure_norm,
-                                        Напряжение = voltage,
-                                        Напряжение_СШ = '',
-                                        Исправность_цепей_включения = isp_opening_chain,
-                                        Внешняя_авария = error,
-                                        Датчик_давления_неисправен = pressure_ndv,
-                                        Включить = open_vs,
-                                        Отключить = close_vs,
-                                        АПВ_не_требуется = '0',
+                    list_vs.append(dict(variable = f'ZD[{count_row}]',
+                                        name = name,
+                                        short_name = '',
+                                        group = '',
+                                        number_in_group = '',
+                                        MP = mp,
+                                        Pressure_is_True = pressure_norm,
+                                        Voltage = voltage,
+                                        Voltage_Sch = '',
+                                        Serviceability_of_circuits_of_inclusion = isp_opening_chain,
+                                        External_alarm = error,
+                                        Pressure_sensor_defective = pressure_ndv,
+                                        VKL = open_vs,
+                                        OTKL = close_vs,
+                                        Not_APV = '0',
                                         Pic = '',
-                                        Таблица_сообщений = 'TblAuxSyses',
-                                        Это_клапан_интерфейсная_вспомсистема = '0',
+                                        Table_msg = 'TblAuxSyses',
+                                        Is_klapana_interface_auxsystem = '0',
                                         
                                         AlphaHMI = '',AlphaHMI_PIC1 = '',AlphaHMI_PIC1_Number_kont = '',
                                         AlphaHMI_PIC2 = '',AlphaHMI_PIC2_Number_kont = '',AlphaHMI_PIC3 = '',
@@ -2651,7 +2650,7 @@ class Filling_PI():
 class Editing_table_SQL():
     def __init__(self):
         self.cursor = db.cursor()
-    def editing_sql(self,table_sql):
+    def editing_sql(self, table_sql):
         #all_signal  = []
         #hat_tabl    = {}
         #unpacking   = []
@@ -2659,13 +2658,27 @@ class Editing_table_SQL():
 
         self.cursor.execute(f'SELECT * FROM {table_sql}')
         name_column = next(zip(*self.cursor.description))
+        array_name_column = []
+        for tabl, name_c in rus_list.items():
+
+            if tabl == table_sql:
+
+                for name in name_column:
+                    if name in name_c.keys():
+
+                        for key, value in name_c.items():
+                            if name == key:
+                                array_name_column.append(value)
+                                break
+                    else:
+                        array_name_column.append(name)
 
         records = self.cursor.fetchall()
         unpacking_.append(records)
 
         count_column = len(name_column)
         count_row    = len(records)
-        return count_column, count_row, name_column, records
+        return count_column, count_row, array_name_column, records
 
         # with db:
         #     for row_sql in table_sql.select().dicts():

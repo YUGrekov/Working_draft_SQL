@@ -232,7 +232,7 @@ rus_list = {'signals': {'id':'№', 'type_signal':'Тип сигнала', 'uso'
                      'replacement_uso_signal_vv_1':'Замена %1 - УСО сигналов ВВ 1\n(Строка для замены %1 в сообщениях)', 
                      'replacement_uso_signal_vv_2':'Замена %2 - УСО сигналов ВВ 2\n(Строка для замены %2 в сообщениях)'},
             
-            'tmna_umpna': {'id':'№','variable':'Переменная', 'tag':'Идентификатор', 'name':'Название', 'unit':'Единица измерения', 'used':'Используется', 'value_ust':'Значение уставки', 'minimum':'Минимум', 
+            'umpna_tm': {'id':'№','variable':'Переменная', 'tag':'Идентификатор', 'name':'Название', 'unit':'Единица измерения', 'used':'Используется', 'value_ust':'Значение уставки', 'minimum':'Минимум', 
                        'maximum':'Максимум', 'group_ust':'Группа уставок', 'rule_map_ust':'Правило для карты уставок'},
             
             'zd': {'id':'№','variable':'Переменная', 'name':'Название', 'short_name':'Короткое название', 'exists_interface':'Наличие ИНТЕРФЕЙСА', 'KVO':'КВО', 'KVZ':'КВЗ', 'MPO':'МПО', 
@@ -246,7 +246,7 @@ rus_list = {'signals': {'id':'№', 'type_signal':'Тип сигнала', 'uso'
                    'AlphaHMI_PIC2_Number_kont':'AlphaHMI_PIC2_Number_kont','AlphaHMI_PIC3':'AlphaHMI_PIC3', 'AlphaHMI_PIC3_Number_kont':'AlphaHMI_PIC3_Number_kont', 
                    'AlphaHMI_PIC4':'AlphaHMI_PIC4', 'AlphaHMI_PIC4_Number_kont':'AlphaHMI_PIC4_Number_kont'},
 
-            'tm_zd': {'id':'№','variable':'Переменная', 'tag':'Идентификатор', 'name':'Название', 'unit':'Единица измерения', 'used':'Используется', 'value_ust':'Значение уставки', 'minimum':'Минимум', 
+            'zd_tm': {'id':'№','variable':'Переменная', 'tag':'Идентификатор', 'name':'Название', 'unit':'Единица измерения', 'used':'Используется', 'value_ust':'Значение уставки', 'minimum':'Минимум', 
                        'maximum':'Максимум', 'group_ust':'Группа уставок', 'rule_map_ust':'Правило для карты уставок'},
 
             'vs': {'id':'№','variable':'Переменная', 'name':'Название', 'short_name':'Короткое название', 'group':'Группа', 'number_in_group':'Номер в группе', 'MP':'МП', 'Pressure_is_True':'Давление норма', 
@@ -256,20 +256,20 @@ rus_list = {'signals': {'id':'№', 'type_signal':'Тип сигнала', 'uso'
                    'AlphaHMI_PIC2_Number_kont':'AlphaHMI_PIC2_Number_kont','AlphaHMI_PIC3':'AlphaHMI_PIC3', 'AlphaHMI_PIC3_Number_kont':'AlphaHMI_PIC3_Number_kont', 
                    'AlphaHMI_PIC4':'AlphaHMI_PIC4', 'AlphaHMI_PIC4_Number_kont':'AlphaHMI_PIC4_Number_kont'},
 
-            'tm_vs': {'id':'№','variable':'Переменная', 'tag':'Идентификатор', 'name':'Название', 'unit':'Единица измерения', 'used':'Используется', 'value_ust':'Значение уставки', 'minimum':'Минимум', 
+            'vs_tm': {'id':'№','variable':'Переменная', 'tag':'Идентификатор', 'name':'Название', 'unit':'Единица измерения', 'used':'Используется', 'value_ust':'Значение уставки', 'minimum':'Минимум', 
                        'maximum':'Максимум', 'group_ust':'Группа уставок', 'rule_map_ust':'Правило для карты уставок'},
 
             'vsgrp': {'id':'№','variable':'Переменная', 'tag':'Идентификатор', 'name':'Название', 'fire_or_watering':'Пож или водоорош', 'Number_of_auxsystem_in_group':'Количество вспомсистем в группе',
                       'WarnOff_flag_if_one_auxsystem_in_the_group_is_running':'Требуется выставлять флаг WarnOff если работает одна вспомсистема в группе'},
 
-            'tm_vsgrp': {'id':'№','variable':'Переменная', 'tag':'Идентификатор', 'name':'Название', 'unit':'Единица измерения', 'used':'Используется', 'value_ust':'Значение уставки', 'minimum':'Минимум', 
+            'vsgrp_tm': {'id':'№','variable':'Переменная', 'tag':'Идентификатор', 'name':'Название', 'unit':'Единица измерения', 'used':'Используется', 'value_ust':'Значение уставки', 'minimum':'Минимум', 
                        'maximum':'Максимум', 'group_ust':'Группа уставок', 'rule_map_ust':'Правило для карты уставок'},
 
             'uts': {'id':'№','variable':'Переменная', 'tag':'Идентификатор', 'name':'Название', 'location':'Место_установки', 'VKL':'Включить', 'siren':'Сирена', 'Does_not_require_autoshutdown':'Не требует автоотключения', 
                     'Examination':'Проверка', 'Kvit':'Квитирование', 'Pic':'Pic', 'number_list_VU':'Номер листа для ВУ', 'order_number_for_VU':'Номер порядка для ВУ', 
                     'uso':'Шкаф', 'basket':'Корзина', 'module':'Модуль', 'channel':'Канал'},
 
-            'tm_uts': {'id':'№','variable':'Переменная', 'tag':'Идентификатор', 'name':'Название', 'unit':'Единица измерения', 'used':'Используется', 'value_ust':'Значение уставки', 'minimum':'Минимум', 
+            'uts_tm': {'id':'№','variable':'Переменная', 'tag':'Идентификатор', 'name':'Название', 'unit':'Единица измерения', 'used':'Используется', 'value_ust':'Значение уставки', 'minimum':'Минимум', 
                        'maximum':'Максимум', 'group_ust':'Группа уставок', 'rule_map_ust':'Правило для карты уставок'},
 
             'vv': {'id':'№','variable':'Переменная', 'name':'Название', 'VV_vkl':'Высоковольтный выключатель включен', 'VV_otkl':'Высоковольтный выключатель отключен', 'Pic':'Pic'},
