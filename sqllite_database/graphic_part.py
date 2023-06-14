@@ -421,6 +421,7 @@ class Window_Filling_tables(QWidget):
         b_clear_do.move(b_width_two + 180, b_height + 90) 
         b_clear_do.clicked.connect(self.clear_do_tabl)
         # UTS
+        self.upts_is_true = False
         l_uts = QLabel('UTS:', self)
         l_uts.move(b_width_one + 2, l_height + 135)
         b_uts_basket = QPushButton('Заполнить', self)
@@ -438,6 +439,10 @@ class Window_Filling_tables(QWidget):
         b_clear_uts.resize(80,23)
         b_clear_uts.move(b_width_two, b_height + 135) 
         b_clear_uts.clicked.connect(self.clear_uts_tabl)
+        c_uts_is_upts = QCheckBox('UPTS', self)
+        c_uts_is_upts.setToolTip("По умолчанию UTS")
+        c_uts_is_upts.move(40, l_height + 134) 
+        c_uts_is_upts.stateChanged.connect(self.uts_check)
         # VV
         l_vv = QLabel('VV:', self)
         l_vv.move(b_width_one + 2, l_height + 180)
@@ -910,13 +915,20 @@ class Window_Filling_tables(QWidget):
     # UTS
     def filling_uts(self):
         uts_table = Filling_UTS()
-        msg = uts_table.column_check()
+        msg = uts_table.column_check(self.upts_is_true)
         self.logs_msg('default', 1, msg, True)
-        msg = uts_table.getting_modul()
+        msg = uts_table.getting_modul(self.upts_is_true)
         self.logs_msg('default', 1, msg, True)
     def clear_uts_tabl(self):
         msg = self.dop_function.clear_tabl('uts', 'UTS', self.list_tabl)
         self.logs_msg('default', 1, msg, True)
+    def uts_check(self, checked):
+        if checked:
+            self.upts_is_true = True
+            self.logs_msg(f'Выбрана таблица UPTS - флаг установлен', 3)
+        else:
+            self.upts_is_true = False
+            self.logs_msg(f'Выбрана таблица UTS - флаг снят', 3)
     # tmUTS
     def filling_uts_tm(self):
         vs_table = Filling_UTS_tm()
@@ -1224,9 +1236,9 @@ class Window_update_sql(QWidget):
         style = "::section {""background-color: #bbbabf; }"
         self.TableWidget.horizontalHeader().setStyleSheet(style)
         # Подсказки к столбцам
-        if column_tooltip is not None:
-            for col in range(self.TableWidget.columnCount()):
-                self.TableWidget.horizontalHeaderItem(col).setToolTip(column_tooltip[col])
+        #if column_tooltip is not None:
+        #    for col in range(self.TableWidget.columnCount()):
+        #        self.TableWidget.horizontalHeaderItem(col).setToolTip(column_tooltip[col])
 
         # Разрешить щелчок правой кнопкой мыши для создания меню
         #self.TableWidget.setContextMenuPolicy(Qt.CustomContextMenu)

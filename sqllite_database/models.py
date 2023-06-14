@@ -30,22 +30,18 @@ rus_list = {'signals': {'id':'№', 'type_signal':'Тип сигнала', 'uso'
                         'schema':'Схема', 'klk':'Клеммник', 'contact':'Контакт', 'basket':'Корзина', 'module':'Модуль', 'channel':'Канал'},
             
             'di': {'id':'№','variable':'Переменная', 'tag':'Идентификатор', 'name':'Название', 
-                   'pValue':'Ссылка на входное значение сигнала', 'pHealth':'Ссылка на исправность канала','Inv':'Инвертировать входное значение',
-                   'ErrValue':'Значение, выставляемое в stateDI[..].Value при неиcправности канала',
-                   'priority_0':'Приоритет при 0', 'priority_1':'Приоритет при 1', 'Msg':'Выдавать сообщения по изменению сигнала',
-                   'isDI_NC':'В pNC_AI должна быть ссылка на stateDI[..].state "Неисправность цепей". Значение сигнала из pValue',
-                   'isAI_Warn':'В pNC_AI должна быть ссылка на stateAI[..]state. Значение из Warn, КЗ из MTMax, обрыв из LTMin. pValue игнорируется',
-                   'isAI_Avar':'В pNC_AI должна быть ссылка на stateAI[..]state. Значение из Avar, КЗ из MTMax, обрыв из LTMin. pValue игнорируется',
-                   'pNC_AI':'Ссылка на stateDI "Неисправность цепей" или stateAI, контролирующий обрыв или КЗ',
-                   'TS_ID':'TS ID для быстрых сигналов', 'isModuleNC':'При потере связи модуля с КЦ формировать сигнализацию и сообщение о неисправности',
-                   'Pic':'Номера листов на которых данный сигнал участвует в формировании рамки квитирования', 
-                   'tabl_msg':'Имя xml файла-шаблона с сообщениями данного сигнала',
-                   'group_diskrets':'Группа для группировки сообщений в архивном журнале:Общие,Диагностика,Энергоснабжение', 'msg_priority_0':'Приоритет  сообщения при 0', 
-                   'msg_priority_1':'Приоритет  сообщения при 1', 'short_title':'Короткое название', 
+                   'pValue':'Ссылка на входное\nзначение сигнала', 'pHealth':'Ссылка на исправность\nканала','Inv':'Инвертировать\nвходное значение',
+                   'ErrValue':'Значение, выставляемое в stateDI[..].Value\nпри неиcправности канала',
+                   'priority_0':'Приоритет при 0', 'priority_1':'Приоритет при 1', 'Msg':'Выдавать сообщения\nпо изменению сигнала',
+                   'isDI_NC':'isDI_NC', 'isAI_Warn':'isAI_Warn', 'isAI_Avar':'isAI_Avar',
+                   'pNC_AI':'pNC_AI', 'TS_ID':'TS ID для быстрых сигналов', 'isModuleNC':'isModuleNC', 'Pic':'Pic', 
+                   'tabl_msg':'Таблица сообщений',
+                   'group_diskrets':'Группа дискретов.\nГруппировка в архивном журнале', 'msg_priority_0':'Приоритет\nсообщения при 0', 
+                   'msg_priority_1':'Приоритет\nсообщения при 1', 'short_title':'Короткое название', 
                    'uso':'Шкаф', 'basket':'Корзина', 'module':'Модуль', 'channel':'Канал'},
             
-            'do': {'id':'№','variable':'Переменная', 'tag':'Идентификатор', 'name':'Название', 'pValue':'Ссылка на входное значение сигнала', 
-                   'pHealth':'Ссылка на исправность канала', 'short_title':'Короткое название',
+            'do': {'id':'№','variable':'Переменная', 'tag':'Идентификатор', 'name':'Название', 'pValue':'Ссылка на входное\nзначение сигнала', 
+                   'pHealth':'Ссылка на исправность\nканала', 'short_title':'Короткое название',
                    'uso':'Шкаф', 'basket':'Корзина', 'module':'Модуль', 'channel':'Канал'},
             
             'hardware': {'id':'№', 'tag':'Идентификатор\n(не генерится!)', 'uso':'Шкаф', 'basket':'Корзина',
@@ -67,8 +63,8 @@ rus_list = {'signals': {'id':'№', 'type_signal':'Тип сигнала', 'uso'
                          'type_30':'Тип модуля 30', 'variable_30':'Переменная модуля 30', 'type_31':'Тип модуля 31', 'variable_31':'Переменная модуля 31', 
                          'type_32':'Тип модуля 32', 'variable_32':'Переменная модуля 32'},
             
-            'uso': {'id':'№','variable':'Переменная', 'name':'Название', 'temperature':'Температура шкафа', 'door':'Двери открыты', 
-                         'signal_1':'Сигнал 1', 'signal_2':'Сигнал 2', 'signal_3':'Сигнал 3', 'signal_4':'Сигнал 4', 'signal_1':'Сигнал 5', 
+            'uso': {'id':'№','variable':'Переменная', 'name':'Название', 'temperature':'Температура\nшкафа', 'door':'Двери открыты', 
+                         'signal_1':'Сигнал 1', 'signal_2':'Сигнал 2', 'signal_3':'Сигнал 3', 'signal_4':'Сигнал 4', 'signal_5':'Сигнал 5', 
                          'signal_6':'Сигнал 6', 'signal_7':'Сигнал 7', 'signal_8':'Сигнал 8', 'signal_9':'Сигнал 9', 'signal_10':'Сигнал 10', 
                          'signal_11':'Сигнал 11', 'signal_12':'Сигнал 12', 'signal_13':'Сигнал 13', 'signal_14':'Сигнал 14', 'signal_15':'Сигнал 15', 
                          'signal_16':'Сигнал 16', 'signal_17':'Сигнал 17', 'signal_18':'Сигнал 18', 'signal_19':'Сигнал 19', 'signal_20':'Сигнал 20', 
@@ -79,10 +75,10 @@ rus_list = {'signals': {'id':'№', 'type_signal':'Тип сигнала', 'uso'
             'ao': {'id':'№','variable':'Переменная', 'tag':'Идентификатор', 'name':'Название', 'pValue':'Ссылка на входное значение сигнала',
                    'pHealth':'Ссылка на исправность канала', 'uso':'Шкаф', 'basket':'Корзина', 'module':'Модуль', 'channel':'Канал'},
             
-            'ai': {'id':'№','variable':'Переменная', 'tag':'Идентификатор', 'name':'Название', 'pValue':'Ссылка на входное значение сигнала',
-                   'pHealth':'Ссылка на исправность канала','group_analog':'Группа аналогов',
-                   'group_ust_analog':'Группа уставок аналогов', 'unit':'Единица измерения', 'sign_VU':'Подпись для ВУ', 
-                   'flag_MPa_kgccm2':'Давление нефти/ нефтепродукта (флаг для пересчета в кгс/см2)', 'number_NA_or_aux':'Номер НА или вспом.', 
+            'ai': {'id':'№','variable':'Переменная', 'tag':'Идентификатор', 'name':'Название', 'pValue':'Ссылка на входное\nзначение сигнала',
+                   'pHealth':'Ссылка на исправность\nканала','group_analog':'Группа аналогов',
+                   'group_ust_analog':'Группа уставок\nаналогов', 'unit':'Единица измерения', 'sign_VU':'Подпись для ВУ', 
+                   'flag_MPa_kgccm2':'Давление нефти/нефтепродукта\n(флаг для пересчета в кгс/см2)', 'number_NA_or_aux':'Номер НА или вспом.', 
                    'vibration_pump':'Вибрация насоса', 'vibration_motor':'Вибрация ЭД', 'current_motor':'Ток ЭД НА', 
                    'aux_outlet_pressure':'Давление на вых. вспом.', 'number_ust_min_avar':'№ уставки мин. авар.', 
                    'number_ust_min_pred':'№ уставки мин. пред.', 'number_ust_max_pred':'№ уставки макс. пред.', 'number_ust_max_avar':'№ уставки макс. авар.', 
@@ -90,95 +86,93 @@ rus_list = {'signals': {'id':'№', 'type_signal':'Тип сигнала', 'uso'
                    'reliability_max':'Достоверность макс.', 'hysteresis':'Гистерезис', 'filtration':'Фильтрация', 
                    'ust_min_6':'Мин.6', 'ust_min_5':'Мин.5', 'ust_min_4':'Мин.4', 'ust_min_3':'Мин.3', 'ust_min_2':'Мин.2', 'ust_min':'Мин.', 
                    'ust_max':'Макс.', 'ust_max_2':'Макс.2', 'ust_max_3':'Макс.3', 'ust_max_4':'Макс.4', 'ust_max_5':'Макс.5', 'ust_max62':'Макс.6', 
-                   'value_precision':'Отображаемая точность значения', 'Pic':'Номера листов на которых данный сигнал участвует в формировании рамки квитирования', 
-                   'group_trend':'Группа сброса трендов', 'hysteresis_TI':'Гистерезис ТИ', 'unit_physical_ACP':'Единица измерения физической величины (АЦП)',
-                   'setpoint_map_rule':'Правило для карты уставок', 'fuse':'Предохранитель',
+                   'value_precision':'Отображаемая точность\nзначения', 'Pic':'Pic', 
+                   'group_trend':'Группа сброса трендов', 'hysteresis_TI':'Гистерезис ТИ', 'unit_physical_ACP':'Единица измерения физической\nвеличины (АЦП)',
+                   'setpoint_map_rule':'Правило для карты\nуставок', 'fuse':'Предохранитель',
                    'uso':'Шкаф', 'basket':'Корзина', 'module':'Модуль', 'channel':'Канал'},
             
             'ktpr': {'id':'№','variable':'Переменная', 'tag':'Идентификатор', 'name':'Название',
-                     'avar_parameter':'Аварийный параметр(pInput)', 
-                     'prohibition_masking':'Запрет маскирования(1 - запрет)', 
-                     'auto_unlock_protection':'Автоматическая деблокировка защиты(1 - разрешена)', 
-                     'shutdown_PNS_a_time_delay_up_5s_after_turning_off_all_NA':'Отключение ПНС с выдержкой времени до 5 с после отключения всех МНА',
-                     'bitmask_protection_group_membership':'Битовая маска принадлежности защиты группе(1 в N бите - разрешение сработки данной защиты на N группе (плече))', 
-                     'stop_type_NA':'Тип остановки НА(0-None, 1-ManageStop, 2-ElectricStop, 3-ManageStopOffVV, 4-ChRPAlarmStop, 5-StopAuto, 6-StopAuto2, 7-PovtorOtkl)',
-                     'pump_station_stop_type':'''Тип остановки насосной станции(описание РД242, ч1, стр61, табл.9.3,п.8, 
-                     1 - StopAllInShoulder - одновремменная остановка всех НА в плече, 
-                     2 - StopOneByOneInShoulder - последовательная остановка всех НА в плече, 
-                     3 - StopFirstNextInShoulder - отключение первого по потоку нефти/нефтепродукта НА, и отключения следующего при сохранении аврийного параметра, 
-                     4 - StopOnlyirstInShoulder - отключение первого по потоку нефти/нефтепродукта НА, 
-                     5 - StopAllInSubShoulder - одновреммення остановка всех ПН в подплече)''',
+                     'avar_parameter':'Аварийный параметр\n(pInput)', 'prohibition_masking':'Запрет маскирования\n(1 - запрет)', 
+                     'auto_unlock_protection':'Автоматическая деблокировка \nзащиты (1 - разрешена)', 
+                     'shutdown_PNS_a_time_delay_up_5s_after_turning_off_all_NA':'Откл. ПНС с выдержкой времени до 5с\nпосле откл. всех МНА',
+                     'bitmask_protection_group_membership':'Битовая маска принадлежности защиты группе\n(1 в N бите - разрешение сраб. данной защиты на N группе (плече))', 
+                     'stop_type_NA':'Тип остановки НА:\n0-None, 1-ManageStop, 2-ElectricStop, 3-ManageStopOffVV\n4-ChRPAlarmStop, 5-StopAuto, 6-StopAuto2, 7-PovtorOtkl',
+                     
+                     'pump_station_stop_type':'''Тип остановки насосной станции:
+                     1 - StopAllInShoulder - одновремменная остановка всех НА в плече, 2 - StopOneByOneInShoulder - последовательная остановка всех НА в плече, 
+                     3 - StopFirstNextInShoulder - отключение первого по потоку нефти НА, и отключения следующего при сохранении авар. параметра, 
+                     4 - StopOnlyirstInShoulder - отключение первого по потоку нефти НА, 5 - StopAllInSubShoulder - одновреммення остановка всех ПН в подплече''',
 
-                     'closing_gate_valves_at_the_inlet_NPS':'Закрытие задвижек на входе НПС', 
-                     'closing_gate_valves_at_the_outlet_NPS':'Закрытие задвижек на выходе НПС', 
-                     'closing_gate_valves_between_PNS_and_MNS':'Закрытие задвижек между ПНС и МНС', 
-                     'closing_gate_valves_between_RP_and_PNS':'Закрытие задвижек между РП и ПНС', 
-                     'closing_valves_inlet_and_outlet_MNS':'Закрытие задвижек на входе и выходе МНС', 
-                     'closing_valves_inlet_and_outlet_PNS':'Закрытие задвижек на входе и выходе ПНС', 
-                     'closing_valves_inlet_and_outlet_MNA':'Закрытие задвижек на входе и выходе МНА', 
-                     'closing_valves_inlet_and_outlet_PNA':'Закрытие задвижек на входе и выходе ПНА', 
-                     'closing_valves_inlet_RD':'Закрытие задвижек на входе узла РД', 
-                     'closing_valves_outlet_RD':'Закрытие задвижек на выходе узла РД', 
-                     'closing_valves_inlet_SSVD':'Закрытие задвижек на входе ССВД', 
-                     'closing_valves_inlet_FGU':'Закрытие задвижек на входе ФГУ', 
-                     'closing_secant_valve_connection_unit__oil_production_oil_refining_facility':'Закрытие секущей задвижки узла подключения объекта нефтедобычи/ нефтепереработки',
-                     'closing_valves_inlet_RP':'Закрытие задвижек на входе РП', 
+                     'closing_gate_valves_at_the_inlet_NPS':'Закрытие задвижек\nна входе НПС', 
+                     'closing_gate_valves_at_the_outlet_NPS':'Закрытие задвижек\nна выходе НПС', 
+                     'closing_gate_valves_between_PNS_and_MNS':'Закрытие задвижек\nмежду ПНС и МНС', 
+                     'closing_gate_valves_between_RP_and_PNS':'Закрытие задвижек\nмежду РП и ПНС', 
+                     'closing_valves_inlet_and_outlet_MNS':'Закрытие задвижек на\nвходе и выходе МНС', 
+                     'closing_valves_inlet_and_outlet_PNS':'Закрытие задвижек на\nвходе и выходе ПНС', 
+                     'closing_valves_inlet_and_outlet_MNA':'Закрытие задвижек на\nвходе и выходе МНА', 
+                     'closing_valves_inlet_and_outlet_PNA':'Закрытие задвижек на\nвходе и выходе ПНА', 
+                     'closing_valves_inlet_RD':'Закрытие задвижек на\nвходе узла РД', 
+                     'closing_valves_outlet_RD':'Закрытие задвижек на\nвыходе узла РД', 
+                     'closing_valves_inlet_SSVD':'Закрытие задвижек на\nвходе ССВД', 
+                     'closing_valves_inlet_FGU':'Закрытие задвижек на\nвходе ФГУ', 
+                     'closing_secant_valve_connection_unit__oil_production_oil_refining_facility':'Закрытие секущей задвижки узла\nподключения объекта нефтедобычи',
+                     'closing_valves_inlet_RP':'Закрытие задвижек на\nвходе РП', 
                      'reserve_protect_14':'Резерв(14 бит)', 
                      'reserve_protect_15':'Резерв(15 бит)',
 
-                     'shutdown_oil_pumps':'Отключение маслонасосов', 
-                     'shutdown_oil_pumps_after_signal_stopped_NA':'Отключение маслонасосов после сигнала "остановлен" НА', 
-                     'shutdown_circulating_water_pumps':'Отключение насосов оборотного водоснабжения', 
-                     'shutdown_pumps_pumping_out_from_tanks_collection_of_leaks_MNS':'Отключение насосов откачки из емкостей сбора утечек МНС', 
-                     'shutdown_pumps_pumping_out_from_tanks_collection_of_leaks_PNS':'Отключение насосов откачки из емкостей сбора утечек ПНС', 
-                     'shutdown_pumps_pumping_out_from_tanks_SSVD':'Отключение насосов откачки из емкостей ССВД',
-                     'switching_off_the_electric_room_fans':'Отключение беспромвальных вентиляторов электрозала', 
-                     'shutdown_of_booster_fans_ED':'Отключение подпорных вентиляторов ЭД', 
-                     'shutdown_of_retaining_fans_of_the_electrical_room':'Отключение подпорных вентиляторов электрозала', 
-                     'shutdown_of_ED_air_compressors':'Отключение компрессоров подпора воздуха ЭД', 
-                     'shutdown_pumps_providing_oil_oil_product_pumping_from_oil_production_oil_refining_facilities':'Отключение насосов, обеспечивающих подкачку нефти/нефтепродукта от объектов нефтедобычи/нефтепереработки', 
-                     'disabling_pumps_for_pumping_oil_oil_products_through_BIC':'Отключение насосов прокачки нефти/нефтепродукта через БИК', 
-                     'shutdown_domestic_and_drinking_water_pumps':'Отключение насосов хозяйственно-питьевого водоснабжения', 
-                     'shutdown_of_art_well_pumps':'Отключение насосов артскважин', 
+                     'shutdown_oil_pumps':'Отключение\nмаслонасосов', 
+                     'shutdown_oil_pumps_after_signal_stopped_NA':'Отключение маслонасосов\nпосле сигнала "остановлен" НА', 
+                     'shutdown_circulating_water_pumps':'Отключение насосов\nоборотного водоснабжения', 
+                     'shutdown_pumps_pumping_out_from_tanks_collection_of_leaks_MNS':'Отключение насосов откачки\nиз емкостей сбора утечек МНС', 
+                     'shutdown_pumps_pumping_out_from_tanks_collection_of_leaks_PNS':'Отключение насосов откачки\nиз емкостей сбора утечек ПНС', 
+                     'shutdown_pumps_pumping_out_from_tanks_SSVD':'Отключение насосов откачки\nиз емкостей ССВД',
+                     'switching_off_the_electric_room_fans':'Отключение беспромвальных\nвентиляторов электрозала', 
+                     'shutdown_of_booster_fans_ED':'Отключение подпорных\nвентиляторов ЭД', 
+                     'shutdown_of_retaining_fans_of_the_electrical_room':'Отключение подпорных\nвентиляторов электрозала', 
+                     'shutdown_of_ED_air_compressors':'Отключение компрессоров\nподпора воздуха ЭД', 
+                     'shutdown_pumps_providing_oil_oil_product_pumping_from_oil_production_oil_refining_facilities':'Отключение насосов, обеспечивающих\nподкачку нефти от объектов нефтедобычи', 
+                     'disabling_pumps_for_pumping_oil_oil_products_through_BIC':'Отключение насосов прокачки\nнефти через БИК', 
+                     'shutdown_domestic_and_drinking_water_pumps':'Отключение насосов\nхоз-питьевого водоснабжения', 
+                     'shutdown_of_art_well_pumps':'Отключение насосов\nартскважин', 
                      'AVO_shutdown':'Отключение АВО', 
-                     'shutdown_of_water_cooling_fans_circulating_water_supply_system':'Отключение вентиляторов водоохлаждения системы оборотного водоснабжения', 
+                     'shutdown_of_water_cooling_fans_circulating_water_supply_system':'Отключение вентиляторов водоохлаждения\nсистемы оборотного водоснабжения', 
                     
-                     'shutdown_exhaust_fans_of_the_pumping_room_of_the_MNS':'Отключение вытяжных вентиляторов насосного зала МНС', 
-                     'shutdown_of_exhaust_fans_of_the_pumping_room_PNS':'Отключение вытяжных вентиляторов насосного зала ПНС', 
-                     'shutdown_of_exhaust_fans_in_the_centralized_oil_system_room':'Отключение вытяжных вентиляторов в помещении централизованной маслосистемы', 
-                     'shutdown_of_exhaust_fans_oil_pit_in_the_electrical_room':'Отключение вытяжных вентиляторов маслоприямка в электрозале', 
-                     'shutdown_of_exhaust_fans_in_the_RD_room':'Отключение вытяжных вентиляторов в помещении РД', 
-                     'shutdown_of_exhaust_fans_in_the_SSVD_room':'Отключение вытяжных вентиляторов в помещении ССВД', 
-                     'shutdown_of_the_roof_fans_of_the_MNS_pump_room':'Отключение крышных вентиляторов насосного зала МНС', 
-                     'shutdown_of_the_roof_fans_of_the_PNS_pump_room':'Отключение крышных вентиляторов насосного зала ПНС', 
-                     'switching_off_the_supply_fans_pumping_room_of_the_MNS_and_closing_the_fire_dampers':'Отключение приточных вентиляторов насосного зала МНС и закрытие огнезадерживающих клапанов', 
-                     'switching_off_the_supply_fans_pumping_room_of_the_PNS_and_closing_the_fire_dampers':'Отключение приточных вентиляторов насосного зала ПНС и закрытие огнезадерживающих клапанов', 
-                     'switch_off_the_supply_fans_in_the_centralized_oil_system_room_and_close_the_fire_dampers':'Отключение приточных вентиляторов в помещении централизованной маслосистемы и закрытие огнезадерживающих клапанов', 
-                     'switching_off_the_supply_fan_of_the_RD_room':'Отключение приточного вентилятора помещения РД', 
-                     'switching_off_the_supply_fan_of_the_SSVD_room':'Отключение приточного вентилятора помещения ССВД', 
-                     'switching_off_the_supply_fans_of_the_ED_air_compressor_room_and_closing_the_fire_dampers':'Отключение приточных вентиляторов помещения компрессорной подпора воздуха ЭД и закрытие огнезадерживающих клапанов', 
-                     'switching_off_the_supply_fan_of_the_BIK_room':'Отключение приточного вентилятора помещения БИК', 
-                     'switching_off_the_supply_fan_of_the_SIKN_room':'Отключение приточного вентилятора помещения СИКН', 
+                     'shutdown_exhaust_fans_of_the_pumping_room_of_the_MNS':'Отключение вытяжных\nвентиляторов насосного зала МНС', 
+                     'shutdown_of_exhaust_fans_of_the_pumping_room_PNS':'Отключение вытяжных\nвентиляторов насосного зала ПНС', 
+                     'shutdown_of_exhaust_fans_in_the_centralized_oil_system_room':'Отключение вытяжных вентиляторов\nв помещении централизованной маслосистемы', 
+                     'shutdown_of_exhaust_fans_oil_pit_in_the_electrical_room':'Отключение вытяжных вентиляторов\nмаслоприямка в электрозале', 
+                     'shutdown_of_exhaust_fans_in_the_RD_room':'Отключение вытяжных\nвентиляторов в помещении РД', 
+                     'shutdown_of_exhaust_fans_in_the_SSVD_room':'Отключение вытяжных\nвентиляторов в помещении ССВД', 
+                     'shutdown_of_the_roof_fans_of_the_MNS_pump_room':'Отключение крышных\nвентиляторов насосного зала МНС', 
+                     'shutdown_of_the_roof_fans_of_the_PNS_pump_room':'Отключение крышных\nвентиляторов насосного зала ПНС', 
+                     'switching_off_the_supply_fans_pumping_room_of_the_MNS_and_closing_the_fire_dampers':'Отключение приточных вентиляторов\nнасосного зала МНС и закрытие\nогнезадерживающих клапанов', 
+                     'switching_off_the_supply_fans_pumping_room_of_the_PNS_and_closing_the_fire_dampers':'Отключение приточных вентиляторов\nнасосного зала ПНС и закрытие\nогнезадерживающих клапанов', 
+                     'switch_off_the_supply_fans_in_the_centralized_oil_system_room_and_close_the_fire_dampers':'Отключение приточных вентиляторов\nв помещении централизованной маслосистемы и\nзакрытие огнезадерживающих клапанов', 
+                     'switching_off_the_supply_fan_of_the_RD_room':'Отключение приточного\nвентилятора помещения РД', 
+                     'switching_off_the_supply_fan_of_the_SSVD_room':'Отключение приточного\nвентилятора помещения ССВД', 
+                     'switching_off_the_supply_fans_of_the_ED_air_compressor_room_and_closing_the_fire_dampers':'Отключение приточных вентиляторов\nпомещения компрессорной подпора воздуха ЭД\nи закрытие огнезадерживающих клапанов', 
+                     'switching_off_the_supply_fan_of_the_BIK_room':'Отключение приточного\nвентилятора помещения БИК', 
+                     'switching_off_the_supply_fan_of_the_SIKN_room':'Отключение приточного\nвентилятора помещения СИКН', 
 
-                     'closing_the_air_valves_louvered_grilles_of_the_pump_room':'Закрытие воздушных клапанов (жалюзийных решёток) насосного зала', 
-                     'closing_of_air_valves_louvered_grilles_of_the_compressor_room_of_the_ED_air_overpressure':'Закрытие воздушных клапанов (жалюзийных решёток) помещения компрессорной подпора воздуха ЭД', 
-                     'shutdown_of_electric_oil_heaters':'Отключение электронагревателей масла', 
-                     'shutdown_of_the_electric_heaters_of_the_leakage_collection_tank_MNS':'Отключение электронагревателей емкости сбора утечек МНС', 
-                     'shutdown_of_the_electric_heaters_of_the_leakage_collection_tank_PNS':'Отключение электронагревателей емкости сбора утечек ПНС', 
-                     'shutdown_of_electric_heaters_of_the_SIKN_leak_collection_tank':'Отключение электронагревателей емкости сбора утечек СИКН', 
-                     'shutdown_of_air_coolers_of_the_locking_system_of_mechanical_seals_of_all_MNA':'Отключение воздушных охладителей системы запирания торцовых уплотнений всех МНА', 
-                     'shutdown_of_air_coolers_of_the_locking_system_of_mechanical_seals_disconnected_NA':'Отключение воздушных охладителей системы запирания торцовых уплотнений отключенных НА', 
-                     'shutdown_of_the_external_cooling_circuit_ChRP_MNA':'Отключение внешнего контура охлаждения ЧРП МНА', 
-                     'shutdown_of_the_external_cooling_circuit_ChRP_PNA':'Отключение внешнего контура охлаждения ЧРП ПНА', 
-                     'shutdown_of_locking_system_pumps':'Отключение насосов системы запирания',
-                     'shutdown_of_pumps_for_pumping_oil_oil_products_through_the_operational_BIK':'Отключение насосов прокачки нефти/нефтепродукта через оперативный БИК', 
-                     'shutdown_of_pumping_pumps_from_leakage_collection_tanks_of_all_SIKN':'Отключение насосов откачки из емкостей сбора утечек всех СИКН', 
-                     'shutdown_of_anticondensation_electric_heaters_ED':'Отключение антиконденсационных электронагревателей ЭД', 
+                     'closing_the_air_valves_louvered_grilles_of_the_pump_room':'Закрытие воздушных клапанов\n(жалюзийных решёток) насосного зала', 
+                     'closing_of_air_valves_louvered_grilles_of_the_compressor_room_of_the_ED_air_overpressure':'Закрытие воздушных клапанов\n(жалюзийных решёток) помещения компрессорной\nподпора воздуха ЭД', 
+                     'shutdown_of_electric_oil_heaters':'Отключение электронагревателей\nмасла', 
+                     'shutdown_of_the_electric_heaters_of_the_leakage_collection_tank_MNS':'Отключение электронагревателей\nемкости сбора утечек МНС', 
+                     'shutdown_of_the_electric_heaters_of_the_leakage_collection_tank_PNS':'Отключение электронагревателей\nемкости сбора утечек ПНС', 
+                     'shutdown_of_electric_heaters_of_the_SIKN_leak_collection_tank':'Отключение электронагревателей\nемкости сбора утечек СИКН', 
+                     'shutdown_of_air_coolers_of_the_locking_system_of_mechanical_seals_of_all_MNA':'Отключение воздушных охладителей\nсистемы запирания торцовых уплотнений\nвсех МНА', 
+                     'shutdown_of_air_coolers_of_the_locking_system_of_mechanical_seals_disconnected_NA':'Отключение воздушных охладителей\nсистемы запирания торцовых уплотнений\nотключенных НА', 
+                     'shutdown_of_the_external_cooling_circuit_ChRP_MNA':'Отключение внешнего контура\nохлаждения ЧРП МНА', 
+                     'shutdown_of_the_external_cooling_circuit_ChRP_PNA':'Отключение внешнего контура\nохлаждения ЧРП ПНА', 
+                     'shutdown_of_locking_system_pumps':'Отключение насосов\nсистемы запирания',
+                     'shutdown_of_pumps_for_pumping_oil_oil_products_through_the_operational_BIK':'Отключение насосов прокачки нефти\nчерез оперативный БИК', 
+                     'shutdown_of_pumping_pumps_from_leakage_collection_tanks_of_all_SIKN':'Отключение насосов откачки из\nемкостей сбора утечек всех СИКН', 
+                     'shutdown_of_anticondensation_electric_heaters_ED':'Отключение антиконденсационных\nэлектронагревателей ЭД', 
                      'fire_protection':'Защита по пожару', 
                      'reserve_aux_15':'Резерв(15 бит)', 
 
                      'time_ust':'Временная уставка', 
-                     'Pic':'Номера листов на которых данный сигнал участвует в формировании рамки квитирования',
+                     'Pic':'Pic',
                      'group_ust':'Группа уставок', 'rule_map_ust':'Правило для карты уставок', 'number_list_VU':'Номер листа (для ВУ)', 'number_protect_VU':'Номер защиты (для ВУ)'},
             
             'ktpra': {'id':'№','variable':'Переменная', 'tag':'Идентификатор', 'name':'Название', 'NA':'Имя НА', 'avar_parameter':'Аварийный параметр', 
@@ -201,34 +195,34 @@ rus_list = {'signals': {'id':'№', 'type_signal':'Тип сигнала', 'uso'
                       'number_list_VU':'Номер листа (для ВУ)', 'number_protect_VU':'Номер защиты (для ВУ)', 'number_pump_VU':'Номер агрегата (для ВУ)'},
             
             'umpna':{'id':'№','variable':'Переменная', 'name':'Название', 'vv_included':'ВВ Включен', 'vv_double_included':'ВВ Включен дубль', 'vv_disabled':'ВВ отключен', 'vv_double_disabled':'ВВ отключен дубль', 
-                     'current_greater_than_noload_setting':'Сила тока >  уставки холостого хода', 'serviceability_of_circuits_of_inclusion_of_VV':'Исправность цепей включения ВВ',
-                     'serviceability_of_circuits_of_shutdown_of_VV':'Исправность цепей отключения ВВ', 'serviceability_of_circuits_of_shutdown_of_VV_double':'Исправность цепей отключения ВВ дубль', 'stop_1':'Стоп 1', 
+                     'current_greater_than_noload_setting':'Сила тока > уставки\nхолостого хода', 'serviceability_of_circuits_of_inclusion_of_VV':'Исправность цепей\nвключения ВВ',
+                     'serviceability_of_circuits_of_shutdown_of_VV':'Исправность цепей\nотключения ВВ', 'serviceability_of_circuits_of_shutdown_of_VV_double':'Исправность цепей\nотключения ВВ дубль', 'stop_1':'Стоп 1', 
                      'stop_2':'Стоп 2', 'stop_3':'Стоп 3', 'stop_4':'Стоп 4', 
-                     'monitoring_the_presence_of_voltage_in_the_control_current_circuits':'Сигнал «Контроль наличия напряжения в цепях оперативного тока»', 
-                     'voltage_presence_flag_in_the_ZRU_motor_cell':'Флаг наличия напряжения в двигательной ячейке ЗРУ', 'vv_trolley_rolled_out':'Тележка ВВ выкачена', 
-                     'remote_control_mode_of_the_RZiA_controller':'Дистанционный режим управления контроллера РЗиА', 
-                     'availability_of_communication_with_the_RZiA_controller':'Наличие связи с контроллером РЗиА', 
-                     'the_state_of_the_causative_agent_of_ED':'Состояние возбудителя ЭД', 'engine_prepurge_end_flag':'Флаг окончания предпусковой продувки двигателя', 
-                     'flag_for_the_presence_of_safe_air_boost_pressure_in_the_engine_housing':'Флаг наличия безопасного давления подпора воздуха в корпусе двигателя', 
-                     'flag_for_the_presence_of_safe_air_boost_pressure_in_the_exciter_housing':'Флаг наличия безопасного давления подпора воздуха в корпусе возбудителя', 
-                     'engine_purge_valve_closed_flag':'Флаг закрытого положения клапана продувки двигателя', 
-                     'oil_system_oil_temperature_flag_is_above_10_at_the_cooler_outlet_for_an_individual_oil_system':'Флаг температуры масла маслосистемы выше 10гр.С на выходе охладителя (для индивидуальной маслосистемы)', 
-                     'flag_for_the_minimum_oil_level_in_the_oil_tank_for_an_individual_oil_system':'Флаг предельного минимального уровня масла в маслобаке (для индивидуальной маслосистемы)', 
-                     'flag_for_the_presence_of_the_minimum_level_of_the_barrier_liquid_in_the_tank_of_the_locking_system':'Флаг наличия минимального уровня запирающей жидкости в баке системы запирания',
-                     'generalized_flag_for_the_presence_of_barrier_fluid_pressure_to_the_mechanical_seal':'Обобщенный флаг наличия давления запирающей жидкости к торцевому уплотнению', 
+                     'monitoring_the_presence_of_voltage_in_the_control_current_circuits':'Сигнал «Контроль наличия напряжения\nв цепях оперативного тока»', 
+                     'voltage_presence_flag_in_the_ZRU_motor_cell':'Флаг наличия напряжения\nв двигательной ячейке ЗРУ', 'vv_trolley_rolled_out':'Тележка ВВ выкачена', 
+                     'remote_control_mode_of_the_RZiA_controller':'Дистанционный режим управления\nконтроллера РЗиА', 
+                     'availability_of_communication_with_the_RZiA_controller':'Наличие связи с\nконтроллером РЗиА', 
+                     'the_state_of_the_causative_agent_of_ED':'Состояние возбудителя ЭД', 'engine_prepurge_end_flag':'Флаг окончания предпуск.\nпродувки двигателя', 
+                     'flag_for_the_presence_of_safe_air_boost_pressure_in_the_engine_housing':'Флаг наличия безопасного давления подпора\nвоздуха в корпусе двигателя', 
+                     'flag_for_the_presence_of_safe_air_boost_pressure_in_the_exciter_housing':'Флаг наличия безопасного давления подпора\nвоздуха в корпусе возбудителя', 
+                     'engine_purge_valve_closed_flag':'Флаг закрытого положения\nклапана продувки двигателя', 
+                     'oil_system_oil_temperature_flag_is_above_10_at_the_cooler_outlet_for_an_individual_oil_system':'Флаг темп. масла маслосистемы выше 10гр.С\nна выходе охладителя (для индивид. маслосистемы)', 
+                     'flag_for_the_minimum_oil_level_in_the_oil_tank_for_an_individual_oil_system':'Флаг предельного мин. уровня масла\nв маслобаке (для индивид. маслосистемы)', 
+                     'flag_for_the_presence_of_the_minimum_level_of_the_barrier_liquid_in_the_tank_of_the_locking_system':'Флаг наличия мин. уровня запирающей\nжидкости в баке системы запирания',
+                     'generalized_flag_for_the_presence_of_barrier_fluid_pressure_to_the_mechanical_seal':'Обобщенный флаг наличия давления запирающей\nжидкости к торцевому уплотнению', 
                      'command_to_turn_on_the_vv_only_for_UMPNA':'Команда на включение ВВ (только для UMPNA)', 
                      'command_to_turn_off_the_vv_output_1':'Команда на отключение ВВ (выход 1)',
-                     'command_to_turn_off_the_vv_output_2':'Команда на отключение ВВ (выход 2)', 'NA_Chrp':'НА с ЧРП', 'type_NA_MNA':'Тип НА - МНА(1 - МНА, 0 - ПНА)', 'pump_type_NM':'Насос типа НМ(1 - НМ)', 
+                     'command_to_turn_off_the_vv_output_2':'Команда на отключение ВВ (выход 2)', 'NA_Chrp':'НА с ЧРП', 'type_NA_MNA':'Тип НА - МНА\n(1 - МНА, 0 - ПНА)', 'pump_type_NM':'Насос типа НМ(1 - НМ)', 
                      'parametr_KTPRAS_1':'Параметр для KTPRAS_1', 
-                     'number_of_delay_scans_of_the_analysis_of_the_health_of_the_control_circuits_NA_MNA':'Количество сканов задержки анализа исправности цепей управления ВВ НА', 
-                     'unit_number_of_the_auxiliary_system_start_up_oil_pump_for_an_individual_oil_system':'Номер агрегата вспомсистемы "пуско-резервный маслонасос" (для индивидуальной маслосистемы)', 
+                     'number_of_delay_scans_of_the_analysis_of_the_health_of_the_control_circuits_NA_MNA':'Количество сканов задержки анализа\nисправности цепей управления ВВ НА', 
+                     'unit_number_of_the_auxiliary_system_start_up_oil_pump_for_an_individual_oil_system':'Номер агрегата вспомсистемы\n"пуско-резервный маслонасос" (для индивид. маслосистемы)', 
                      'NPS_number_1_or_2_which_the_AT_belongs':'Номер НПС (1 или 2), к которой относится НА', 
-                     'achr_protection_number_in_the_array_of_station_protections':'Номер защиты АЧР в массиве станционных защит', 
-                     'saon_protection_number_in_the_array_of_station_protections':'Номер защиты САОН в массиве станционных защит', 
+                     'achr_protection_number_in_the_array_of_station_protections':'Номер защиты АЧР\nв массиве станционных защит', 
+                     'saon_protection_number_in_the_array_of_station_protections':'Номер защиты САОН\nв массиве станционных защит', 
                      'gmpna_49':'GMPNA_[49]', 'gmpna_50':'GMPNA_[50]', 'gmpna_51':'GMPNA_[51]', 'gmpna_52':'GMPNA_[52]', 'gmpna_53':'GMPNA_[53]', 'gmpna_54':'GMPNA_[54]',
                      'gmpna_55':'GMPNA_[55]', 'gmpna_56':'GMPNA_[56]', 'gmpna_57':'GMPNA_[57]', 'gmpna_58':'GMPNA_[58]', 'gmpna_59':'GMPNA_[59]', 'gmpna_51':'GMPNA_[60]', 
                      'gmpna_51':'GMPNA_[61]', 'gmpna_51':'GMPNA_[62]', 'gmpna_51':'GMPNA_[63]', 'gmpna_51':'GMPNA_[64]', 
-                     'Pic':'Номера листов на которых данный сигнал участвует в формировании рамки квитирования', 
+                     'Pic':'Pic', 
                      'replacement_uso_signal_vv_1':'Замена %1 - УСО сигналов ВВ 1\n(Строка для замены %1 в сообщениях)', 
                      'replacement_uso_signal_vv_2':'Замена %2 - УСО сигналов ВВ 2\n(Строка для замены %2 в сообщениях)'},
             
@@ -239,9 +233,9 @@ rus_list = {'signals': {'id':'№', 'type_signal':'Тип сигнала', 'uso'
                    'MPZ':'МПЗ', 'Dist':'Дист_ф', 'Mufta':'Муфта', 'Drive_failure':'Авария привода', 'Open':'Открыть', 'Close':'Закрыть', 'Stop':'Остановить', 'Opening_stop':'Открытие остановить', 
                    'Closeing_stop':'Закрытие остановить', 'KVO_i':'КВО_и', 'KVZ_i':'КВЗ_и', 'MPO_i':'МПО_и', 'MPZ_i':'МПЗ_и', 'Dist_i':'Дист_и', 'Mufta_i':'Муфта_и','Drive_failure_i':'Авария привода_и', 
                    'Open_i':'Открыть_и', 'Close_i':'Закрыть_и', 'Stop_i':'Остановить_и', 'Opening_stop_i':'Открытие остановить_и','Closeing_stop_i':'Закрытие остановить_и', 'No_connection':'Отсутствие связи', 
-                   'Close_BRU':'Закрыть с БРУ', 'Stop_BRU':'Стоп с БРУ', 'Voltage':'Напряжение', 'Voltage_CHSU':'Напряжение ЩСУ', 'Voltage_in_signaling_circuits':'Напряжение в цепях сигнализации', 
+                   'Close_BRU':'Закрыть с БРУ', 'Stop_BRU':'Стоп с БРУ', 'Voltage':'Напряжение', 'Voltage_CHSU':'Напряжение ЩСУ', 'Voltage_in_signaling_circuits':'Напряжение в цепях\nсигнализации', 
                    'Serviceability_opening_circuits':'Исправность цепей открытия', 'Serviceability_closening_circuits':'Исправность цепей закрытия', 'VMMO':'ВММО', 'VMMZ':'ВММЗ', 
-                   'Freeze_on_suspicious_change':'Замораживать при подозрительном изм', 'Is_klapan':'Это клапан', 'Opening_percent':'Процент открытия', 'Pic':'Pic', 'Type_BUR_ZD':'Тип БУР задвижки', 
+                   'Freeze_on_suspicious_change':'Замораживать при\nподозрительном изм', 'Is_klapan':'Это клапан', 'Opening_percent':'Процент открытия', 'Pic':'Pic', 'Type_BUR_ZD':'Тип БУР задвижки', 
                    'AlphaHMI':'AlphaHMI', 'AlphaHMI_PIC1':'AlphaHMI_PIC1', 'AlphaHMI_PIC1_Number_kont':'AlphaHMI_PIC1_Number_kont', 'AlphaHMI_PIC2':'AlphaHMI_PIC2',
                    'AlphaHMI_PIC2_Number_kont':'AlphaHMI_PIC2_Number_kont','AlphaHMI_PIC3':'AlphaHMI_PIC3', 'AlphaHMI_PIC3_Number_kont':'AlphaHMI_PIC3_Number_kont', 
                    'AlphaHMI_PIC4':'AlphaHMI_PIC4', 'AlphaHMI_PIC4_Number_kont':'AlphaHMI_PIC4_Number_kont'},
@@ -249,8 +243,8 @@ rus_list = {'signals': {'id':'№', 'type_signal':'Тип сигнала', 'uso'
             'zd_tm': {'id':'№','variable':'Переменная', 'tag':'Идентификатор', 'name':'Название', 'unit':'Единица измерения', 'used':'Используется', 'value_ust':'Значение уставки', 'minimum':'Минимум', 
                        'maximum':'Максимум', 'group_ust':'Группа уставок', 'rule_map_ust':'Правило для карты уставок'},
 
-            'vs': {'id':'№','variable':'Переменная', 'name':'Название', 'short_name':'Короткое название', 'group':'Группа', 'number_in_group':'Номер в группе', 'MP':'МП', 'Pressure_is_True':'Давление норма', 
-                   'Voltage':'Напряжение', 'Voltage_Sch':'Напряжение на СШ', 'Serviceability_of_circuits_of_inclusion':'Исправность цепей включения', 'External_alarm':'Внешняя авария', 'Pressure_sensor_defective':'Датчик давления неисправен', 
+            'vs': {'id':'№','variable':'Переменная', 'name':'Название', 'short_name':'Короткое\nназвание', 'group':'Группа', 'number_in_group':'Номер в группе', 'MP':'МП', 'Pressure_is_True':'Давление норма', 
+                   'Voltage':'Напряжение', 'Voltage_Sch':'Напряжение на СШ', 'Serviceability_of_circuits_of_inclusion':'Исправность цепей\nвключения', 'External_alarm':'Внешняя авария', 'Pressure_sensor_defective':'Датчик давления неисправен', 
                    'VKL':'Включить', 'OTKL':'Отключить', 'Not_APV':'АПВ не требуется', 'Pic':'Pic', 'Table_msg':'Таблица сообщений', 'Is_klapana_interface_auxsystem':'Это клапан/интерфейсная вспомсистема',
                    'AlphaHMI':'AlphaHMI', 'AlphaHMI_PIC1':'AlphaHMI_PIC1', 'AlphaHMI_PIC1_Number_kont':'AlphaHMI_PIC1_Number_kont', 'AlphaHMI_PIC2':'AlphaHMI_PIC2',
                    'AlphaHMI_PIC2_Number_kont':'AlphaHMI_PIC2_Number_kont','AlphaHMI_PIC3':'AlphaHMI_PIC3', 'AlphaHMI_PIC3_Number_kont':'AlphaHMI_PIC3_Number_kont', 
@@ -265,8 +259,14 @@ rus_list = {'signals': {'id':'№', 'type_signal':'Тип сигнала', 'uso'
             'vsgrp_tm': {'id':'№','variable':'Переменная', 'tag':'Идентификатор', 'name':'Название', 'unit':'Единица измерения', 'used':'Используется', 'value_ust':'Значение уставки', 'minimum':'Минимум', 
                        'maximum':'Максимум', 'group_ust':'Группа уставок', 'rule_map_ust':'Правило для карты уставок'},
 
-            'uts': {'id':'№','variable':'Переменная', 'tag':'Идентификатор', 'name':'Название', 'location':'Место_установки', 'VKL':'Включить', 'siren':'Сирена', 'Does_not_require_autoshutdown':'Не требует автоотключения', 
-                    'Examination':'Проверка', 'Kvit':'Квитирование', 'Pic':'Pic', 'number_list_VU':'Номер листа для ВУ', 'order_number_for_VU':'Номер порядка для ВУ', 
+            'uts': {'id':'№','variable':'Переменная', 'tag':'Идентификатор', 'name':'Название', 'location':'Место установки', 'VKL':'Включить', 'Serviceability_of_circuits_of_inclusion':'Исправность цепей\nвключения', 'siren':'Сирена', 
+                    'Does_not_require_autoshutdown':'Не требует\nавтоотключения', 'Examination':'Проверка', 'Kvit':'Квитирование', 
+                    'Pic':'Pic', 'number_list_VU':'Номер листа для ВУ', 'order_number_for_VU':'Номер порядка для ВУ', 
+                    'uso':'Шкаф', 'basket':'Корзина', 'module':'Модуль', 'channel':'Канал'},
+            
+            'upts': {'id':'№','variable':'Переменная', 'tag':'Идентификатор', 'name':'Название', 'location':'Место установки', 'VKL':'Включить', 'Serviceability_of_circuits_of_inclusion':'Исправность цепей\nвключения', 'siren':'Сирена', 
+                    'Does_not_require_autoshutdown':'Не требует\nавтоотключения', 'Examination':'Проверка', 'Kvit':'Квитирование', 
+                    'Pic':'Pic', 'number_list_VU':'Номер листа для ВУ', 'order_number_for_VU':'Номер порядка для ВУ', 
                     'uso':'Шкаф', 'basket':'Корзина', 'module':'Модуль', 'channel':'Канал'},
 
             'uts_tm': {'id':'№','variable':'Переменная', 'tag':'Идентификатор', 'name':'Название', 'unit':'Единица измерения', 'used':'Используется', 'value_ust':'Значение уставки', 'minimum':'Минимум', 
@@ -274,12 +274,12 @@ rus_list = {'signals': {'id':'№', 'type_signal':'Тип сигнала', 'uso'
 
             'vv': {'id':'№','variable':'Переменная', 'name':'Название', 'VV_vkl':'Высоковольтный выключатель включен', 'VV_otkl':'Высоковольтный выключатель отключен', 'Pic':'Pic'},
             
-            'pi': {'id':'№','variable':'Переменная', 'tag':'Идентификатор', 'name':'Название', 'Type_PI':'Тип_ПИ(1 - пламени, 2 - тепловой, 3 - дымовой, 4 - АПУ, 5 - тепловой аналоговый)', 
-                   'Fire_0':'Пожар 0', 'Attention_1':'Внимание 1', 'Fault_1_glass_pollution_broken_2':'Неисправность 1 загрязнение стекла обрыв 2', 'Fault_2_fault_KZ_3':'Неисправность 2 неисправность КЗ 3', 
+            'pi': {'id':'№','variable':'Переменная', 'tag':'Идентификатор', 'name':'Название', 'Type_PI':'Тип_ПИ:\n1 - пламени, 2 - тепловой, 3 - дымовой, 4 - АПУ, 5 - тепловой аналоговый', 
+                   'Fire_0':'Пожар 0', 'Attention_1':'Внимание 1', 'Fault_1_glass_pollution_broken_2':'Неисправность 1\nзагрязнение стекла обрыв 2', 'Fault_2_fault_KZ_3':'Неисправность 2\nнеисправность КЗ 3', 
                    'Yes_connection_4':'Есть связь 4', 'Frequency_generator_failure_5':'Неисправность генератора частоты 5','Parameter_loading_error_6':'Ошибка загрузки параметров 6', 
-                   'Communication_error_module_IPP_7':'Ошибка связи с модулем ИПП 7', 'Supply_voltage_fault_8':'Неисправность напряжения питания 8', 'Optics_contamination_9':'Загрязнение оптики 9',
-                   'IK_channel_failure_10':'Неисправность ИК канала_10', 'UF_channel_failure_11':'Неисправность УФ канала_11', 'Loading_12':'Загрузка 12', 'Test_13':'Тест 13', 'Reserve_14':'Резерв 14',
-                   'Reset_Link':'Сброс ссылка', 'Reset_Request':'Сброс запроса', 'Through_loop_number_for_interface':'Сквозной номер шлейфа для интерфейсных', 'location':'Место установки', 'Pic':'Pic','Normal':'Норма'}, 
+                   'Communication_error_module_IPP_7':'Ошибка связи с модулем ИПП 7', 'Supply_voltage_fault_8':'Неисправность напряжения\nпитания 8', 'Optics_contamination_9':'Загрязнение оптики 9',
+                   'IK_channel_failure_10':'Неисправность ИК канала 10', 'UF_channel_failure_11':'Неисправность УФ канала 11', 'Loading_12':'Загрузка 12', 'Test_13':'Тест 13', 'Reserve_14':'Резерв 14',
+                   'Reset_Link':'Сброс ссылка', 'Reset_Request':'Сброс запроса', 'Through_loop_number_for_interface':'Сквозной номер шлейфа\nдля интерфейсных', 'location':'Место установки', 'Pic':'Pic','Normal':'Норма'}, 
                 }
 class Signals(BaseModel):
     type_signal = CharField(null = True)
@@ -715,7 +715,7 @@ class tmNA_UMPNA(BaseModel):
     rule_map_ust = CharField(null = True)
 
     class Meta:
-        table_name = 'tmna_umpna'
+        table_name = 'umpna_tm'
 class UMPNA(BaseModel):
     variable = CharField(null = True)
     name = CharField(null = True)
@@ -934,6 +934,7 @@ class UTS(BaseModel):
     name = CharField(null = True)
     location = CharField(null = True)
     VKL = CharField(null = True)
+    Serviceability_of_circuits_of_inclusion = CharField(null = True)
     siren = CharField(null = True)
     Does_not_require_autoshutdown = CharField(null = True)
     Examination = CharField(null = True)
@@ -948,6 +949,27 @@ class UTS(BaseModel):
 
     class Meta:
         table_name = 'uts'
+class UPTS(BaseModel):
+    variable = CharField(null = True)
+    tag = CharField(null = True)
+    name = CharField(null = True)
+    location = CharField(null = True)
+    VKL = CharField(null = True)
+    Serviceability_of_circuits_of_inclusion = CharField(null = True)
+    siren = CharField(null = True)
+    Does_not_require_autoshutdown = CharField(null = True)
+    Examination = CharField(null = True)
+    Kvit = CharField(null = True)
+    Pic = CharField(null = True)
+    number_list_VU = CharField(null = True)
+    order_number_for_VU = CharField(null = True)
+    uso = CharField(null = True)
+    basket = IntegerField(null = True)
+    module = IntegerField(null = True)
+    channel = IntegerField(null = True)
+
+    class Meta:
+        table_name = 'upts'
 class UTS_tm(BaseModel):
     variable = CharField(null = True)
     tag = CharField(null = True)
