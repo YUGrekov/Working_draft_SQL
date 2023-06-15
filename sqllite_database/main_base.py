@@ -2638,6 +2638,61 @@ class Filling_PI():
                         'Reset_Link', 'Reset_Request', 'Through_loop_number_for_interface', 'location', 'Pic','Normal']
         msg = self.dop_function.column_check(PI, 'pi', list_default)
         return msg 
+    
+# Work with filling in the table 'PZ_tm'
+class Filling_PZ_tm():
+    def __init__(self):
+        self.cursor   = db.cursor()
+        self.dop_function = General_functions()
+    # Получаем данные с таблицы PZ_tm
+    def getting_modul(self):
+        msg = {}
+        count_PZ = 0
+        list_pz_tm = []
+
+        time_ust = [('Задержка атаки' , 'T1', '10', 'с'), 
+                    ('Задержка на возникновение запроса об остановке тушения', 'T2', '30', 'c'),
+                    ('Длительность атаки', 'T3', '60', 'c'),
+                    ('Контроль процесса пуска тушения', 'T4', '20', 'c'),
+                    ('Контроль процесса останова тушения', 'T5', '20', 'c'),
+                    ('Инерционность системы', 'T6', '50', 'c'),
+                    ('Задержка включения насосов с момента окончания задержки атаки', 'T7', '0', 'c'),
+                    ('Выдержка времения на включение следующего насоса при включении нескольких насосов', 'T8', '10', 'c'),
+                    ('Задержка открытия задвижек с момента окончания задержки атаки', 'T9', '10', 'c'),] 
+        with db:
+            try:
+                if self.dop_function.empty_table('pz'): 
+                    msg[f'{today} - Таблицы: pz пустая! Заполни таблицу!'] = 2
+                    return msg
+                
+                exists_name = self.cursor.execute(f'''SELECT name FROM pz''')
+                for i in exists_name.fetchall():
+                    count_PZ += 1
+                    for ust in time_ust:
+                        used = '0' if ust[0] == 'Резерв' else '1' 
+                        list_pz_tm.append(dict(variable = '',
+                                                tag  = f'HUTS[{count_PZ}]_{ust[1]}',
+                                                name = f'{i[0]}. {ust[0]}',
+                                                unit = ust[3],
+                                                used = used,
+                                                value_ust = f'{ust[2]}',
+                                                minimum = '0',
+                                                maximum = '65535',
+                                                group_ust = 'Временные уставки пожарных зон',
+                                                rule_map_ust = 'Временные уставки'))
+                            
+                # Checking for the existence of a database
+                PZ_tm.insert_many(list_pz_tm).execute()
+            except Exception:
+                msg[f'{today} - Таблица: pz_tm, ошибка при заполнении: {traceback.format_exc()}'] = 2
+            msg[f'{today} - Таблица: pz_tm, выполнение кода завершено!'] = 1
+        return(msg)
+    # Заполняем таблицу pz_tm
+    def column_check(self):
+        list_default = ['variable', 'tag', 'name', 'unit', 'used', 
+                        'value_ust', 'minimum', 'maximum', 'group_ust', 'rule_map_ust']
+        msg = self.dop_function.column_check(PZ_tm, 'pz_tm', list_default)
+        return msg 
 
 # Changing tables SQL
 class Editing_table_SQL():

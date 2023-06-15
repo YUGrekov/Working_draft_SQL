@@ -567,7 +567,7 @@ class Window_Filling_tables(QWidget):
         b_clear_umpna.move(b_width_two + 540, b_height) 
         b_clear_umpna.clicked.connect(self.clear_umpna_tabl)
         # tmNA_UMPNA
-        l_tm_umpna = QLabel('tmNA_UMPNA:', self)
+        l_tm_umpna = QLabel('UMPNA_tm:', self)
         l_tm_umpna.move(b_width_one + 728, l_height)
         b_tm_umpna_basket = QPushButton('Заполнить', self)
         b_tm_umpna_basket.setStyleSheet("background: #bfd6bf; border-radius: 4px; border: 1px solid")
@@ -608,7 +608,7 @@ class Window_Filling_tables(QWidget):
         b_clear_zd.move(b_width_two + 540, b_height + 45) 
         b_clear_zd.clicked.connect(self.clear_valves_tabl)
         # tmZD
-        l_tmzd = QLabel('tmZD:', self)
+        l_tmzd = QLabel('ZD_tm:', self)
         l_tmzd.move(b_width_one + 728, l_height + 45)
         b_tm_zd_basket = QPushButton('Заполнить', self)
         b_tm_zd_basket.setStyleSheet("background: #bfd6bf; border-radius: 4px; border: 1px solid")
@@ -648,7 +648,7 @@ class Window_Filling_tables(QWidget):
         b_clear_vs.move(b_width_two + 540, b_height + 90) 
         b_clear_vs.clicked.connect(self.clear_vs_tabl)
         # tmVS
-        l_tmvs = QLabel('tmVS:', self)
+        l_tmvs = QLabel('VS_tm:', self)
         l_tmvs.move(b_width_one + 728, l_height + 90)
         b_tm_vs_basket = QPushButton('Заполнить', self)
         b_tm_vs_basket.setStyleSheet("background: #bfd6bf; border-radius: 4px; border: 1px solid")
@@ -681,7 +681,7 @@ class Window_Filling_tables(QWidget):
         b_clear_vsgrp.move(b_width_two + 540, b_height + 135) 
         b_clear_vsgrp.clicked.connect(self.clear_vsgrp_tabl)
         # tmVSGRP
-        l_tmvsgrp = QLabel('tmVSGRP:', self)
+        l_tmvsgrp = QLabel('VSGRP_tm:', self)
         l_tmvsgrp.move(b_width_one + 728, l_height + 135)
         b_tm_vsgrp_basket = QPushButton('Заполнить', self)
         b_tm_vsgrp_basket.setStyleSheet("background: #bfd6bf; border-radius: 4px; border: 1px solid")
@@ -718,6 +718,23 @@ class Window_Filling_tables(QWidget):
         b_clear_pi.resize(80,23)
         b_clear_pi.move(b_width_two + 900, b_height) 
         b_clear_pi.clicked.connect(self.clear_pi_tabl)
+        # tmPZ
+        l_tmpz = QLabel('PZ_tm:', self)
+        l_tmpz.move(b_width_one + 910, l_height + 45)
+        b_tm_pz_basket = QPushButton('Заполнить', self)
+        b_tm_pz_basket.setStyleSheet("background: #bfd6bf; border-radius: 4px; border: 1px solid")
+        b_tm_pz_basket.setToolTip('''Временные уставки PZ.
+        Должна быть заполнена таблица PZ, откуда берется название и по умолчанию добавляются уставки.
+        Проверки нет! Для нового заполнения необходимо очистить таблицу, иначе новые записи добавятся в конец таблицы!''')
+        b_tm_pz_basket.resize(80,23)
+        b_tm_pz_basket.move(b_width_one + 900, b_height + 45) 
+        b_tm_pz_basket.clicked.connect(self.filling_tmpz)
+        b_clear_tm_pz = QPushButton('Очистить', self)
+        b_clear_tm_pz.setStyleSheet("background: #bbbabf; border-radius: 4px; border: 1px solid")
+        b_clear_tm_pz.setToolTip("Очистить таблицу Временные уставки PZ")
+        b_clear_tm_pz.resize(80,23)
+        b_clear_tm_pz.move(b_width_two + 900, b_height + 45) 
+        b_clear_tm_pz.clicked.connect(self.clear_tmpz_tabl)
         # Logs
         self.logTextBox = QTextEdit(self)
         self.logTextBox.setStyleSheet("border-radius: 4px; border: 1px solid")
@@ -956,6 +973,16 @@ class Window_Filling_tables(QWidget):
         self.logs_msg('default', 1, msg, True)
     def clear_pi_tabl(self):
         msg = self.dop_function.clear_tabl('pi', 'PI', self.list_tabl)
+        self.logs_msg('default', 1, msg, True)
+    # tmPZ
+    def filling_uts_tm(self):
+        pz_table = Filling_PZ_tm()
+        msg = pz_table.column_check()
+        self.logs_msg('default', 1, msg, True)
+        msg = pz_table.getting_modul()
+        self.logs_msg('default', 1, msg, True)
+    def clear_uts_tm_tabl(self):
+        msg = self.dop_function.clear_tabl('pz_tm', 'PZ_tm', self.list_tabl)
         self.logs_msg('default', 1, msg, True)
     # Logging messeges
     def logs_msg(self, logs=None, number_color=1, buffer_msg=None, msg=False):

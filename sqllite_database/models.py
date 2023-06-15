@@ -274,13 +274,15 @@ rus_list = {'signals': {'id':'№', 'type_signal':'Тип сигнала', 'uso'
 
             'vv': {'id':'№','variable':'Переменная', 'name':'Название', 'VV_vkl':'Высоковольтный выключатель включен', 'VV_otkl':'Высоковольтный выключатель отключен', 'Pic':'Pic'},
             
-            'pi': {'id':'№','variable':'Переменная', 'tag':'Идентификатор', 'name':'Название', 'Type_PI':'Тип_ПИ:\n1 - пламени, 2 - тепловой,\n3 - дымовой, 4 - АПУ, 5 - тепловой аналог.', 
+            'pi': {'id':'№','variable':'Переменная', 'tag':'Идентификатор', 'name':'Название', 'Type_PI':'Тип ПИ:\n1 - пламени, 2 - тепловой,\n3 - дымовой, 4 - АПУ, 5 - тепловой аналог.', 
                    'Fire_0':'Пожар 0', 'Attention_1':'Внимание 1', 'Fault_1_glass_pollution_broken_2':'Неисправность 1\nзагрязнение стекла обрыв 2', 'Fault_2_fault_KZ_3':'Неисправность 2\nнеисправность КЗ 3', 
                    'Yes_connection_4':'Есть связь 4', 'Frequency_generator_failure_5':'Неисправность генератора частоты 5','Parameter_loading_error_6':'Ошибка загрузки параметров 6', 
                    'Communication_error_module_IPP_7':'Ошибка связи с модулем ИПП 7', 'Supply_voltage_fault_8':'Неисправность напряжения\nпитания 8', 'Optics_contamination_9':'Загрязнение оптики 9',
                    'IK_channel_failure_10':'Неисправность ИК канала 10', 'UF_channel_failure_11':'Неисправность УФ канала 11', 'Loading_12':'Загрузка 12', 'Test_13':'Тест 13', 'Reserve_14':'Резерв 14',
                    'Reset_Link':'Сброс ссылка', 'Reset_Request':'Сброс запроса', 'Through_loop_number_for_interface':'Сквозной номер шлейфа\nдля интерфейсных', 'location':'Место установки', 'Pic':'Pic','Normal':'Норма'}, 
-                }
+                
+            'pz_tm': {'id':'№','variable':'Переменная', 'tag':'Идентификатор', 'name':'Название', 'unit':'Единица измерения', 'used':'Используется', 'value_ust':'Значение уставки', 'minimum':'Минимум', 
+                       'maximum':'Максимум', 'group_ust':'Группа уставок', 'rule_map_ust':'Правило для карты уставок'},}
 class Signals(BaseModel):
     type_signal = CharField(null = True)
     uso         = CharField(null = True)
@@ -983,7 +985,7 @@ class UTS_tm(BaseModel):
     rule_map_ust = CharField(null = True)
 
     class Meta:
-        table_name = 'uts_tm'   
+        table_name = 'uts_tm'
 class VV(BaseModel):
     variable = CharField(null = True)
     name = CharField(null = True)
@@ -1022,3 +1024,17 @@ class PI(BaseModel):
 
     class Meta:
         table_name = 'pi'  
+class PZ_tm(BaseModel):
+    variable = CharField(null = True)
+    tag = CharField(null = True)
+    name = CharField(null = True)
+    unit = CharField(null = True)
+    used = CharField(null = True)
+    value_ust = CharField(null = True)
+    minimum = CharField(null = True)
+    maximum = CharField(null = True)
+    group_ust = CharField(null = True)
+    rule_map_ust = CharField(null = True)
+
+    class Meta:
+        table_name = 'pz_tm'   
