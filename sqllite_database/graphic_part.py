@@ -975,13 +975,13 @@ class Window_Filling_tables(QWidget):
         msg = self.dop_function.clear_tabl('pi', 'PI', self.list_tabl)
         self.logs_msg('default', 1, msg, True)
     # tmPZ
-    def filling_uts_tm(self):
+    def filling_tmpz(self):
         pz_table = Filling_PZ_tm()
         msg = pz_table.column_check()
         self.logs_msg('default', 1, msg, True)
         msg = pz_table.getting_modul()
         self.logs_msg('default', 1, msg, True)
-    def clear_uts_tm_tabl(self):
+    def clear_tmpz_tabl(self):
         msg = self.dop_function.clear_tabl('pz_tm', 'PZ_tm', self.list_tabl)
         self.logs_msg('default', 1, msg, True)
     # Logging messeges

@@ -1,7 +1,7 @@
 from peewee import *
 from playhouse.migrate import *
 
-from graphic_part import Window
+# from graphic_part import Window
 # from PyQt5.QtWidgets import QApplication
 # app = QApplication([])
 
@@ -11,6 +11,8 @@ from graphic_part import Window
 path_to_exel = f'D:\\Development\\New_SQL_generator\\Working_draft_SQL\\sqllite_database\\П3 - КЗФКП Аксинино-2_MK500_20230405.xlsx'
 path_to_base = f'D:\\Development\\New_SQL_generator\\Working_draft_SQL\\sqllite_database\\asutp.db'
 
+db = PostgresqlDatabase('db_asutp', user='postgres', password='postgres', host='127.0.0.1', port=5432)
+
 # with open(path_prj) as paths:
 #     for string in paths:
 #         split_str = string.strip().split(': ')
@@ -19,7 +21,7 @@ path_to_base = f'D:\\Development\\New_SQL_generator\\Working_draft_SQL\\sqllite_
 #         if split_str[0] == 'path_to_base':
 #             path_to_base = split_str[1]
 
-db = SqliteDatabase(path_to_base)
+#db = SqliteDatabase(path_to_base)
 migrator = SqliteMigrator(db)
 
 class BaseModel(Model):
