@@ -2,7 +2,6 @@ from models import *
 import openpyxl as wb
 from datetime import datetime
 import re, traceback
-#import psycopg2
 today = datetime.now()
 
 
@@ -97,14 +96,14 @@ class General_functions():
         # Logs
         msg = {}
         # Create tabl
-        try:
-            cursor = db.cursor()
-            cursor.execute(f'''SELECT * FROM {table_used_base}''')
-            msg[f'{today} - Таблица: {table_used_base} существует'] = 1
-        except:
-            with db.atomic():
-                db.create_tables([table_used_model])
-            msg[f'{today} - Таблица: {table_used_base} добавлена в базу данных'] = 3
+        # try:
+        #     cursor = db.cursor()
+        #     cursor.execute(f'''SELECT * FROM {table_used_base}''')
+        #     msg[f'{today} - Таблица: {table_used_base} существует'] = 1
+        # except:
+        with db.atomic():
+            db.create_tables([table_used_model])
+            #msg[f'{today} - Таблица: {table_used_base} добавлена в базу данных'] = 3
         # Checking if a column exists
         column_tabl  = []
         new_column   = []
@@ -123,8 +122,9 @@ class General_functions():
         return msg
     def empty_table(self, table_used):
         cursor = db.cursor()
-        empty = cursor.execute(f'''SELECT COUNT(*) FROM {table_used}''')
-        return True if int(empty.fetchall()[0][0]) == 0  else False
+        cursor.execute(f'''SELECT COUNT (*) FROM {table_used}''')
+        empty = cursor.fetchall()
+        return True if int(empty[0][0]) == 0  else False
 
     # Clear tabl
     def clear_tabl(self, table_used, table_name, list_tabl):
@@ -232,6 +232,10 @@ class Import_in_SQL():
             type_signal = row['type_signal']
             scheme      = row['schema']
             basket      = row['basket']
+            module      = row['module']
+            channel     = row['channel']
+
+            if basket is None or module is None or channel is None: continue
 
             list_type = ['CPU', 'PSU', 'CN', 'MN', 'AI','AO', 'DI', 'RS','DO']
             for value in list_type:
@@ -258,10 +262,9 @@ class Import_in_SQL():
         with db.atomic():
             try:
                 Signals.insert_many(data).execute()
+                msg[f'{today} - Добавлено новое УСО: {uso}'] = 1
             except Exception:
                 msg[f'{today} - Таблица: signals, ошибка при заполнении: {traceback.format_exc()}'] = 2
-
-        msg[f'{today} - Добавлено новое УСО: {uso}'] = 1
         return(msg)
     # Update Database
     def update_for_sql(self, data, uso):
@@ -281,7 +284,7 @@ class Import_in_SQL():
                             uso        =row_exel['uso'],
                             tag        =row_exel['tag'],
                             description=row_exel['description'],
-                            scheme     =row_exel['scheme'],
+                            schema     =row_exel['schema'],
                             klk        =row_exel['klk'],
                             contact    =row_exel['contact'],
                             basket     =row_exel['basket'],
@@ -300,10 +303,10 @@ class Import_in_SQL():
                         row_sql['channel'] == str(row_exel['channel']):
                             
                             if str(row_sql['tag'])         == str(row_exel['tag'])         and \
-                            str(row_sql['description']) == str(row_exel['description']) and \
-                            str(row_sql['scheme'])      == str(row_exel['scheme'])      and \
-                            str(row_sql['klk'])         == str(row_exel['klk'])         and \
-                            str(row_sql['contact'])     == str(row_exel['contact']):
+                               str(row_sql['description']) == str(row_exel['description']) and \
+                               str(row_sql['scheme'])      == str(row_exel['scheme'])      and \
+                               str(row_sql['klk'])         == str(row_exel['klk'])         and \
+                               str(row_sql['contact'])     == str(row_exel['contact']):
             
                                 continue
                             else:
@@ -311,7 +314,7 @@ class Import_in_SQL():
                                     type_signal=row_exel['type_signal'],
                                     tag        =row_exel['tag'],
                                     description=row_exel['description'],
-                                    scheme     =row_exel['scheme'],
+                                    schema     =row_exel['scheme'],
                                     klk        =row_exel['klk'],
                                     contact    =row_exel['contact'],
                                 ).where(Signals.id == row_sql['id']).execute()
@@ -320,7 +323,7 @@ class Import_in_SQL():
                                                                                         type_signal - {row_sql['type_signal']}, 
                                                                                         tag - {row_sql['tag']},                      
                                                                                         description - {row_sql['description']}, 
-                                                                                        scheme - {row_sql['scheme']}, 
+                                                                                        schema - {row_sql['scheme']}, 
                                                                                         klk - {row_sql['klk']},
                                                                                         contact - {row_sql['contact']} = 
                                                                                         Стало, 
@@ -371,116 +374,118 @@ class Filling_HardWare():
                      'RS' : 'MK-541-002', 
                      'DO' : 'MK-531-032'}
         with db:
-            if self.dop_function.empty_table('signals'): 
-                msg[f'{today} - Таблица: signals пустая! Заполни таблицу!'] = 2
-                return msg
+            try:
+                if self.dop_function.empty_table('signals'): 
+                    msg[f'{today} - Таблица: signals пустая! Заполни таблицу!'] = 2
+                    return msg
 
-            req_uso = self.cursor.execute(f'''SELECT DISTINCT uso 
-                                              FROM signals''')
-            list_uso = req_uso.fetchall()
+                self.cursor.execute(f'''SELECT DISTINCT uso 
+                                        FROM signals
+                                        ORDER BY uso''')
+                list_uso = self.cursor.fetchall()
 
-            temp_flag    = False
-            test_s       = []
-            count_basket = 0
-            count_AI     = 0
-            count_AO     = 0
-            count_DI     = 0
-            count_DO     = 0
-            count_RS     = 0
-            for uso in list_uso:
-                req_basket = self.cursor.execute(f'''SELECT DISTINCT basket 
-                                                     FROM signals
-                                                     WHERE uso="{uso[0]}"
-                                                     ORDER BY basket''')
-                list_basket = req_basket.fetchall()
+                temp_flag    = False
+                test_s       = []
+                count_basket = 0
+                count_AI, count_AO = 0, 0
+                count_DI, count_DO, count_RS = 0, 0, 0 
+                for uso in list_uso:
+                    self.cursor.execute(f"""SELECT DISTINCT basket 
+                                            FROM signals
+                                            WHERE uso='{uso[0]}'
+                                            ORDER BY basket""")
+                    list_basket = self.cursor.fetchall()
 
-                # ЦК в количестве 2 - ONE!
-                if temp_flag is False:
-                    for i in range(2):
-                        uso_kk = uso[0]
-                        test_s.append(dict(uso = uso[0], tag = '',
-                                           powerLink_ID ='',
-                                           basket  = i + 1,
-                                           type_0  = 'MK-550-024',  variable_0 = f'PSU', type_1 = f'MK-546-010', variable_1 = f'MN',
-                                           type_2  = f'MK-504-120', variable_2 = f'CPU', type_3 = f'',           variable_3 = f'',
-                                           type_4  = f'',           variable_4 = f'',    type_5 = f'',           variable_5 = f'',
-                                           type_6  = f'',           variable_6 = f'',    type_7 = f'',           variable_7 = f'',
-                                           type_8  = f'',           variable_8 = f'',    type_9 = f'',           variable_9 = f'',
-                                           type_10 = f'',           variable_10= f'',    type_11= f'',           variable_11= f'',
-                                           type_12 = f'',           variable_12= f'',    type_13= f'',           variable_13= f'',
-                                           type_14 = f'',           variable_14= f'',    type_15= f'',           variable_15= f'',
-                                           type_16 = f'',           variable_16= f'',    type_17= f'',           variable_17= f'',
-                                           type_18 = f'',           variable_18= f'',    type_19= f'',           variable_19= f'',
-                                           type_20 = f'',           variable_20= f'',    type_21= f'',           variable_21= f'',
-                                           type_22 = f'',           variable_22= f'',    type_23= f'',           variable_23= f'',
-                                           type_24 = f'',           variable_24= f'',    type_25= f'',           variable_25= f'',
-                                           type_26 = f'',           variable_26= f'',    type_27= f'',           variable_27= f'',
-                                           type_28 = f'',           variable_28= f'',    type_29= f'',           variable_29= f'',
-                                           type_30 = f'',           variable_30= f'',    type_31= f'',           variable_31= f'',
-                                           type_32 = f'',           variable_32= f''))
-                    temp_flag = True
-                for basket in list_basket:
-                    count_basket     += 1
-                    list_hw           = {}
-                    list_hw['uso']    = uso[0]    
-                    list_hw['basket'] = basket[0] 
+                    # ЦК в количестве 2 - ONE!
+                    if temp_flag is False:
+                        for i in range(2):
+                            uso_kk = uso[0]
+                            test_s.append(dict(uso = uso[0], tag = '',
+                                            powerLink_ID ='',
+                                            basket  = i + 1,
+                                            type_0  = 'MK-550-024',  variable_0 = f'PSU', type_1 = f'MK-546-010', variable_1 = f'MN',
+                                            type_2  = f'MK-504-120', variable_2 = f'CPU', type_3 = f'',           variable_3 = f'',
+                                            type_4  = f'',           variable_4 = f'',    type_5 = f'',           variable_5 = f'',
+                                            type_6  = f'',           variable_6 = f'',    type_7 = f'',           variable_7 = f'',
+                                            type_8  = f'',           variable_8 = f'',    type_9 = f'',           variable_9 = f'',
+                                            type_10 = f'',           variable_10= f'',    type_11= f'',           variable_11= f'',
+                                            type_12 = f'',           variable_12= f'',    type_13= f'',           variable_13= f'',
+                                            type_14 = f'',           variable_14= f'',    type_15= f'',           variable_15= f'',
+                                            type_16 = f'',           variable_16= f'',    type_17= f'',           variable_17= f'',
+                                            type_18 = f'',           variable_18= f'',    type_19= f'',           variable_19= f'',
+                                            type_20 = f'',           variable_20= f'',    type_21= f'',           variable_21= f'',
+                                            type_22 = f'',           variable_22= f'',    type_23= f'',           variable_23= f'',
+                                            type_24 = f'',           variable_24= f'',    type_25= f'',           variable_25= f'',
+                                            type_26 = f'',           variable_26= f'',    type_27= f'',           variable_27= f'',
+                                            type_28 = f'',           variable_28= f'',    type_29= f'',           variable_29= f'',
+                                            type_30 = f'',           variable_30= f'',    type_31= f'',           variable_31= f'',
+                                            type_32 = f'',           variable_32= f''))
+                        temp_flag = True
+                    for basket in list_basket:
+                        count_basket     += 1
+                        list_hw           = {}
+                        list_hw['uso']    = uso[0]    
+                        list_hw['basket'] = basket[0] 
 
-                    # Если в проекте есть КК
-                    if kk_is_True and count_basket == 3:
-                        for i in range(4, 6, 1):
-                            test_s.append(dict(uso        = uso_kk,
-                                               tag        = '',
-                                               basket     = i + 1,
-                                               type_0     = 'MK-550-024',
-                                               variable_0 = f'PSU',
-                                               type_2     = f'MK-504-120',
-                                               variable_2 = f'CPU'))
+                        # Если в проекте есть КК
+                        if kk_is_True and count_basket == 3:
+                            for i in range(4, 6, 1):
+                                test_s.append(dict(uso        = uso_kk,
+                                                   tag        = '',
+                                                   basket     = i + 1,
+                                                   type_0     = 'MK-550-024',
+                                                   variable_0 = f'PSU',
+                                                   type_2     = f'MK-504-120',
+                                                   variable_2 = f'CPU'))
 
-                    req_modul = self.cursor.execute(f'''SELECT DISTINCT module, type_signal 
-                                                        FROM signals
-                                                        WHERE uso="{uso[0]}" AND basket={basket[0]}
-                                                        ORDER BY module''')
-                    for i in req_modul.fetchall():
-                        if i[1] is None or i[1] == '' or i[1] == ' ': 
-                            type_kod = 'Неопределен!'
-                            type_mod = 'Неопределен!'
-                            msg[f'{today} - Таблица: Hardware. {uso[0]}.A{basket[0]}.{i[0]} тип не определен!'] = 2
-                        else:
-                            for key, value in list_type.items():
-                                if str(i[1]).find(key) != -1: 
-                                    if key == 'AI': 
-                                        count_AI += 1
-                                        type_mod = f'{key}[{count_AI}]'
-                                    elif key == 'AO': 
-                                        count_AO += 1
-                                        type_mod = f'{key}[{count_AO}]'
-                                    elif key == 'DI': 
-                                        count_DI += 1
-                                        type_mod = f'{key}[{count_DI}]'
-                                    elif key == 'DO': 
-                                        count_DO += 1
-                                        type_mod = f'{key}[{count_DO}]'
-                                    elif key == 'RS': 
-                                        count_RS += 1
-                                        type_mod = f'{key}[{count_RS}]'
-                                    else:
-                                        type_mod = key
+                        self.cursor.execute(f"""SELECT DISTINCT module, type_signal 
+                                                FROM signals
+                                                WHERE uso='{uso[0]}' AND basket={basket[0]}
+                                                ORDER BY module""")
+                        req_modul = self.cursor.fetchall()
+                        for i in req_modul:
+                            if i[1] is None or i[1] == '' or i[1] == ' ': 
+                                type_kod = 'Неопределен!'
+                                type_mod = 'Неопределен!'
+                                msg[f'{today} - Таблица: Hardware. {uso[0]}.A{basket[0]}.{i[0]} тип не определен!'] = 2
+                            else:
+                                for key, value in list_type.items():
+                                    if str(i[1]).find(key) != -1: 
+                                        if key == 'AI': 
+                                            count_AI += 1
+                                            type_mod = f'{key}[{count_AI}]'
+                                        elif key == 'AO': 
+                                            count_AO += 1
+                                            type_mod = f'{key}[{count_AO}]'
+                                        elif key == 'DI': 
+                                            count_DI += 1
+                                            type_mod = f'{key}[{count_DI}]'
+                                        elif key == 'DO': 
+                                            count_DO += 1
+                                            type_mod = f'{key}[{count_DO}]'
+                                        elif key == 'RS': 
+                                            count_RS += 1
+                                            type_mod = f'{key}[{count_RS}]'
+                                        else:
+                                            type_mod = key
 
-                                    type_kod = value
-                        list_hw[f'tag']             = ''
-                        list_hw[f'powerLink_ID']    = count_basket
-                        list_hw[f'type_0']          = 'MK-550-024'
-                        list_hw[f'variable_0']      = 'PSU'
-                        list_hw[f'type_1']          = 'MK-545-010'
-                        list_hw[f'variable_1']      = 'CN'
-                        list_hw[f'type_{i[0]}']     = type_kod
-                        list_hw[f'variable_{i[0]}'] = type_mod
-                    test_s.append(list_hw)
+                                        type_kod = value
+                            list_hw[f'tag']             = ''
+                            list_hw[f'powerLink_ID']    = count_basket
+                            list_hw[f'type_0']          = 'MK-550-024'
+                            list_hw[f'variable_0']      = 'PSU'
+                            list_hw[f'type_1']          = 'MK-545-010'
+                            list_hw[f'variable_1']      = 'CN'
+                            list_hw[f'type_{i[0]}']     = type_kod
+                            list_hw[f'variable_{i[0]}'] = type_mod
+                        test_s.append(list_hw)
 
-            # Checking for the existence of a database
-            HardWare.insert_many(test_s).execute()
-        msg[f'{today} - Таблица: hardware заполнена'] = 1
-        msg[f'{today} - Таблица: hardware, выполнение кода завершено!'] = 1
+                # Checking for the existence of a database
+                HardWare.insert_many(test_s).execute()
+                msg[f'{today} - Таблица: hardware заполнена'] = 1
+            except Exception:
+                msg[f'{today} - Таблица: hardware, ошибка при заполнении: {traceback.format_exc()}'] = 2
+            msg[f'{today} - Таблица: hardware, выполнение кода завершено!'] = 1
         return(msg)
     # Заполняем таблицу HardWare
     def column_check(self):
@@ -523,9 +528,9 @@ class Filling_USO():
                 except:
                     msg[f'{today} - Таблицы: ai или di не найдены!'] = 2
                     return msg
-                req_uso = self.cursor.execute(f'''SELECT DISTINCT uso 
-                                                FROM signals''')
-                list_uso = req_uso.fetchall()
+                self.cursor.execute(f'''SELECT DISTINCT uso 
+                                        FROM signals''')
+                list_uso = self.cursor.fetchall()
                 for uso in list_uso:
                     count_DI  = 0
                     count_USO += 1
@@ -534,10 +539,10 @@ class Filling_USO():
                     list_diag['variable'] = f'USO[{count_USO}]'
                     list_diag['name']     = f'{uso[0]}'
 
-                    ai_temp = self.cursor.execute(f'''SELECT variable, name
-                                                    FROM ai
-                                                    WHERE name LIKE "%{uso[0]}%"''')
-                    current_ai = ai_temp.fetchall()
+                    self.cursor.execute(f"""SELECT variable, name
+                                            FROM ai
+                                            WHERE name LIKE '%{uso[0]}%'""")
+                    current_ai = self.cursor.fetchall()
                     try:
                         if len(current_ai) == 0: raise
                         for ai in current_ai:
@@ -547,11 +552,11 @@ class Filling_USO():
                         list_diag['temperature']  = ''
                         msg[f'{today} - Таблица: uso. Температура в шкафу {uso[0]} не найдена!'] = 2
 
-                    door_temp = self.cursor.execute(f'''SELECT variable, name
-                                                        FROM di
-                                                        WHERE name LIKE "%{uso[0]}%" AND 
-                                                             (name LIKE "%двер%" OR name LIKE "%Двер%")''')
-                    current_door = door_temp.fetchall()
+                    self.cursor.execute(f"""SELECT variable, name
+                                            FROM di
+                                            WHERE name LIKE '%{uso[0]}%' AND 
+                                                 (name LIKE '%двер%' OR name LIKE '%Двер%')""")
+                    current_door = self.cursor.fetchall()
                     try:
                         if len(current_door) == 0: raise
                         for door in current_door:
@@ -561,12 +566,12 @@ class Filling_USO():
                         list_diag['temperature']  = ''
                         msg[f'{today} - Таблица: uso. Сигнал открытой двери шкафа {uso[0]} не найден!'] = 2
 
-                    di_temp = self.cursor.execute(f'''SELECT variable, name
-                                                    FROM di
-                                                    WHERE name LIKE "%{uso[0]}%" AND 
-                                                            (name NOT LIKE "%двер%") AND (name NOT LIKE "%Двер%") 
-                                                    ORDER BY name''')
-                    current_di = di_temp.fetchall()
+                    self.cursor.execute(f"""SELECT variable, name
+                                            FROM di
+                                            WHERE name LIKE '%{uso[0]}%' AND 
+                                                 (name NOT LIKE '%двер%') AND (name NOT LIKE '%Двер%') 
+                                            ORDER BY name""")
+                    current_di = self.cursor.fetchall()
                     try:
                         for di in current_di:
                             count_DI += 1
@@ -656,28 +661,27 @@ class Filling_AI():
                     if self.dop_function.str_find(type_signal, {'AI'}) or self.dop_function.str_find(scheme, {'AI'}):
                         count_AI += 1
                         # Выбор между полным заполнением или обновлением
-                        empty = self.cursor.execute('SELECT COUNT(*) FROM ai')
-                        if int(empty.fetchall()[0][0]) == 0:
+                        if self.dop_function.empty_table('ai'):
                             msg[f'{today} - Таблица: ai пуста, идет заполнение'] = 1
                         else:
                             msg[f'{today} - Таблица: ai не пуста, идет обновление'] = 1
 
-                        coincidence = AI.select().where(AI.uso    == uso_s,
-                                                        AI.basket == basket_s,
+                        coincidence = AI.select().where(AI.uso     == uso_s,
+                                                        AI.basket  == basket_s,
                                                         AI.module  == module_s,
-                                                        AI.channel   == channel_s)
+                                                        AI.channel == channel_s)
                         if bool(coincidence):
-                            exist_tag  = AI.select().where(AI.tag == tag_translate)
+                            exist_tag  = AI.select().where(AI.tag  == tag_translate)
                             exist_name = AI.select().where(AI.name == description)
 
                             if not bool(exist_tag):
-                                select_tag = self.cursor.execute(f'''SELECT id, tag 
-                                                                     FROM ai
-                                                                     WHERE uso='{uso_s}' AND 
-                                                                           basket={basket_s} AND 
-                                                                           module={module_s} AND 
-                                                                           channel={channel_s}''')
-                                for id_, tag_ in select_tag.fetchall():
+                                self.cursor.execute(f"""SELECT id, tag 
+                                                        FROM ai
+                                                        WHERE uso='{uso_s}' AND 
+                                                              basket={basket_s} AND 
+                                                              module={module_s} AND 
+                                                              channel={channel_s}""")
+                                for id_, tag_ in self.cursor.fetchall():
                                     msg[f'{today} - Таблица: ai, у сигнала обновлен tag: id = {id_}, ({tag_}) {tag_translate}'] = 2
                                 self.cursor.execute(f'''UPDATE ai
                                                         SET tag='{tag_translate}' 
@@ -687,20 +691,20 @@ class Filling_AI():
                                                             channel={channel_s}''')
         
                             if not bool(exist_name):
-                                select_name = self.cursor.execute(f'''SELECT id, name 
-                                                                      FROM ai
-                                                                      WHERE uso='{uso_s}' AND 
-                                                                            basket={basket_s} AND 
-                                                                            module={module_s} AND 
-                                                                            channel={channel_s}''')
-                                for id_, name_ in select_name.fetchall():
+                                self.cursor.execute(f'''SELECT id, name 
+                                                        FROM ai
+                                                        WHERE uso='{uso_s}' AND 
+                                                        basket={basket_s} AND 
+                                                        module={module_s} AND 
+                                                        channel={channel_s}''')
+                                for id_, name_ in self.cursor.fetchall():
                                     msg[f'{today} - Таблица: ai, у сигнала обновлено name: id = {id_}, ({name_}) {description}'] = 2
                                 self.cursor.execute(f'''UPDATE ai
                                                         SET name='{description}' 
                                                         WHERE uso='{uso_s}' AND 
-                                                            basket={basket_s} AND 
-                                                            module={module_s} AND 
-                                                            channel={channel_s}''')
+                                                              basket={basket_s} AND 
+                                                              module={module_s} AND 
+                                                              channel={channel_s}''')
                             continue
 
                         # Сквозной номер модуля
@@ -709,18 +713,18 @@ class Filling_AI():
                                 uso_h    = through_module_number['uso']
                                 basket_h = through_module_number['basket']
 
+                                isdigit_num = ''
                                 if uso_s == uso_h and basket_s == basket_h:
                                     type_mod = through_module_number[f'variable_{module_s}']
                                     isdigit_num  = re.findall('\d+', str(type_mod))
                                     
                                     try   : isdigit_num = isdigit_num[0]
                                     except: 
-                                        isdigit_num = ''
                                         msg[f'{today} - В таблице hardware не найден модуль сигнала: {id_s}, {tag}, {description}, {uso_s}_A{basket_s}_{module_s}_{channel_s}, "pValue" не заполнен'] = 2
                                     break
                         except Exception:
                             msg[f'{today} - Таблица: ai, ошибка при заполнении. Заполнение продолжится: {traceback.format_exc()}'] = 2
-                            msg[f'{today} - Таблица: signals, ошибка в этой строке. Строка пропусается: {row_sql}'] = 2
+                            msg[f'{today} - Таблица: signals, ошибка в этой строке. Строка пропускается: {row_sql}'] = 2
                             continue
 
                         sign             = ''
@@ -746,45 +750,48 @@ class Filling_AI():
 
                         flag_MPa_kgccm2 = '1' if self.dop_function.str_find(str(description).lower(), {'давлен'}) else '0'
 
+                        if isdigit_num == '':
+                            msg[f'{today} - В таблице hardware не найден модуль сигнала: {id_s}, {tag}, {description}, {uso_s}_A{basket_s}_{module_s}_{channel_s}, "pValue" не заполнен'] = 2
+
+                        msg[f'{today} - Таблица: ai, добавлен новый сигнал: {row_sql}'] = 1
                         list_AI.append(dict(variable = f'AI[{count_AI}]',
-                                        tag = tag_translate,
-                                        name = description,
-                                        pValue = f'mAI8[{isdigit_num[0]}, {module_s}]',
-                                        pHealth = f'mAI8_HEALTH[{isdigit_num[0]}]',
-                                        group_analog = group_analog,
-                                        group_ust_analog = group_ust_analog,
-                                        unit = unit,
-                                        sign_VU = sign,
-                                        flag_MPa_kgccm2 = flag_MPa_kgccm2,
-                                        number_NA_or_aux = '',
-                                        vibration_pump = '',
-                                        vibration_motor = '',
-                                        current_motor = '',
-                                        aux_outlet_pressure = '',
-                                        number_ust_min_avar = '',
-                                        number_ust_min_pred = '',
-                                        number_ust_max_pred = '',
-                                        number_ust_max_avar = '',
-                                        field_min = '4000',
-                                        field_max = '20000',
-                                        eng_min = eng_min,
-                                        eng_max = eng_max,
-                                        reliability_min = '3900',
-                                        reliability_max = '20100',
-                                        hysteresis = '0',
-                                        filtration = '0',
-                                        ust_min_6 = '', ust_min_5 = '', ust_min_4 = '', ust_min_3 = '', ust_min_2 = '', ust_min = '',
-                                        ust_max = '', ust_max_2 = '', ust_max_3 = '', ust_max_4 = '', ust_max_5 = '', ust_max_6 = '',
-                                        value_precision = value_precision,
-                                        Pic = '', group_trend = '', hysteresis_TI = '0,1', unit_physical_ACP = 'мкА', 
-                                        setpoint_map_rule = rule, fuse = '', uso = uso_s, basket = basket_s, module = module_s, channel = channel_s,
-                                        AlphaHMI = '', AlphaHMI_PIC1 = '', AlphaHMI_PIC1_Number_kont = '', AlphaHMI_PIC2 = '', 
-                                        AlphaHMI_PIC2_Number_kont = '', AlphaHMI_PIC3 = '', AlphaHMI_PIC3_Number_kont = '', 
-                                        AlphaHMI_PIC4 = '', AlphaHMI_PIC4_Number_kont = ''))
+                                            tag = tag_translate,
+                                            name = description,
+                                            pValue = f'mAI8[{isdigit_num}, {module_s}]',
+                                            pHealth = f'mAI8_HEALTH[{isdigit_num}]',
+                                            group_analog = group_analog,
+                                            group_ust_analog = group_ust_analog,
+                                            unit = unit,
+                                            sign_VU = sign,
+                                            flag_MPa_kgccm2 = flag_MPa_kgccm2,
+                                            number_NA_or_aux = '',
+                                            vibration_pump = '',
+                                            vibration_motor = '',
+                                            current_motor = '',
+                                            aux_outlet_pressure = '',
+                                            number_ust_min_avar = '',
+                                            number_ust_min_pred = '',
+                                            number_ust_max_pred = '',
+                                            number_ust_max_avar = '',
+                                            field_min = '4000',
+                                            field_max = '20000',
+                                            eng_min = eng_min,
+                                            eng_max = eng_max,
+                                            reliability_min = '3900',
+                                            reliability_max = '20100',
+                                            hysteresis = '0',
+                                            filtration = '0',
+                                            ust_min_6 = '', ust_min_5 = '', ust_min_4 = '', ust_min_3 = '', ust_min_2 = '', ust_min = '',
+                                            ust_max = '', ust_max_2 = '', ust_max_3 = '', ust_max_4 = '', ust_max_5 = '', ust_max_6 = '',
+                                            value_precision = value_precision,
+                                            Pic = '', group_trend = '', hysteresis_TI = '0,1', unit_physical_ACP = 'мкА', 
+                                            setpoint_map_rule = rule, fuse = '', uso = uso_s, basket = basket_s, module = module_s, channel = channel_s,
+                                            AlphaHMI = '', AlphaHMI_PIC1 = '', AlphaHMI_PIC1_Number_kont = '', AlphaHMI_PIC2 = '', 
+                                            AlphaHMI_PIC2_Number_kont = '', AlphaHMI_PIC3 = '', AlphaHMI_PIC3_Number_kont = '', 
+                                            AlphaHMI_PIC4 = '', AlphaHMI_PIC4_Number_kont = ''))
 
                 # Checking for the existence of a database
                 AI.insert_many(list_AI).execute()
-                msg[f'{today} - Таблица: ai заполнена'] = 1
             except Exception:
                 msg[f'{today} - Таблица: ai, ошибка при заполнении: {traceback.format_exc()}'] = 2
             msg[f'{today} - Таблица: ai, выполнение кода завершено!'] = 1
@@ -836,8 +843,7 @@ class Filling_AO():
                     if self.dop_function.str_find(type_signal, {'AO'}) or self.dop_function.str_find(scheme, {'AO'}):
                         count_AO += 1
                         # Выбор между полным заполнением или обновлением
-                        empty = self.cursor.execute('SELECT COUNT(*) FROM ao')
-                        if int(empty.fetchall()[0][0]) == 0:
+                        if self.dop_function.empty_table('ao'):
                             msg[f'{today} - Таблица: ao пуста, идет заполнение'] = 1
                         else:
                             msg[f'{today} - Таблица: ao не пуста, идет обновление'] = 1
@@ -851,29 +857,29 @@ class Filling_AO():
                             exist_name = AO.select().where(AO.name == description)
 
                             if not bool(exist_tag):
-                                select_tag = self.cursor.execute(f'''SELECT id, tag 
-                                                                     FROM ao
-                                                                     WHERE uso='{uso_s}' AND 
-                                                                           basket={basket_s} AND 
-                                                                           module={module_s} AND 
-                                                                           channel={channel_s}''')
-                                for id_, tag_ in select_tag.fetchall():
+                                self.cursor.execute(f'''SELECT id, tag 
+                                                        FROM ao
+                                                        WHERE uso='{uso_s}' AND 
+                                                              basket={basket_s} AND 
+                                                              module={module_s} AND 
+                                                              channel={channel_s}''')
+                                for id_, tag_ in self.cursor.fetchall():
                                     msg[f'{today} - Таблица: ao, у сигнала обновлен tag: id = {id_}, ({tag_}) {tag}'] = 2
                                 self.cursor.execute(f'''UPDATE ao
                                                         SET tag='{tag}' 
                                                         WHERE uso='{uso_s}' AND 
-                                                            basket={basket_s} AND 
-                                                            module={module_s} AND 
-                                                            channel={channel_s}''')
+                                                              basket={basket_s} AND 
+                                                              module={module_s} AND 
+                                                              channel={channel_s}''')
         
                             if not bool(exist_name):
-                                select_name = self.cursor.execute(f'''SELECT id, name 
-                                                                      FROM ao
-                                                                      WHERE uso='{uso_s}' AND 
-                                                                            basket={basket_s} AND 
-                                                                            module={module_s} AND 
-                                                                            channel={channel_s}''')
-                                for id_, name_ in select_name.fetchall():
+                                self.cursor.execute(f'''SELECT id, name 
+                                                        FROM ao
+                                                        WHERE uso='{uso_s}' AND 
+                                                              basket={basket_s} AND 
+                                                              module={module_s} AND 
+                                                              channel={channel_s}''')
+                                for id_, name_ in self.cursor.fetchall():
                                     msg[f'{today} - Таблица: ao, у сигнала обновлено name: id = {id_}, ({name_}) {description}'] = 2
                                 self.cursor.execute(f'''UPDATE ao
                                                         SET name='{description}' 
@@ -890,13 +896,13 @@ class Filling_AO():
                                 uso_h    = through_module_number['uso']
                                 basket_h = through_module_number['basket']
 
+                                isdigit_num = ''
                                 if uso_s == uso_h and basket_s == basket_h:
                                     type_mod = through_module_number[f'variable_{module_s}']
                                     isdigit_num  = re.findall('\d+', str(type_mod))
 
                                     try   : isdigit_num = isdigit_num[0]
                                     except: 
-                                        isdigit_num = ''
                                         msg[f'{today} - В таблице hardware не найден модуль сигнала: {id_s}, {tag}, {description}, {uso_s}_A{basket_s}_{module_s}_{channel_s}, "pValue" не заполнен'] = 2
                                     break
 
@@ -906,12 +912,16 @@ class Filling_AO():
                             msg[f'{today} - Таблица: ao, ошибка при заполнении. Заполнение продолжится: {traceback.format_exc()}'] = 2
                             msg[f'{today} - Таблица: signals, ошибка в этой строке. Строка пропусается: {row_sql}'] = 2
                             continue
-
+                        
+                        if isdigit_num == '':
+                            msg[f'{today} - В таблице hardware не найден модуль сигнала: {id_s}, {tag}, {description}, {uso_s}_A{basket_s}_{module_s}_{channel_s}, "pValue" не заполнен'] = 2
+                        
+                        msg[f'{today} - Таблица: ao, добавлен новый сигнал: {row_sql}'] = 1
                         list_AO.append(dict(variable = f'AO[{count_AO}]',
                                         tag = tag,
                                         name = description,
                                         pValue = f'{tag_h}_{prefix}_AO[{channel_s}]',
-                                        pHealth = f'mAO_HEALTH[{isdigit_num[0]}]',
+                                        pHealth = f'mAO_HEALTH[{isdigit_num}]',
                                         uso = uso_s, 
                                         basket = basket_s, 
                                         module = module_s, 
@@ -920,7 +930,6 @@ class Filling_AO():
 
                 # Checking for the existence of a database
                 AO.insert_many(list_AO).execute()
-                msg[f'{today} - Таблица: ao заполнена'] = 1
             except Exception:
                 msg[f'{today} - Таблица: ao, ошибка при заполнении: {traceback.format_exc()}'] = 2
             msg[f'{today} - Таблица: ao, выполнение кода завершено!'] = 1
@@ -964,8 +973,7 @@ class Filling_DI():
                     if self.dop_function.str_find(type_signal, {'DI'}) or self.dop_function.str_find(scheme, {'DI'}):
                         count_DI += 1
                         # Выбор между полным заполнением или обновлением
-                        empty = self.cursor.execute('SELECT COUNT(*) FROM di')
-                        if int(empty.fetchall()[0][0]) == 0:
+                        if self.dop_function.empty_table('di'):
                             msg[f'{today} - Таблица: di пуста, идет заполнение'] = 1
                         else:
                             msg[f'{today} - Таблица: di не пуста, идет обновление'] = 1
@@ -979,29 +987,29 @@ class Filling_DI():
                             exist_name = DI.select().where(DI.name == description)
 
                             if not bool(exist_tag):
-                                select_tag = self.cursor.execute(f'''SELECT id, tag 
-                                                                    FROM di
-                                                                    WHERE uso='{uso_s}' AND 
-                                                                          basket={basket_s} AND 
-                                                                          module={module_s} AND 
-                                                                          channel={channel_s}''')
-                                for id_, tag_ in select_tag.fetchall():
+                                self.cursor.execute(f'''SELECT id, tag 
+                                                        FROM di
+                                                        WHERE uso='{uso_s}' AND 
+                                                              basket={basket_s} AND 
+                                                              module={module_s} AND 
+                                                              channel={channel_s}''')
+                                for id_, tag_ in self.cursor.fetchall():
                                     msg[f'{today} - Таблица: di, у сигнала обновлен tag: id = {id_}, ({tag_}) {tag_translate}'] = 2
                                 self.cursor.execute(f'''UPDATE di
                                                         SET tag='{tag_translate}' 
                                                         WHERE uso='{uso_s}' AND 
                                                               basket={basket_s} AND 
-                                                              Модуль={module_s} AND 
+                                                              module={module_s} AND 
                                                               channel={channel_s}''')
         
                             if not bool(exist_name):
-                                select_name = self.cursor.execute(f'''SELECT id, name 
-                                                                      FROM di
-                                                                      WHERE uso='{uso_s}' AND 
-                                                                            basket={basket_s} AND 
-                                                                            module={module_s} AND 
-                                                                            channel={channel_s}''')
-                                for id_, name_ in select_name.fetchall():
+                                self.cursor.execute(f'''SELECT id, name 
+                                                        FROM di
+                                                        WHERE uso='{uso_s}' AND 
+                                                              basket={basket_s} AND 
+                                                              module={module_s} AND 
+                                                              channel={channel_s}''')
+                                for id_, name_ in self.cursor.fetchall():
                                     msg[f'{today} - Таблица: di, у сигнала обновлено name: id = {id_}, ({name_}) {description}'] = 2
                                 self.cursor.execute(f'''UPDATE di
                                                         SET name='{description}' 
@@ -1018,13 +1026,13 @@ class Filling_DI():
                                 uso_h    = through_module_number['uso']
                                 basket_h = through_module_number['basket']
 
+                                isdigit_num = ''
                                 if uso_s == uso_h and basket_s == basket_h:
                                     type_mod = through_module_number[f'variable_{module_s}']
                                     isdigit_num  = re.findall('\d+', str(type_mod))
 
                                     try   : isdigit_num = isdigit_num[0]
                                     except: 
-                                        isdigit_num = ''
                                         msg[f'{today} - В таблице hardware не найден модуль сигнала: {id_s}, {tag}, {description}, {uso_s}_A{basket_s}_{module_s}_{channel_s}, "pValue" не заполнен'] = 2
                                     break
 
@@ -1039,36 +1047,40 @@ class Filling_DI():
                         elif self.dop_function.str_find(str(tag).lower(), {'ec'}): group_diskrets = 'Электроснабжение'
                         else: group_diskrets = 'Общие'
 
+                        if isdigit_num == '':
+                            msg[f'{today} - В таблице hardware не найден модуль сигнала: {id_s}, {tag}, {description}, {uso_s}_A{basket_s}_{module_s}_{channel_s}, "pValue" не заполнен'] = 2
+                        
+                        msg[f'{today} - Таблица: di, добавлен новый сигнал: {row_sql}'] = 1
+
                         list_DI.append(dict(variable = f'DI[{count_DI}]',
-                                        tag = tag_translate,
-                                        name = description,
-                                        pValue = f'{tag_h}_{prefix}_DI[{channel_s}]',
-                                        pHealth = f'mDI_HEALTH[{str(isdigit_num)}]',
-                                        Inv = '0',
-                                        ErrValue = '0',
-                                        priority_0 = '1',
-                                        priority_1 = '1',
-                                        Msg = '1',
-                                        isDI_NC = '',
-                                        isAI_Warn = '',
-                                        isAI_Avar = '',
-                                        pNC_AI = '',
-                                        TS_ID = '',
-                                        isModuleNC = '',
-                                        Pic = '',
-                                        tabl_msg = 'TblDiscretes',
-                                        group_diskrets = group_diskrets,
-                                        msg_priority_0 = '',
-                                        msg_priority_1 = '',
-                                        short_title = description,
-                                        uso = uso_s, basket = basket_s, module = module_s, channel = channel_s,
-                                        AlphaHMI = '', AlphaHMI_PIC1 = '', AlphaHMI_PIC1_Number_kont = '', AlphaHMI_PIC2 = '', 
-                                        AlphaHMI_PIC2_Number_kont = '', AlphaHMI_PIC3 = '', AlphaHMI_PIC3_Number_kont = '', 
-                                        AlphaHMI_PIC4 = '', AlphaHMI_PIC4_Number_kont = ''))
+                                            tag = tag_translate,
+                                            name = description,
+                                            pValue = f'{tag_h}_{prefix}_DI[{channel_s}]',
+                                            pHealth = f'mDI_HEALTH[{str(isdigit_num)}]',
+                                            Inv = '0',
+                                            ErrValue = '0',
+                                            priority_0 = '1',
+                                            priority_1 = '1',
+                                            Msg = '1',
+                                            isDI_NC = '',
+                                            isAI_Warn = '',
+                                            isAI_Avar = '',
+                                            pNC_AI = '',
+                                            TS_ID = '',
+                                            isModuleNC = '',
+                                            Pic = '',
+                                            tabl_msg = 'TblDiscretes',
+                                            group_diskrets = group_diskrets,
+                                            msg_priority_0 = '',
+                                            msg_priority_1 = '',
+                                            short_title = description,
+                                            uso = uso_s, basket = basket_s, module = module_s, channel = channel_s,
+                                            AlphaHMI = '', AlphaHMI_PIC1 = '', AlphaHMI_PIC1_Number_kont = '', AlphaHMI_PIC2 = '', 
+                                            AlphaHMI_PIC2_Number_kont = '', AlphaHMI_PIC3 = '', AlphaHMI_PIC3_Number_kont = '', 
+                                            AlphaHMI_PIC4 = '', AlphaHMI_PIC4_Number_kont = ''))
 
                 # Checking for the existence of a database
                 DI.insert_many(list_DI).execute()
-                msg[f'{today} - Таблица: di заполнена'] = 1
             except Exception:
                 msg[f'{today} - Таблица: di, ошибка при заполнении: {traceback.format_exc()}'] = 2
             msg[f'{today} - Таблица: di, выполнение кода завершено!'] = 1
@@ -1119,28 +1131,27 @@ class Filling_DO():
                     if self.dop_function.str_find(type_signal, {'DO'}) or self.dop_function.str_find(scheme, {'DO'}):
                         count_DO += 1
                         # Выбор между полным заполнением или обновлением
-                        empty = self.cursor.execute('SELECT COUNT(*) FROM do')
-                        if int(empty.fetchall()[0][0]) == 0:
+                        if self.dop_function.empty_table('do'):
                             msg[f'{today} - Таблица: do пуста, идет заполнение'] = 1
                         else:
                             msg[f'{today} - Таблица: do не пуста, идет обновление'] = 1
 
                         coincidence = DO.select().where(DO.uso    == uso_s,
                                                         DO.basket == basket_s,
-                                                        DO.module  == module_s,
-                                                        DO.channel   == channel_s)
+                                                        DO.module == module_s,
+                                                        DO.channel== channel_s)
                         if bool(coincidence):
                             exist_tag  = DO.select().where(DO.tag == tag_translate)
                             exist_name = DO.select().where(DO.name == description)
 
                             if not bool(exist_tag):
-                                select_tag = self.cursor.execute(f'''SELECT id, tag 
-                                                                     FROM do
-                                                                     WHERE uso='{uso_s}' AND 
-                                                                           basket={basket_s} AND 
-                                                                           module={module_s} AND 
-                                                                           channel={channel_s}''')
-                                for id_, tag_ in select_tag.fetchall():
+                                self.cursor.execute(f'''SELECT id, tag 
+                                                        FROM do
+                                                        WHERE uso='{uso_s}' AND 
+                                                              basket={basket_s} AND 
+                                                              module={module_s} AND 
+                                                              channel={channel_s}''')
+                                for id_, tag_ in self.cursor.fetchall():
                                     msg[f'{today} - Таблица: do, у сигнала обновлен tag: id = {id_}, ({tag_}) {tag_translate}'] = 2
                                 self.cursor.execute(f'''UPDATE do
                                                         SET tag='{tag_translate}' 
@@ -1150,13 +1161,13 @@ class Filling_DO():
                                                               channel={channel_s}''')
         
                             if not bool(exist_name):
-                                select_name = self.cursor.execute(f'''SELECT id, name 
-                                                                      FROM do
-                                                                      WHERE uso='{uso_s}' AND 
-                                                                            basket={basket_s} AND 
-                                                                            module={module_s} AND 
-                                                                            channel={channel_s}''')
-                                for id_, name_ in select_name.fetchall():
+                                self.cursor.execute(f'''SELECT id, name 
+                                                        FROM do
+                                                        WHERE uso='{uso_s}' AND 
+                                                              basket={basket_s} AND 
+                                                              module={module_s} AND 
+                                                              channel={channel_s}''')
+                                for id_, name_ in self.cursor.fetchall():
                                     msg[f'{today} - Таблица: do, у сигнала обновлено name: id = {id_}, ({name_}) {description}'] = 2
                                 self.cursor.execute(f'''UPDATE do
                                                         SET name='{description}' 
@@ -1173,13 +1184,13 @@ class Filling_DO():
                                 uso_h    = through_module_number['uso']
                                 basket_h = through_module_number['basket']
 
+                                isdigit_num == ''
                                 if uso_s == uso_h and basket_s == basket_h:
                                     type_mod = through_module_number[f'variable_{module_s}']
                                     isdigit_num  = re.findall('\d+', str(type_mod))
 
                                     try   : isdigit_num = isdigit_num[0]
                                     except: 
-                                        isdigit_num = ''
                                         msg[f'{today} - В таблице hardware не найден модуль сигнала: {id_s}, {tag}, {description}, {uso_s}_A{basket_s}_{module_s}_{channel_s}, "pValue" не заполнен'] = 2
                                     break
 
@@ -1189,6 +1200,11 @@ class Filling_DO():
                             msg[f'{today} - Таблица: do, ошибка при заполнении. Заполнение продолжится: {traceback.format_exc()}'] = 2
                             msg[f'{today} - Таблица: signals, ошибка в этой строке. Строка пропусается: {row_sql}'] = 2
                             continue
+
+                        if isdigit_num == '':
+                            msg[f'{today} - В таблице hardware не найден модуль сигнала: {id_s}, {tag}, {description}, {uso_s}_A{basket_s}_{module_s}_{channel_s}, "pValue" не заполнен'] = 2
+                        
+                        msg[f'{today} - Таблица: do, добавлен новый сигнал: {row_sql}'] = 1
 
                         list_DO.append(dict(variable = f'DO[{count_DO}]',
                                         tag = tag_translate,
@@ -1203,7 +1219,6 @@ class Filling_DO():
 
                 # Checking for the existence of a database
                 DO.insert_many(list_DO).execute()
-                msg[f'{today} - Таблица: do заполнена'] = 1
             except Exception:
                 msg[f'{today} - Таблица: do, ошибка при заполнении: {traceback.format_exc()}'] = 2
             msg[f'{today} - Таблица: do, выполнение кода завершено!'] = 1
@@ -2715,7 +2730,7 @@ class Editing_table_SQL():
         #unpacking   = []
         unpacking_  = []
 
-        self.cursor.execute(f'SELECT * FROM {table_sql}')
+        self.cursor.execute(f'SELECT * FROM {table_sql} ORDER BY id')
         name_column = next(zip(*self.cursor.description))
         array_name_column = []
         for tabl, name_c in rus_list.items():
@@ -2806,9 +2821,9 @@ class Editing_table_SQL():
     # Updating cell values
     def update_row_tabl(self, column, text_cell, text_cell_id, table_used, hat_name):
         active_column = list(hat_name)[column]
-        self.cursor.execute(f'''UPDATE {table_used} 
+        self.cursor.execute(f"""UPDATE {table_used} 
                                 SET {active_column}='{text_cell}' 
-                                WHERE id == {text_cell_id}''')
+                                WHERE id={text_cell_id}""")
         #table_used.update(**{active_column: text_cell}).where(table_used.id == text_cell_id).execute()
     # Adding new lines
     def add_new_row(self, table_used):

@@ -8,10 +8,11 @@ from playhouse.migrate import *
 # win_ = Window()
 # path_prj = win_.file_prj()
 
+
 path_to_exel = f'D:\\Development\\New_SQL_generator\\Working_draft_SQL\\sqllite_database\\П3 - КЗФКП Аксинино-2_MK500_20230405.xlsx'
 path_to_base = f'D:\\Development\\New_SQL_generator\\Working_draft_SQL\\sqllite_database\\asutp.db'
 
-db = PostgresqlDatabase('db_asutp', user='postgres', password='postgres', host='127.0.0.1', port=5432)
+db = PostgresqlDatabase('mydatabase', user='postgres', password='postgres', host='localhost', port=5432)
 
 # with open(path_prj) as paths:
 #     for string in paths:
@@ -23,6 +24,8 @@ db = PostgresqlDatabase('db_asutp', user='postgres', password='postgres', host='
 
 #db = SqliteDatabase(path_to_base)
 migrator = SqliteMigrator(db)
+
+
 
 class BaseModel(Model):
     class Meta:
@@ -1040,3 +1043,5 @@ class PZ_tm(BaseModel):
 
     class Meta:
         table_name = 'pz_tm'   
+
+
