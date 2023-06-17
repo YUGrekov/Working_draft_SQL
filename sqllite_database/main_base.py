@@ -122,7 +122,7 @@ class General_functions():
         return msg
     def empty_table(self, table_used):
         cursor = db.cursor()
-        cursor.execute(f'''SELECT COUNT (*) FROM {table_used}''')
+        cursor.execute(f'''SELECT COUNT (*) FROM "{table_used}"''')
         empty = cursor.fetchall()
         return True if int(empty[0][0]) == 0  else False
 
@@ -138,17 +138,17 @@ class General_functions():
             msg[f'{today} - Таблица: {table_used} пустая!'] = 2
             return msg
         
-        cursor.execute(f'DELETE FROM {table_used}')
+        cursor.execute(f'DELETE FROM "{table_used}"')
         msg[f'{today} - Таблица: {table_used} полностью очищена'] = 1
         return msg
     def search_signal(self, tabl_used_cl, tabl_used_str, tag):
         exists_tag = tabl_used_cl.select().where(tabl_used_cl.tag == tag)
         if bool(exists_tag):
             cursor = db.cursor()
-            search_tag = cursor.execute(f'''SELECT id, tag
-                                            FROM {tabl_used_str}
-                                            WHERE tag="{tag}"''')
-            for id_, tag in search_tag.fetchall():
+            cursor.execute(f"""SELECT id, tag
+                               FROM {tabl_used_str}
+                               WHERE tag='{tag}'""")
+            for id_, tag in cursor.fetchall():
                 if tabl_used_str == 'di': return (f'DI[{id_}].Value')
                 if tabl_used_str == 'do': return (f'ctrlDO[{id_}]')
                 if tabl_used_str == 'ai': return (f'AI[{id_}].Norm')
@@ -160,9 +160,9 @@ class General_functions():
                                                     column_update_cl == tag)
         if not bool(exist_value):
             cursor = db.cursor()
-            cursor.execute(f'''UPDATE {tabl_used_str}
+            cursor.execute(f"""UPDATE '{tabl_used_str}'
                                SET {column_update_str}='{tag}' 
-                               WHERE id="{number_NA}"''')
+                               WHERE id='{number_NA}'""")
             msg[f'{today} - Таблица: umpna, NA[{number_NA}] обновлено {column_update_str} = {tag}'] = 3
             return msg
         return msg
@@ -173,7 +173,7 @@ class General_functions():
                                                     column_update_cl == value)
         if not bool(exist_value):
             cursor = db.cursor()
-            cursor.execute(f'''UPDATE {tabl_used_str}
+            cursor.execute(f'''UPDATE "{tabl_used_str}"
                                SET {column_update_str}='{value}' 
                                WHERE name="{name}"''')
             msg[f'{today} - Таблица: {tabl_used_str}, обновлен: {name},  {column_update_str} = {value}'] = 3
@@ -1131,7 +1131,7 @@ class Filling_DO():
                     if self.dop_function.str_find(type_signal, {'DO'}) or self.dop_function.str_find(scheme, {'DO'}):
                         count_DO += 1
                         # Выбор между полным заполнением или обновлением
-                        if self.dop_function.empty_table('do'):
+                        if self.dop_function.empty_table("do"):
                             msg[f'{today} - Таблица: do пуста, идет заполнение'] = 1
                         else:
                             msg[f'{today} - Таблица: do не пуста, идет обновление'] = 1
@@ -1146,14 +1146,14 @@ class Filling_DO():
 
                             if not bool(exist_tag):
                                 self.cursor.execute(f'''SELECT id, tag 
-                                                        FROM do
+                                                        FROM "do"
                                                         WHERE uso='{uso_s}' AND 
                                                               basket={basket_s} AND 
                                                               module={module_s} AND 
                                                               channel={channel_s}''')
                                 for id_, tag_ in self.cursor.fetchall():
                                     msg[f'{today} - Таблица: do, у сигнала обновлен tag: id = {id_}, ({tag_}) {tag_translate}'] = 2
-                                self.cursor.execute(f'''UPDATE do
+                                self.cursor.execute(f'''UPDATE "do"
                                                         SET tag='{tag_translate}' 
                                                         WHERE uso='{uso_s}' AND 
                                                               basket={basket_s} AND 
@@ -1162,14 +1162,14 @@ class Filling_DO():
         
                             if not bool(exist_name):
                                 self.cursor.execute(f'''SELECT id, name 
-                                                        FROM do
+                                                        FROM "do"
                                                         WHERE uso='{uso_s}' AND 
                                                               basket={basket_s} AND 
                                                               module={module_s} AND 
                                                               channel={channel_s}''')
                                 for id_, name_ in self.cursor.fetchall():
                                     msg[f'{today} - Таблица: do, у сигнала обновлено name: id = {id_}, ({name_}) {description}'] = 2
-                                self.cursor.execute(f'''UPDATE do
+                                self.cursor.execute(f'''UPDATE "do"
                                                         SET name='{description}' 
                                                         WHERE uso='{uso_s}' AND 
                                                               basket={basket_s} AND 
@@ -1184,7 +1184,7 @@ class Filling_DO():
                                 uso_h    = through_module_number['uso']
                                 basket_h = through_module_number['basket']
 
-                                isdigit_num == ''
+                                isdigit_num = ''
                                 if uso_s == uso_h and basket_s == basket_h:
                                     type_mod = through_module_number[f'variable_{module_s}']
                                     isdigit_num  = re.findall('\d+', str(type_mod))
@@ -1490,8 +1490,8 @@ class Filling_UMPNA():
                     msg[f'{today} - Таблицы: ai или di отсутсвует!'] = 2
                     return msg
 
-                row_count_req = self.cursor.execute(f'''SELECT Count (*) FROM umpna''')
-                row_count = row_count_req.fetchall()[0][0]
+                self.cursor.execute(f'''SELECT Count (*) FROM "umpna"''')
+                row_count = self.cursor.fetchall()[0][0]
 
                 for i in range(1, count_NA + 1):
 
@@ -1499,7 +1499,7 @@ class Filling_UMPNA():
                         list_UMPNA = []
                         msg[f'{today} - Таблица: umpna, отсутствует NA[{i}] идет заполнение'] = 3
 
-                        vv_included = self.dop_function.search_signal(DI, 'di', f'MBC{i}01-1')
+                        vv_included = self.dop_function.search_signal(DI, "di", f"MBC{i}01-1")
                         vv_double_included = self.dop_function.search_signal(DI, 'di', f'MBC{i}01-2')
                         vv_disabled = self.dop_function.search_signal(DI, 'di', f'MBC{i}02-1')
                         vv_double_disabled = self.dop_function.search_signal(DI, 'di', f'MBC{i}02-2')
@@ -1529,20 +1529,20 @@ class Filling_UMPNA():
                             stop_2 = f'NOT {stop_2}',
                             stop_3 ='',
                             stop_4 ='',
-                            monitoring_the_presence_of_voltage_in_the_control_current_circuits = monitoring_the_presence_of_voltage_in_the_control_current_circuits,
+                            monitoring_the_presence_of_voltage_in_the_control_current = monitoring_the_presence_of_voltage_in_the_control_current_circuits,
                             voltage_presence_flag_in_the_ZRU_motor_cell ='',
                             vv_trolley_rolled_out = vv_trolley_rolled_out,
                             remote_control_mode_of_the_RZiA_controller ='',
                             availability_of_communication_with_the_RZiA_controller ='',
                             the_state_of_the_causative_agent_of_ED ='',
                             engine_prepurge_end_flag ='',
-                            flag_for_the_presence_of_safe_air_boost_pressure_in_the_engine_housing ='',
-                            flag_for_the_presence_of_safe_air_boost_pressure_in_the_exciter_housing ='',
+                            flag_for_the_presence_of_safe_air_boost_pressure_in_the_en ='',
+                            flag_for_the_presence_of_safe_air_boost_pressure_in_the_ex ='',
                             engine_purge_valve_closed_flag ='',
-                            oil_system_oil_temperature_flag_is_above_10_at_the_cooler_outlet_for_an_individual_oil_system ='',
-                            flag_for_the_minimum_oil_level_in_the_oil_tank_for_an_individual_oil_system ='',
-                            flag_for_the_presence_of_the_minimum_level_of_the_barrier_liquid_in_the_tank_of_the_locking_system ='',
-                            generalized_flag_for_the_presence_of_barrier_fluid_pressure_to_the_mechanical_seal ='',
+                            oil_system_oil_temperature_flag_is_above_10_at_the_cooler_ou ='',
+                            flag_for_the_minimum_oil_level_in_the_oil_tank_for_an_indiv ='',
+                            flag_for_the_presence_of_the_minimum_level_of_the_barrier ='',
+                            generalized_flag_for_the_presence_of_barrier_fluid_pressure ='',
                             command_to_turn_on_the_vv_only_for_UMPNA = command_to_turn_on_the_vv_only_for_UMPNA,
                             command_to_turn_off_the_vv_output_1 = command_to_turn_off_the_vv_output_1,
                             command_to_turn_off_the_vv_output_2 = command_to_turn_off_the_vv_output_2,
@@ -1550,8 +1550,8 @@ class Filling_UMPNA():
                             type_NA_MNA ='',
                             pump_type_NM ='',
                             parametr_KTPRAS_1 ='',
-                            number_of_delay_scans_of_the_analysis_of_the_health_of_the_control_circuits_NA_MNA ='',
-                            unit_number_of_the_auxiliary_system_start_up_oil_pump_for_an_individual_oil_system ='',
+                            number_of_delay_scans_of_the_analysis_of_the_health_of_the ='',
+                            unit_number_of_the_auxiliary_system_start_up_oil_pump ='',
                             NPS_number_1_or_2_which_the_AT_belongs ='',
                             achr_protection_number_in_the_array_of_station_protections ='',
                             saon_protection_number_in_the_array_of_station_protections ='',
@@ -1616,8 +1616,8 @@ class Filling_UMPNA():
                         
                         msg[f'{today} - Таблица: umpna, сигналы NA[{i}] обновлены'] = 1
                 
-                exists_name = self.cursor.execute(f'''SELECT name FROM umpna''')
-                for i in exists_name.fetchall():
+                self.cursor.execute(f'''SELECT name FROM "umpna"''')
+                for i in self.cursor.fetchall():
                     if i[0] is None or i[0] == '' or i[0] == ' ':
                         msg[f'{today} - Таблица: umpna, необходимо заполнить название НА!'] = 3
             except Exception:
@@ -1630,18 +1630,18 @@ class Filling_UMPNA():
                         'vv_double_disabled', 'current_greater_than_noload_setting', 'serviceability_of_circuits_of_inclusion_of_VV',
                         'serviceability_of_circuits_of_shutdown_of_VV', 'serviceability_of_circuits_of_shutdown_of_VV_double',
                         'stop_1', 'stop_2', 'stop_3', 'stop_4',
-                        'monitoring_the_presence_of_voltage_in_the_control_current_circuits', 'voltage_presence_flag_in_the_ZRU_motor_cell',
+                        'monitoring_the_presence_of_voltage_in_the_control_current', 'voltage_presence_flag_in_the_ZRU_motor_cell',
                         'vv_trolley_rolled_out', 'remote_control_mode_of_the_RZiA_controller', 
                         'availability_of_communication_with_the_RZiA_controller','the_state_of_the_causative_agent_of_ED',
-                        'engine_prepurge_end_flag', 'flag_for_the_presence_of_safe_air_boost_pressure_in_the_engine_housing',
-                        'flag_for_the_presence_of_safe_air_boost_pressure_in_the_exciter_housing', 'engine_purge_valve_closed_flag',
-                        'oil_system_oil_temperature_flag_is_above_10_at_the_cooler_outlet_for_an_individual_oil_system', 
-                        'flag_for_the_minimum_oil_level_in_the_oil_tank_for_an_individual_oil_system', 
-                        'flag_for_the_presence_of_the_minimum_level_of_the_barrier_liquid_in_the_tank_of_the_locking_system',
-                        'generalized_flag_for_the_presence_of_barrier_fluid_pressure_to_the_mechanical_seal', 'command_to_turn_on_the_vv_only_for_UMPNA',
+                        'engine_prepurge_end_flag', 'flag_for_the_presence_of_safe_air_boost_pressure_in_the_en',
+                        'flag_for_the_presence_of_safe_air_boost_pressure_in_the_ex', 'engine_purge_valve_closed_flag',
+                        'oil_system_oil_temperature_flag_is_above_10_at_the_cooler_ou', 
+                        'flag_for_the_minimum_oil_level_in_the_oil_tank_for_an_indiv', 
+                        'flag_for_the_presence_of_the_minimum_level_of_the_barrier',
+                        'generalized_flag_for_the_presence_of_barrier_fluid_pressure', 'command_to_turn_on_the_vv_only_for_UMPNA',
                         'command_to_turn_off_the_vv_output_1', 'command_to_turn_off_the_vv_output_2', 'NA_Chrp', 'type_NA_MNA',
-                        'pump_type_NM','parametr_KTPRAS_1', 'number_of_delay_scans_of_the_analysis_of_the_health_of_the_control_circuits_NA_MNA',
-                        'unit_number_of_the_auxiliary_system_start_up_oil_pump_for_an_individual_oil_system', 'NPS_number_1_or_2_which_the_AT_belongs',
+                        'pump_type_NM','parametr_KTPRAS_1', 'number_of_delay_scans_of_the_analysis_of_the_health_of_the',
+                        'unit_number_of_the_auxiliary_system_start_up_oil_pump', 'NPS_number_1_or_2_which_the_AT_belongs',
                         'achr_protection_number_in_the_array_of_station_protections','saon_protection_number_in_the_array_of_station_protections', 
                         'gmpna_49', 'gmpna_50', 'gmpna_51', 'gmpna_52','gmpna_53', 'gmpna_54', 'gmpna_55', 'gmpna_56',
                         'gmpna_57','gmpna_58', 'gmpna_59', 'gmpna_60', 'gmpna_61', 'gmpna_62','gmpna_63', 'gmpna_64', 'Pic', 
@@ -1683,8 +1683,8 @@ class Filling_tmNA_UMPNA():
                 if self.dop_function.empty_table('umpna'): 
                     msg[f'{today} - Таблицы: umpna пустая! Заполни таблицу!'] = 2
                     return msg
-                exists_name = self.cursor.execute(f'''SELECT name FROM umpna''')
-                for i in exists_name.fetchall():
+                self.cursor.execute(f'''SELECT name FROM umpna''')
+                for i in self.cursor.fetchall():
                     count_NA += 1
                     if i[0] is None or i[0] == '' or i[0] == ' ':
                         msg[f'{today} - Таблица: umpna, необходимо заполнить название НА!'] = 3
@@ -1736,12 +1736,12 @@ class Filling_ZD():
                     return msg
                 
                 # Новый список задвижек из таблицы DI
-                count_zd_new = self.cursor.execute(f'''SELECT name 
-                                                    FROM di
-                                                    WHERE name LIKE "%задвижк%" OR name LIKE "%Задвижк%" OR 
-                                                          name LIKE "%клап%" OR name LIKE "%Клап%" OR
-                                                          name LIKE "%клоп%" OR name LIKE "%КЛОП%"''')
-                name_zd_new = count_zd_new.fetchall()
+                self.cursor.execute(f'''SELECT name 
+                                        FROM di
+                                        WHERE name LIKE "%задвижк%" OR name LIKE "%Задвижк%" OR 
+                                              name LIKE "%клап%" OR name LIKE "%Клап%" OR
+                                              name LIKE "%клоп%" OR name LIKE "%КЛОП%"''')
+                name_zd_new = self.cursor.fetchall()
                 list_zd_name_split = []
                 for i in name_zd_new: 
                     list_zd_name_split.append(str(i[0]).split(' - ')[0])
@@ -2730,7 +2730,7 @@ class Editing_table_SQL():
         #unpacking   = []
         unpacking_  = []
 
-        self.cursor.execute(f'SELECT * FROM {table_sql} ORDER BY id')
+        self.cursor.execute(f'SELECT * FROM "{table_sql}" ORDER BY id')
         name_column = next(zip(*self.cursor.description))
         array_name_column = []
         for tabl, name_c in rus_list.items():

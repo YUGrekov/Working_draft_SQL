@@ -203,30 +203,30 @@ rus_list = {'signals': {'id':'№', 'type_signal':'Тип сигнала', 'uso'
                      'current_greater_than_noload_setting':'Сила тока > уставки\nхолостого хода', 'serviceability_of_circuits_of_inclusion_of_VV':'Исправность цепей\nвключения ВВ',
                      'serviceability_of_circuits_of_shutdown_of_VV':'Исправность цепей\nотключения ВВ', 'serviceability_of_circuits_of_shutdown_of_VV_double':'Исправность цепей\nотключения ВВ дубль', 'stop_1':'Стоп 1', 
                      'stop_2':'Стоп 2', 'stop_3':'Стоп 3', 'stop_4':'Стоп 4', 
-                     'monitoring_the_presence_of_voltage_in_the_control_current_circuits':'Сигнал «Контроль наличия напряжения\nв цепях оперативного тока»', 
+                     'monitoring_the_presence_of_voltage_in_the_control_current':'Сигнал «Контроль наличия напряжения\nв цепях оперативного тока»', 
                      'voltage_presence_flag_in_the_ZRU_motor_cell':'Флаг наличия напряжения\nв двигательной ячейке ЗРУ', 'vv_trolley_rolled_out':'Тележка ВВ выкачена', 
                      'remote_control_mode_of_the_RZiA_controller':'Дистанционный режим управления\nконтроллера РЗиА', 
                      'availability_of_communication_with_the_RZiA_controller':'Наличие связи с\nконтроллером РЗиА', 
                      'the_state_of_the_causative_agent_of_ED':'Состояние возбудителя ЭД', 'engine_prepurge_end_flag':'Флаг окончания предпуск.\nпродувки двигателя', 
-                     'flag_for_the_presence_of_safe_air_boost_pressure_in_the_engine_housing':'Флаг наличия безопасного давления подпора\nвоздуха в корпусе двигателя', 
-                     'flag_for_the_presence_of_safe_air_boost_pressure_in_the_exciter_housing':'Флаг наличия безопасного давления подпора\nвоздуха в корпусе возбудителя', 
+                     'flag_for_the_presence_of_safe_air_boost_pressure_in_the_en':'Флаг наличия безопасного давления подпора\nвоздуха в корпусе двигателя', 
+                     'flag_for_the_presence_of_safe_air_boost_pressure_in_the_ex':'Флаг наличия безопасного давления подпора\nвоздуха в корпусе возбудителя', 
                      'engine_purge_valve_closed_flag':'Флаг закрытого положения\nклапана продувки двигателя', 
-                     'oil_system_oil_temperature_flag_is_above_10_at_the_cooler_outlet_for_an_individual_oil_system':'Флаг темп. масла маслосистемы выше 10гр.С\nна выходе охладителя (для индивид. маслосистемы)', 
-                     'flag_for_the_minimum_oil_level_in_the_oil_tank_for_an_individual_oil_system':'Флаг предельного мин. уровня масла\nв маслобаке (для индивид. маслосистемы)', 
-                     'flag_for_the_presence_of_the_minimum_level_of_the_barrier_liquid_in_the_tank_of_the_locking_system':'Флаг наличия мин. уровня запирающей\nжидкости в баке системы запирания',
-                     'generalized_flag_for_the_presence_of_barrier_fluid_pressure_to_the_mechanical_seal':'Обобщенный флаг наличия давления запирающей\nжидкости к торцевому уплотнению', 
+                     'oil_system_oil_temperature_flag_is_above_10_at_the_cooler_ou':'Флаг темп. масла маслосистемы выше 10гр.С\nна выходе охладителя (для индивид. маслосистемы)', 
+                     'flag_for_the_minimum_oil_level_in_the_oil_tank_for_an_indiv':'Флаг предельного мин. уровня масла\nв маслобаке (для индивид. маслосистемы)', 
+                     'flag_for_the_presence_of_the_minimum_level_of_the_barrier':'Флаг наличия мин. уровня запирающей\nжидкости в баке системы запирания',
+                     'generalized_flag_for_the_presence_of_barrier_fluid_pressure':'Обобщенный флаг наличия давления запирающей\nжидкости к торцевому уплотнению', 
                      'command_to_turn_on_the_vv_only_for_UMPNA':'Команда на включение ВВ (только для UMPNA)', 
                      'command_to_turn_off_the_vv_output_1':'Команда на отключение ВВ (выход 1)',
                      'command_to_turn_off_the_vv_output_2':'Команда на отключение ВВ (выход 2)', 'NA_Chrp':'НА с ЧРП', 'type_NA_MNA':'Тип НА - МНА\n(1 - МНА, 0 - ПНА)', 'pump_type_NM':'Насос типа НМ(1 - НМ)', 
                      'parametr_KTPRAS_1':'Параметр для KTPRAS_1', 
-                     'number_of_delay_scans_of_the_analysis_of_the_health_of_the_control_circuits_NA_MNA':'Количество сканов задержки анализа\nисправности цепей управления ВВ НА', 
-                     'unit_number_of_the_auxiliary_system_start_up_oil_pump_for_an_individual_oil_system':'Номер агрегата вспомсистемы\n"пуско-резервный маслонасос" (для индивид. маслосистемы)', 
+                     'number_of_delay_scans_of_the_analysis_of_the_health_of_the':'Количество сканов задержки анализа\nисправности цепей управления ВВ НА', 
+                     'unit_number_of_the_auxiliary_system_start_up_oil_pump':'Номер агрегата вспомсистемы\n"пуско-резервный маслонасос" (для индивид. маслосистемы)', 
                      'NPS_number_1_or_2_which_the_AT_belongs':'Номер НПС (1 или 2), к которой относится НА', 
                      'achr_protection_number_in_the_array_of_station_protections':'Номер защиты АЧР\nв массиве станционных защит', 
                      'saon_protection_number_in_the_array_of_station_protections':'Номер защиты САОН\nв массиве станционных защит', 
                      'gmpna_49':'GMPNA_[49]', 'gmpna_50':'GMPNA_[50]', 'gmpna_51':'GMPNA_[51]', 'gmpna_52':'GMPNA_[52]', 'gmpna_53':'GMPNA_[53]', 'gmpna_54':'GMPNA_[54]',
-                     'gmpna_55':'GMPNA_[55]', 'gmpna_56':'GMPNA_[56]', 'gmpna_57':'GMPNA_[57]', 'gmpna_58':'GMPNA_[58]', 'gmpna_59':'GMPNA_[59]', 'gmpna_51':'GMPNA_[60]', 
-                     'gmpna_51':'GMPNA_[61]', 'gmpna_51':'GMPNA_[62]', 'gmpna_51':'GMPNA_[63]', 'gmpna_51':'GMPNA_[64]', 
+                     'gmpna_55':'GMPNA_[55]', 'gmpna_56':'GMPNA_[56]', 'gmpna_57':'GMPNA_[57]', 'gmpna_58':'GMPNA_[58]', 'gmpna_59':'GMPNA_[59]', 'gmpna_60':'GMPNA_[60]', 
+                     'gmpna_61':'GMPNA_[61]', 'gmpna_62':'GMPNA_[62]', 'gmpna_63':'GMPNA_[63]', 'gmpna_64':'GMPNA_[64]', 
                      'Pic':'Pic', 
                      'replacement_uso_signal_vv_1':'Замена %1 - УСО сигналов ВВ 1\n(Строка для замены %1 в сообщениях)', 
                      'replacement_uso_signal_vv_2':'Замена %2 - УСО сигналов ВВ 2\n(Строка для замены %2 в сообщениях)'},
@@ -741,20 +741,20 @@ class UMPNA(BaseModel):
     stop_3 = CharField(null = True)
     stop_4 = CharField(null = True)
 
-    monitoring_the_presence_of_voltage_in_the_control_current_circuits = CharField(null = True)
+    monitoring_the_presence_of_voltage_in_the_control_current = CharField(null = True)
     voltage_presence_flag_in_the_ZRU_motor_cell = CharField(null = True)
     vv_trolley_rolled_out = CharField(null = True)
     remote_control_mode_of_the_RZiA_controller = CharField(null = True)
     availability_of_communication_with_the_RZiA_controller = CharField(null = True)
     the_state_of_the_causative_agent_of_ED = CharField(null = True)
     engine_prepurge_end_flag = CharField(null = True)
-    flag_for_the_presence_of_safe_air_boost_pressure_in_the_engine_housing = CharField(null = True)
-    flag_for_the_presence_of_safe_air_boost_pressure_in_the_exciter_housing = CharField(null = True)
+    flag_for_the_presence_of_safe_air_boost_pressure_in_the_en = CharField(null = True)
+    flag_for_the_presence_of_safe_air_boost_pressure_in_the_ex = CharField(null = True)
     engine_purge_valve_closed_flag = CharField(null = True)
-    oil_system_oil_temperature_flag_is_above_10_at_the_cooler_outlet_for_an_individual_oil_system = CharField(null = True)
-    flag_for_the_minimum_oil_level_in_the_oil_tank_for_an_individual_oil_system = CharField(null = True)
-    flag_for_the_presence_of_the_minimum_level_of_the_barrier_liquid_in_the_tank_of_the_locking_system = CharField(null = True)
-    generalized_flag_for_the_presence_of_barrier_fluid_pressure_to_the_mechanical_seal = CharField(null = True)
+    oil_system_oil_temperature_flag_is_above_10_at_the_cooler_ou = CharField(null = True)
+    flag_for_the_minimum_oil_level_in_the_oil_tank_for_an_indiv = CharField(null = True)
+    flag_for_the_presence_of_the_minimum_level_of_the_barrier = CharField(null = True)
+    generalized_flag_for_the_presence_of_barrier_fluid_pressure = CharField(null = True)
     command_to_turn_on_the_vv_only_for_UMPNA = CharField(null = True)
     command_to_turn_off_the_vv_output_1 = CharField(null = True)
     command_to_turn_off_the_vv_output_2 = CharField(null = True)
@@ -762,8 +762,8 @@ class UMPNA(BaseModel):
     type_NA_MNA = CharField(null = True)
     pump_type_NM = CharField(null = True)
     parametr_KTPRAS_1 = CharField(null = True)
-    number_of_delay_scans_of_the_analysis_of_the_health_of_the_control_circuits_NA_MNA = CharField(null = True)
-    unit_number_of_the_auxiliary_system_start_up_oil_pump_for_an_individual_oil_system = CharField(null = True)
+    number_of_delay_scans_of_the_analysis_of_the_health_of_the = CharField(null = True)
+    unit_number_of_the_auxiliary_system_start_up_oil_pump = CharField(null = True)
     NPS_number_1_or_2_which_the_AT_belongs = CharField(null = True)
     achr_protection_number_in_the_array_of_station_protections = CharField(null = True)
     saon_protection_number_in_the_array_of_station_protections = CharField(null = True)
