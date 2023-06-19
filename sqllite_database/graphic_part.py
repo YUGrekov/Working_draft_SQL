@@ -735,6 +735,22 @@ class Window_Filling_tables(QWidget):
         b_clear_tm_pz.resize(80,23)
         b_clear_tm_pz.move(b_width_two + 900, b_height + 45) 
         b_clear_tm_pz.clicked.connect(self.clear_tmpz_tabl)
+        # KTPR
+        l_ktprp = QLabel('KTPR:', self)
+        l_ktprp.move(b_width_one + 910, l_height + 90)
+        b_ktprp_basket = QPushButton('Подготовить', self)
+        b_ktprp_basket.setStyleSheet("background: #bfd6bf; border-radius: 4px; border: 1px solid")
+        b_ktprp_basket.setToolTip('''Защиты по пожару. Таблица не заполняется! 
+        - Если отсутствует в базе, то добавиться новая, со строками на 30 защит''')
+        b_ktprp_basket.resize(80,23)
+        b_ktprp_basket.move(b_width_one + 900, b_height + 90) 
+        b_ktprp_basket.clicked.connect(self.filling_ktprp)
+        b_clear_ktprp = QPushButton('Очистить', self)
+        b_clear_ktprp.setStyleSheet("background: #bbbabf; border-radius: 4px; border: 1px solid")
+        b_clear_ktprp.setToolTip("Очистить таблицу KTPRP")
+        b_clear_ktprp.resize(80,23)
+        b_clear_ktprp.move(b_width_two + 900, b_height + 90) 
+        b_clear_ktprp.clicked.connect(self.clear_ktprp_tabl)
         # Logs
         self.logTextBox = QTextEdit(self)
         self.logTextBox.setStyleSheet("border-radius: 4px; border: 1px solid")
@@ -807,6 +823,16 @@ class Window_Filling_tables(QWidget):
         self.logs_msg('default', 1, msg, True)
     def clear_do_tabl(self):
         msg = self.dop_function.clear_tabl('do', 'DO', self.list_tabl)
+        self.logs_msg('default', 1, msg, True)
+    # KTPRP
+    def filling_ktprp(self):
+        ktprp_table = Filling_KTPRP()
+        msg = ktprp_table.column_check()
+        self.logs_msg('default', 1, msg, True)
+        msg = ktprp_table.getting_modul()
+        self.logs_msg('default', 1, msg, True)
+    def clear_ktprp_tabl(self):
+        msg = self.dop_function.clear_tabl('ktprp', 'KTPRP', self.list_tabl)
         self.logs_msg('default', 1, msg, True)
     # KTPR
     def filling_ktpr(self):
@@ -1007,7 +1033,7 @@ class Window_Filling_tables(QWidget):
             elif number_color == 3: self.logTextBox.append(warningFormat.format(f'{today} - {logs}'))
             elif number_color == 0: self.logTextBox.append(newFormat.format(f'{today} - {logs}'))
 
-# Просмотр и редактирование таблиц
+# Выбор окна для просмотр и редактирования таблицы
 class Window_tabl_checkbox(QWidget):
     def __init__(self, list_tabl):
         super(Window_tabl_checkbox, self).__init__()
@@ -1038,6 +1064,36 @@ class Window_tabl_checkbox(QWidget):
         self.ch_tabl = Window_update_sql(name_table)
         self.ch_tabl.show()
         self.close()
+# Тип таблицы
+class Window_type_tabl_sql(QWidget):
+    def __init__(self, table_list):
+        super(Window_type_tabl_sql, self).__init__()
+        self.setWindowTitle('Тип столбцов таблицы')
+        self.setStyleSheet("background-color: #e1e5e5;")
+        self.setWindowFlags(Qt.WindowCloseButtonHint)
+        self.resize(500, 600)
+
+        self.TableWidget = QTableWidget(self)
+        self.TableWidget.setGeometry(0,0,500,600)
+
+        self.TableWidget.setColumnCount(3)
+        self.TableWidget.setRowCount(len(table_list))
+        tabl = ['Имя_eng', 'Имя_rus', 'Тип']
+        self.TableWidget.setHorizontalHeaderLabels(tabl)
+        # Color header
+        style = "::section {""background-color: #bbbabf; }"
+        self.TableWidget.horizontalHeader().setStyleSheet(style)
+
+        for row_t in range(len(table_list)):
+            for column_t in range(3):
+                if column_t == 0: value = table_list[row_t][column_t]
+                if column_t == 1: value = table_list[row_t][column_t]
+                if column_t == 2: value = table_list[row_t][column_t]
+
+                item = QTableWidgetItem(value)
+                item.setFlags(Qt.ItemIsEnabled)
+                self.TableWidget.setItem(row_t, column_t, item)
+# Основное окно просмотра и редактирования таблиц
 class Window_update_sql(QWidget):
     def __init__(self, table_used):
         super(Window_update_sql, self).__init__()
@@ -1058,6 +1114,8 @@ class Window_update_sql(QWidget):
         self.table_used = table_used
         self.edit_SQL = Editing_table_SQL()
         column, row, self.hat_name, value = self.edit_SQL.editing_sql(self.table_used)
+
+        self.gen_func = General_functions()
         
         try   : self.tablew(column, row, self.hat_name, value, rus_list[self.table_used])
         except: self.tablew(column, row, self.hat_name, value)
@@ -1119,6 +1177,12 @@ class Window_update_sql(QWidget):
         reset_request_Button.move(900, 40) 
         reset_request_Button.clicked.connect(self.reset_database_query)
 
+        clickButton_type = QPushButton('Тип данных', self)
+        clickButton_type.setStyleSheet("background: #bfd6bf; border-radius: 4px; border: 1px solid")
+        clickButton_type.resize(120,25)
+        clickButton_type.move(1100, 40) 
+        clickButton_type.clicked.connect(self.type_tabl)
+
         self.layout = QVBoxLayout()
         self.layout.addWidget(self.logTextBox)
         self.layout.addWidget(new_addrow_Button)
@@ -1128,6 +1192,11 @@ class Window_update_sql(QWidget):
         self.layout.addWidget(self.TableWidget)
         # Logs
         self.logs_msg(f'Запущен редактор базы данных. Таблица: {self.table_used}', 1)
+    # Новое окно тип таблицы
+    def type_tabl(self):
+        type_list = self.edit_SQL.type_column(self.table_used)
+        self.type_tabl = Window_type_tabl_sql(type_list)
+        self.type_tabl.show()
     # Сompletely clear the table
     def clear_tabl(self):
         rowcount = self.TableWidget.rowCount()
@@ -1278,8 +1347,18 @@ class Window_update_sql(QWidget):
                     item = QTableWidgetItem('')
                 else:
                     item = QTableWidgetItem(str(value[row_t][column_t]))
-                    item.setToolTip(str(value[row_t][column_t]))
-
+                    # Подсказки к ячейкам
+                    if self.gen_func.str_find(str(value[row_t][column_t]), {'DI'}):
+                        name_signal = self.edit_SQL.search_name("di", str(value[row_t][column_t]))
+                        item.setToolTip(name_signal)
+                    elif self.gen_func.str_find(str(value[row_t][column_t]), {'DO'}):
+                        name_signal = self.edit_SQL.search_name("do", str(value[row_t][column_t]))
+                        item.setToolTip(name_signal)
+                    elif self.gen_func.str_find(str(value[row_t][column_t]), {'AI'}):
+                        name_signal = self.edit_SQL.search_name("ai", str(value[row_t][column_t]))
+                        item.setToolTip(name_signal)
+                    else: item.setToolTip('')
+                    
                 if column_t == 0: item.setFlags(Qt.ItemIsEnabled)
      
                 # center text
@@ -1313,7 +1392,9 @@ class Window_update_sql(QWidget):
         text_cell_id = self.TableWidget.item(int(row), 0).text()
 
         hat_name = self.edit_SQL.column_names(self.table_used)
-        self.edit_SQL.update_row_tabl(column, text_cell, text_cell_id, self.table_used, hat_name)
+        flag_NULL = True if text_cell == 0 else False
+        msg = self.edit_SQL.update_row_tabl(column, text_cell, text_cell_id, self.table_used, hat_name, flag_NULL)
+        self.logs_msg('default', 1, msg, True)
     # Logging messeges
     def logs_msg(self, logs=None, number_color=1, buffer_msg=None, msg=False):
         today = datetime.now()

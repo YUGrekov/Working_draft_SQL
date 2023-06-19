@@ -95,6 +95,10 @@ rus_list = {'signals': {'id':'№', 'type_signal':'Тип сигнала', 'uso'
                    'group_trend':'Группа сброса трендов', 'hysteresis_TI':'Гистерезис ТИ', 'unit_physical_ACP':'Единица измерения физической\nвеличины (АЦП)',
                    'setpoint_map_rule':'Правило для карты\nуставок', 'fuse':'Предохранитель',
                    'uso':'Шкаф', 'basket':'Корзина', 'module':'Модуль', 'channel':'Канал'},
+
+            'ktprp': {'id':'№','variable':'Переменная', 'tag':'Идентификатор', 'name':'Название',
+                      'Number_PZ':'Номер PZ', 'Type':'Тип\n1 - авт., 2 - АПУ, 3 - с АРМ', 'Pic':'Pic', 
+                      'number_list_VU':'Номер листа\n(для ВУ)', 'number_protect_VU':'Номер защиты\n(для ВУ)'},
             
             'ktpr': {'id':'№','variable':'Переменная', 'tag':'Идентификатор', 'name':'Название',
                      'avar_parameter':'Аварийный параметр\n(pInput)', 'prohibition_masking':'Запрет маскирования\n(1 - запрет)', 
@@ -567,6 +571,20 @@ class USO(BaseModel):
 
     class Meta:
         table_name = 'uso'
+class KTPRP(BaseModel):
+    variable = CharField(null = True)
+    tag  = CharField(null = True)
+    name = CharField(null = True)
+
+    Number_PZ = CharField(null = True)
+    Type = CharField(null = True)
+    Pic = CharField(null = True)
+
+    number_list_VU = IntegerField(null = True)
+    number_protect_VU = IntegerField(null = True)
+    
+    class Meta:
+        table_name = 'ktprp'
 class KTPR(BaseModel):
     variable = CharField(null = True)
     tag  = CharField(null = True)

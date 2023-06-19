@@ -1232,6 +1232,34 @@ class Filling_DO():
         msg = self.dop_function.column_check(DO, 'do', list_default)
         return msg 
     
+# Work with filling in the table 'KTPRP'
+class Filling_KTPRP():
+    def __init__(self):
+        self.cursor   = db.cursor()
+        self.dop_function = General_functions()
+    def getting_modul(self):
+        msg = {}
+        list_KTPRP = []
+        with db:
+            for i in range(1, 31):
+                list_KTPRP.append(dict(variable = f'KTPRP[{i}]',
+                                       tag = '',
+                                       name = 'Резерв',
+                                       Number_PZ = '',
+                                       Type = '',
+                                       Pic = ''))
+
+            # Checking for the existence of a database
+            KTPRP.insert_many(list_KTPRP).execute()
+
+        msg[f'{today} - Таблица: ktprp подготовлена'] = 1
+        return(msg)
+    # Заполняем таблицу KTPRP
+    def column_check(self):
+        list_default = ['variable', 'tag', 'name', 'Number_PZ', 'Type', 'Pic', 
+                         'number_list_VU', 'number_protect_VU']
+        msg = self.dop_function.column_check(KTPRP, 'ktprp', list_default)
+        return msg 
 # Work with filling in the table 'KTPR'
 class Filling_KTPR():
     def __init__(self):
@@ -2728,9 +2756,6 @@ class Editing_table_SQL():
     def __init__(self):
         self.cursor = db.cursor()
     def editing_sql(self, table_sql):
-        #all_signal  = []
-        #hat_tabl    = {}
-        #unpacking   = []
         unpacking_  = []
 
         self.cursor.execute(f'SELECT * FROM "{table_sql}" ORDER BY id')
@@ -2756,25 +2781,21 @@ class Editing_table_SQL():
         count_column = len(name_column)
         count_row    = len(records)
         return count_column, count_row, array_name_column, records
-
-        # with db:
-        #     for row_sql in table_sql.select().dicts():
-        #         all_signal.append(row_sql)
-        #         hat_tabl = row_sql
-        # for key in all_signal:
-        #     for i, a in key.items():
-        #         unpacking.append(str(a))
-        # name_column  = hat_tabl.keys()
-        # count_column = len(hat_tabl.keys())
-        # count_row    = len(all_signal)
-        # unpacking = list(self.func_chunks_generators(unpacking, count_column))
-        #for i in unpacking: unpacking_.append(i)
-        #db.close()
-        #return count_column, count_row, name_column, unpacking_
     def func_chunks_generators(self, lst, n):
         for i in range(0, len(lst), n):
             yield lst[i : i + n]
 
+    # Поиск названия сигнала для подписи
+    def search_name(self, tabl, value):
+        try:
+            isdigit_num  = re.findall('\d+', str(value))
+            self.cursor.execute(f"""SELECT name 
+                                    FROM "{tabl}"
+                                    WHERE id = {int(isdigit_num[0])}""")
+            name_row = self.cursor.fetchall()[0][0]
+            return name_row
+        except:
+            return ''
     # Column names
     def column_names(self, table_used):
         self.cursor.execute(f'SELECT * FROM {table_used}')
@@ -2820,13 +2841,23 @@ class Editing_table_SQL():
         except:
             msg[f'{today} - Таблица: {table_used} некорректный запрос!'] = 2
             return msg
-
     # Updating cell values
-    def update_row_tabl(self, column, text_cell, text_cell_id, table_used, hat_name):
+    def update_row_tabl(self, column, text_cell, text_cell_id, table_used, hat_name, flag_NULL):
+        msg = {}
         active_column = list(hat_name)[column]
-        self.cursor.execute(f"""UPDATE {table_used} 
-                                SET "{active_column}"='{text_cell}' 
-                                WHERE id={text_cell_id}""")
+        try:
+            if flag_NULL:
+                self.cursor.execute(f"""UPDATE {table_used} 
+                                        SET "{active_column}"= NULL
+                                        WHERE id={text_cell_id}""")
+            else:
+                self.cursor.execute(f"""UPDATE {table_used} 
+                                        SET "{active_column}"='{text_cell}' 
+                                        WHERE id={text_cell_id}""")
+            return msg
+        except Exception:
+            msg[f'{today} - Таблица: {table_used}, ошибка при изменении ячейки: {traceback.format_exc()}'] = 2
+            return msg
         #table_used.update(**{active_column: text_cell}).where(table_used.id == text_cell_id).execute()
     # Adding new lines
     def add_new_row(self, table_used):
@@ -2856,6 +2887,30 @@ class Editing_table_SQL():
     # Table selection window
     def get_tabl(self):
         return db.get_tables()
+    def type_column(self, table_used):
+        self.cursor.execute(f"""SELECT column_name, data_type
+                                FROM information_schema.columns
+                                WHERE table_schema = 'public' AND table_name = '{table_used}'""")
+        type_list = []
+
+        for tabl, name_c in rus_list.items():
+
+            if tabl == table_used:
+
+                for i in self.cursor.fetchall():
+                    column_name = i[0]
+                    data_type   = i[1]
+
+                    if column_name in name_c.keys():
+
+                        for key, value in name_c.items():
+                            if column_name == key:
+                                list_a = [column_name, value, data_type]
+                                type_list.append(list_a)
+                                break
+        return type_list
+
+
 
 
  
