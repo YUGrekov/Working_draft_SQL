@@ -99,7 +99,7 @@ rus_list = {'signals': {'id':'№', 'type_signal':'Тип сигнала', 'uso'
             'ktpr': {'id':'№','variable':'Переменная', 'tag':'Идентификатор', 'name':'Название',
                      'avar_parameter':'Аварийный параметр\n(pInput)', 'prohibition_masking':'Запрет маскирования\n(1 - запрет)', 
                      'auto_unlock_protection':'Автоматическая деблокировка \nзащиты (1 - разрешена)', 
-                     'shutdown_PNS_a_time_delay_up_5s_after_turning_off_all_NA':'Откл. ПНС с выдержкой времени до 5с\nпосле откл. всех МНА',
+                     'shutdown_PNS_a_time_delay_up_5s_after_turning':'Откл. ПНС с выдержкой времени до 5с\nпосле откл. всех МНА',
                      'bitmask_protection_group_membership':'Битовая маска принадлежности защиты группе\n(1 в N бите - разрешение сраб. данной защиты на N группе (плече))', 
                      'stop_type_NA':'Тип остановки НА:\n0-None, 1-ManageStop, 2-ElectricStop, 3-ManageStopOffVV\n4-ChRPAlarmStop, 5-StopAuto, 6-StopAuto2, 7-PovtorOtkl',
                      
@@ -120,7 +120,7 @@ rus_list = {'signals': {'id':'№', 'type_signal':'Тип сигнала', 'uso'
                      'closing_valves_outlet_RD':'Закрытие задвижек на\nвыходе узла РД', 
                      'closing_valves_inlet_SSVD':'Закрытие задвижек на\nвходе ССВД', 
                      'closing_valves_inlet_FGU':'Закрытие задвижек на\nвходе ФГУ', 
-                     'closing_secant_valve_connection_unit__oil_production_oil_refining_facility':'Закрытие секущей задвижки узла\nподключения объекта нефтедобычи',
+                     'closing_secant_valve_connection_unit__oil_production_oil':'Закрытие секущей задвижки узла\nподключения объекта нефтедобычи',
                      'closing_valves_inlet_RP':'Закрытие задвижек на\nвходе РП', 
                      'reserve_protect_14':'Резерв(14 бит)', 
                      'reserve_protect_15':'Резерв(15 бит)',
@@ -135,7 +135,7 @@ rus_list = {'signals': {'id':'№', 'type_signal':'Тип сигнала', 'uso'
                      'shutdown_of_booster_fans_ED':'Отключение подпорных\nвентиляторов ЭД', 
                      'shutdown_of_retaining_fans_of_the_electrical_room':'Отключение подпорных\nвентиляторов электрозала', 
                      'shutdown_of_ED_air_compressors':'Отключение компрессоров\nподпора воздуха ЭД', 
-                     'shutdown_pumps_providing_oil_oil_product_pumping_from_oil_production_oil_refining_facilities':'Отключение насосов, обеспечивающих\nподкачку нефти от объектов нефтедобычи', 
+                     'shutdown_pumps_providing_oil':'Отключение насосов, обеспечивающих\nподкачку нефти от объектов нефтедобычи', 
                      'disabling_pumps_for_pumping_oil_oil_products_through_BIC':'Отключение насосов прокачки\nнефти через БИК', 
                      'shutdown_domestic_and_drinking_water_pumps':'Отключение насосов\nхоз-питьевого водоснабжения', 
                      'shutdown_of_art_well_pumps':'Отключение насосов\nартскважин', 
@@ -150,28 +150,28 @@ rus_list = {'signals': {'id':'№', 'type_signal':'Тип сигнала', 'uso'
                      'shutdown_of_exhaust_fans_in_the_SSVD_room':'Отключение вытяжных\nвентиляторов в помещении ССВД', 
                      'shutdown_of_the_roof_fans_of_the_MNS_pump_room':'Отключение крышных\nвентиляторов насосного зала МНС', 
                      'shutdown_of_the_roof_fans_of_the_PNS_pump_room':'Отключение крышных\nвентиляторов насосного зала ПНС', 
-                     'switching_off_the_supply_fans_pumping_room_of_the_MNS_and_closing_the_fire_dampers':'Отключение приточных вентиляторов\nнасосного зала МНС и закрытие\nогнезадерживающих клапанов', 
-                     'switching_off_the_supply_fans_pumping_room_of_the_PNS_and_closing_the_fire_dampers':'Отключение приточных вентиляторов\nнасосного зала ПНС и закрытие\nогнезадерживающих клапанов', 
-                     'switch_off_the_supply_fans_in_the_centralized_oil_system_room_and_close_the_fire_dampers':'Отключение приточных вентиляторов\nв помещении централизованной маслосистемы и\nзакрытие огнезадерживающих клапанов', 
+                     'switching_off_the_supply_fans_pumping_room_of_the_MNS':'Отключение приточных вентиляторов\nнасосного зала МНС и закрытие\nогнезадерживающих клапанов', 
+                     'switching_off_the_supply_fans_pumping_room_of_the_PNS':'Отключение приточных вентиляторов\nнасосного зала ПНС и закрытие\nогнезадерживающих клапанов', 
+                     'switch_off_the_supply_fans_in_the_centralized_oil':'Отключение приточных вентиляторов\nв помещении централизованной маслосистемы и\nзакрытие огнезадерживающих клапанов', 
                      'switching_off_the_supply_fan_of_the_RD_room':'Отключение приточного\nвентилятора помещения РД', 
                      'switching_off_the_supply_fan_of_the_SSVD_room':'Отключение приточного\nвентилятора помещения ССВД', 
-                     'switching_off_the_supply_fans_of_the_ED_air_compressor_room_and_closing_the_fire_dampers':'Отключение приточных вентиляторов\nпомещения компрессорной подпора воздуха ЭД\nи закрытие огнезадерживающих клапанов', 
+                     'switching_off_the_supply_fans_of_the_ED_air_compressor':'Отключение приточных вентиляторов\nпомещения компрессорной подпора воздуха ЭД\nи закрытие огнезадерживающих клапанов', 
                      'switching_off_the_supply_fan_of_the_BIK_room':'Отключение приточного\nвентилятора помещения БИК', 
                      'switching_off_the_supply_fan_of_the_SIKN_room':'Отключение приточного\nвентилятора помещения СИКН', 
 
                      'closing_the_air_valves_louvered_grilles_of_the_pump_room':'Закрытие воздушных клапанов\n(жалюзийных решёток) насосного зала', 
-                     'closing_of_air_valves_louvered_grilles_of_the_compressor_room_of_the_ED_air_overpressure':'Закрытие воздушных клапанов\n(жалюзийных решёток) помещения компрессорной\nподпора воздуха ЭД', 
+                     'closing_of_air_valves_louvered_grilles_of_the_compressor_room':'Закрытие воздушных клапанов\n(жалюзийных решёток) помещения компрессорной\nподпора воздуха ЭД', 
                      'shutdown_of_electric_oil_heaters':'Отключение электронагревателей\nмасла', 
-                     'shutdown_of_the_electric_heaters_of_the_leakage_collection_tank_MNS':'Отключение электронагревателей\nемкости сбора утечек МНС', 
-                     'shutdown_of_the_electric_heaters_of_the_leakage_collection_tank_PNS':'Отключение электронагревателей\nемкости сбора утечек ПНС', 
+                     'shutdown_of_the_electric_heaters_of_the_leakage_collection_MNS':'Отключение электронагревателей\nемкости сбора утечек МНС', 
+                     'shutdown_of_the_electric_heaters_of_the_leakage_collection_PNS':'Отключение электронагревателей\nемкости сбора утечек ПНС', 
                      'shutdown_of_electric_heaters_of_the_SIKN_leak_collection_tank':'Отключение электронагревателей\nемкости сбора утечек СИКН', 
-                     'shutdown_of_air_coolers_of_the_locking_system_of_mechanical_seals_of_all_MNA':'Отключение воздушных охладителей\nсистемы запирания торцовых уплотнений\nвсех МНА', 
-                     'shutdown_of_air_coolers_of_the_locking_system_of_mechanical_seals_disconnected_NA':'Отключение воздушных охладителей\nсистемы запирания торцовых уплотнений\nотключенных НА', 
+                     'shutdown_of_air_coolers_of_the_locking_system_MNA':'Отключение воздушных охладителей\nсистемы запирания торцовых уплотнений\nвсех МНА', 
+                     'shutdown_of_air_coolers_of_the_locking_system_disc_NA':'Отключение воздушных охладителей\nсистемы запирания торцовых уплотнений\nотключенных НА', 
                      'shutdown_of_the_external_cooling_circuit_ChRP_MNA':'Отключение внешнего контура\nохлаждения ЧРП МНА', 
                      'shutdown_of_the_external_cooling_circuit_ChRP_PNA':'Отключение внешнего контура\nохлаждения ЧРП ПНА', 
                      'shutdown_of_locking_system_pumps':'Отключение насосов\nсистемы запирания',
-                     'shutdown_of_pumps_for_pumping_oil_oil_products_through_the_operational_BIK':'Отключение насосов прокачки нефти\nчерез оперативный БИК', 
-                     'shutdown_of_pumping_pumps_from_leakage_collection_tanks_of_all_SIKN':'Отключение насосов откачки из\nемкостей сбора утечек всех СИКН', 
+                     'shutdown_of_pumps_for_pumping_oil_oil_products_through':'Отключение насосов прокачки нефти\nчерез оперативный БИК', 
+                     'shutdown_of_pumping_pumps_from_leakage_collection_tanks':'Отключение насосов откачки из\nемкостей сбора утечек всех СИКН', 
                      'shutdown_of_anticondensation_electric_heaters_ED':'Отключение антиконденсационных\nэлектронагревателей ЭД', 
                      'fire_protection':'Защита по пожару', 
                      'reserve_aux_15':'Резерв(15 бит)', 
@@ -575,7 +575,7 @@ class KTPR(BaseModel):
     avar_parameter = CharField(null = True)
     prohibition_masking = CharField(null = True)
     auto_unlock_protection = CharField(null = True)
-    shutdown_PNS_a_time_delay_up_5s_after_turning_off_all_NA = CharField(null = True)
+    shutdown_PNS_a_time_delay_up_5s_after_turning = CharField(null = True)
     bitmask_protection_group_membership = CharField(null = True)
     stop_type_NA = CharField(null = True)
     pump_station_stop_type = CharField(null = True)
@@ -592,7 +592,7 @@ class KTPR(BaseModel):
     closing_valves_outlet_RD = CharField(null = True)
     closing_valves_inlet_SSVD = CharField(null = True)
     closing_valves_inlet_FGU = CharField(null = True)
-    closing_secant_valve_connection_unit__oil_production_oil_refining_facility = CharField(null = True)
+    closing_secant_valve_connection_unit__oil_production_oil = CharField(null = True)
     closing_valves_inlet_RP = CharField(null = True)
     reserve_protect_14 = CharField(null = True)
     reserve_protect_15 = CharField(null = True)
@@ -607,7 +607,7 @@ class KTPR(BaseModel):
     shutdown_of_booster_fans_ED = CharField(null = True)
     shutdown_of_retaining_fans_of_the_electrical_room = CharField(null = True)
     shutdown_of_ED_air_compressors = CharField(null = True)
-    shutdown_pumps_providing_oil_oil_product_pumping_from_oil_production_oil_refining_facilities = CharField(null = True)
+    shutdown_pumps_providing_oil = CharField(null = True)
     disabling_pumps_for_pumping_oil_oil_products_through_BIC = CharField(null = True)
     shutdown_domestic_and_drinking_water_pumps = CharField(null = True)
     shutdown_of_art_well_pumps = CharField(null = True)
@@ -622,28 +622,28 @@ class KTPR(BaseModel):
     shutdown_of_exhaust_fans_in_the_SSVD_room = CharField(null = True)
     shutdown_of_the_roof_fans_of_the_MNS_pump_room = CharField(null = True)
     shutdown_of_the_roof_fans_of_the_PNS_pump_room = CharField(null = True)
-    switching_off_the_supply_fans_pumping_room_of_the_MNS_and_closing_the_fire_dampers = CharField(null = True)
-    switching_off_the_supply_fans_pumping_room_of_the_PNS_and_closing_the_fire_dampers = CharField(null = True)
-    switch_off_the_supply_fans_in_the_centralized_oil_system_room_and_close_the_fire_dampers = CharField(null = True)
+    switching_off_the_supply_fans_pumping_room_of_the_MNS = CharField(null = True)
+    switching_off_the_supply_fans_pumping_room_of_the_PNS = CharField(null = True)
+    switch_off_the_supply_fans_in_the_centralized_oil = CharField(null = True)
     switching_off_the_supply_fan_of_the_RD_room = CharField(null = True)
     switching_off_the_supply_fan_of_the_SSVD_room = CharField(null = True)
-    switching_off_the_supply_fans_of_the_ED_air_compressor_room_and_closing_the_fire_dampers = CharField(null = True)
+    switching_off_the_supply_fans_of_the_ED_air_compressor = CharField(null = True)
     switching_off_the_supply_fan_of_the_BIK_room = CharField(null = True)
     switching_off_the_supply_fan_of_the_SIKN_room = CharField(null = True)
     
     closing_the_air_valves_louvered_grilles_of_the_pump_room = CharField(null = True)
-    closing_of_air_valves_louvered_grilles_of_the_compressor_room_of_the_ED_air_overpressure = CharField(null = True)
+    closing_of_air_valves_louvered_grilles_of_the_compressor_room = CharField(null = True)
     shutdown_of_electric_oil_heaters = CharField(null = True)
-    shutdown_of_the_electric_heaters_of_the_leakage_collection_tank_MNS = CharField(null = True)
-    shutdown_of_the_electric_heaters_of_the_leakage_collection_tank_PNS = CharField(null = True)
+    shutdown_of_the_electric_heaters_of_the_leakage_collection_MNS = CharField(null = True)
+    shutdown_of_the_electric_heaters_of_the_leakage_collection_PNS = CharField(null = True)
     shutdown_of_electric_heaters_of_the_SIKN_leak_collection_tank = CharField(null = True)
-    shutdown_of_air_coolers_of_the_locking_system_of_mechanical_seals_of_all_MNA = CharField(null = True)
-    shutdown_of_air_coolers_of_the_locking_system_of_mechanical_seals_disconnected_NA = CharField(null = True)
+    shutdown_of_air_coolers_of_the_locking_system_MNA = CharField(null = True)
+    shutdown_of_air_coolers_of_the_locking_system_disc_NA = CharField(null = True)
     shutdown_of_the_external_cooling_circuit_ChRP_MNA = CharField(null = True)
     shutdown_of_the_external_cooling_circuit_ChRP_PNA = CharField(null = True)
     shutdown_of_locking_system_pumps = CharField(null = True)
-    shutdown_of_pumps_for_pumping_oil_oil_products_through_the_operational_BIK = CharField(null = True)
-    shutdown_of_pumping_pumps_from_leakage_collection_tanks_of_all_SIKN = CharField(null = True)
+    shutdown_of_pumps_for_pumping_oil_oil_products_through = CharField(null = True)
+    shutdown_of_pumping_pumps_from_leakage_collection_tanks = CharField(null = True)
     shutdown_of_anticondensation_electric_heaters_ED = CharField(null = True)
     fire_protection = CharField(null = True)
     reserve_aux_15 = CharField(null = True)

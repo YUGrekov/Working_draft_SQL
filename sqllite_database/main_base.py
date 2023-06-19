@@ -160,9 +160,9 @@ class General_functions():
                                                     column_update_cl == tag)
         if not bool(exist_value):
             cursor = db.cursor()
-            cursor.execute(f"""UPDATE '{tabl_used_str}'
-                               SET {column_update_str}='{tag}' 
-                               WHERE id='{number_NA}'""")
+            cursor.execute(f"""UPDATE {tabl_used_str}
+                               SET "{column_update_str}"='{tag}' 
+                               WHERE "id"='{number_NA}'""")
             msg[f'{today} - Таблица: umpna, NA[{number_NA}] обновлено {column_update_str} = {tag}'] = 3
             return msg
         return msg
@@ -173,9 +173,9 @@ class General_functions():
                                                     column_update_cl == value)
         if not bool(exist_value):
             cursor = db.cursor()
-            cursor.execute(f'''UPDATE "{tabl_used_str}"
-                               SET {column_update_str}='{value}' 
-                               WHERE name="{name}"''')
+            cursor.execute(f"""UPDATE {tabl_used_str}
+                               SET "{column_update_str}"='{value}' 
+                               WHERE "name"='{name}'""")
             msg[f'{today} - Таблица: {tabl_used_str}, обновлен: {name},  {column_update_str} = {value}'] = 3
             return msg
         return msg
@@ -1246,81 +1246,82 @@ class Filling_KTPR():
                                       tag = '',
                                       name = 'Резерв',
                                       avar_parameter = '',
-                                      prohibition_masking = '',
-                                      auto_unlock_protection = '',
-                                      shutdown_PNS_a_time_delay_up_5s_after_turning_off_all_NA = '',
-                                      bitmask_protection_group_membership = '',
-                                      stop_type_NA = '',
-                                      pump_station_stop_type = '',
-                                      closing_gate_valves_at_the_inlet_NPS = '',
-                                      closing_gate_valves_at_the_outlet_NPS = '',
-                                      closing_gate_valves_between_PNS_and_MNS = '',
-                                      closing_gate_valves_between_RP_and_PNS = '',
-                                      closing_valves_inlet_and_outlet_MNS = '',
-                                      closing_valves_inlet_and_outlet_PNS = '',
-                                      closing_valves_inlet_and_outlet_MNA = '',
-                                      closing_valves_inlet_and_outlet_PNA = '',
-                                      closing_valves_inlet_RD = '',
-                                      closing_valves_outlet_RD = '',
-                                      closing_valves_inlet_SSVD = '',
-                                      closing_valves_inlet_FGU = '',
-                                      closing_secant_valve_connection_unit__oil_production_oil_refining_facility = '',
-                                      closing_valves_inlet_RP = '',
-                                      reserve_protect_14 = '',
-                                      reserve_protect_15 = '',
-                                      shutdown_oil_pumps_after_signal_stopped_NA = '',
-                                      shutdown_circulating_water_pumps = '',
-                                      shutdown_pumps_pumping_out_from_tanks_collection_of_leaks_MNS = '',
-                                      shutdown_pumps_pumping_out_from_tanks_collection_of_leaks_PNS = '',
-                                      shutdown_pumps_pumping_out_from_tanks_SSVD = '',
-                                      switching_off_the_electric_room_fans = '',
-                                      shutdown_of_booster_fans_ED = '',
-                                      shutdown_of_retaining_fans_of_the_electrical_room = '',
-                                      shutdown_of_ED_air_compressors = '',
-                                      shutdown_pumps_providing_oil_oil_product_pumping_from_oil_production_oil_refining_facilities = '',
-                                      disabling_pumps_for_pumping_oil_oil_products_through_BIC = '',
-                                      shutdown_domestic_and_drinking_water_pumps = '',
-                                      shutdown_of_art_well_pumps = '',
-                                      AVO_shutdown = '',
-                                      shutdown_of_water_cooling_fans_circulating_water_supply_system = '',
-                                      shutdown_exhaust_fans_of_the_pumping_room_of_the_MNS = '',
-                                      shutdown_of_exhaust_fans_of_the_pumping_room_PNS = '',
-                                      shutdown_of_exhaust_fans_in_the_centralized_oil_system_room = '',
-                                      shutdown_of_exhaust_fans_oil_pit_in_the_electrical_room = '',
-                                      shutdown_of_exhaust_fans_in_the_RD_room = '',
-                                      shutdown_of_exhaust_fans_in_the_SSVD_room = '',
-                                      shutdown_of_the_roof_fans_of_the_MNS_pump_room = '',
-                                      shutdown_of_the_roof_fans_of_the_PNS_pump_room = '',
-                                      switching_off_the_supply_fans_pumping_room_of_the_MNS_and_closing_the_fire_dampers = '',
-                                      switching_off_the_supply_fans_pumping_room_of_the_PNS_and_closing_the_fire_dampers = '',
-                                      switch_off_the_supply_fans_in_the_centralized_oil_system_room_and_close_the_fire_dampers = '',
-                                      switching_off_the_supply_fan_of_the_RD_room = '',
-                                      switching_off_the_supply_fan_of_the_SSVD_room = '',
-                                      switching_off_the_supply_fans_of_the_ED_air_compressor_room_and_closing_the_fire_dampers = '',
-                                      switching_off_the_supply_fan_of_the_BIK_room = '',
-                                      switching_off_the_supply_fan_of_the_SIKN_room = '',  
-                                      closing_the_air_valves_louvered_grilles_of_the_pump_room = '',
-                                      closing_of_air_valves_louvered_grilles_of_the_compressor_room_of_the_ED_air_overpressure = '',
-                                      shutdown_of_electric_oil_heaters = '',
-                                      shutdown_of_the_electric_heaters_of_the_leakage_collection_tank_MNS = '',
-                                      shutdown_of_the_electric_heaters_of_the_leakage_collection_tank_PNS = '',
-                                      shutdown_of_electric_heaters_of_the_SIKN_leak_collection_tank = '',
-                                      shutdown_of_air_coolers_of_the_locking_system_of_mechanical_seals_of_all_MNA = '',
-                                      shutdown_of_air_coolers_of_the_locking_system_of_mechanical_seals_disconnected_NA = '',
-                                      shutdown_of_the_external_cooling_circuit_ChRP_MNA = '',
-                                      shutdown_of_the_external_cooling_circuit_ChRP_PNA = '',
-                                      shutdown_of_locking_system_pumps = '',
-                                      shutdown_of_pumps_for_pumping_oil_oil_products_through_the_operational_BIK = '',
-                                      shutdown_of_pumping_pumps_from_leakage_collection_tanks_of_all_SIKN = '',
-                                      shutdown_of_anticondensation_electric_heaters_ED = '',
-                                      fire_protection = '',
-                                      reserve_aux_15 = '',
-                                      time_ust = '',
-                                      Pic = '',
+                                    #   prohibition_masking = '',
+                                    #   auto_unlock_protection = '',
+                                    #   shutdown_PNS_a_time_delay_up_5s_after_turning = '',
+                                    #   bitmask_protection_group_membership = '',
+                                    #   stop_type_NA = '',
+                                    #   pump_station_stop_type = '',
+                                    #   closing_gate_valves_at_the_inlet_NPS = '',
+                                    #   closing_gate_valves_at_the_outlet_NPS = '',
+                                    #   closing_gate_valves_between_PNS_and_MNS = '',
+                                    #   closing_gate_valves_between_RP_and_PNS = '',
+                                    #   closing_valves_inlet_and_outlet_MNS = '',
+                                    #   closing_valves_inlet_and_outlet_PNS = '',
+                                    #   closing_valves_inlet_and_outlet_MNA = '',
+                                    #   closing_valves_inlet_and_outlet_PNA = '',
+                                    #   closing_valves_inlet_RD = '',
+                                    #   closing_valves_outlet_RD = '',
+                                    #   closing_valves_inlet_SSVD = '',
+                                    #   closing_valves_inlet_FGU = '',
+                                    #   closing_secant_valve_connection_unit__oil_production_oil = '',
+                                    #   closing_valves_inlet_RP = '',
+                                    #   reserve_protect_14 = '',
+                                    #   reserve_protect_15 = '',
+                                    #   shutdown_oil_pumps_after_signal_stopped_NA = '',
+                                    #   shutdown_circulating_water_pumps = '',
+                                    #   shutdown_pumps_pumping_out_from_tanks_collection_of_leaks_MNS = '',
+                                    #   shutdown_pumps_pumping_out_from_tanks_collection_of_leaks_PNS = '',
+                                    #   shutdown_pumps_pumping_out_from_tanks_SSVD = '',
+                                    #   switching_off_the_electric_room_fans = '',
+                                    #   shutdown_of_booster_fans_ED = '',
+                                    #   shutdown_of_retaining_fans_of_the_electrical_room = '',
+                                    #   shutdown_of_ED_air_compressors = '',
+                                    #   shutdown_pumps_providing_oil = '',
+                                    #   disabling_pumps_for_pumping_oil_oil_products_through_BIC = '',
+                                    #   shutdown_domestic_and_drinking_water_pumps = '',
+                                    #   shutdown_of_art_well_pumps = '',
+                                    #   AVO_shutdown = '',
+                                    #   shutdown_of_water_cooling_fans_circulating_water_supply_system = '',
+                                    #   shutdown_exhaust_fans_of_the_pumping_room_of_the_MNS = '',
+                                    #   shutdown_of_exhaust_fans_of_the_pumping_room_PNS = '',
+                                    #   shutdown_of_exhaust_fans_in_the_centralized_oil_system_room = '',
+                                    #   shutdown_of_exhaust_fans_oil_pit_in_the_electrical_room = '',
+                                    #   shutdown_of_exhaust_fans_in_the_RD_room = '',
+                                    #   shutdown_of_exhaust_fans_in_the_SSVD_room = '',
+                                    #   shutdown_of_the_roof_fans_of_the_MNS_pump_room = '',
+                                    #   shutdown_of_the_roof_fans_of_the_PNS_pump_room = '',
+                                    #   switching_off_the_supply_fans_pumping_room_of_the_MNS = '',
+                                    #   switching_off_the_supply_fans_pumping_room_of_the_PNS = '',
+                                    #   switch_off_the_supply_fans_in_the_centralized_oil = '',
+                                    #   switching_off_the_supply_fan_of_the_RD_room = '',
+                                    #   switching_off_the_supply_fan_of_the_SSVD_room = '',
+                                    #   switching_off_the_supply_fans_of_the_ED_air_compressor = '',
+                                    #   switching_off_the_supply_fan_of_the_BIK_room = '',
+                                    #   switching_off_the_supply_fan_of_the_SIKN_room = '',  
+                                    #   closing_the_air_valves_louvered_grilles_of_the_pump_room = '',
+                                    #   closing_of_air_valves_louvered_grilles_of_the_compressor_room = '',
+                                    #   shutdown_of_electric_oil_heaters = '',
+                                    #   shutdown_of_the_electric_heaters_of_the_leakage_collection_MNS = '',
+                                    #   shutdown_of_the_electric_heaters_of_the_leakage_collection_PNS = '',
+                                    #   shutdown_of_electric_heaters_of_the_SIKN_leak_collection_tank = '',
+                                    #   shutdown_of_air_coolers_of_the_locking_system_MNA = '',
+                                    #   shutdown_of_air_coolers_of_the_locking_system_disc_NA = '',
+                                    #   shutdown_of_the_external_cooling_circuit_ChRP_MNA = '',
+                                    #   shutdown_of_the_external_cooling_circuit_ChRP_PNA = '',
+                                    #   shutdown_of_locking_system_pumps = '',
+                                    #   shutdown_of_pumps_for_pumping_oil_oil_products_through = '',
+                                    #   shutdown_of_pumping_pumps_from_leakage_collection_tanks = '',
+                                    #   shutdown_of_anticondensation_electric_heaters_ED = '',
+                                    #   fire_protection = '',
+                                    #   reserve_aux_15 = '',
+                                    #   time_ust = '',
+                                    #   Pic = '',
                                       group_ust = 'Временные уставки общестанционных защит',
                                       rule_map_ust = 'Временные уставки',
-                                      number_list_VU = '',
-                                      number_protect_VU = ''))
+                                    #   number_list_VU = '',
+                                    #   number_protect_VU = ''
+                                    ))
 
             # Checking for the existence of a database
             KTPR.insert_many(list_KTPR).execute()
@@ -1330,35 +1331,35 @@ class Filling_KTPR():
     # Заполняем таблицу KTPR
     def column_check(self):
         list_default = ['variable', 'tag', 'name', 
-                        'avar_parameter', 'prohibition_masking', 'auto_unlock_protection', 'shutdown_PNS_a_time_delay_up_5s_after_turning_off_all_NA',
+                        'avar_parameter', 'prohibition_masking', 'auto_unlock_protection', 'shutdown_PNS_a_time_delay_up_5s_after_turning',
                         'bitmask_protection_group_membership', 'stop_type_NA', 'pump_station_stop_type',
                         'closing_gate_valves_at_the_inlet_NPS', 'closing_gate_valves_at_the_outlet_NPS', 'closing_gate_valves_between_PNS_and_MNS',
                         'closing_gate_valves_between_RP_and_PNS', 'closing_valves_inlet_and_outlet_MNS', 'closing_valves_inlet_and_outlet_PNS',
                         'closing_valves_inlet_and_outlet_MNA', 'closing_valves_inlet_and_outlet_PNA', 'closing_valves_inlet_RD',
                         'closing_valves_outlet_RD', 'closing_valves_inlet_SSVD', 'closing_valves_inlet_FGU',
-                        'closing_secant_valve_connection_unit__oil_production_oil_refining_facility', 'closing_valves_inlet_RP', 'reserve_protect_14', 'reserve_protect_15',
+                        'closing_secant_valve_connection_unit__oil_production_oil', 'closing_valves_inlet_RP', 'reserve_protect_14', 'reserve_protect_15',
                         'shutdown_oil_pumps', 'shutdown_oil_pumps_after_signal_stopped_NA', 'shutdown_circulating_water_pumps',
                         'shutdown_pumps_pumping_out_from_tanks_collection_of_leaks_MNS', 'shutdown_pumps_pumping_out_from_tanks_collection_of_leaks_PNS',
                         'shutdown_pumps_pumping_out_from_tanks_SSVD', 'switching_off_the_electric_room_fans', 'shutdown_of_booster_fans_ED', 
                         'shutdown_of_retaining_fans_of_the_electrical_room', 'shutdown_of_ED_air_compressors', 
-                        'shutdown_pumps_providing_oil_oil_product_pumping_from_oil_production_oil_refining_facilities', 
+                        'shutdown_pumps_providing_oil', 
                         'disabling_pumps_for_pumping_oil_oil_products_through_BIC', 'shutdown_domestic_and_drinking_water_pumps', 'shutdown_of_art_well_pumps',
                         'AVO_shutdown', 'shutdown_of_water_cooling_fans_circulating_water_supply_system',
                         'shutdown_exhaust_fans_of_the_pumping_room_of_the_MNS', 'shutdown_of_exhaust_fans_of_the_pumping_room_PNS',
                         'shutdown_of_exhaust_fans_in_the_centralized_oil_system_room', 'shutdown_of_exhaust_fans_oil_pit_in_the_electrical_room', 
                         'shutdown_of_exhaust_fans_in_the_RD_room', 'shutdown_of_exhaust_fans_in_the_SSVD_room',
                         'shutdown_of_the_roof_fans_of_the_MNS_pump_room', 'shutdown_of_the_roof_fans_of_the_PNS_pump_room',
-                        'switching_off_the_supply_fans_pumping_room_of_the_MNS_and_closing_the_fire_dampers', 'switching_off_the_supply_fans_pumping_room_of_the_PNS_and_closing_the_fire_dampers',
-                        'switch_off_the_supply_fans_in_the_centralized_oil_system_room_and_close_the_fire_dampers', 'switching_off_the_supply_fan_of_the_RD_room',
-                        'switching_off_the_supply_fan_of_the_SSVD_room', 'switching_off_the_supply_fans_of_the_ED_air_compressor_room_and_closing_the_fire_dampers',
+                        'switching_off_the_supply_fans_pumping_room_of_the_MNS', 'switching_off_the_supply_fans_pumping_room_of_the_PNS',
+                        'switch_off_the_supply_fans_in_the_centralized_oil', 'switching_off_the_supply_fan_of_the_RD_room',
+                        'switching_off_the_supply_fan_of_the_SSVD_room', 'switching_off_the_supply_fans_of_the_ED_air_compressor',
                         'switching_off_the_supply_fan_of_the_BIK_room', 'switching_off_the_supply_fan_of_the_SIKN_room',
-                        'closing_the_air_valves_louvered_grilles_of_the_pump_room', 'closing_of_air_valves_louvered_grilles_of_the_compressor_room_of_the_ED_air_overpressure',
-                        'shutdown_of_electric_oil_heaters', 'shutdown_of_the_electric_heaters_of_the_leakage_collection_tank_MNS',
-                        'shutdown_of_the_electric_heaters_of_the_leakage_collection_tank_PNS', 'shutdown_of_electric_heaters_of_the_SIKN_leak_collection_tank',
-                        'shutdown_of_air_coolers_of_the_locking_system_of_mechanical_seals_of_all_MNA', 'shutdown_of_air_coolers_of_the_locking_system_of_mechanical_seals_disconnected_NA',
+                        'closing_the_air_valves_louvered_grilles_of_the_pump_room', 'closing_of_air_valves_louvered_grilles_of_the_compressor_room',
+                        'shutdown_of_electric_oil_heaters', 'shutdown_of_the_electric_heaters_of_the_leakage_collection_MNS',
+                        'shutdown_of_the_electric_heaters_of_the_leakage_collection_PNS', 'shutdown_of_electric_heaters_of_the_SIKN_leak_collection_tank',
+                        'shutdown_of_air_coolers_of_the_locking_system_MNA', 'shutdown_of_air_coolers_of_the_locking_system_disc_NA',
                         'shutdown_of_the_external_cooling_circuit_ChRP_MNA', 'shutdown_of_the_external_cooling_circuit_ChRP_PNA', 'shutdown_of_locking_system_pumps',
-                        'shutdown_of_pumps_for_pumping_oil_oil_products_through_the_operational_BIK',
-                        'shutdown_of_pumping_pumps_from_leakage_collection_tanks_of_all_SIKN', 'shutdown_of_anticondensation_electric_heaters_ED', 'fire_protection', 'reserve_aux_15', 
+                        'shutdown_of_pumps_for_pumping_oil_oil_products_through',
+                        'shutdown_of_pumping_pumps_from_leakage_collection_tanks', 'shutdown_of_anticondensation_electric_heaters_ED', 'fire_protection', 'reserve_aux_15', 
                         'time_ust', 'Pic', 'group_ust', 'rule_map_ust', 'number_list_VU', 'number_protect_VU']
         msg = self.dop_function.column_check(KTPR, 'ktpr', list_default)
         return msg 
@@ -1375,7 +1376,7 @@ class Filling_KTPRA():
                 for k in range(1, 97):
                     list_ktpra.append(dict(variable = f'KTPRA[{i}][{k}]',
                                             tag  = '',
-                                            name = 'Резерв',
+                                            name = f'Резерв',
                                             NA = '',
                                             avar_parameter = '',
                                             stop_type = '',
@@ -1386,9 +1387,10 @@ class Filling_KTPRA():
                                             Pic = '',
                                             group_ust = f'Tm - Агрегатные защиты МНА{i}',
                                             rule_map_ust = 'Временные уставки',
-                                            number_list_VU = '',
-                                            number_protect_VU = '',
-                                            number_pump_VU = f'{i}'))
+                                            # number_list_VU = ,
+                                            # number_protect_VU = '',
+                                            number_pump_VU = i
+                                            ))
             # Checking for the existence of a database
             KTPRA.insert_many(list_ktpra).execute()
         msg[f'{today} - Таблица: ktpra подготовлена'] = 1
@@ -1456,9 +1458,9 @@ class Filling_GMPNA():
                                             setting = '',
                                             group_ust = f'Tm - Агрегатные готовности МНА{i}',
                                             rule_map_ust = 'Временные уставки',
-                                            number_list_VU = '',
-                                            number_protect_VU = '',
-                                            number_pump_VU = f'{i}'))
+                                            # number_list_VU = '',
+                                            # number_protect_VU = '',
+                                            number_pump_VU = i))
 
             # Checking for the existence of a database
             GMPNA.insert_many(list_GMPNA).execute()
@@ -1500,20 +1502,20 @@ class Filling_UMPNA():
                         msg[f'{today} - Таблица: umpna, отсутствует NA[{i}] идет заполнение'] = 3
 
                         vv_included = self.dop_function.search_signal(DI, "di", f"MBC{i}01-1")
-                        vv_double_included = self.dop_function.search_signal(DI, 'di', f'MBC{i}01-2')
-                        vv_disabled = self.dop_function.search_signal(DI, 'di', f'MBC{i}02-1')
-                        vv_double_disabled = self.dop_function.search_signal(DI, 'di', f'MBC{i}02-2')
+                        vv_double_included = self.dop_function.search_signal(DI, "di", f'MBC{i}01-2')
+                        vv_disabled = self.dop_function.search_signal(DI, "di", f'MBC{i}02-1')
+                        vv_double_disabled = self.dop_function.search_signal(DI, "di", f'MBC{i}02-2')
                         current_greater_than_noload_setting = self.dop_function.search_signal(AI, 'ai', f'CT{i}01')
-                        serviceability_of_circuits_of_inclusion_of_VV = self.dop_function.search_signal(DI, 'di', f'ECB{i}01')
-                        serviceability_of_circuits_of_shutdown_of_VV = self.dop_function.search_signal(DI, 'di', f'ECO{i}01-1')
-                        serviceability_of_circuits_of_shutdown_of_VV_double = self.dop_function.search_signal(DI, 'di', f'ECO{i}01-2')
-                        stop_1 = self.dop_function.search_signal(DI, 'di', f'KKC{i}01')
-                        stop_2 = self.dop_function.search_signal(DI, 'di', f'KKC{i}02')
-                        monitoring_the_presence_of_voltage_in_the_control_current_circuits = self.dop_function.search_signal(DI, 'di', f'EC{i}08')
-                        vv_trolley_rolled_out = self.dop_function.search_signal(DI, 'di', f'EC{i}04')
-                        command_to_turn_on_the_vv_only_for_UMPNA = self.dop_function.search_signal(DO, 'do', f'ABB{i}01')
-                        command_to_turn_off_the_vv_output_1 = self.dop_function.search_signal(DO, 'do', f'ABO{i}01-1')
-                        command_to_turn_off_the_vv_output_2 = self.dop_function.search_signal(DO, 'do', f'ABO{i}01-2')
+                        serviceability_of_circuits_of_inclusion_of_VV = self.dop_function.search_signal(DI, "di", f'ECB{i}01')
+                        serviceability_of_circuits_of_shutdown_of_VV = self.dop_function.search_signal(DI, "di", f'ECO{i}01-1')
+                        serviceability_of_circuits_of_shutdown_of_VV_double = self.dop_function.search_signal(DI, "di", f'ECO{i}01-2')
+                        stop_1 = self.dop_function.search_signal(DI, "di", f'KKC{i}01')
+                        stop_2 = self.dop_function.search_signal(DI, "di", f'KKC{i}02')
+                        monitoring_the_presence_of_voltage_in_the_control_current_circuits = self.dop_function.search_signal(DI, "di", f'EC{i}08')
+                        vv_trolley_rolled_out = self.dop_function.search_signal(DI, "di", f'EC{i}04')
+                        command_to_turn_on_the_vv_only_for_UMPNA = self.dop_function.search_signal(DO, "do", f'ABB{i}01')
+                        command_to_turn_off_the_vv_output_1 = self.dop_function.search_signal(DO, "do", f'ABO{i}01-1')
+                        command_to_turn_off_the_vv_output_2 = self.dop_function.search_signal(DO, "do", f'ABO{i}01-2')
 
                         list_UMPNA.append(dict(variable = f'NA[{i}]',
                             name ='',
@@ -1736,11 +1738,11 @@ class Filling_ZD():
                     return msg
                 
                 # Новый список задвижек из таблицы DI
-                self.cursor.execute(f'''SELECT name 
+                self.cursor.execute(f"""SELECT name 
                                         FROM di
-                                        WHERE name LIKE "%задвижк%" OR name LIKE "%Задвижк%" OR 
-                                              name LIKE "%клап%" OR name LIKE "%Клап%" OR
-                                              name LIKE "%клоп%" OR name LIKE "%КЛОП%"''')
+                                        WHERE name LIKE '%задвижк%' OR name LIKE '%Задвижк%' OR 
+                                              name LIKE '%клап%' OR name LIKE '%Клап%' OR
+                                              name LIKE '%клоп%' OR name LIKE '%КЛОП%'""")
                 name_zd_new = self.cursor.fetchall()
                 list_zd_name_split = []
                 for i in name_zd_new: 
@@ -1748,15 +1750,15 @@ class Filling_ZD():
                 unique_name = set(list_zd_name_split)
 
                 # Существующий список задвижек из таблицы ZD
-                count_zd_old = self.cursor.execute(f'''SELECT name FROM zd''')
-                name_zd_old = count_zd_old.fetchall()
+                self.cursor.execute(f'''SELECT name FROM zd''')
+                name_zd_old = self.cursor.fetchall()
                 tabl_zd_name = []
                 for i in name_zd_old:
                     tabl_zd_name.append(i[0])
 
                 # Количество строк в таблице
-                row = self.cursor.execute(f'''SELECT COUNT(*) FROM zd''')
-                count_row = row.fetchall()[0][0]
+                self.cursor.execute(f'''SELECT COUNT(*) FROM zd''')
+                count_row = self.cursor.fetchall()[0][0]
                         
                 for name in sorted(unique_name):
                     list_zd = []
@@ -1766,11 +1768,11 @@ class Filling_ZD():
                     open_zd, close_zd, stop_zd, open_stop, close_stop = '', '', '', '', ''
 
                     for tag in array_di_tag_zd:
-                        count_zd_di = self.cursor.execute(f'''SELECT id, tag, name 
-                                                            FROM di
-                                                            WHERE name LIKE "%{name}%" AND tag LIKE "%{tag}%"''')
+                        self.cursor.execute(f"""SELECT id, tag, name 
+                                                FROM di
+                                                WHERE name LIKE '%{name}%' AND tag LIKE '%{tag}%'""")
                         
-                        try   : number_id = count_zd_di.fetchall()[0][0]
+                        try   : number_id = self.cursor.fetchall()[0][0]
                         except: continue
 
                         if tag == 'OKC':   kvo = f'DI[{number_id}].Value'
@@ -1789,16 +1791,16 @@ class Filling_ZD():
                         if tag == 'CFC':  isp_closing_chain = f'DI[{number_id}].Value'
 
                     for tag in array_do_tag_zd:    
-                        count_zd_do = self.cursor.execute(f'''SELECT id, tag, name 
-                                                              FROM do
-                                                              WHERE name LIKE "%{name}%" AND tag LIKE "%{tag}%"''')
+                        self.cursor.execute(f"""SELECT id, tag, name 
+                                                FROM "do"
+                                                WHERE name LIKE '%{name}%' AND tag LIKE '%{tag}%'""")
                         
-                        try   : number_id = count_zd_do.fetchall()[0][0]
+                        try   : number_id = self.cursor.fetchall()[0][0]
                         except: continue
                         
-                        if tag == 'DOB': open_zd  = f'ctrlDO[{number_id}]'
-                        if tag == 'DKB': close_zd = f'ctrlDO[{number_id}]'
-                        if tag == 'DCB': stop_zd  = f'ctrlDO[{number_id}]'
+                        if tag == 'DOB' : open_zd    = f'ctrlDO[{number_id}]'
+                        if tag == 'DKB' : close_zd   = f'ctrlDO[{number_id}]'
+                        if tag == 'DCB' : stop_zd    = f'ctrlDO[{number_id}]'
                         if tag == 'DCOB': open_stop  = f'ctrlDO[{number_id}]'
                         if tag == 'DCCB': close_stop = f'ctrlDO[{number_id}]'
                     
@@ -1810,27 +1812,27 @@ class Filling_ZD():
                         klapan = '0'
 
                     if name in tabl_zd_name:
-                        msg.update(self.dop_function.update_signal_dop(ZD, 'zd', name, ZD.KVO, 'KVO', kvo))
-                        msg.update(self.dop_function.update_signal_dop(ZD, 'zd', name, ZD.KVZ, 'KVZ', kvz))
-                        msg.update(self.dop_function.update_signal_dop(ZD, 'zd', name, ZD.MPO, 'MPO', mpo))
-                        msg.update(self.dop_function.update_signal_dop(ZD, 'zd', name, ZD.MPZ, 'MPZ', mpz))
-                        msg.update(self.dop_function.update_signal_dop(ZD, 'zd', name, ZD.Mufta, 'Mufta', mufta))
-                        msg.update(self.dop_function.update_signal_dop(ZD, 'zd', name, ZD.Drive_failure, 'Drive_failure', error))
-                        msg.update(self.dop_function.update_signal_dop(ZD, 'zd', name, ZD.Dist, 'Dist', dist))
-                        msg.update(self.dop_function.update_signal_dop(ZD, 'zd', name, ZD.VMMO, 'VMMO', vmmo))
-                        msg.update(self.dop_function.update_signal_dop(ZD, 'zd', name, ZD.VMMZ, 'VMMZ', vmmz))
-                        msg.update(self.dop_function.update_signal_dop(ZD, 'zd', name, ZD.Close_BRU, 'Close_BRU', close_bru))
-                        msg.update(self.dop_function.update_signal_dop(ZD, 'zd', name, ZD.Stop_BRU, 'Stop_BRU', stop_bru))
+                        msg.update(self.dop_function.update_signal_dop(ZD, "zd", name, ZD.KVO, 'KVO', kvo))
+                        msg.update(self.dop_function.update_signal_dop(ZD, "zd", name, ZD.KVZ, 'KVZ', kvz))
+                        msg.update(self.dop_function.update_signal_dop(ZD, "zd", name, ZD.MPO, 'MPO', mpo))
+                        msg.update(self.dop_function.update_signal_dop(ZD, "zd", name, ZD.MPZ, 'MPZ', mpz))
+                        msg.update(self.dop_function.update_signal_dop(ZD, "zd", name, ZD.Mufta, 'Mufta', mufta))
+                        msg.update(self.dop_function.update_signal_dop(ZD, "zd", name, ZD.Drive_failure, 'Drive_failure', error))
+                        msg.update(self.dop_function.update_signal_dop(ZD, "zd", name, ZD.Dist, 'Dist', dist))
+                        msg.update(self.dop_function.update_signal_dop(ZD, "zd", name, ZD.VMMO, 'VMMO', vmmo))
+                        msg.update(self.dop_function.update_signal_dop(ZD, "zd", name, ZD.VMMZ, 'VMMZ', vmmz))
+                        msg.update(self.dop_function.update_signal_dop(ZD, "zd", name, ZD.Close_BRU, 'Close_BRU', close_bru))
+                        msg.update(self.dop_function.update_signal_dop(ZD, "zd", name, ZD.Stop_BRU, 'Stop_BRU', stop_bru))
 
-                        msg.update(self.dop_function.update_signal_dop(ZD, 'zd', name, ZD.Voltage, 'Voltage', voltage))
-                        msg.update(self.dop_function.update_signal_dop(ZD, 'zd', name, ZD.Serviceability_opening_circuits, 'Serviceability_opening_circuits', isp_opening_chain))
-                        msg.update(self.dop_function.update_signal_dop(ZD, 'zd', name, ZD.Serviceability_closening_circuits, 'Serviceability_closening_circuits', isp_closing_chain))
+                        msg.update(self.dop_function.update_signal_dop(ZD, "zd", name, ZD.Voltage, 'Voltage', voltage))
+                        msg.update(self.dop_function.update_signal_dop(ZD, "zd", name, ZD.Serviceability_opening_circuits, 'Serviceability_opening_circuits', isp_opening_chain))
+                        msg.update(self.dop_function.update_signal_dop(ZD, "zd", name, ZD.Serviceability_closening_circuits, 'Serviceability_closening_circuits', isp_closing_chain))
 
-                        msg.update(self.dop_function.update_signal_dop(ZD, 'zd', name, ZD.Open, 'Open', open_zd))
-                        msg.update(self.dop_function.update_signal_dop(ZD, 'zd', name, ZD.Close, 'Close', close_zd))
-                        msg.update(self.dop_function.update_signal_dop(ZD, 'zd', name, ZD.Stop, 'Stop', stop_zd))
-                        msg.update(self.dop_function.update_signal_dop(ZD, 'zd', name, ZD.Opening_stop, 'Opening_stop', open_stop))
-                        msg.update(self.dop_function.update_signal_dop(ZD, 'zd', name, ZD.Closeing_stop, 'Closeing_stop', close_stop))
+                        msg.update(self.dop_function.update_signal_dop(ZD, "zd", name, ZD.Open, 'Open', open_zd))
+                        msg.update(self.dop_function.update_signal_dop(ZD, "zd", name, ZD.Close, 'Close', close_zd))
+                        msg.update(self.dop_function.update_signal_dop(ZD, "zd", name, ZD.Stop, 'Stop', stop_zd))
+                        msg.update(self.dop_function.update_signal_dop(ZD, "zd", name, ZD.Opening_stop, 'Opening_stop', open_stop))
+                        msg.update(self.dop_function.update_signal_dop(ZD, "zd", name, ZD.Closeing_stop, 'Closeing_stop', close_stop))
 
                     else:
                         count_row += 1
@@ -1940,8 +1942,8 @@ class Filling_ZD_tm():
                     msg[f'{today} - Таблицы: zd пустая! Заполни таблицу!'] = 2
                     return msg
                 
-                exists_name = self.cursor.execute(f'''SELECT name FROM zd''')
-                for i in exists_name.fetchall():
+                self.cursor.execute(f'''SELECT name FROM zd''')
+                for i in self.cursor.fetchall():
                     count_ZD += 1
                     for ust in time_ust:
                         used = '0' if ust[0] == 'Резерв' else '1' 
@@ -1992,12 +1994,12 @@ class Filling_VS():
                     return msg
                 
                 # Новый список вспомсистем из таблицы DI
-                count_vs_new = self.cursor.execute(f'''SELECT tag, name 
-                                                       FROM di
-                                                       WHERE tag LIKE "%MPC%"''')
-                name_vs_new = count_vs_new.fetchall()
+                self.cursor.execute(f"""SELECT tag, name 
+                                        FROM di
+                                        WHERE tag LIKE '%MPC%'""")
+                vs_name = self.cursor.fetchall()
                 list_vs_name_split = []
-                for i in name_vs_new: 
+                for i in vs_name: 
                     if   self.dop_function.str_find(i[1], {'- сигнал от МП'}):
                         list_vs_name_split.append(str(i[1]).split('- сигнал от МП')[0])
                     elif self.dop_function.str_find(i, {'-сигнал от МП'}):
@@ -2013,15 +2015,15 @@ class Filling_VS():
                 unique_name = set(list_vs_name_split)
 
                 # Существующий список вспомсистем из таблицы VS
-                count_vs_old = self.cursor.execute(f'''SELECT name FROM vs''')
-                name_vs_old = count_vs_old.fetchall()
+                self.cursor.execute(f'''SELECT name FROM vs''')
+                exists_vs = self.cursor.fetchall()
                 tabl_vs_name = []
-                for i in name_vs_old:
+                for i in exists_vs:
                     tabl_vs_name.append(i[0])
 
                 # Количество строк в таблице
-                row = self.cursor.execute(f'''SELECT COUNT(*) FROM vs''')
-                count_row = row.fetchall()[0][0]
+                self.cursor.execute(f'''SELECT COUNT(*) FROM vs''')
+                count_row = self.cursor.fetchall()[0][0]
                         
                 for name in sorted(unique_name):
                     list_vs = []
@@ -2029,11 +2031,11 @@ class Filling_VS():
 
                     # Принадлежность OPC тега
                     for tag in array_tag_opc_vs:  
-                        opc_tag_vs_di = self.cursor.execute(f'''SELECT id, tag, name 
-                                                                FROM di
-                                                                WHERE name LIKE "%{name}%" AND name LIKE "%{tag}%" AND tag LIKE "%OPC%"''')
+                        self.cursor.execute(f"""SELECT id, tag, name 
+                                                FROM di
+                                                WHERE name LIKE '%{name}%' AND name LIKE '%{tag}%' AND tag LIKE '%OPC%'""")
                         
-                        try   : number_id = opc_tag_vs_di.fetchall()[0][0]
+                        try   : number_id = self.cursor.fetchall()[0][0]
                         except: continue
 
                         if tag == 'авар': 
@@ -2046,22 +2048,22 @@ class Filling_VS():
                             isp_opening_chain = f'DI[{number_id}].Value'
 
                     for tag in array_di_tag_vs:
-                        count_vs_di = self.cursor.execute(f'''SELECT id, tag, name
-                                                            FROM di
-                                                            WHERE name LIKE "%{name}%" AND tag LIKE "%{tag}%"''')
+                        self.cursor.execute(f"""SELECT id, tag, name
+                                                FROM di
+                                                WHERE name LIKE '%{name}%' AND tag LIKE '%{tag}%'""")
                         
-                        try   : number_id = count_vs_di.fetchall()[0][0]
+                        try   : number_id = self.cursor.fetchall()[0][0]
                         except: continue
 
-                        if tag == 'MPC': mp                = f'DI[{number_id}].Value'
-                        if tag == 'EC' : voltage           = f'DI[{number_id}].Value'
+                        if tag == 'MPC': mp      = f'DI[{number_id}].Value'
+                        if tag == 'EC' : voltage = f'DI[{number_id}].Value'
                         
                     for tag in array_do_tag_vs:    
-                        count_vs_do = self.cursor.execute(f'''SELECT id, tag, name 
-                                                            FROM do
-                                                            WHERE name LIKE "%{name}%" AND tag LIKE "%{tag}%"''')
+                        self.cursor.execute(f"""SELECT id, tag, name 
+                                                FROM "do"
+                                                WHERE name LIKE '%{name}%' AND tag LIKE '%{tag}%'""")
                         
-                        try   : number_id = count_vs_do.fetchall()[0][0]
+                        try   : number_id = self.cursor.fetchall()[0][0]
                         except: continue
                         
                         if tag == 'ABB': open_vs  = f'ctrlDO[{number_id}]'
@@ -2082,11 +2084,11 @@ class Filling_VS():
                     new_name = str(new_name).replace('Прит', 'прит')
                     new_name = str(new_name).replace('Вытяж', 'вытяж')
 
-                    pressure_vs_ai = self.cursor.execute(f'''SELECT id, name 
-                                                             FROM ai
-                                                             WHERE name LIKE "%{new_name}%"''')
+                    self.cursor.execute(f"""SELECT id, name 
+                                            FROM ai
+                                            WHERE name LIKE '%{new_name}%'""")
                     try: 
-                        number_id = pressure_vs_ai.fetchall()[0][0]
+                        number_id = self.cursor.fetchall()[0][0]
                         pressure_norm = f'AI[{number_id}].Norm'
                         pressure_ndv  = f'AI[{number_id}].Ndv'
                     except:
@@ -2094,16 +2096,16 @@ class Filling_VS():
                         pressure_ndv  = f''
 
                     if name in tabl_vs_name:
-                        msg.update(self.dop_function.update_signal_dop(VS, 'vs', name, VS.MP, 'MP', mp))
-                        msg.update(self.dop_function.update_signal_dop(VS, 'vs', name, VS.Voltage, 'Voltage', voltage))
-                        msg.update(self.dop_function.update_signal_dop(VS, 'vs', name, VS.Serviceability_of_circuits_of_inclusion, 'Serviceability_of_circuits_of_inclusion', isp_opening_chain))
-                        msg.update(self.dop_function.update_signal_dop(VS, 'vs', name, VS.External_alarm, 'External_alarm', error))
+                        msg.update(self.dop_function.update_signal_dop(VS, "vs", name, VS.MP, 'MP', mp))
+                        msg.update(self.dop_function.update_signal_dop(VS, "vs", name, VS.Voltage, 'Voltage', voltage))
+                        msg.update(self.dop_function.update_signal_dop(VS, "vs", name, VS.Serviceability_of_circuits_of_inclusion, 'Serviceability_of_circuits_of_inclusion', isp_opening_chain))
+                        msg.update(self.dop_function.update_signal_dop(VS, "vs", name, VS.External_alarm, 'External_alarm', error))
 
-                        msg.update(self.dop_function.update_signal_dop(VS, 'vs', name, VS.VKL, 'VKL', open_vs))
-                        msg.update(self.dop_function.update_signal_dop(VS, 'vs', name, VS.OTKL, 'OTKL', close_vs))
+                        msg.update(self.dop_function.update_signal_dop(VS, "vs", name, VS.VKL, 'VKL', open_vs))
+                        msg.update(self.dop_function.update_signal_dop(VS, "vs", name, VS.OTKL, 'OTKL', close_vs))
 
-                        msg.update(self.dop_function.update_signal_dop(VS, 'vs', name, VS.Pressure_is_True, 'Pressure_is_True', pressure_norm))
-                        msg.update(self.dop_function.update_signal_dop(VS, 'vs', name, VS.Pressure_sensor_defective, 'Pressure_sensor_defective', pressure_ndv))
+                        msg.update(self.dop_function.update_signal_dop(VS, "vs", name, VS.Pressure_is_True, 'Pressure_is_True', pressure_norm))
+                        msg.update(self.dop_function.update_signal_dop(VS, "vs", name, VS.Pressure_sensor_defective, 'Pressure_sensor_defective', pressure_ndv))
 
                     else:
                         count_row += 1
@@ -2179,8 +2181,8 @@ class Filling_VS_tm():
                     msg[f'{today} - Таблицы: vs пустая! Заполни таблицу!'] = 2
                     return msg
                 
-                exists_name = self.cursor.execute(f'''SELECT name FROM vs''')
-                for i in exists_name.fetchall():
+                self.cursor.execute(f'''SELECT name FROM vs''')
+                for i in self.cursor.fetchall():
                     count_VS += 1
                     for ust in time_ust:
                         used = '0' if ust[0] == 'Резерв' else '1' 
@@ -2235,8 +2237,8 @@ class Filling_VSGRP_tm():
                 msg[f'{today} - Таблицы: VSGRP пустая! Заполни таблицу!'] = 2
                 return msg
             
-            exists_name = self.cursor.execute(f'''SELECT name FROM vsgrp''')
-            for i in exists_name.fetchall():
+            self.cursor.execute(f'''SELECT name FROM vsgrp''')
+            for i in self.cursor.fetchall():
                 count_VSGRP += 1
                 for ust in time_ust:
                     used = '0' if ust[0] == 'Резерв' else '1' 
@@ -2291,79 +2293,80 @@ class Filling_UTS():
                     return msg
                 
                 # Новый список из таблицы DI
-                req_uts_do = self.cursor.execute(f'''SELECT id, tag, name, uso, basket, module, channel
-                                                    FROM do
-                                                    WHERE (name LIKE "%Табл%" AND tag LIKE "%BB%")  OR
-                                                          (name LIKE "%Сирен%" AND tag LIKE "%BB%") OR
-                                                          (name LIKE "%Звон%" AND tag LIKE "%BB%")  OR
-                                                          (name LIKE "%табл%" AND tag LIKE "%BB%")  OR
-                                                          (name LIKE "%сирен%" AND tag LIKE "%BB%") OR
-                                                          (name LIKE "%звон%" AND tag LIKE "%BB%") OR
-                                                          (name LIKE "%ОТВ%" OR name LIKE "%отв%") OR
-                                                          (name LIKE "%сигнализ%")''')
-                list_uts_do = req_uts_do.fetchall()
+                self.cursor.execute(f"""SELECT id, tag, name, uso, basket, module, channel
+                                        FROM "do"
+                                        WHERE (name LIKE '%Табл%' AND tag LIKE '%BB%')  OR
+                                              (name LIKE '%Сирен%' AND tag LIKE '%BB%') OR
+                                              (name LIKE '%Звон%' AND tag LIKE '%BB%')  OR
+                                              (name LIKE '%табл%' AND tag LIKE '%BB%')  OR
+                                              (name LIKE '%сирен%' AND tag LIKE '%BB%') OR
+                                              (name LIKE '%звон%' AND tag LIKE '%BB%') OR
+                                              (name LIKE '%ОТВ%' OR name LIKE '%отв%') OR
+                                              (name LIKE '%сигнализ%')
+                                        ORDER BY tag""")
+                list_uts_do = self.cursor.fetchall()
                 # Количество строк в таблице
-                row = self.cursor.execute(f'''SELECT COUNT(*) FROM {tabl_used}''')
-                count_row = row.fetchall()[0][0]
+                self.cursor.execute(f"""SELECT COUNT(*) FROM {tabl_used}""")
+                count_row = self.cursor.fetchall()[0][0]
 
                 for uts_do in list_uts_do:
 
                     coincidence = model_used.select().where(model_used.uso     == uts_do[3],
-                                                     model_used.basket  == uts_do[4],
-                                                     model_used.module  == uts_do[5],
-                                                     model_used.channel == uts_do[6])
+                                                            model_used.basket  == uts_do[4],
+                                                            model_used.module  == uts_do[5],
+                                                            model_used.channel == uts_do[6])
                     if bool(coincidence):
                         exist_vkl  = model_used.select().where(model_used.VKL  == f'ctrlDO[{uts_do[0]}]')
                         exist_tag  = model_used.select().where(model_used.tag  == uts_do[1])
                         exist_name = model_used.select().where(model_used.name == uts_do[2])
 
                         if not bool(exist_vkl):
-                            select_vkl = self.cursor.execute(f'''SELECT id, tag 
-                                                                 FROM do
-                                                                 WHERE uso='{uts_do[3]}' AND 
-                                                                       basket={uts_do[4]} AND 
-                                                                       module={uts_do[5]} AND 
-                                                                       channel={uts_do[6]}''')
-                            for id_, vkl_ in select_vkl.fetchall():
-                                msg[f'{today} - Таблица: {tabl_used}, у сигнала в таблице do обновлена команда включить: id = {id_}, ({vkl_}) ctrlDO[{uts_do[0]}]'] = 2
-                            self.cursor.execute(f'''UPDATE {tabl_used}
-                                                    SET VKL='ctrlDO[{uts_do[0]}]'
+                            self.cursor.execute(f"""SELECT id, tag 
+                                                    FROM "do"
                                                     WHERE uso='{uts_do[3]}' AND 
                                                           basket={uts_do[4]} AND 
                                                           module={uts_do[5]} AND 
-                                                          channel={uts_do[6]}''')
+                                                          channel={uts_do[6]}""")
+                            for id_, vkl_ in self.cursor.fetchall():
+                                msg[f'{today} - Таблица: {tabl_used}, у сигнала в таблице do обновлена команда включить: id = {id_}, ({vkl_}) ctrlDO[{uts_do[0]}]'] = 3
+                            self.cursor.execute(f"""UPDATE {tabl_used}
+                                                    SET "VKL"='ctrlDO[{uts_do[0]}]'
+                                                    WHERE uso='{uts_do[3]}' AND 
+                                                          basket={uts_do[4]} AND 
+                                                          module={uts_do[5]} AND 
+                                                          channel={uts_do[6]}""")
 
                         if not bool(exist_tag):
-                            select_tag = self.cursor.execute(f'''SELECT id, tag 
-                                                                 FROM do
-                                                                 WHERE uso='{uts_do[3]}' AND 
-                                                                       basket={uts_do[4]} AND 
-                                                                       module={uts_do[5]} AND 
-                                                                       channel={uts_do[6]}''')
-                            for id_, tag_ in select_tag.fetchall():
-                                msg[f'{today} - Таблица: {tabl_used}, у сигнала в таблице do обновлен tag: id = {id_}, ({tag_}) {uts_do[1]}'] = 2
-                            self.cursor.execute(f'''UPDATE {tabl_used}
-                                                    SET tag='{uts_do[1]}' 
+                            self.cursor.execute(f"""SELECT id, tag 
+                                                    FROM "do"
                                                     WHERE uso='{uts_do[3]}' AND 
                                                           basket={uts_do[4]} AND 
                                                           module={uts_do[5]} AND 
-                                                          channel={uts_do[6]}''')
+                                                          channel={uts_do[6]}""")
+                            for id_, tag_ in self.cursor.fetchall():
+                                msg[f'{today} - Таблица: {tabl_used}, у сигнала в таблице do обновлен tag: id = {id_}, ({tag_}) {uts_do[1]}'] = 3
+                            self.cursor.execute(f"""UPDATE {tabl_used}
+                                                    SET "tag"='{uts_do[1]}' 
+                                                    WHERE uso='{uts_do[3]}' AND 
+                                                          basket={uts_do[4]} AND 
+                                                          module={uts_do[5]} AND 
+                                                          channel={uts_do[6]}""")
 
                         if not bool(exist_name):
-                            select_name = self.cursor.execute(f'''SELECT id, name 
-                                                                  FROM do
-                                                                  WHERE uso='{uts_do[3]}' AND 
-                                                                        basket={uts_do[4]} AND 
-                                                                        module={uts_do[5]} AND 
-                                                                        channel={uts_do[6]}''')
-                            for id_, name_ in select_name.fetchall():
-                                msg[f'{today} - Таблица: {tabl_used}, у сигнала в таблице do обновлено name: id = {id_}, ({uts_do[1]}), {uts_do[2]}'] = 2
-                            self.cursor.execute(f'''UPDATE {tabl_used}
-                                                    SET name='{uts_do[2]}' 
+                            self.cursor.execute(f"""SELECT id, name 
+                                                    FROM "do"
                                                     WHERE uso='{uts_do[3]}' AND 
                                                           basket={uts_do[4]} AND 
                                                           module={uts_do[5]} AND 
-                                                          channel={uts_do[6]}''')
+                                                          channel={uts_do[6]}""")
+                            for id_, name_ in self.cursor.fetchall():
+                                msg[f'{today} - Таблица: {tabl_used}, у сигнала в таблице do обновлено name: id = {id_}, ({uts_do[1]}), {uts_do[2]}'] = 3
+                            self.cursor.execute(f"""UPDATE {tabl_used}
+                                                    SET "name"='{uts_do[2]}' 
+                                                    WHERE uso='{uts_do[3]}' AND 
+                                                          basket={uts_do[4]} AND 
+                                                          module={uts_do[5]} AND 
+                                                          channel={uts_do[6]}""")
                         continue
                     count_row += 1
                     msg[f'{today} - Таблица: {tabl_used}, добавлен новый сигнал: id = {uts_do[0]}, ({uts_do[1]}), {uts_do[2]}'] = 1
@@ -2420,8 +2423,8 @@ class Filling_UTS_tm():
                     msg[f'{today} - Таблицы: uts пустая! Заполни таблицу!'] = 2
                     return msg
                 
-                exists_name = self.cursor.execute(f'''SELECT name FROM uts''')
-                for i in exists_name.fetchall():
+                self.cursor.execute(f'''SELECT name FROM uts''')
+                for i in self.cursor.fetchall():
                     count_UTS += 1
                     for ust in time_ust:
                         used = '0' if ust[0] == 'Резерв' else '1' 
@@ -2558,24 +2561,24 @@ class Filling_PI():
                     return msg
                 
                 # Новый список из таблицы DI
-                req_pi_ai = self.cursor.execute(f'''SELECT id, tag, name
-                                                    FROM ai
-                                                    WHERE (name LIKE "%адрес%" AND name LIKE "%пусков%") OR
-                                                          (name LIKE "%пожар%" AND name LIKE "%дымов%")  OR
-                                                          (name LIKE "%теплов%") 
-                                                    ORDER BY tag''')
-                list_pi_ai = req_pi_ai.fetchall()
+                self.cursor.execute(f"""SELECT id, tag, name
+                                        FROM ai
+                                        WHERE (name LIKE '%адрес%' AND name LIKE '%пусков%') OR
+                                              (name LIKE '%пожар%' AND name LIKE '%дымов%')  OR
+                                              (name LIKE '%теплов%') 
+                                        ORDER BY tag""")
+                list_pi_ai = self.cursor.fetchall()
 
                 # Существующий список из таблицы PI
-                count_pi_old = self.cursor.execute(f'''SELECT name FROM pi''')
-                name_pi_old = count_pi_old.fetchall()
+                self.cursor.execute(f'''SELECT name FROM pi''')
+                name_pi_old = self.cursor.fetchall()
                 tabl_pi_name = []
                 for i in name_pi_old:
                     tabl_pi_name.append(i[0])
 
                 # Количество строк в таблице
-                row = self.cursor.execute(f'''SELECT COUNT(*) FROM pi''')
-                count_row = row.fetchall()[0][0]
+                self.cursor.execute(f'''SELECT COUNT(*) FROM pi''')
+                count_row = self.cursor.fetchall()[0][0]
 
                 for new_list_pi in list_pi_ai:
                     number_ai = new_list_pi[0]
@@ -2594,10 +2597,10 @@ class Filling_PI():
                         attention = ''
                     # Reset
                     try:
-                        req_pi_do = self.cursor.execute(f'''SELECT id, tag
-                                                            FROM do
-                                                            WHERE tag LIKE "%{tag_ai}%"''')
-                        list_pi_do = req_pi_do.fetchall()
+                        self.cursor.execute(f"""SELECT id, tag
+                                                FROM "do"
+                                                WHERE tag LIKE '%{tag_ai}%'""")
+                        list_pi_do = self.cursor.fetchall()
                         ctrl_DO = f'ctrlDO[{list_pi_do[0][0]}]'
                     except Exception:
                         ctrl_DO = ''
@@ -2607,14 +2610,14 @@ class Filling_PI():
                     fault_2 = f'stateAI[{number_ai}].state.reg'
 
                     if name_ai in tabl_pi_name:
-                        msg.update(self.dop_function.update_signal_dop(PI, 'pi', name_ai, PI.tag, 'tag', tag_ai))
-                        msg.update(self.dop_function.update_signal_dop(PI, 'pi', name_ai, PI.name, 'name', name_ai))
-                        msg.update(self.dop_function.update_signal_dop(PI, 'pi', name_ai, PI.Type_PI, 'Type_PI', type_pi))
-                        msg.update(self.dop_function.update_signal_dop(PI, 'pi', name_ai, PI.Fire_0, 'Fire_0', fire_0))
-                        msg.update(self.dop_function.update_signal_dop(PI, 'pi', name_ai, PI.Attention_1, 'Attention_1', attention))
-                        msg.update(self.dop_function.update_signal_dop(PI, 'pi', name_ai, PI.Fault_1_glass_pollution_broken_2, 'Fault_1_glass_pollution_broken_2', fault_1))
-                        msg.update(self.dop_function.update_signal_dop(PI, 'pi', name_ai, PI.Fault_2_fault_KZ_3, 'Fault_2_fault_KZ_3', fault_2))
-                        msg.update(self.dop_function.update_signal_dop(PI, 'pi', name_ai, PI.Reset_Link, 'Reset_Link', ctrl_DO))
+                        msg.update(self.dop_function.update_signal_dop(PI, "pi", name_ai, PI.tag, 'tag', tag_ai))
+                        msg.update(self.dop_function.update_signal_dop(PI, "pi", name_ai, PI.name, 'name', name_ai))
+                        msg.update(self.dop_function.update_signal_dop(PI, "pi", name_ai, PI.Type_PI, 'Type_PI', type_pi))
+                        msg.update(self.dop_function.update_signal_dop(PI, "pi", name_ai, PI.Fire_0, 'Fire_0', fire_0))
+                        msg.update(self.dop_function.update_signal_dop(PI, "pi", name_ai, PI.Attention_1, 'Attention_1', attention))
+                        msg.update(self.dop_function.update_signal_dop(PI, "pi", name_ai, PI.Fault_1_glass_pollution_broken_2, 'Fault_1_glass_pollution_broken_2', fault_1))
+                        msg.update(self.dop_function.update_signal_dop(PI, "pi", name_ai, PI.Fault_2_fault_KZ_3, 'Fault_2_fault_KZ_3', fault_2))
+                        msg.update(self.dop_function.update_signal_dop(PI, "pi", name_ai, PI.Reset_Link, 'Reset_Link', ctrl_DO))
                     else:
                         msg[f'{today} - Таблица: pi, добавлен новый сигнал: id = {number_ai}, {name_ai}'] = 3
                         count_row += 1
@@ -2691,8 +2694,8 @@ class Filling_PZ_tm():
                     msg[f'{today} - Таблица: pz пустая или не существует!'] = 2
                     return msg
                 
-                exists_name = self.cursor.execute(f'''SELECT name FROM pz''')
-                for i in exists_name.fetchall():
+                self.cursor.execute(f'''SELECT name FROM pz''')
+                for i in self.cursor.fetchall():
                     count_PZ += 1
                     for ust in time_ust:
                         used = '0' if ust[0] == 'Резерв' else '1' 
@@ -2822,7 +2825,7 @@ class Editing_table_SQL():
     def update_row_tabl(self, column, text_cell, text_cell_id, table_used, hat_name):
         active_column = list(hat_name)[column]
         self.cursor.execute(f"""UPDATE {table_used} 
-                                SET {active_column}='{text_cell}' 
+                                SET "{active_column}"='{text_cell}' 
                                 WHERE id={text_cell_id}""")
         #table_used.update(**{active_column: text_cell}).where(table_used.id == text_cell_id).execute()
     # Adding new lines
