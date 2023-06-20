@@ -11,7 +11,7 @@ class Window(QMainWindow):
     def __init__(self):
         super(Window, self).__init__()
         self.setWindowTitle('Меню разработки проекта')
-        self.setFixedSize(250, 145)
+        self.setFixedSize(250, 180)
         self.setStyleSheet("background-color: #e1e5e5;")
         self.setWindowFlags(Qt.WindowCloseButtonHint)
         # Create menu bar
@@ -36,7 +36,14 @@ class Window(QMainWindow):
         butt_sql.setToolTip('Редактор таблиц базы данных')
         butt_sql.resize(220,25)
         butt_sql.move(15, 105)      
-        butt_sql.clicked.connect(self.window_create_sql)  
+        butt_sql.clicked.connect(self.window_create_sql) 
+        # Generate msg 
+        gen_msg_sql = QPushButton('Генерация сообщений', self)
+        gen_msg_sql.setStyleSheet(("background: #c6c3b5; border-radius: 4px; border: 1px solid"))
+        gen_msg_sql.setToolTip('Генерация сообщений в базу SQL или файл')
+        gen_msg_sql.resize(220,25)
+        gen_msg_sql.move(15, 140)      
+        gen_msg_sql.clicked.connect(self.window_gen_win) 
     def create_menu_bars(self):
         menuBar = self.menuBar()
         menuBar.setStyleSheet('background-color: #c7c9c9;')
@@ -46,11 +53,12 @@ class Window(QMainWindow):
 
         menuBar.addMenu(settings)
 
-        path_prj = QAction('Файл конфигурации проекта', self)
+        path_prj = QAction('Инициализация файла проекта', self)
         settings.addAction(path_prj)
         path_prj.triggered.connect(self.file_prj)
     def file_prj(self):
-        return(QFileDialog.getOpenFileName(caption='Выберите файл конфигурации проекта')[0])
+        self.init_path = Window_path_prj()
+        self.init_path.show()
                         
     def window_import_exel(self):
         self.w_i_e = Window_import_exel()
@@ -64,6 +72,284 @@ class Window(QMainWindow):
 
         self.w_t_c = Window_tabl_checkbox(list_tabl)
         self.w_t_c.show()
+    def window_gen_win(self):
+        self.w_c_s = Window_gen_SQL()
+        self.w_c_s.show()
+# Инициализация файла проекта
+class Window_path_prj(QWidget):
+    def __init__(self):
+        super(Window_path_prj, self).__init__()
+        self.setWindowTitle('Инициализация файла проекта')
+        self.setStyleSheet("background-color: #e1e5e5;")
+        self.setWindowFlags(Qt.WindowCloseButtonHint)
+        self.resize(700, 300)
+    
+        
+
+
+# Генерация сообщений в базу SQL
+class Window_gen_SQL(QWidget):
+    def __init__(self):
+        super(Window_gen_SQL, self).__init__()
+        self.setWindowTitle('Генерация сообщений')
+        self.setStyleSheet("background-color: #e1e5e5;")
+        self.resize(355, 240)
+
+        self.list_gen_msg = []
+        self.gen_sql = Generate_database_SQL()
+
+        # Диагностика
+        l_diagn = QLabel('Диагностика: ', self)
+        l_diagn.move(10, 5)
+        self.q_check_ai = QCheckBox('AI', self)
+        self.q_check_ai.move(10, 20) 
+        self.q_check_ai.stateChanged.connect(self.check_ai)
+        self.q_check_di = QCheckBox('DI', self)
+        self.q_check_di.move(10, 36) 
+        self.q_check_di.stateChanged.connect(self.check_di)
+        self.q_check_do = QCheckBox('DO', self)
+        self.q_check_do.move(10, 52) 
+        self.q_check_do.stateChanged.connect(self.check_do)
+        self.q_check_ao = QCheckBox('AO', self)
+        self.q_check_ao.move(10, 68) 
+        self.q_check_ao.stateChanged.connect(self.check_ao)
+        self.q_check_uso = QCheckBox('USO', self)
+        self.q_check_uso.move(10, 84) 
+        self.q_check_uso.stateChanged.connect(self.check_uso)
+        self.q_check_hw = QCheckBox('HardWare', self)
+        self.q_check_hw.move(10, 100) 
+        self.q_check_hw.stateChanged.connect(self.check_hw)
+        # Оборудование
+        l_equip = QLabel('Оборудование: ', self)
+        l_equip.move(100, 5)
+        self.q_check_umpna = QCheckBox('UMPNA', self)
+        self.q_check_umpna.move(100, 20) 
+        self.q_check_umpna.stateChanged.connect(self.check_umpna)
+        self.q_check_zd = QCheckBox('ZD', self)
+        self.q_check_zd.move(100, 36) 
+        self.q_check_zd.stateChanged.connect(self.check_zd)
+        self.q_check_vs = QCheckBox('VS', self)
+        self.q_check_vs.move(100, 52) 
+        self.q_check_vs.stateChanged.connect(self.check_vs)
+        self.q_check_vsgrp = QCheckBox('VSGRP', self)
+        self.q_check_vsgrp.move(100, 68) 
+        self.q_check_vsgrp.stateChanged.connect(self.check_vsgrp)
+        self.q_check_uts = QCheckBox('UTS', self)
+        self.q_check_uts.move(100, 84) 
+        self.q_check_uts.stateChanged.connect(self.check_uts)
+        self.q_check_vv = QCheckBox('VV', self)
+        self.q_check_vv.move(100, 100) 
+        self.q_check_vv.stateChanged.connect(self.check_vv)
+        self.q_check_pi = QCheckBox('PI', self)
+        self.q_check_pi.move(100, 116) 
+        self.q_check_pi.stateChanged.connect(self.check_pi)
+        # Оборудование(уст)
+        l_equip_ust = QLabel('Оборудование\n(уставки): ', self)
+        l_equip_ust.move(190, 5)
+        self.q_check_umpna_ust = QCheckBox('UMPNA_tm', self)
+        self.q_check_umpna_ust.move(190, 35) 
+        self.q_check_umpna_ust.stateChanged.connect(self.check_umpna_tm)
+        self.q_check_zd_ust = QCheckBox('ZD_tm', self)
+        self.q_check_zd_ust.move(190, 51) 
+        self.q_check_zd_ust.stateChanged.connect(self.check_zd_tm)
+        self.q_check_vs_ust = QCheckBox('VS_tm', self)
+        self.q_check_vs_ust.move(190, 67) 
+        self.q_check_vs_ust.stateChanged.connect(self.check_vs_tm)
+        self.q_check_vsgrp_ust = QCheckBox('VSGRP_tm', self)
+        self.q_check_vsgrp_ust.move(190, 83) 
+        self.q_check_vsgrp_ust.stateChanged.connect(self.check_vsgrp_tm)
+        self.q_check_uts_ust = QCheckBox('UTS_tm', self)
+        self.q_check_uts_ust.move(190, 99) 
+        self.q_check_uts_ust.stateChanged.connect(self.check_uts_tm)
+        self.q_check_pz_ust = QCheckBox('PZ_tm', self)
+        self.q_check_pz_ust.move(190, 115) 
+        self.q_check_pz_ust.stateChanged.connect(self.check_pz_tm)
+        # Защиты, готовности
+        l_protect = QLabel('Защиты,\nготовности: ', self)
+        l_protect.move(280, 5)
+        self.q_check_ktpr = QCheckBox('KTPR', self)
+        self.q_check_ktpr.move(280, 35) 
+        self.q_check_ktpr.stateChanged.connect(self.check_ktpr)
+        self.q_check_ktprp = QCheckBox('KTPRP', self)
+        self.q_check_ktprp.move(280, 51) 
+        self.q_check_ktprp.stateChanged.connect(self.check_ktprp)
+        self.q_check_ktpra = QCheckBox('KTPRA', self)
+        self.q_check_ktpra.move(280, 67) 
+        self.q_check_ktpra.stateChanged.connect(self.check_ktpra)
+        self.q_check_ktprs = QCheckBox('KTPRS', self)
+        self.q_check_ktprs.move(280, 83) 
+        self.q_check_ktprs.stateChanged.connect(self.check_ktprs)
+        self.q_check_gmpna = QCheckBox('GMPNA', self)
+        self.q_check_gmpna.move(280, 99) 
+        self.q_check_gmpna.stateChanged.connect(self.check_gmpna)
+        # Установить все
+        check_all = QCheckBox('Установить/Снять', self)
+        check_all.setToolTip('Установить или снять все флаги')
+        check_all.move(10, 140) 
+        check_all.stateChanged.connect(self.check_all)
+        # Подтверждение
+        b_export_list = QPushButton('Генерировать файлы\nдля базы данных', self)
+        b_export_list.setStyleSheet("background: #bbbabf; border-radius: 4px; border: 1px solid")
+        b_export_list.setToolTip('''Генерировать файлы сообщений для базы данных PostgreSQL''')
+        b_export_list.resize(150,30)
+        b_export_list.move(10, 200) 
+        b_export_list.clicked.connect(self.export_list)
+        b_export_sql = QPushButton('Генерировать в\nбазу данных', self)
+        b_export_sql.setStyleSheet("background: #bfd6bf; border-radius: 4px; border: 1px solid")
+        b_export_sql.setToolTip('''Генерировать сообщения в базу данных PostgreSQL''')
+        b_export_sql.resize(150,30)
+        b_export_sql.move(190, 200) 
+        b_export_sql.clicked.connect(self.export_sql)
+        # Проверка подключения к SQL
+        self.l_check_sql = QLabel('Подключение не установлено', self)
+        self.l_check_sql.move(170, 164)
+        b_check_sql = QPushButton('Проверить подключение', self)
+        b_check_sql.setStyleSheet("background: #bfd6bf; border-radius: 4px; border: 1px solid")
+        b_check_sql.setToolTip('''Для подключения должны быть указаны данные в файле конфигурации(раздел msg)''')
+        b_check_sql.resize(150,23)
+        b_check_sql.move(10, 160) 
+        b_check_sql.clicked.connect(self.check_sql)
+    # Check sql
+    def check_sql(self):
+        self.gen_sql
+        self.l_check_sql.setText('Установлено')
+    # CheckBox
+    def check_all(self, checked):
+        if checked: 
+            self.q_check_ai.setChecked(True)
+            self.q_check_di.setChecked(True)
+            self.q_check_do.setChecked(True)
+            self.q_check_ao.setChecked(True)
+            self.q_check_uso.setChecked(True)
+            self.q_check_hw.setChecked(True)
+            
+            self.q_check_umpna.setChecked(True)
+            self.q_check_zd.setChecked(True)
+            self.q_check_vs.setChecked(True)
+            self.q_check_vsgrp.setChecked(True)
+            self.q_check_uts.setChecked(True)
+            self.q_check_vv.setChecked(True)
+            self.q_check_pi.setChecked(True)
+            
+            self.q_check_umpna_ust.setChecked(True)
+            self.q_check_zd_ust.setChecked(True)
+            self.q_check_vs_ust.setChecked(True)
+            self.q_check_vsgrp_ust.setChecked(True)
+            self.q_check_uts_ust.setChecked(True)
+            self.q_check_pz_ust.setChecked(True)
+            
+            self.q_check_ktpr.setChecked(True)
+            self.q_check_ktprp.setChecked(True)
+            self.q_check_ktpra.setChecked(True)
+            self.q_check_ktprs.setChecked(True)
+            self.q_check_gmpna.setChecked(True)
+        else: 
+            self.q_check_ai.setChecked(False)
+            self.q_check_di.setChecked(False)
+            self.q_check_do.setChecked(False)
+            self.q_check_ao.setChecked(False)
+            self.q_check_uso.setChecked(False)
+            self.q_check_hw.setChecked(False)
+            
+            self.q_check_umpna.setChecked(False)
+            self.q_check_zd.setChecked(False)
+            self.q_check_vs.setChecked(False)
+            self.q_check_vsgrp.setChecked(False)
+            self.q_check_uts.setChecked(False)
+            self.q_check_vv.setChecked(False)
+            self.q_check_pi.setChecked(False)
+            
+            self.q_check_umpna_ust.setChecked(False)
+            self.q_check_zd_ust.setChecked(False)
+            self.q_check_vs_ust.setChecked(False)
+            self.q_check_vsgrp_ust.setChecked(False)
+            self.q_check_uts_ust.setChecked(False)
+            self.q_check_pz_ust.setChecked(False)
+            
+            self.q_check_ktpr.setChecked(False)
+            self.q_check_ktprp.setChecked(False)
+            self.q_check_ktpra.setChecked(False)
+            self.q_check_ktprs.setChecked(False)
+            self.q_check_gmpna.setChecked(False)
+    def check_ai(self, checked):
+        if checked: self.list_gen_msg.append('AI')
+        else      : self.list_gen_msg.remove('AI')
+    def check_di(self, checked):
+        if checked: self.list_gen_msg.append('DI')
+        else      : self.list_gen_msg.remove('DI')
+    def check_do(self, checked):
+        if checked: self.list_gen_msg.append('DO')
+        else      : self.list_gen_msg.remove('DO')
+    def check_ao(self, checked):
+        if checked: self.list_gen_msg.append('AO')
+        else      : self.list_gen_msg.remove('AO')
+    def check_uso(self, checked):
+        if checked: self.list_gen_msg.append('USO')
+        else      : self.list_gen_msg.remove('USO')
+    def check_hw(self, checked):
+        if checked: self.list_gen_msg.append('HW')
+        else      : self.list_gen_msg.remove('HW')
+    def check_umpna(self, checked):
+        if checked: self.list_gen_msg.append('UMPNA')
+        else      : self.list_gen_msg.remove('UMPNA')
+    def check_zd(self, checked):
+        if checked: self.list_gen_msg.append('ZD')
+        else      : self.list_gen_msg.remove('ZD')
+    def check_vs(self, checked):
+        if checked: self.list_gen_msg.append('VS')
+        else      : self.list_gen_msg.remove('VS')
+    def check_vsgrp(self, checked):
+        if checked: self.list_gen_msg.append('VSGRP')
+        else      : self.list_gen_msg.remove('VSGRP')
+    def check_uts(self, checked):
+        if checked: self.list_gen_msg.append('UTS')
+        else      : self.list_gen_msg.remove('UTS')
+    def check_vv(self, checked):
+        if checked: self.list_gen_msg.append('VV')
+        else      : self.list_gen_msg.remove('VV')
+    def check_pi(self, checked):
+        if checked: self.list_gen_msg.append('PI')
+        else      : self.list_gen_msg.remove('PI')
+    def check_umpna_tm(self, checked):
+        if checked: self.list_gen_msg.append('UMPNA_tm')
+        else      : self.list_gen_msg.remove('UMPNA_tm')
+    def check_zd_tm(self, checked):
+        if checked: self.list_gen_msg.append('ZD_tm')
+        else      : self.list_gen_msg.remove('ZD_tm')
+    def check_vs_tm(self, checked):
+        if checked: self.list_gen_msg.append('VS_tm')
+        else      : self.list_gen_msg.remove('VS_tm')
+    def check_vsgrp_tm(self, checked):
+        if checked: self.list_gen_msg.append('VSGRP_tm')
+        else      : self.list_gen_msg.remove('VSGRP_tm')
+    def check_uts_tm(self, checked):
+        if checked: self.list_gen_msg.append('UTS_tm')
+        else      : self.list_gen_msg.remove('UTS_tm')
+    def check_pz_tm(self, checked):
+        if checked: self.list_gen_msg.append('PZ_tm')
+        else      : self.list_gen_msg.remove('PZ_tm')
+    def check_ktpr(self, checked):
+        if checked: self.list_gen_msg.append('KTPR')
+        else      : self.list_gen_msg.remove('KTPR')
+    def check_ktprp(self, checked):
+        if checked: self.list_gen_msg.append('KTPRP')
+        else      : self.list_gen_msg.remove('KTPRP')
+    def check_ktpra(self, checked):
+        if checked: self.list_gen_msg.append('KTPRA')
+        else      : self.list_gen_msg.remove('KTPRA')
+    def check_ktprs(self, checked):
+        if checked: self.list_gen_msg.append('KTPRS')
+        else      : self.list_gen_msg.remove('KTPRS')
+    def check_gmpna(self, checked):
+        if checked: self.list_gen_msg.append('GMPNA')
+        else      : self.list_gen_msg.remove('GMPNA')
+    # Button
+    def export_list(self):
+        print(len(self.list_gen_msg))
+
+    def export_sql(self):
+        pass
+
 
 # Окно импорта КЗФКП
 class Window_import_exel(QWidget):
@@ -1074,7 +1360,12 @@ class Window_type_tabl_sql(QWidget):
         self.resize(500, 600)
 
         self.TableWidget = QTableWidget(self)
-        self.TableWidget.setGeometry(0,0,500,600)
+        self.TableWidget.move(500,600)
+        self.TableWidget.verticalHeader().setVisible(False)
+        self.TableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+
+        innerOutLayout = QVBoxLayout()
+        innerOutLayout.addWidget(self.TableWidget)
 
         self.TableWidget.setColumnCount(3)
         self.TableWidget.setRowCount(len(table_list))
@@ -1093,6 +1384,8 @@ class Window_type_tabl_sql(QWidget):
                 item = QTableWidgetItem(value)
                 item.setFlags(Qt.ItemIsEnabled)
                 self.TableWidget.setItem(row_t, column_t, item)
+
+        self.setLayout(innerOutLayout)
 # Основное окно просмотра и редактирования таблиц
 class Window_update_sql(QWidget):
     def __init__(self, table_used):
@@ -1194,9 +1487,10 @@ class Window_update_sql(QWidget):
         self.logs_msg(f'Запущен редактор базы данных. Таблица: {self.table_used}', 1)
     # Новое окно тип таблицы
     def type_tabl(self):
-        type_list = self.edit_SQL.type_column(self.table_used)
+        type_list, msg = self.edit_SQL.type_column(self.table_used)
         self.type_tabl = Window_type_tabl_sql(type_list)
         self.type_tabl.show()
+        self.logs_msg('default', 1, msg, True)
     # Сompletely clear the table
     def clear_tabl(self):
         rowcount = self.TableWidget.rowCount()
@@ -1392,7 +1686,7 @@ class Window_update_sql(QWidget):
         text_cell_id = self.TableWidget.item(int(row), 0).text()
 
         hat_name = self.edit_SQL.column_names(self.table_used)
-        flag_NULL = True if text_cell == 0 else False
+        flag_NULL = True if len(text_cell) == 0 else False
         msg = self.edit_SQL.update_row_tabl(column, text_cell, text_cell_id, self.table_used, hat_name, flag_NULL)
         self.logs_msg('default', 1, msg, True)
     # Logging messeges

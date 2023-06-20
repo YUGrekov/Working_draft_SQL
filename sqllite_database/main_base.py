@@ -2888,28 +2888,36 @@ class Editing_table_SQL():
     def get_tabl(self):
         return db.get_tables()
     def type_column(self, table_used):
-        self.cursor.execute(f"""SELECT column_name, data_type
-                                FROM information_schema.columns
-                                WHERE table_schema = 'public' AND table_name = '{table_used}'""")
+        msg       = {}
         type_list = []
+        try:
+            self.cursor.execute(f"""SELECT column_name, data_type
+                                    FROM information_schema.columns
+                                    WHERE table_schema = 'public' AND table_name = '{table_used}'""")
+            for tabl, name_c in rus_list.items():
 
-        for tabl, name_c in rus_list.items():
+                if tabl == table_used:
 
-            if tabl == table_used:
+                    for i in self.cursor.fetchall():
+                        column_name = i[0]
+                        data_type   = i[1]
 
-                for i in self.cursor.fetchall():
-                    column_name = i[0]
-                    data_type   = i[1]
+                        if column_name in name_c.keys():
 
-                    if column_name in name_c.keys():
+                            for key, value in name_c.items():
+                                if column_name == key:
+                                    list_a = [column_name, value, data_type]
+                                    type_list.append(list_a)
+                                    break
+        except Exception:
+            msg[f'{today} - Окно тип данных: ошибка: {traceback.format_exc()}'] = 2
 
-                        for key, value in name_c.items():
-                            if column_name == key:
-                                list_a = [column_name, value, data_type]
-                                type_list.append(list_a)
-                                break
-        return type_list
+        return type_list, msg
 
+# Generate data SQL
+class Generate_database_SQL():
+     def __init__(self):
+        self.cursor = db.cursor() 
 
 
 

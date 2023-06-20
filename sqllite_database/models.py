@@ -12,7 +12,7 @@ from playhouse.migrate import *
 path_to_exel = f'D:\\Development\\New_SQL_generator\\Working_draft_SQL\\sqllite_database\\П3 - КЗФКП Аксинино-2_MK500_20230405.xlsx'
 path_to_base = f'D:\\Development\\New_SQL_generator\\Working_draft_SQL\\sqllite_database\\asutp.db'
 
-db = PostgresqlDatabase('mydatabase', user='postgres', password='postgres', host='localhost', port=5432)
+db = PostgresqlDatabase('mydatabase', user='postgress', password='postgres', host='localhost', port=5432)
 
 # with open(path_prj) as paths:
 #     for string in paths:
