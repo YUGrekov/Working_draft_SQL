@@ -16,3 +16,9 @@ user_msg: postgres
 password_msg: postgres
 host_msg: localhost
 port_msg: 5432
+;---------------ust---------------
+database: asutp
+user: postgres
+password: postgres
+host: 10.155.23.135
+port: 5432

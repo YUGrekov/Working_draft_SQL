@@ -1,7 +1,7 @@
 from peewee import *
 from playhouse.migrate import *
 
-# from graphic_part import Window
+from graphic_part import Window
 # from PyQt5.QtWidgets import QApplication
 # app = QApplication([])
 
@@ -9,10 +9,26 @@ from playhouse.migrate import *
 # path_prj = win_.file_prj()
 
 
-path_to_exel = f'D:\\Development\\New_SQL_generator\\Working_draft_SQL\\sqllite_database\\П3 - КЗФКП Аксинино-2_MK500_20230405.xlsx'
-path_to_base = f'D:\\Development\\New_SQL_generator\\Working_draft_SQL\\sqllite_database\\asutp.db'
+#path_to_exel = f'D:\\Development\\New_SQL_generator\\Working_draft_SQL\\sqllite_database\\П3 - КЗФКП Аксинино-2_MK500_20230405.xlsx'
+#path_to_base = f'D:\\Development\\New_SQL_generator\\Working_draft_SQL\\sqllite_database\\asutp.db'
 
-db = PostgresqlDatabase('mydatabase', user='postgress', password='postgres', host='localhost', port=5432)
+path_to_exel = ''
+path_to_base = ''
+path_sample  = 'D:\Development\Generation_msg\Sample\\'
+path_location_file = 'D:\Development\Generation_msg\Script\\'
+
+database_msg = 'mydatabase'
+user_msg = 'postgres'
+password_msg = 'postgres'
+host_msg = 'localhost'
+port_msg = '5432'
+database_ust = ''
+user_ust = ''
+password_ust = ''
+host_ust = ''
+port_ust = ''
+
+#db = PostgresqlDatabase('mydatabase', user='postgress', password='postgres', host='localhost', port=5432)
 
 # with open(path_prj) as paths:
 #     for string in paths:
@@ -21,7 +37,36 @@ db = PostgresqlDatabase('mydatabase', user='postgress', password='postgres', hos
 #             path_to_exel = split_str[1]
 #         if split_str[0] == 'path_to_base':
 #             path_to_base = split_str[1]
+#         if split_str[0] == 'path_sample':
+#             path_sample = split_str[1]
+#         if split_str[0] == 'path_location_file':
+#             path_location_file = split_str[1]
 
+
+#         if split_str[0] == 'database_msg':
+#             database_msg = split_str[1]
+#         if split_str[0] == 'user_msg':
+#             user_msg = split_str[1]
+#         if split_str[0] == 'password_msg':
+#             password_msg = split_str[1]
+#         if split_str[0] == 'host_msg':
+#             host_msg = split_str[1]
+#         if split_str[0] == 'port_msg':
+#             port_msg = split_str[1]
+        
+#         if split_str[0] == 'database':
+#             database_ust = split_str[1]
+#         if split_str[0] == 'user':
+#             user_ust = split_str[1]
+#         if split_str[0] == 'password':
+#             password_ust = split_str[1]
+#         if split_str[0] == 'host':
+#             host_ust = split_str[1]
+#         if split_str[0] == 'port':
+#             port_ust = split_str[1]
+
+
+db = PostgresqlDatabase(database_msg, user=user_msg, password=password_msg, host=host_msg, port=port_msg)
 #db = SqliteDatabase(path_to_base)
 migrator = SqliteMigrator(db)
 

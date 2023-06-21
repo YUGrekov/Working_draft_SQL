@@ -55,8 +55,10 @@ class Window(QMainWindow):
 
         path_prj = QAction('Инициализация файла проекта', self)
         settings.addAction(path_prj)
-        path_prj.triggered.connect(self.file_prj)
+        path_prj.triggered.connect(self.win_data_prj)
     def file_prj(self):
+        return(QFileDialog.getOpenFileName(caption='Выберите файл конфигурации проекта')[0])
+    def win_data_prj(self):
         self.init_path = Window_path_prj()
         self.init_path.show()
                         
@@ -82,10 +84,110 @@ class Window_path_prj(QWidget):
         self.setWindowTitle('Инициализация файла проекта')
         self.setStyleSheet("background-color: #e1e5e5;")
         self.setWindowFlags(Qt.WindowCloseButtonHint)
-        self.resize(700, 300)
-    
-        
+        self.resize(800, 250)   
 
+        self.gen_sql = Generate_database_SQL()
+        # КЗФКП
+        l_kzfkp_desc = QLabel('Путь до файла КД: ', self)
+        l_kzfkp_desc.move(10, 5)
+        l_kzfkp_path = QLabel(self)
+        l_kzfkp_path.move(120, 5)
+        l_kzfkp_path.setText(path_to_exel)
+        # SQL
+        l_sql_desc = QLabel('Данные для подключения к базе SQL: ', self)
+        l_sql_desc.move(10, 23)
+        l_sql_msg_desc = QLabel('База сообщений: ', self)
+        l_sql_msg_desc.setStyleSheet("background-color: #d8d99c")
+        l_sql_msg_desc.move(10, 36)
+        l_sql_ust_desc = QLabel('База уставок: ', self)
+        l_sql_ust_desc.setStyleSheet("background-color: #d8d99c")
+        l_sql_ust_desc.move(160, 36)
+        # Проверка подключения
+        #msg
+        b_check_sql_msg = QPushButton('Проверить соединение', self)
+        b_check_sql_msg.setStyleSheet("border-radius: 4px; border: 1px solid")
+        b_check_sql_msg.resize(130,23)
+        b_check_sql_msg.move(10, 130) 
+        b_check_sql_msg.clicked.connect(self.check_base_sql_msg)
+        self.l_sql_msg_check = QLabel('Проверка не проводилась',self)
+        self.l_sql_msg_check.move(10, 155)
+        #ust
+        b_check_sql_ust = QPushButton('Проверить соединение', self)
+        b_check_sql_ust.setStyleSheet("border-radius: 4px; border: 1px solid")
+        b_check_sql_ust.resize(130,23)
+        b_check_sql_ust.move(160, 130) 
+        b_check_sql_ust.clicked.connect(self.check_base_sql_ust)
+        self.l_sql_ust_check = QLabel('Проверка не проводилась',self)
+        self.l_sql_ust_check.move(160, 155)
+        # MSG
+        l_sql_msg_base_desc = QLabel('Database: ',self)
+        l_sql_msg_base_desc.move(10, 50)
+        l_sql_msg_base_path = QLabel(self)
+        l_sql_msg_base_path.move(70, 50)
+        l_sql_msg_base_path.setText(database_msg)
+        l_sql_msg_user_desc = QLabel('User: ',self)
+        l_sql_msg_user_desc.move(10, 65)
+        l_sql_msg_user_path = QLabel(self)
+        l_sql_msg_user_path.move(70, 65)
+        l_sql_msg_user_path.setText(user_msg)
+        l_sql_msg_pass_desc = QLabel('Password: ',self)
+        l_sql_msg_pass_desc.move(10, 80)
+        l_sql_msg_pass_path = QLabel(self)
+        l_sql_msg_pass_path.move(70, 80)
+        l_sql_msg_pass_path.setText(password_msg)
+        l_sql_msg_host_desc = QLabel('Host: ',self)
+        l_sql_msg_host_desc.move(10, 95)
+        l_sql_msg_host_path = QLabel(self)
+        l_sql_msg_host_path.move(70, 95)
+        l_sql_msg_host_path.setText(host_msg)
+        l_sql_msg_port_desc = QLabel('Port: ',self)
+        l_sql_msg_port_desc.move(10, 110)
+        l_sql_msg_port_path = QLabel(self)
+        l_sql_msg_port_path.move(70, 110)
+        l_sql_msg_port_path.setText(port_msg)
+        # asutp
+        l_sql_base_desc = QLabel('Database: ',self)
+        l_sql_base_desc.move(160, 50)
+        l_sql_base_path = QLabel(self)
+        l_sql_base_path.move(220, 50)
+        l_sql_base_path.setText(database_ust)
+        l_sql_user_desc = QLabel('User: ',self)
+        l_sql_user_desc.move(160, 65)
+        l_sql_user_path = QLabel(self)
+        l_sql_user_path.move(220, 65)
+        l_sql_user_path.setText(user_ust)
+        l_sql_pass_desc = QLabel('Password: ',self)
+        l_sql_pass_desc.move(160, 80)
+        l_sql_pass_path = QLabel(self)
+        l_sql_pass_path.move(220, 80)
+        l_sql_pass_path.setText(password_ust)
+        l_sql_host_desc = QLabel('Host: ',self)
+        l_sql_host_desc.move(160, 95)
+        l_sql_host_path = QLabel(self)
+        l_sql_host_path.move(220, 95)
+        l_sql_host_path.setText(host_ust)
+        l_sql_port_desc = QLabel('Port: ',self)
+        l_sql_port_desc.move(160, 110)
+        l_sql_port_path = QLabel(self)
+        l_sql_port_path.move(220, 110)
+        l_sql_port_path.setText(port_ust)
+    def check_base_sql_msg(self):
+        connect = self.gen_sql.check_database_connect(database_msg, user_msg, password_msg, host_msg, port_msg)
+        if connect is True:
+            self.l_sql_msg_check.setText('Установлено')
+            self.l_sql_msg_check.setStyleSheet("background-color: lightgreen")
+        else:
+            self.l_sql_msg_check.setText('Не установлено')
+            self.l_sql_msg_check.setStyleSheet("background-color: red")
+    def check_base_sql_ust(self):
+        connect =self.gen_sql.check_database_connect(database_ust, user_ust, password_ust, host_ust, port_ust)
+        if connect is True:
+            self.l_sql_ust_check.setText('Установлено')
+            self.l_sql_ust_check.setStyleSheet("background-color: lightgreen")
+        else:
+            self.l_sql_ust_check.setText('Не установлено')
+            self.l_sql_ust_check.setStyleSheet("background-color: red")
+        
 
 # Генерация сообщений в базу SQL
 class Window_gen_SQL(QWidget):
@@ -199,20 +301,25 @@ class Window_gen_SQL(QWidget):
         b_export_sql.setToolTip('''Генерировать сообщения в базу данных PostgreSQL''')
         b_export_sql.resize(150,30)
         b_export_sql.move(190, 200) 
-        b_export_sql.clicked.connect(self.export_sql)
+        b_export_sql.clicked.connect(self.write_in_sql)
         # Проверка подключения к SQL
-        self.l_check_sql = QLabel('Подключение не установлено', self)
+        self.l_check_sql = QLabel('Не проводилась', self)
         self.l_check_sql.move(170, 164)
-        b_check_sql = QPushButton('Проверить подключение', self)
-        b_check_sql.setStyleSheet("background: #bfd6bf; border-radius: 4px; border: 1px solid")
+        b_check_sql = QPushButton('Проверить соединение', self)
+        b_check_sql.setStyleSheet("border-radius: 4px; border: 1px solid")
         b_check_sql.setToolTip('''Для подключения должны быть указаны данные в файле конфигурации(раздел msg)''')
         b_check_sql.resize(150,23)
         b_check_sql.move(10, 160) 
         b_check_sql.clicked.connect(self.check_sql)
     # Check sql
     def check_sql(self):
-        self.gen_sql
-        self.l_check_sql.setText('Установлено')
+        connect = self.gen_sql.check_database_connect(database_msg, user_msg, password_msg, host_msg, port_msg)
+        if connect is True:
+            self.l_check_sql.setText('Установлено')
+            self.l_check_sql.setStyleSheet("background-color: lightgreen")
+        else:
+            self.l_check_sql.setText('Не установлено')
+            self.l_check_sql.setStyleSheet("background-color: red")
     # CheckBox
     def check_all(self, checked):
         if checked: 
@@ -347,8 +454,8 @@ class Window_gen_SQL(QWidget):
     def export_list(self):
         print(len(self.list_gen_msg))
 
-    def export_sql(self):
-        pass
+    def write_in_sql(self):
+        self.gen_sql.write_in_sql(self.list_gen_msg)
 
 
 # Окно импорта КЗФКП

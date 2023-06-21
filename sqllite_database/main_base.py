@@ -1,7 +1,9 @@
 from models import *
 import openpyxl as wb
+from lxml import etree
 from datetime import datetime
-import re, traceback
+import re, traceback, os
+import psycopg2
 today = datetime.now()
 
 
@@ -179,6 +181,34 @@ class General_functions():
             msg[f'{today} - Таблица: {tabl_used_str}, обновлен: {name},  {column_update_str} = {value}'] = 3
             return msg
         return msg
+    def parser_sample(self, path, name, kod_msg):
+        cursor = db.cursor()
+        parser = etree.XMLParser(remove_blank_text=True)
+        tree = etree.parse(path, parser)
+        root = tree.getroot()
+
+        for lvl_one in root.iter('Row'):
+            kod_msg += 1
+            category  = lvl_one.attrib['Category']
+            isAck     = lvl_one.attrib['IsAck']
+            isCycle   = lvl_one.attrib['IsCycle']
+            isSound   = lvl_one.attrib['IsSound']
+            isHide    = lvl_one.attrib['IsHide']
+            priority  = lvl_one.attrib['Priority']
+            isAlert   = lvl_one.attrib['IsAlert']
+            mess      = lvl_one.attrib['Message']
+            soundFile = lvl_one.attrib['SoundFile']
+            nextLink  = lvl_one.attrib['NextLink']
+            base      = lvl_one.attrib['Base']
+            print(category, mess)
+
+            cursor.execute(f"""DELETE FROM opmessages 
+                               WHERE Category ={kod_msg}""")
+            cursor.execute(f"""INSERT INTO opmessages (Category, Message, IsAck, SoundFile, IsCycle, IsSound, IsHide, Priority, IsAlert) 
+                               VALUES({kod_msg}, '{name}. {mess}', {isAck}, '{soundFile}', {isCycle}, {isSound}, {isHide}, {priority}, {isAlert})""")
+        return kod_msg
+
+        
 
 # Work with filling in the table 'Signals'
 class Import_in_SQL():
@@ -2500,23 +2530,23 @@ class Filling_VV():
                     return msg
                 
                 # Cписок ВВ из таблицы DI
-                req_vv_di = self.cursor.execute(f'''SELECT id, tag, name
-                                                    FROM di
-                                                    WHERE (name LIKE "%ввода%" AND tag LIKE "%MBC%") OR
-                                                          (name LIKE "%СВВ%" AND tag LIKE "%MBC%") OR
-                                                          (name LIKE "%ССВ%" AND tag LIKE "%MBC%")''')
-                list_vv_di = req_vv_di.fetchall()
+                self.cursor.execute(f'''SELECT id, tag, name
+                                        FROM di
+                                        WHERE (name LIKE '%ввода%' AND tag LIKE '%MBC%') OR
+                                              (name LIKE '%СВВ%' AND tag LIKE '%MBC%') OR
+                                              (name LIKE '%ССВ%' AND tag LIKE '%MBC%')''')
+                list_vv_di = self.cursor.fetchall()
 
                 # Существующий список из таблицы VV
-                count_vv_old = self.cursor.execute(f'''SELECT name FROM vv''')
-                name_vv_old = count_vv_old.fetchall()
+                self.cursor.execute(f'''SELECT name FROM vv''')
+                name_vv_old = self.cursor.fetchall()
                 tabl_vv_name = []
                 for i in name_vv_old:
                     tabl_vv_name.append(i[0])
 
                 # Количество строк в таблице
-                row = self.cursor.execute(f'''SELECT COUNT(*) FROM vv''')
-                count_row = row.fetchall()[0][0]
+                self.cursor.execute(f'''SELECT COUNT(*) FROM vv''')
+                count_row = self.cursor.fetchall()[0][0]
                 
                 # Короткое имя
                 list_name_vv = []
@@ -2533,10 +2563,10 @@ class Filling_VV():
                 for set_name in sorted(set_name_vv):
                     vkl_vv  = ''
                     otkl_vv = ''
-                    req_vv_name_di = self.cursor.execute(f'''SELECT id, name
-                                                             FROM di
-                                                             WHERE name LIKE "%{set_name}%"''')
-                    list_vv_signals = req_vv_name_di.fetchall()
+                    self.cursor.execute(f"""SELECT id, name
+                                            FROM di
+                                            WHERE name LIKE '%{set_name}%'""")
+                    list_vv_signals = self.cursor.fetchall()
                     for signal in list_vv_signals:
                         id_vv   = signal[0]
                         name_vv = signal[1]
@@ -2545,8 +2575,8 @@ class Filling_VV():
                         if self.dop_function.str_find(name_vv, {'отключ'}): otkl_vv = f'DI[{id_vv}].Value'
 
                     if set_name in tabl_vv_name:
-                        msg.update(self.dop_function.update_signal_dop(VV, 'vv', set_name, VV.VV_vkl, 'VV_vkl', vkl_vv))
-                        msg.update(self.dop_function.update_signal_dop(VV, 'vv', set_name, VV.otkl_vv, 'otkl_vv', otkl_vv))
+                        msg.update(self.dop_function.update_signal_dop(VV, "vv", set_name, VV.VV_vkl, 'VV_vkl', vkl_vv))
+                        msg.update(self.dop_function.update_signal_dop(VV, "vv", set_name, VV.otkl_vv, 'otkl_vv', otkl_vv))
                     else:
                         msg[f'{today} - Таблица: vv, добавлен новый сигнал: id = {id_vv}, {name_vv}'] = 3
                         count_row += 1
@@ -2916,9 +2946,53 @@ class Editing_table_SQL():
 
 # Generate data SQL
 class Generate_database_SQL():
-     def __init__(self):
-        self.cursor = db.cursor() 
+    def __init__(self):
+        self.cursor = db.cursor()
+        self.dop_function = General_functions()
+    def check_database_connect(self, dbname, user, password, host, port):
+        try:
+            connect = psycopg2.connect(f"dbname={dbname} user={user} host={host} password={password} port={port} connect_timeout=1 ")
+            connect.close()
+            return True
+        except:
+            return False
+    def write_in_sql(self, list_tabl):
+        if len(list_tabl) == 0: return
+        for tabl in list_tabl:
+            if tabl == 'AI': 
+                self.gen_msg_ai()
+                continue
+    def gen_msg_ai(self):
+        with db:
+            try:
+                self.cursor.execute(f"""SELECT id, name, group_analog FROM ai""")
+                list_ai = self.cursor.fetchall()
+                # self.cursor.execute(f"""SELECT id, tag, index FROM msg""")
+                # list_msg = self.cursor.fetchall()[0][0]
+                kod_msg = 5000
+                for analog in list_ai:
+                    id_ai    = analog[0]
+                    name_ai  = analog[1]
+                    group_ai = analog[2]
+
+                    if id_ai == 4: return
+                    try:
+                        self.cursor.execute(f"""SELECT "Table_msg" 
+                                                FROM ai_grp
+                                                WHERE name_group='{group_ai}'""")
+                        list_group = self.cursor.fetchall()[0][0]
+                        path = f'{path_sample}\{list_group}.xml'
+                        if not os.path.isfile(path):
+                            print(id_ai, 'шаблон отсутствует')
+                            continue
+
+                        kod_msg = self.dop_function.parser_sample(path, name_ai, kod_msg)
+
+                    except Exception:
+                        print(traceback.format_exc())
+                        continue
+
+            except Exception:
+                print(traceback.format_exc())
 
 
-
- 
