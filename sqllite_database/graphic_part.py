@@ -195,7 +195,7 @@ class Window_gen_SQL(QWidget):
         super(Window_gen_SQL, self).__init__()
         self.setWindowTitle('Генерация сообщений')
         self.setStyleSheet("background-color: #e1e5e5;")
-        self.resize(355, 240)
+        self.resize(355, 315)
 
         self.list_gen_msg = []
         self.gen_sql = Generate_database_SQL()
@@ -311,6 +311,12 @@ class Window_gen_SQL(QWidget):
         b_check_sql.resize(150,23)
         b_check_sql.move(10, 160) 
         b_check_sql.clicked.connect(self.check_sql)
+        # Logs
+        self.logTextBox = QTextEdit(self)
+        self.logTextBox.setStyleSheet("border-radius: 4px; border: 1px solid")
+        self.logTextBox.setGeometry(10,235,335,70)
+        self.logTextBox.setReadOnly(True)
+        self.logs_msg(f'Запущена форма генерации сообщений', 1)
     # Check sql
     def check_sql(self):
         connect = self.gen_sql.check_database_connect(database_msg, user_msg, password_msg, host_msg, port_msg)
@@ -452,10 +458,33 @@ class Window_gen_SQL(QWidget):
         else      : self.list_gen_msg.remove('GMPNA')
     # Button
     def export_list(self):
-        print(len(self.list_gen_msg))
-
+        self.gen_sql.write_in_sql(self.list_gen_msg, False)
     def write_in_sql(self):
-        self.gen_sql.write_in_sql(self.list_gen_msg)
+        msg = self.gen_sql.write_in_sql(self.list_gen_msg, True)
+        self.logs_msg('default', 1, msg, True)
+    # Logging messeges
+    def logs_msg(self, logs=None, number_color=1, buffer_msg=None, msg=False):
+        today = datetime.now()
+        errorFormat   = '<span style="color:red;">{}</span>'
+        warningFormat = '<span style="color:#9ea108;">{}</span>'
+        validFormat   = '<span style="color:black;">{}</span>'
+        newFormat     = '<span style="color:green;">{}</span>'
+        if msg:
+            for string_msg, value in buffer_msg.items():
+                if   value == 1: 
+                    self.logTextBox.append(validFormat.format(string_msg))
+                elif value == 2: 
+                    self.logTextBox.append(errorFormat.format(string_msg))
+                elif value == 3: 
+                    self.logTextBox.append(warningFormat.format(string_msg))
+                elif value == 0: 
+                    self.logTextBox.append(newFormat.format(string_msg))
+        else:
+            if   number_color == 1: self.logTextBox.append(validFormat.format(f'{logs}'))
+            elif number_color == 2: self.logTextBox.append(errorFormat.format(f'{logs}'))
+            elif number_color == 3: self.logTextBox.append(warningFormat.format(f'{logs}'))
+            elif number_color == 0: self.logTextBox.append(newFormat.format(f'{logs}'))
+
 
 
 # Окно импорта КЗФКП

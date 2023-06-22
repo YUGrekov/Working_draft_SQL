@@ -181,14 +181,15 @@ class General_functions():
             msg[f'{today} - Таблица: {tabl_used_str}, обновлен: {name},  {column_update_str} = {value}'] = 3
             return msg
         return msg
-    def parser_sample(self, path, name, kod_msg):
+    def parser_sample(self, path, kod_msg, name, flag_write_db):
         cursor = db.cursor()
         parser = etree.XMLParser(remove_blank_text=True)
         tree = etree.parse(path, parser)
         root = tree.getroot()
 
+        list_msg = []
+
         for lvl_one in root.iter('Row'):
-            kod_msg += 1
             category  = lvl_one.attrib['Category']
             isAck     = lvl_one.attrib['IsAck']
             isCycle   = lvl_one.attrib['IsCycle']
@@ -200,13 +201,21 @@ class General_functions():
             soundFile = lvl_one.attrib['SoundFile']
             nextLink  = lvl_one.attrib['NextLink']
             base      = lvl_one.attrib['Base']
-            print(category, mess)
 
-            cursor.execute(f"""DELETE FROM opmessages 
-                               WHERE Category ={kod_msg}""")
-            cursor.execute(f"""INSERT INTO opmessages (Category, Message, IsAck, SoundFile, IsCycle, IsSound, IsHide, Priority, IsAlert) 
-                               VALUES({kod_msg}, '{name}. {mess}', {isAck}, '{soundFile}', {isCycle}, {isSound}, {isHide}, {priority}, {isAlert})""")
-        return kod_msg
+            del_row_tabl = f"""DELETE FROM opmessages WHERE Category ={kod_msg + int(category)}"""
+            ins_row_tabl = f"""INSERT INTO opmessages (Category, Message, IsAck, SoundFile, IsCycle, IsSound, IsHide, Priority, IsAlert) 
+                               VALUES({kod_msg + int(category)}, '{name}.{mess}', {isAck}, '{soundFile}', {isCycle}, {isSound}, {isHide}, {priority}, {isAlert})"""
+            
+            if flag_write_db:
+                cursor.execute(del_row_tabl)
+                cursor.execute(ins_row_tabl)
+            else:
+                list_msg.append(del_row_tabl)
+                list_msg.append(ins_row_tabl)
+
+        return list_msg
+
+
 
         
 
@@ -1939,7 +1948,7 @@ class Filling_ZD():
                                             Opening_percent = '',
                                             Pic = '',
 
-                                            Type_BUR_ZD = '',
+                                            Type_BUR_ZD = '', tabl_msg='TblValves',
                                             AlphaHMI = '',AlphaHMI_PIC1 = '',AlphaHMI_PIC1_Number_kont = '',
                                             AlphaHMI_PIC2 = '',AlphaHMI_PIC2_Number_kont = '',AlphaHMI_PIC3 = '',
                                             AlphaHMI_PIC3_Number_kont = '',AlphaHMI_PIC4 = '',AlphaHMI_PIC4_Number_kont = ''))
@@ -1963,7 +1972,7 @@ class Filling_ZD():
                         'MPO_i', 'MPZ_i', 'Dist_i', 'Mufta_i', 'Drive_failure_i', 'Open_i', 'Close_i', 'Stop_i', 'Opening_stop_i',
                         'Closeing_stop_i', 'No_connection', 'Close_BRU', 'Stop_BRU', 'Voltage', 'Voltage_CHSU', 
                         'Voltage_in_signaling_circuits', 'Serviceability_opening_circuits', 'Serviceability_closening_circuits', 'VMMO', 'VMMZ', 
-                        'Freeze_on_suspicious_change', 'Is_klapan', 'Opening_percent', 'Pic', 'Type_BUR_ZD', 
+                        'Freeze_on_suspicious_change', 'Is_klapan', 'Opening_percent', 'Pic', 'Type_BUR_ZD', 'tabl_msg',
                         'AlphaHMI', 'AlphaHMI_PIC1', 'AlphaHMI_PIC1_Number_kont', 'AlphaHMI_PIC2',
                         'AlphaHMI_PIC2_Number_kont','AlphaHMI_PIC3', 'AlphaHMI_PIC3_Number_kont', 
                         'AlphaHMI_PIC4', 'AlphaHMI_PIC4_Number_kont']
@@ -2709,7 +2718,7 @@ class Filling_PI():
                 PI.insert_many(list_pi).execute()
                 if len(msg) == 0: msg[f'{today} - Таблица: pi, обновление завершено, изменений не обнаружено!'] = 1
             except Exception:
-                 msg[f'{today} - Таблица: pi, ошибка при заполнении: {traceback.format_exc()}'] = 2
+                msg[f'{today} - Таблица: pi, ошибка при заполнении: {traceback.format_exc()}'] = 2
             msg[f'{today} - Таблица: pi, выполнение кода завершено!'] = 1
         return(msg)
     # Заполняем таблицу VS
@@ -2947,7 +2956,6 @@ class Editing_table_SQL():
 # Generate data SQL
 class Generate_database_SQL():
     def __init__(self):
-        self.cursor = db.cursor()
         self.dop_function = General_functions()
     def check_database_connect(self, dbname, user, password, host, port):
         try:
@@ -2956,43 +2964,105 @@ class Generate_database_SQL():
             return True
         except:
             return False
-    def write_in_sql(self, list_tabl):
+    def define_number_msg(self, cursor, tag):
+        kod_msg     = 0
+        addr_offset = 0
+        try:
+            cursor.execute(f"""SELECT index, count 
+                               FROM msg
+                               WHERE tag ='{tag}'""")
+            for i in cursor.fetchall():
+                kod_msg = i[0]
+                addr_offset = i[1]
+        except Exception:
+            return kod_msg, addr_offset
+        return kod_msg, addr_offset
+
+    def write_in_sql(self, list_tabl, flag_write_db):
+        msg = {}
         if len(list_tabl) == 0: return
+
         for tabl in list_tabl:
             if tabl == 'AI': 
-                self.gen_msg_ai()
+                cursor = db.cursor()
+                msg.update(self.gen_msg_ai(cursor, flag_write_db))
                 continue
-    def gen_msg_ai(self):
+            if tabl == 'DI': 
+                cursor = db.cursor()
+                msg.update(self.gen_msg_general(cursor, flag_write_db, 'di', 'DI'))
+                continue
+            if tabl == 'ZD': 
+                cursor = db.cursor()
+                msg.update(self.gen_msg_general(cursor, flag_write_db, 'zd', 'ZD'))
+                continue
+        return msg
+    def gen_msg_ai(self, cursor, flag_write_db):
         with db:
+            msg = {}
+            gen_list = []
             try:
-                self.cursor.execute(f"""SELECT id, name, group_analog FROM ai""")
-                list_ai = self.cursor.fetchall()
-                # self.cursor.execute(f"""SELECT id, tag, index FROM msg""")
-                # list_msg = self.cursor.fetchall()[0][0]
-                kod_msg = 5000
+                kod_msg, addr_offset = self.define_number_msg(cursor, 'AI')
+                if kod_msg == 0 or addr_offset == 0 or kod_msg is None or addr_offset is None: 
+                    msg[f'{today} - Сообщения AI: ошибка. Адреса из таблицы msg не определены'] = 2
+                    return msg
+
+                cursor.execute(f"""SELECT id, name, group_analog FROM ai""")
+                list_ai = cursor.fetchall()
                 for analog in list_ai:
                     id_ai    = analog[0]
                     name_ai  = analog[1]
                     group_ai = analog[2]
 
-                    if id_ai == 4: return
+                    start_addr = kod_msg + ((id_ai - 1) * int(addr_offset))
                     try:
-                        self.cursor.execute(f"""SELECT "Table_msg" 
-                                                FROM ai_grp
-                                                WHERE name_group='{group_ai}'""")
-                        list_group = self.cursor.fetchall()[0][0]
+                        cursor.execute(f"""SELECT "Table_msg" 
+                                           FROM ai_grp
+                                           WHERE name_group='{group_ai}'""")
+                        list_group = cursor.fetchall()[0][0]
                         path = f'{path_sample}\{list_group}.xml'
                         if not os.path.isfile(path):
-                            print(id_ai, 'шаблон отсутствует')
+                            msg[f'{today} - Сообщения AI: отсутствует шаблон!{id_ai} - {name_ai}'] = 2
                             continue
-
-                        kod_msg = self.dop_function.parser_sample(path, name_ai, kod_msg)
-
+                        gen_list.append(self.dop_function.parser_sample(path, start_addr, name_ai, flag_write_db))
                     except Exception:
-                        print(traceback.format_exc())
+                        msg[f'{today} - Сообщения AI: ошибка генерации:{id_ai} - {name_ai}'] = 2
                         continue
-
+                
+                if not flag_write_db:
+                    print(gen_list)
             except Exception:
-                print(traceback.format_exc())
+                msg[f'{today} - Сообщения AI: ошибка генерации: {traceback.format_exc()}'] = 2
+            msg[f'{today} - Сообщения AI: генерация завершена!'] = 1
+        return(msg)
+    def gen_msg_general(self, cursor, flag_write_db, tabl, sign):
+            with db:
+                msg = {}
+                gen_list = []
+                try:
+                    kod_msg, addr_offset = self.define_number_msg(cursor, sign)
+                    if kod_msg == 0 or addr_offset == 0 or kod_msg is None or addr_offset is None: 
+                        msg[f'{today} - Сообщения {sign}: ошибка. Адреса из таблицы msg не определены'] = 2
+                        return msg
+                    
+                    cursor.execute(f"""SELECT id, name, tabl_msg FROM "{tabl}" """)
+                    list_signal = cursor.fetchall()
+                    for signal in list_signal:
+                        id_       = signal[0]
+                        name      = signal[1]
+                        table_msg = signal[2]
+
+                        start_addr = kod_msg + ((id_ - 1) * int(addr_offset))
+                        path = f'{path_sample}\{table_msg}.xml'
+                        if not os.path.isfile(path):
+                            msg[f'{today} - Сообщения {sign}: отсутствует шаблон!{id_} - {name}'] = 2
+                            continue
+                        gen_list.append(self.dop_function.parser_sample(path, start_addr, name, flag_write_db))
+                    if not flag_write_db:
+                        print(gen_list)
+                except Exception:
+                    msg[f'{today} - Сообщения {sign}: ошибка генерации: {traceback.format_exc()}'] = 2
+                msg[f'{today} - Сообщения {sign}: генерация завершена!'] = 1
+            return(msg)
+        
 
 

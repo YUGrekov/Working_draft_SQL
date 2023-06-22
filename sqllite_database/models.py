@@ -290,7 +290,7 @@ rus_list = {'signals': {'id':'№', 'type_signal':'Тип сигнала', 'uso'
                    'Close_BRU':'Закрыть с БРУ', 'Stop_BRU':'Стоп с БРУ', 'Voltage':'Напряжение', 'Voltage_CHSU':'Напряжение ЩСУ', 'Voltage_in_signaling_circuits':'Напряжение в цепях\nсигнализации', 
                    'Serviceability_opening_circuits':'Исправность цепей открытия', 'Serviceability_closening_circuits':'Исправность цепей закрытия', 'VMMO':'ВММО', 'VMMZ':'ВММЗ', 
                    'Freeze_on_suspicious_change':'Замораживать при\nподозрительном изм', 'Is_klapan':'Это клапан', 'Opening_percent':'Процент открытия', 'Pic':'Pic', 'Type_BUR_ZD':'Тип БУР задвижки', 
-                   'AlphaHMI':'AlphaHMI', 'AlphaHMI_PIC1':'AlphaHMI_PIC1', 'AlphaHMI_PIC1_Number_kont':'AlphaHMI_PIC1_Number_kont', 'AlphaHMI_PIC2':'AlphaHMI_PIC2',
+                   'tabl_msg':'Шаблон для сообщений', 'AlphaHMI':'AlphaHMI', 'AlphaHMI_PIC1':'AlphaHMI_PIC1', 'AlphaHMI_PIC1_Number_kont':'AlphaHMI_PIC1_Number_kont', 'AlphaHMI_PIC2':'AlphaHMI_PIC2',
                    'AlphaHMI_PIC2_Number_kont':'AlphaHMI_PIC2_Number_kont','AlphaHMI_PIC3':'AlphaHMI_PIC3', 'AlphaHMI_PIC3_Number_kont':'AlphaHMI_PIC3_Number_kont', 
                    'AlphaHMI_PIC4':'AlphaHMI_PIC4', 'AlphaHMI_PIC4_Number_kont':'AlphaHMI_PIC4_Number_kont'},
 
@@ -901,6 +901,7 @@ class ZD(BaseModel):
     Opening_percent = CharField(null = True)
     Pic = CharField(null = True)
     Type_BUR_ZD = CharField(null = True)
+    tabl_msg = CharField(null = True)
 
     AlphaHMI = CharField(null = True)
     AlphaHMI_PIC1 = CharField(null = True)
