@@ -458,7 +458,8 @@ class Window_gen_SQL(QWidget):
         else      : self.list_gen_msg.remove('GMPNA')
     # Button
     def export_list(self):
-        self.gen_sql.write_in_sql(self.list_gen_msg, False)
+        msg = self.gen_sql.write_in_sql(self.list_gen_msg, False)
+        self.logs_msg('default', 1, msg, True)
     def write_in_sql(self):
         msg = self.gen_sql.write_in_sql(self.list_gen_msg, True)
         self.logs_msg('default', 1, msg, True)
@@ -484,8 +485,6 @@ class Window_gen_SQL(QWidget):
             elif number_color == 2: self.logTextBox.append(errorFormat.format(f'{logs}'))
             elif number_color == 3: self.logTextBox.append(warningFormat.format(f'{logs}'))
             elif number_color == 0: self.logTextBox.append(newFormat.format(f'{logs}'))
-
-
 
 # Окно импорта КЗФКП
 class Window_import_exel(QWidget):

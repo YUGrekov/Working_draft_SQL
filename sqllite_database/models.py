@@ -17,6 +17,7 @@ path_to_base = ''
 path_sample  = 'D:\Development\Generation_msg\Sample\\'
 path_location_file = 'D:\Development\Generation_msg\Script\\'
 
+
 database_msg = 'mydatabase'
 user_msg = 'postgres'
 password_msg = 'postgres'
@@ -276,7 +277,7 @@ rus_list = {'signals': {'id':'№', 'type_signal':'Тип сигнала', 'uso'
                      'gmpna_49':'GMPNA_[49]', 'gmpna_50':'GMPNA_[50]', 'gmpna_51':'GMPNA_[51]', 'gmpna_52':'GMPNA_[52]', 'gmpna_53':'GMPNA_[53]', 'gmpna_54':'GMPNA_[54]',
                      'gmpna_55':'GMPNA_[55]', 'gmpna_56':'GMPNA_[56]', 'gmpna_57':'GMPNA_[57]', 'gmpna_58':'GMPNA_[58]', 'gmpna_59':'GMPNA_[59]', 'gmpna_60':'GMPNA_[60]', 
                      'gmpna_61':'GMPNA_[61]', 'gmpna_62':'GMPNA_[62]', 'gmpna_63':'GMPNA_[63]', 'gmpna_64':'GMPNA_[64]', 
-                     'Pic':'Pic', 
+                     'Pic':'Pic', 'tabl_msg':'Шаблон сообщений',
                      'replacement_uso_signal_vv_1':'Замена %1 - УСО сигналов ВВ 1\n(Строка для замены %1 в сообщениях)', 
                      'replacement_uso_signal_vv_2':'Замена %2 - УСО сигналов ВВ 2\n(Строка для замены %2 в сообщениях)'},
             
@@ -299,7 +300,7 @@ rus_list = {'signals': {'id':'№', 'type_signal':'Тип сигнала', 'uso'
 
             'vs': {'id':'№','variable':'Переменная', 'name':'Название', 'short_name':'Короткое\nназвание', 'group':'Группа', 'number_in_group':'Номер в группе', 'MP':'МП', 'Pressure_is_True':'Давление норма', 
                    'Voltage':'Напряжение', 'Voltage_Sch':'Напряжение на СШ', 'Serviceability_of_circuits_of_inclusion':'Исправность цепей\nвключения', 'External_alarm':'Внешняя авария', 'Pressure_sensor_defective':'Датчик давления неисправен', 
-                   'VKL':'Включить', 'OTKL':'Отключить', 'Not_APV':'АПВ не требуется', 'Pic':'Pic', 'Table_msg':'Таблица сообщений', 'Is_klapana_interface_auxsystem':'Это клапан/интерфейсная вспомсистема',
+                   'VKL':'Включить', 'OTKL':'Отключить', 'Not_APV':'АПВ не требуется', 'Pic':'Pic', 'table_msg':'Таблица сообщений', 'Is_klapana_interface_auxsystem':'Это клапан/интерфейсная вспомсистема',
                    'AlphaHMI':'AlphaHMI', 'AlphaHMI_PIC1':'AlphaHMI_PIC1', 'AlphaHMI_PIC1_Number_kont':'AlphaHMI_PIC1_Number_kont', 'AlphaHMI_PIC2':'AlphaHMI_PIC2',
                    'AlphaHMI_PIC2_Number_kont':'AlphaHMI_PIC2_Number_kont','AlphaHMI_PIC3':'AlphaHMI_PIC3', 'AlphaHMI_PIC3_Number_kont':'AlphaHMI_PIC3_Number_kont', 
                    'AlphaHMI_PIC4':'AlphaHMI_PIC4', 'AlphaHMI_PIC4_Number_kont':'AlphaHMI_PIC4_Number_kont'},
@@ -849,6 +850,7 @@ class UMPNA(BaseModel):
     gmpna_64 = CharField(null = True)
 
     Pic = CharField(null = True)
+    tabl_msg = CharField(null = True)
     replacement_uso_signal_vv_1 = CharField(null = True)
     replacement_uso_signal_vv_2 = CharField(null = True)
 
@@ -946,7 +948,7 @@ class VS(BaseModel):
     OTKL = CharField(null = True)
     Not_APV = CharField(null = True)
     Pic = CharField(null = True)
-    Table_msg = CharField(null = True)
+    table_msg = CharField(null = True)
     Is_klapana_interface_auxsystem = CharField(null = True)
     
     AlphaHMI = CharField(null = True)

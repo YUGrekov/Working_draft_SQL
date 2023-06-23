@@ -8,7 +8,7 @@ path_file_signals: D:\Проекты\LPDS_Salim\HMI\_Docs
 prefix_system: 
 prefix_driver: OFS!
 path_sample: D:/Проекты/НПС-Аксинино_2/HMI/_Docs/Defence
-
+path_location_file: D:/Проекты/НПС-Аксинино_2/HMI/_Docs/Defence
 
 ;---------------msg---------------
 database_msg: mydatabase

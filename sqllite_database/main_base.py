@@ -2,7 +2,7 @@ from models import *
 import openpyxl as wb
 from lxml import etree
 from datetime import datetime
-import re, traceback, os
+import re, traceback, os, codecs
 import psycopg2
 today = datetime.now()
 
@@ -148,7 +148,7 @@ class General_functions():
         if bool(exists_tag):
             cursor = db.cursor()
             cursor.execute(f"""SELECT id, tag
-                               FROM {tabl_used_str}
+                               FROM "{tabl_used_str}"
                                WHERE tag='{tag}'""")
             for id_, tag in cursor.fetchall():
                 if tabl_used_str == 'di': return (f'DI[{id_}].Value')
@@ -181,7 +181,7 @@ class General_functions():
             msg[f'{today} - Таблица: {tabl_used_str}, обновлен: {name},  {column_update_str} = {value}'] = 3
             return msg
         return msg
-    def parser_sample(self, path, kod_msg, name, flag_write_db):
+    def parser_sample(self, path, kod_msg, name, flag_write_db, table, *args):
         cursor = db.cursor()
         parser = etree.XMLParser(remove_blank_text=True)
         tree = etree.parse(path, parser)
@@ -202,22 +202,22 @@ class General_functions():
             nextLink  = lvl_one.attrib['NextLink']
             base      = lvl_one.attrib['Base']
 
-            del_row_tabl = f"""DELETE FROM opmessages WHERE Category ={kod_msg + int(category)}"""
-            ins_row_tabl = f"""INSERT INTO opmessages (Category, Message, IsAck, SoundFile, IsCycle, IsSound, IsHide, Priority, IsAlert) 
-                               VALUES({kod_msg + int(category)}, '{name}.{mess}', {isAck}, '{soundFile}', {isCycle}, {isSound}, {isHide}, {priority}, {isAlert})"""
+            if table == 'KTPRAS_1' or table == 'UMPNA':
+                if self.str_find(mess, {'%1'}): 
+                    mess = str(mess).replace('%1', args[0])
+                if self.str_find(mess, {'%2'}): 
+                    mess = str(mess).replace('%2', args[1])
+
+            del_row_tabl = f"""DELETE FROM messages.opmessages WHERE Category ={kod_msg + int(category)};\n"""
+            ins_row_tabl = f"INSERT INTO messages.opmessages (Category, Message, IsAck, SoundFile, IsCycle, IsSound, IsHide, Priority, IsAlert) VALUES({kod_msg + int(category)}, '{name}. {mess}', {isAck}, '{soundFile}', {isCycle}, {isSound}, {isHide}, {priority}, {isAlert});\n"
             
             if flag_write_db:
                 cursor.execute(del_row_tabl)
                 cursor.execute(ins_row_tabl)
             else:
-                list_msg.append(del_row_tabl)
-                list_msg.append(ins_row_tabl)
-
+                list_msg.append(dict(delete = del_row_tabl,
+                                     insert = ins_row_tabl))
         return list_msg
-
-
-
-        
 
 # Work with filling in the table 'Signals'
 class Import_in_SQL():
@@ -1580,9 +1580,9 @@ class Filling_UMPNA():
                         stop_2 = self.dop_function.search_signal(DI, "di", f'KKC{i}02')
                         monitoring_the_presence_of_voltage_in_the_control_current_circuits = self.dop_function.search_signal(DI, "di", f'EC{i}08')
                         vv_trolley_rolled_out = self.dop_function.search_signal(DI, "di", f'EC{i}04')
-                        command_to_turn_on_the_vv_only_for_UMPNA = self.dop_function.search_signal(DO, "do", f'ABB{i}01')
-                        command_to_turn_off_the_vv_output_1 = self.dop_function.search_signal(DO, "do", f'ABO{i}01-1')
-                        command_to_turn_off_the_vv_output_2 = self.dop_function.search_signal(DO, "do", f'ABO{i}01-2')
+                        command_to_turn_on_the_vv_only_for_UMPNA = self.dop_function.search_signal(DO, 'do', f'ABB{i}01')
+                        command_to_turn_off_the_vv_output_1 = self.dop_function.search_signal(DO, 'do', f'ABO{i}01-1')
+                        command_to_turn_off_the_vv_output_2 = self.dop_function.search_signal(DO, 'do', f'ABO{i}01-2')
 
                         list_UMPNA.append(dict(variable = f'NA[{i}]',
                             name ='',
@@ -1641,6 +1641,7 @@ class Filling_UMPNA():
                             gmpna_63 ='',
                             gmpna_64 ='',
                             Pic ='',
+                            tabl_msg = 'TblPumpsUMPNA',
                             replacement_uso_signal_vv_1 ='',
                             replacement_uso_signal_vv_2 =''))
                             
@@ -1673,15 +1674,15 @@ class Filling_UMPNA():
                         msg.update(self.dop_function.update_signal(UMPNA, 'umpna', 
                             f'NOT {self.dop_function.search_signal(DI, "di", f"KKC{i}02")}', i, UMPNA.stop_2, 'stop_2'))
                         msg.update(self.dop_function.update_signal(UMPNA, 'umpna', 
-                            self.dop_function.search_signal(DI, "di", f"EC{i}08"), i, UMPNA.monitoring_the_presence_of_voltage_in_the_control_current_circuits, 'monitoring_the_presence_of_voltage_in_the_control_current_circuits'))
+                            self.dop_function.search_signal(DI, "di", f"EC{i}08"), i, UMPNA.monitoring_the_presence_of_voltage_in_the_control_current, 'monitoring_the_presence_of_voltage_in_the_control_current'))
                         msg.update(self.dop_function.update_signal(UMPNA, 'umpna', 
                             self.dop_function.search_signal(DI, "di", f"EC{i}04"), i, UMPNA.vv_trolley_rolled_out, 'vv_trolley_rolled_out'))
                         msg.update(self.dop_function.update_signal(UMPNA, 'umpna', 
-                            self.dop_function.search_signal(DO, "do", f"ABB{i}01"), i, UMPNA.command_to_turn_on_the_vv_only_for_UMPNA, 'command_to_turn_on_the_vv_only_for_UMPNA'))
+                            self.dop_function.search_signal(DO, 'do', f"ABB{i}01"), i, UMPNA.command_to_turn_on_the_vv_only_for_UMPNA, 'command_to_turn_on_the_vv_only_for_UMPNA'))
                         msg.update(self.dop_function.update_signal(UMPNA, 'umpna', 
-                            self.dop_function.search_signal(DO, "do", f"ABO{i}01-1"), i, UMPNA.command_to_turn_off_the_vv_output_1, 'command_to_turn_off_the_vv_output_1'))
+                            self.dop_function.search_signal(DO, 'do', f"ABO{i}01-1"), i, UMPNA.command_to_turn_off_the_vv_output_1, 'command_to_turn_off_the_vv_output_1'))
                         msg.update(self.dop_function.update_signal(UMPNA, 'umpna', 
-                            self.dop_function.search_signal(DO, "do", f"ABO{i}01-2"), i, UMPNA.command_to_turn_off_the_vv_output_2, 'command_to_turn_off_the_vv_output_2'))
+                            self.dop_function.search_signal(DO, 'do', f"ABO{i}01-2"), i, UMPNA.command_to_turn_off_the_vv_output_2, 'command_to_turn_off_the_vv_output_2'))
                         
                         msg[f'{today} - Таблица: umpna, сигналы NA[{i}] обновлены'] = 1
                 
@@ -1713,7 +1714,7 @@ class Filling_UMPNA():
                         'unit_number_of_the_auxiliary_system_start_up_oil_pump', 'NPS_number_1_or_2_which_the_AT_belongs',
                         'achr_protection_number_in_the_array_of_station_protections','saon_protection_number_in_the_array_of_station_protections', 
                         'gmpna_49', 'gmpna_50', 'gmpna_51', 'gmpna_52','gmpna_53', 'gmpna_54', 'gmpna_55', 'gmpna_56',
-                        'gmpna_57','gmpna_58', 'gmpna_59', 'gmpna_60', 'gmpna_61', 'gmpna_62','gmpna_63', 'gmpna_64', 'Pic', 
+                        'gmpna_57','gmpna_58', 'gmpna_59', 'gmpna_60', 'gmpna_61', 'gmpna_62','gmpna_63', 'gmpna_64', 'Pic', 'tabl_msg',
                         'replacement_uso_signal_vv_1', 'replacement_uso_signal_vv_2']
         msg = self.dop_function.column_check(UMPNA, 'umpna', list_default)
         return msg 
@@ -2194,7 +2195,7 @@ class Filling_VS():
                                             OTKL = close_vs,
                                             Not_APV = '0',
                                             Pic = '',
-                                            Table_msg = 'TblAuxSyses',
+                                            table_msg = 'TblAuxSyses',
                                             Is_klapana_interface_auxsystem = '0',
                                             
                                             AlphaHMI = '',AlphaHMI_PIC1 = '',AlphaHMI_PIC1_Number_kont = '',
@@ -2217,7 +2218,7 @@ class Filling_VS():
     def column_check(self):
         list_default = ['variable', 'name', 'short_name', 'group', 'number_in_group', 'MP', 'Pressure_is_True', 'Voltage', 'Voltage_Sch', 
                         'Serviceability_of_circuits_of_inclusion', 'External_alarm', 'Pressure_sensor_defective', 'VKL', 'OTKL', 'Not_APV',
-                        'Pic', 'Table_msg', 'Is_klapana_interface_auxsystem',
+                        'Pic', 'table_msg', 'Is_klapana_interface_auxsystem',
                         'AlphaHMI', 'AlphaHMI_PIC1', 'AlphaHMI_PIC1_Number_kont', 'AlphaHMI_PIC2',
                         'AlphaHMI_PIC2_Number_kont','AlphaHMI_PIC3', 'AlphaHMI_PIC3_Number_kont', 
                         'AlphaHMI_PIC4', 'AlphaHMI_PIC4_Number_kont']
@@ -2977,11 +2978,47 @@ class Generate_database_SQL():
         except Exception:
             return kod_msg, addr_offset
         return kod_msg, addr_offset
+    # Запись скрипта в файл
+    def write_file(self, list_str, tabl, name_file):
+        msg = {}
+        # Создаём файл запроса
+        path_request = f'{path_location_file}\\{name_file}.sql'
+        if not os.path.exists(path_request):
+            file = codecs.open(path_request, 'w', 'utf-8')
+        else:
+            os.remove(path_request)
+            file = codecs.open(path_request, 'w', 'utf-8')
 
+        if path_location_file == '' or path_location_file is None or len(path_location_file) == 0:
+            msg[f'{today} - Сообщения {tabl}: не указана конечная папка'] = 2
+            return msg
+        begin = ('\tCREATE SCHEMA IF NOT EXISTS messages;\n'
+                 '\tCREATE TABLE IF NOT EXISTS messages.OPMessages(\n'
+                 '\t\tCategory INT NOT NULL,\n'
+                 '\t\tMessage VARCHAR(1024),\n'
+                 '\t\tIsAck BOOLEAN NOT NULL,\n'
+                 '\t\tSoundFile VARCHAR(1024),\n'
+                 '\t\tIsCycle BOOLEAN NOT NULL,\n'
+                 '\t\tIsSound BOOLEAN NOT NULL,\n'
+                 '\t\tIsHide BOOLEAN NOT NULL,\n'
+                 '\t\tPriority INT NOT NULL,\n'
+                 '\t\tIsAlert BOOLEAN NOT NULL,\n'
+                 '\t\tCONSTRAINT OPMessages_pkey PRIMARY KEY (Category)\n'
+                 '\t);\n'
+                'BEGIN TRANSACTION;\n')
+        file.write(begin)
+        for i in list_str:
+            for j in i:
+                delete = j['delete']
+                file.write(delete)
+                insert = j['insert']
+                file.write(insert)
+        file.write(f'COMMIT;')
+        file.close()
+        return msg
     def write_in_sql(self, list_tabl, flag_write_db):
         msg = {}
         if len(list_tabl) == 0: return
-
         for tabl in list_tabl:
             if tabl == 'AI': 
                 cursor = db.cursor()
@@ -2989,11 +3026,21 @@ class Generate_database_SQL():
                 continue
             if tabl == 'DI': 
                 cursor = db.cursor()
-                msg.update(self.gen_msg_general(cursor, flag_write_db, 'di', 'DI'))
+                msg.update(self.gen_msg_general(cursor, flag_write_db, 'di', 'DI', 'PostgreSQL_Messages-DI'))
                 continue
             if tabl == 'ZD': 
                 cursor = db.cursor()
-                msg.update(self.gen_msg_general(cursor, flag_write_db, 'zd', 'ZD'))
+                msg.update(self.gen_msg_general(cursor, flag_write_db, 'zd', 'ZD', 'PostgreSQL_Messages-ZD'))
+                continue
+            if tabl == 'VS': 
+                cursor = db.cursor()
+                msg.update(self.gen_msg_general(cursor, flag_write_db, 'vs', 'VS', 'PostgreSQL_Messages-VS'))
+                continue
+            if tabl == 'UMPNA': 
+                cursor = db.cursor()
+                msg.update(self.gen_msg_umpna(cursor, flag_write_db, 'umpna', 'UMPNA', 'PostgreSQL_Messages-Pumps'))
+                cursor = db.cursor()
+                msg.update(self.gen_msg_umpna(cursor, flag_write_db, 'umpna', 'KTPRAS_1', 'PostgreSQL_Messages-KTPRAS_1'))
                 continue
         return msg
     def gen_msg_ai(self, cursor, flag_write_db):
@@ -3002,10 +3049,9 @@ class Generate_database_SQL():
             gen_list = []
             try:
                 kod_msg, addr_offset = self.define_number_msg(cursor, 'AI')
-                if kod_msg == 0 or addr_offset == 0 or kod_msg is None or addr_offset is None: 
+                if addr_offset == 0 or kod_msg is None or addr_offset is None: 
                     msg[f'{today} - Сообщения AI: ошибка. Адреса из таблицы msg не определены'] = 2
                     return msg
-
                 cursor.execute(f"""SELECT id, name, group_analog FROM ai""")
                 list_ai = cursor.fetchall()
                 for analog in list_ai:
@@ -3021,30 +3067,67 @@ class Generate_database_SQL():
                         list_group = cursor.fetchall()[0][0]
                         path = f'{path_sample}\{list_group}.xml'
                         if not os.path.isfile(path):
-                            msg[f'{today} - Сообщения AI: отсутствует шаблон!{id_ai} - {name_ai}'] = 2
+                            msg[f'{today} - Сообщения AI: отсутствует шаблон! {id_ai} - {name_ai}'] = 2
                             continue
-                        gen_list.append(self.dop_function.parser_sample(path, start_addr, name_ai, flag_write_db))
+                        gen_list.append(self.dop_function.parser_sample(path, start_addr, name_ai, flag_write_db, 'AI'))
                     except Exception:
-                        msg[f'{today} - Сообщения AI: ошибка генерации:{id_ai} - {name_ai}'] = 2
+                        msg[f'{today} - Сообщения AI: отсутствует шаблон: {id_ai} - {name_ai}'] = 2
                         continue
-                
                 if not flag_write_db:
-                    print(gen_list)
+                    msg.update(self.write_file(gen_list, 'AI', 'PostgreSQL_Messages-AI'))
+                    msg[f'{today} - Сообщения AI: файл скрипта создан'] = 1
+                    return(msg)
             except Exception:
                 msg[f'{today} - Сообщения AI: ошибка генерации: {traceback.format_exc()}'] = 2
-            msg[f'{today} - Сообщения AI: генерация завершена!'] = 1
+            msg[f'{today} - Сообщения AI: генерация в базу завершена'] = 1
         return(msg)
-    def gen_msg_general(self, cursor, flag_write_db, tabl, sign):
+    def gen_msg_umpna(self, cursor, flag_write_db, tabl, sign, script_file):
+                with db:
+                    msg = {}
+                    gen_list = []
+                    try:
+                        kod_msg, addr_offset = self.define_number_msg(cursor, sign)
+                        if addr_offset == 0 or kod_msg is None or addr_offset is None: 
+                            msg[f'{today} - Сообщения {sign}: ошибка. Адреса из таблицы msg не определены'] = 2
+                            return msg
+                        
+                        cursor.execute(f"""SELECT id, name, tabl_msg, replacement_uso_signal_vv_1, replacement_uso_signal_vv_2
+                                           FROM "{tabl}" ORDER BY id""")
+                        list_signal = cursor.fetchall()
+                        for signal in list_signal:
+                            id_       = signal[0]
+                            name      = signal[1]
+                            table_msg = signal[2]
+                            cabinet_1 = signal[3]
+                            cabinet_2 = signal[4]
+
+                            if sign == 'KTPRAS_1': table_msg = 'TblPumpsKTPRAS'
+
+                            start_addr = kod_msg + ((id_ - 1) * int(addr_offset))
+                            path = f'{path_sample}\{table_msg}.xml'
+                            if not os.path.isfile(path):
+                                msg[f'{today} - Сообщения {sign}: отсутствует шаблон!{id_} - {name}'] = 2
+                                continue
+                            gen_list.append(self.dop_function.parser_sample(path, start_addr, name, flag_write_db, sign, cabinet_1, cabinet_2))
+                        if not flag_write_db:
+                            msg.update(self.write_file(gen_list, sign, script_file))
+                            msg[f'{today} - Сообщения {sign}: файл скрипта создан'] = 1
+                            return(msg)
+                    except Exception:
+                        msg[f'{today} - Сообщения {sign}: ошибка генерации: {traceback.format_exc()}'] = 2
+                    msg[f'{today} - Сообщения {sign}: генерация в базу завершена!'] = 1
+                return(msg)
+    def gen_msg_general(self, cursor, flag_write_db, tabl, sign, script_file):
             with db:
                 msg = {}
                 gen_list = []
                 try:
                     kod_msg, addr_offset = self.define_number_msg(cursor, sign)
-                    if kod_msg == 0 or addr_offset == 0 or kod_msg is None or addr_offset is None: 
+                    if addr_offset == 0 or kod_msg is None or addr_offset is None: 
                         msg[f'{today} - Сообщения {sign}: ошибка. Адреса из таблицы msg не определены'] = 2
                         return msg
                     
-                    cursor.execute(f"""SELECT id, name, tabl_msg FROM "{tabl}" """)
+                    cursor.execute(f"""SELECT id, name, tabl_msg FROM "{tabl}" ORDER BY id""")
                     list_signal = cursor.fetchall()
                     for signal in list_signal:
                         id_       = signal[0]
@@ -3056,13 +3139,12 @@ class Generate_database_SQL():
                         if not os.path.isfile(path):
                             msg[f'{today} - Сообщения {sign}: отсутствует шаблон!{id_} - {name}'] = 2
                             continue
-                        gen_list.append(self.dop_function.parser_sample(path, start_addr, name, flag_write_db))
+                        gen_list.append(self.dop_function.parser_sample(path, start_addr, name, flag_write_db, sign))
                     if not flag_write_db:
-                        print(gen_list)
+                        msg.update(self.write_file(gen_list, sign, script_file))
+                        msg[f'{today} - Сообщения {sign}: файл скрипта создан'] = 1
+                        return(msg)
                 except Exception:
                     msg[f'{today} - Сообщения {sign}: ошибка генерации: {traceback.format_exc()}'] = 2
-                msg[f'{today} - Сообщения {sign}: генерация завершена!'] = 1
+                msg[f'{today} - Сообщения {sign}: генерация в базу завершена!'] = 1
             return(msg)
-        
-
-
