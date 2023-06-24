@@ -3048,7 +3048,15 @@ class Generate_database_SQL():
                 continue
             if tabl == 'KTPRA': 
                 cursor = db.cursor()
-                msg.update(self.gen_msg_defence(cursor, flag_write_db, 'ktpra', 'KTPRA', 'PostgreSQL_Messages-KTPRA', 'TblPumpReadineses'))
+                msg.update(self.gen_msg_defence(cursor, flag_write_db, 'ktpra', 'KTPRA', 'PostgreSQL_Messages-KTPRA', 'TblPumpDefences'))
+                continue
+            if tabl == 'GMPNA': 
+                cursor = db.cursor()
+                msg.update(self.gen_msg_defence(cursor, flag_write_db, 'gmpna', 'GMPNA', 'PostgreSQL_Messages-GMPNA', 'TblPumpReadineses'))
+                continue
+            if tabl == 'KTPRS': 
+                cursor = db.cursor()
+                msg.update(self.gen_msg_defence(cursor, flag_write_db, 'ktprs', 'KTPRS', 'PostgreSQL_Messages-KTPRS', 'TblLimitParameters'))
                 continue
         return msg
     def gen_msg_ai(self, cursor, flag_write_db):
@@ -3135,18 +3143,26 @@ class Generate_database_SQL():
                         msg[f'{today} - Сообщения {sign}: ошибка. Адреса из таблицы msg не определены'] = 2
                         return msg
                     
-                    cursor.execute(f"""SELECT id, name FROM "{tabl}" ORDER BY id""")
+                    if sign == 'KTPRA' or sign == 'GMPNA':
+                        cursor.execute(f"""SELECT id, name, "NA" FROM "{tabl}" ORDER BY id""")
+                    else:
+                        cursor.execute(f"""SELECT id, name FROM "{tabl}" ORDER BY id""")
                     list_signal = cursor.fetchall()
                     for signal in list_signal:
                         id_       = signal[0]
                         name      = signal[1]
+                        if sign == 'KTPRA' or sign == 'GMPNA':
+                            na    = signal[2]
 
                         start_addr = kod_msg + ((id_ - 1) * int(addr_offset))
                         path = f'{path_sample}\{table_msg}.xml'
                         if not os.path.isfile(path):
-                            msg[f'{today} - Сообщения {sign}: отсутствует шаблон!{id_} - {name}'] = 2
-                            continue
-                        gen_list.append(self.dop_function.parser_sample(path, start_addr, name, flag_write_db, sign))
+                            msg[f'{today} - Сообщения {sign}: в папке отсутствует шаблон - {table_msg}'] = 2
+                            return msg
+                        if sign == 'KTPRA' or sign == 'GMPNA':
+                            gen_list.append(self.dop_function.parser_sample(path, start_addr, f'{na}. {name}', flag_write_db, sign))
+                        else:
+                            gen_list.append(self.dop_function.parser_sample(path, start_addr, name, flag_write_db, sign))
                     if not flag_write_db:
                         msg.update(self.write_file(gen_list, sign, script_file))
                         msg[f'{today} - Сообщения {sign}: файл скрипта создан'] = 1
