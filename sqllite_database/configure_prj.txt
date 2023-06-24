@@ -1,22 +1,31 @@
-path_to_kzfkp: D:\Development\New_SQL_generator\Working_draft_SQL\sqllite_database\П4.1.1 - ТС ТП НПС Салым-4_кор14_ЗПСИ.xlsm
-path_to_base: D:\Development\New_SQL_generator\Working_draft_SQL\sqllite_database\asutp.db
-path_to_devstudio: D:/Проекты/LPDS_Salim/HMI/project/typical_prj
 path_item: 
-Название станции: 
 path_file_txt: 
 path_file_signals: D:\Проекты\LPDS_Salim\HMI\_Docs 
+
 prefix_system: 
-prefix_driver: OFS!
+
+
+name_project: Тест
+; Путь до файла КЗФКП
+path_to_kzfkp: D:\Development\New_SQL_generator\Working_draft_SQL\sqllite_database\П4.1.1 - ТС ТП НПС Салым-4_кор14_ЗПСИ.xlsm
+
+; Путь до папки с файлами DevStudio
+path_to_devstudio: D:/Проекты/LPDS_Salim/HMI/project/typical_prj
+
+; Путь шаблона и расположение скрипта для сообщений
 path_sample: D:/Проекты/НПС-Аксинино_2/HMI/_Docs/Defence
 path_location_file: D:/Проекты/НПС-Аксинино_2/HMI/_Docs/Defence
 
-;---------------msg---------------
+; Расположение остальных файлов
+
+; SQL база проекта разработки
 database_msg: mydatabase
 user_msg: postgres
 password_msg: postgres
 host_msg: localhost
 port_msg: 5432
-;---------------ust---------------
+
+; SQL база проекта станции
 database: asutp
 user: postgres
 password: postgres

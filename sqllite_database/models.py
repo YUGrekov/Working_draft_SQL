@@ -1,7 +1,7 @@
 from peewee import *
 from playhouse.migrate import *
 
-from graphic_part import Window
+#from graphic_part import Window
 # from PyQt5.QtWidgets import QApplication
 # app = QApplication([])
 
@@ -12,10 +12,11 @@ from graphic_part import Window
 #path_to_exel = f'D:\\Development\\New_SQL_generator\\Working_draft_SQL\\sqllite_database\\П3 - КЗФКП Аксинино-2_MK500_20230405.xlsx'
 #path_to_base = f'D:\\Development\\New_SQL_generator\\Working_draft_SQL\\sqllite_database\\asutp.db'
 
-path_to_exel = ''
-path_to_base = ''
+path_to_exel = 'D:\\Development\\New_SQL_generator\\Working_draft_SQL\\sqllite_database\\П4.1.1 - ТС ТП НПС Салым-4_кор14_ЗПСИ.xlsm'
 path_sample  = 'D:\Development\Generation_msg\Sample\\'
 path_location_file = 'D:\Development\Generation_msg\Script\\'
+name_project = 'Тест'
+path_to_devstudio = 'D:\Development\Generation_msg\Script\\'
 
 
 database_msg = 'mydatabase'
@@ -42,6 +43,8 @@ port_ust = ''
 #             path_sample = split_str[1]
 #         if split_str[0] == 'path_location_file':
 #             path_location_file = split_str[1]
+#         if split_str[0] == 'name_project':
+#             name_project = split_str[1]
 
 
 #         if split_str[0] == 'database_msg':

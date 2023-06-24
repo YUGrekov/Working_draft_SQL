@@ -3042,6 +3042,14 @@ class Generate_database_SQL():
                 cursor = db.cursor()
                 msg.update(self.gen_msg_umpna(cursor, flag_write_db, 'umpna', 'KTPRAS_1', 'PostgreSQL_Messages-KTPRAS_1'))
                 continue
+            if tabl == 'KTPR': 
+                cursor = db.cursor()
+                msg.update(self.gen_msg_defence(cursor, flag_write_db, 'ktpr', 'KTPR', 'PostgreSQL_Messages-KTPR', 'TblStationDefences'))
+                continue
+            if tabl == 'KTPRA': 
+                cursor = db.cursor()
+                msg.update(self.gen_msg_defence(cursor, flag_write_db, 'ktpra', 'KTPRA', 'PostgreSQL_Messages-KTPRA', 'TblPumpReadineses'))
+                continue
         return msg
     def gen_msg_ai(self, cursor, flag_write_db):
         with db:
@@ -3117,6 +3125,36 @@ class Generate_database_SQL():
                         msg[f'{today} - Сообщения {sign}: ошибка генерации: {traceback.format_exc()}'] = 2
                     msg[f'{today} - Сообщения {sign}: генерация в базу завершена!'] = 1
                 return(msg)
+    def gen_msg_defence(self, cursor, flag_write_db, tabl, sign, script_file, table_msg):
+            with db:
+                msg = {}
+                gen_list = []
+                try:
+                    kod_msg, addr_offset = self.define_number_msg(cursor, sign)
+                    if addr_offset == 0 or kod_msg is None or addr_offset is None: 
+                        msg[f'{today} - Сообщения {sign}: ошибка. Адреса из таблицы msg не определены'] = 2
+                        return msg
+                    
+                    cursor.execute(f"""SELECT id, name FROM "{tabl}" ORDER BY id""")
+                    list_signal = cursor.fetchall()
+                    for signal in list_signal:
+                        id_       = signal[0]
+                        name      = signal[1]
+
+                        start_addr = kod_msg + ((id_ - 1) * int(addr_offset))
+                        path = f'{path_sample}\{table_msg}.xml'
+                        if not os.path.isfile(path):
+                            msg[f'{today} - Сообщения {sign}: отсутствует шаблон!{id_} - {name}'] = 2
+                            continue
+                        gen_list.append(self.dop_function.parser_sample(path, start_addr, name, flag_write_db, sign))
+                    if not flag_write_db:
+                        msg.update(self.write_file(gen_list, sign, script_file))
+                        msg[f'{today} - Сообщения {sign}: файл скрипта создан'] = 1
+                        return(msg)
+                except Exception:
+                    msg[f'{today} - Сообщения {sign}: ошибка генерации: {traceback.format_exc()}'] = 2
+                msg[f'{today} - Сообщения {sign}: генерация в базу завершена!'] = 1
+            return(msg)
     def gen_msg_general(self, cursor, flag_write_db, tabl, sign, script_file):
             with db:
                 msg = {}
