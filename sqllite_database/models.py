@@ -341,7 +341,10 @@ rus_list = {'signals': {'id':'№', 'type_signal':'Тип сигнала', 'uso'
                    'Reset_Link':'Сброс ссылка', 'Reset_Request':'Сброс запроса', 'Through_loop_number_for_interface':'Сквозной номер шлейфа\nдля интерфейсных', 'location':'Место установки', 'Pic':'Pic','Normal':'Норма'}, 
                 
             'pz_tm': {'id':'№','variable':'Переменная', 'tag':'Идентификатор', 'name':'Название', 'unit':'Единица измерения', 'used':'Используется', 'value_ust':'Значение уставки', 'minimum':'Минимум', 
-                       'maximum':'Максимум', 'group_ust':'Группа уставок', 'rule_map_ust':'Правило для карты уставок'},}
+                       'maximum':'Максимум', 'group_ust':'Группа уставок', 'rule_map_ust':'Правило для карты уставок'},
+
+            'dps': {'id':'№','variable':'Переменная', 'tag':'Идентификатор', 'name':'Название', 'control':'Контроль', 'relieve':'Деблокировка', 
+                      'actuation':'Срабатывание', 'actuation_transmitter':'Срабатывание\n(трансмиттер)', 'malfunction':'Неисправность', 'voltage':'Напряжение'},}
 class Signals(BaseModel):
     type_signal = CharField(null = True)
     uso         = CharField(null = True)
@@ -1113,20 +1116,18 @@ class PZ_tm(BaseModel):
 
     class Meta:
         table_name = 'pz_tm'
-
 class DPS(BaseModel):
     variable = CharField(null = True)
     tag = CharField(null = True)
     name = CharField(null = True)
     control = CharField(null = True)
     relieve = CharField(null = True)
-    oeration = CharField(null = True)
-    minimum = CharField(null = True)
-    maximum = CharField(null = True)
-    group_ust = CharField(null = True)
-    rule_map_ust = CharField(null = True)
+    actuation = CharField(null = True)
+    actuation_transmitter = CharField(null = True)
+    malfunction = CharField(null = True)
+    voltage = CharField(null = True)
 
     class Meta:
-        table_name = 'pz_tm'
+        table_name = 'dps'
 
 

@@ -20,16 +20,38 @@ class Widget(QWidget):
         tab_1 = QFrame()
         tab_2 = QFrame()
         tab_3 = QFrame()
-        tab_4 = QFrame()    
+        tab_4 = QFrame()  
+        tab_5 = QFrame()   
 
         tab.addTab(tab_1, 'Соединение')
         tab.addTab(tab_2, 'Импорт КЗФКП')
         tab.addTab(tab_3, 'SQL разработки')
         tab.addTab(tab_4, 'SQL проекта')
+        tab.addTab(tab_5, 'SQL редактор')
 
         self.dop_function = General_functions()
         self.edit_SQL = Editing_table_SQL()
         self.list_tabl = self.edit_SQL.get_tabl()
+
+        # ------------------Окно редактирования------------------
+        list_tabl = self.dop_function.all_tables()
+        l_table = QLabel('Выберите таблицу: ', tab_5)
+        l_table.move(10, 5)
+
+        self.combo = QComboBox(tab_5)
+        self.combo.move(10, 20) 
+        self.combo.resize(240,25)
+        self.combo.setStyleSheet("border-radius: 4px; border: 1px solid")
+        self.combo.setFont(QFont('Arial', 10))
+
+        clickButton = QPushButton('Подключиться к таблице', tab_5)
+        clickButton.setStyleSheet("background: #bfd6bf; border-radius: 4px; border: 1px solid")
+        clickButton.resize(240,35)
+        clickButton.move(10, 55) 
+        clickButton.clicked.connect(self.choose_tabl)
+
+        for tabl in list_tabl:
+           self.combo.addItem(str(tabl))
 
         # ------------------Соединение------------------
         self.gen_sql = Generate_database_SQL()
@@ -804,7 +826,7 @@ class Widget(QWidget):
         b_export_list.resize(120,23)
         b_export_list.move(10, 180) 
         b_export_list.clicked.connect(self.export_list)
-        b_export_sql = QPushButton('Генерировать базу', tab_4)
+        b_export_sql = QPushButton('Генерировать в базу', tab_4)
         b_export_sql.setStyleSheet("border: 1px solid; border-radius: 3px;")
         b_export_sql.setToolTip('''Генерировать сообщения в базу данных PostgreSQL''')
         b_export_sql.resize(120,23)
@@ -1347,7 +1369,13 @@ class Widget(QWidget):
     def write_in_sql(self):
         msg = self.gen_sql.write_in_sql(self.list_gen_msg, True)
         self.logs_msg('default', 1, msg, True)
-    
+
+    # ------------------Окно редактирования------------------
+    # Choose table
+    def choose_tabl(self):
+        name_table = self.combo.currentText()
+        self.ch_tabl = Window_update_sql(name_table)
+        self.ch_tabl.show()
     # Logging messeges
     def logs_msg(self, logs=None, number_color=1, buffer_msg=None, msg=False):
         today = datetime.now()
@@ -1370,6 +1398,405 @@ class Widget(QWidget):
             elif number_color == 2: self.logTextBox.append(errorFormat.format(f'{today} - {logs}'))
             elif number_color == 3: self.logTextBox.append(warningFormat.format(f'{today} - {logs}'))
             elif number_color == 0: self.logTextBox.append(newFormat.format(f'{today} - {logs}'))
+
+
+# Выбор окна для просмотр и редактирования таблицы
+class Window_tabl_checkbox(QWidget):
+    def __init__(self, list_tabl):
+        super(Window_tabl_checkbox, self).__init__()
+        self.setWindowTitle('Список таблиц')
+        self.setStyleSheet("background-color: #e1e5e5;")
+        self.resize(260, 100)
+
+        l_table = QLabel('Выберите таблицу: ', self)
+        l_table.move(10, 5)
+
+        self.combo = QComboBox(self)
+        self.combo.move(10, 20) 
+        self.combo.resize(240,25)
+        self.combo.setStyleSheet("border-radius: 4px; border: 1px solid")
+        self.combo.setFont(QFont('Arial', 10))
+
+        clickButton = QPushButton('Подключиться к таблице', self)
+        clickButton.setStyleSheet("background: #bfd6bf; border-radius: 4px; border: 1px solid")
+        clickButton.resize(240,35)
+        clickButton.move(10, 55) 
+        clickButton.clicked.connect(self.choose_tabl)
+
+        for tabl in list_tabl:
+           self.combo.addItem(str(tabl))
+        
+    # Choose table
+    def choose_tabl(self):
+        name_table = self.combo.currentText()
+        self.ch_tabl = Window_update_sql(name_table)
+        self.ch_tabl.show()
+        self.close()
+# Тип таблицы
+class Window_type_tabl_sql(QWidget):
+    def __init__(self, table_list):
+        super(Window_type_tabl_sql, self).__init__()
+        self.setWindowTitle('Тип столбцов таблицы')
+        self.setStyleSheet("background-color: #e1e5e5;")
+        self.setWindowFlags(Qt.WindowCloseButtonHint)
+        self.resize(500, 600)
+
+        self.TableWidget = QTableWidget(self)
+        self.TableWidget.move(500,600)
+        self.TableWidget.verticalHeader().setVisible(False)
+        self.TableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+
+        innerOutLayout = QVBoxLayout()
+        innerOutLayout.addWidget(self.TableWidget)
+
+        self.TableWidget.setColumnCount(3)
+        self.TableWidget.setRowCount(len(table_list))
+        tabl = ['Имя_eng', 'Имя_rus', 'Тип']
+        self.TableWidget.setHorizontalHeaderLabels(tabl)
+        # Color header
+        style = "::section {""background-color: #bbbabf; }"
+        self.TableWidget.horizontalHeader().setStyleSheet(style)
+
+        for row_t in range(len(table_list)):
+            for column_t in range(3):
+                if column_t == 0: value = table_list[row_t][column_t]
+                if column_t == 1: value = table_list[row_t][column_t]
+                if column_t == 2: value = table_list[row_t][column_t]
+
+                item = QTableWidgetItem(value)
+                item.setFlags(Qt.ItemIsEnabled)
+                self.TableWidget.setItem(row_t, column_t, item)
+
+        self.setLayout(innerOutLayout)
+# Основное окно просмотра и редактирования таблиц
+class Window_update_sql(QWidget):
+    def __init__(self, table_used):
+        super(Window_update_sql, self).__init__()
+        self.setWindowTitle('Редактор базы данных')
+        self.setStyleSheet("background-color: #e1e5e5;")
+        self.setWindowFlags(Qt.WindowCloseButtonHint)
+        self.resize(1600, 890)
+
+        self.TableWidget = QTableWidget(self)
+        self.TableWidget.setGeometry(10,70,1580,710)
+
+        self.logTextBox = QTextEdit(self)
+        self.logTextBox.setGeometry(10,779,1580,100)
+        self.logTextBox.setStyleSheet("border-radius: 4px; border: 1px solid")
+        self.logTextBox.setFont(QFont('Arial', 10))
+        self.logTextBox.setReadOnly(True)
+
+        self.table_used = table_used
+        self.edit_SQL = Editing_table_SQL()
+        column, row, self.hat_name, value, msg = self.edit_SQL.editing_sql(self.table_used)
+        self.logs_msg('default', 1, msg, True)
+
+        self.gen_func = General_functions()
+        
+        try   : self.tablew(column, row, self.hat_name, value, rus_list[self.table_used])
+        except: self.tablew(column, row, self.hat_name, value)
+
+        new_addrow_Button = QPushButton('Добавить строку', self)
+        new_addrow_Button.setStyleSheet("background: #bfd6bf; border-radius: 4px; border: 1px solid")
+        new_addrow_Button.resize(120,25)
+        new_addrow_Button.move(10, 8) 
+        new_addrow_Button.clicked.connect(self.add_row)
+
+        remoterow_Button = QPushButton('Удалить строку', self)
+        remoterow_Button.setStyleSheet("background: #d65860; border-radius: 4px; border: 1px solid")
+        remoterow_Button.resize(120,25)
+        remoterow_Button.move(10, 40) 
+        remoterow_Button.clicked.connect(self.delete_row)
+
+        self.namecolumn = QLineEdit(self, placeholderText='Название нового столбца', clearButtonEnabled=True)
+        self.namecolumn.setStyleSheet('border: 1px solid #6f7370; border-radius: 4px; border: 1px solid')
+        self.namecolumn.move(160, 8)
+        self.namecolumn.resize(260,25)
+        new_addcol_Button = QPushButton('Добавить столбец', self)
+        new_addcol_Button.setStyleSheet("background: #bfd6bf; border-radius: 4px; border: 1px solid")
+        new_addcol_Button.resize(120,25)
+        new_addcol_Button.move(160, 40) 
+        new_addcol_Button.clicked.connect(self.add_column)
+
+        remotecolumn_Button = QPushButton('Удалить столбец', self)
+        remotecolumn_Button.setStyleSheet("background: #d65860; border-radius: 4px; border: 1px solid")
+        remotecolumn_Button.resize(120,25)
+        remotecolumn_Button.move(300, 40) 
+        remotecolumn_Button.clicked.connect(self.delete_column)
+
+        cleartab_Button = QPushButton('Очистить таблицу', self)
+        cleartab_Button.setStyleSheet("background: #bbbabf; border-radius: 4px; border: 1px solid")
+        cleartab_Button.resize(120,25)
+        cleartab_Button.move(470, 8) 
+        cleartab_Button.clicked.connect(self.clear_tabl)
+
+        droptab_Button = QPushButton('Удалить таблицу', self)
+        droptab_Button.setStyleSheet("background: #bbbabf; border-radius: 4px; border: 1px solid")
+        droptab_Button.resize(120,25)
+        droptab_Button.move(470, 40) 
+        droptab_Button.clicked.connect(self.drop_tabl)
+
+        self.req_base = QLineEdit(self, placeholderText='Введите запрос к текущей таблице', clearButtonEnabled=True)
+        self.req_base.setStyleSheet('border: 1px solid #6f7370; border-radius: 4px; border: 1px solid')
+        self.req_base.setToolTip('Значения типа "string" обязательно брать в "ковычки"')
+        self.req_base.move(750, 8)
+        self.req_base.resize(820,25)
+        apply_query_Button = QPushButton('Применить запрос', self)
+        apply_query_Button.setStyleSheet("background: #bfd6bf; border-radius: 4px; border: 1px solid")
+        apply_query_Button.resize(120,25)
+        apply_query_Button.move(750, 40) 
+        apply_query_Button.clicked.connect(self.apply_database_query)
+        reset_request_Button = QPushButton('Сбросить запрос', self)
+        reset_request_Button.setStyleSheet("background: #bbbabf; border-radius: 4px; border: 1px solid")
+        reset_request_Button.setToolTip("Если используется выборка из таблицы!")
+        reset_request_Button.resize(120,25)
+        reset_request_Button.move(900, 40) 
+        reset_request_Button.clicked.connect(self.reset_database_query)
+
+        clickButton_type = QPushButton('Тип данных', self)
+        clickButton_type.setStyleSheet("background: #bfd6bf; border-radius: 4px; border: 1px solid")
+        clickButton_type.resize(120,25)
+        clickButton_type.move(1100, 40) 
+        clickButton_type.clicked.connect(self.type_tabl)
+
+        self.layout = QVBoxLayout()
+        self.layout.addWidget(self.logTextBox)
+        self.layout.addWidget(new_addrow_Button)
+        self.layout.addWidget(new_addcol_Button)
+        self.layout.addWidget(remoterow_Button)
+        self.layout.addWidget(cleartab_Button)
+        self.layout.addWidget(self.TableWidget)
+        # Logs
+        self.logs_msg(f'Запущен редактор базы данных. Таблица: {self.table_used}', 1)
+    # Новое окно тип таблицы
+    def type_tabl(self):
+        type_list, msg = self.edit_SQL.type_column(self.table_used)
+        self.type_tabl = Window_type_tabl_sql(type_list)
+        self.type_tabl.show()
+        self.logs_msg('default', 1, msg, True)
+    # Сompletely clear the table
+    def clear_tabl(self):
+        rowcount = self.TableWidget.rowCount()
+
+        if rowcount == 0: 
+            self.logs_msg(f'Таблица: {self.table_used} пустая', 3)
+            return
+
+        while rowcount >= 0:
+            self.TableWidget.removeRow(rowcount)
+            rowcount -= 1
+
+        self.edit_SQL.clear_tabl(self.table_used)
+         # Logs
+        self.logs_msg(f'Таблица: {self.table_used} полностью очищена!', 3)
+    # Drop the table
+    def drop_tabl(self):
+        self.close()
+        self.edit_SQL.drop_tabl(self.table_used)
+
+    # Adding new lines
+    def add_row(self):  
+        rowPos = self.TableWidget.rowCount()
+        
+        if rowPos == 0: 
+            text_cell = 0
+        else:
+            text_cell = self.TableWidget.item(rowPos - 1, 0).text()
+
+        self.TableWidget.insertRow(rowPos)
+        self.TableWidget.setItem(rowPos, 0, QTableWidgetItem (f'{int(text_cell) + 1}'))
+
+        self.edit_SQL.add_new_row(self.table_used)
+        # Logs
+        self.logs_msg('В конец таблицы добавлена новая строка', 1)
+    # Removing rows
+    def delete_row(self):
+        row = self.TableWidget.currentRow()
+        if row <= 0: 
+            self.logs_msg('Невозможно удалить строки из пустой таблицы', 2)
+            return
+        
+        text_cell_id = self.TableWidget.item(int(row), 0).text()
+        if row > -1: 
+            self.TableWidget.removeRow(row)
+            self.TableWidget.selectionModel().clearCurrentIndex()
+
+        self.edit_SQL.delete_row(text_cell_id, self.table_used)
+        # Logs
+        self.logs_msg(f'Из таблицы: {self.table_used} удалена строка id={text_cell_id}', 3)
+    # Adding new column
+    def add_column(self):
+        def letters(name):
+            if len(name) == 0: name = 'newcolumn'
+            return ''.join(filter(str.isalnum, name))
+        
+        namecolumn = letters(self.namecolumn.text())
+        hat_name = self.edit_SQL.column_names(self.table_used)
+        if namecolumn in hat_name: 
+            self.logs_msg('Дублирующие название столбца!', 2)
+            return
+
+        column_count = self.TableWidget.columnCount()
+        self.TableWidget.insertColumn(column_count)
+
+        self.edit_SQL.add_new_column(self.table_used, namecolumn)
+
+        hat_name = self.edit_SQL.column_names(self.table_used)
+        self.TableWidget.setHorizontalHeaderLabels(hat_name)
+        # Logs
+        self.logs_msg(f'В таблицу: {self.table_used} добавлен новый столбец: {namecolumn}', 1)
+    # Removing column
+    def delete_column(self):
+        if self.table_used == 'signals': 
+            self.logs_msg(f'Из таблицы: signals нельзя удалять столбцы!', 3)
+            return
+        column = self.TableWidget.currentColumn()
+        self.TableWidget.removeColumn(column)
+
+        hat_name = self.edit_SQL.column_names(self.table_used)
+        self.edit_SQL.delete_column(column, hat_name, self.table_used)
+        self.logs_msg(f'Из таблицы: {self.table_used} удален столбец', 3)
+    
+    # Changing a table while entering a query
+    def apply_database_query(self):
+        request = self.req_base.text()
+        if request == '': 
+            self.logs_msg(f'Пустой запрос!', 2)
+            return
+        # Под запрос 'select' отдельная функция
+        find = General_functions()
+        if find.str_find(str(request).lower(), {'select'}):
+            column, row, hat_name, value, msg = self.edit_SQL.apply_request_select(request, self.table_used)
+            self.logs_msg('default', 1, msg, True)
+        else:
+            msg = self.edit_SQL.other_requests(request, self.table_used)
+            self.logs_msg('default', 1, msg, True)
+            column, row, hat_name, value, msg = self.edit_SQL.editing_sql(self.table_used)
+            self.logs_msg('default', 1, msg, True)
+        # Если запрос некорректный
+        if column == 'error': return
+        # Clear
+        rowcount = self.TableWidget.rowCount()
+        if rowcount != 0: 
+            while rowcount >= 0:
+                self.TableWidget.removeRow(rowcount)
+                rowcount -= 1
+        # Filling
+        try   : self.tablew(column, row, hat_name, value, rus_list[self.table_used])
+        except: self.tablew(column, row, hat_name, value)
+        #SELECT * FROM ai WHERE uso='МНС-2.КЦ' AND basket=3 AND module=3 AND channel=1
+    # Reset a table query
+    def reset_database_query(self):
+        rowcount = self.TableWidget.rowCount()
+        if rowcount != 0: 
+            while rowcount >= 0:
+                self.TableWidget.removeRow(rowcount)
+                rowcount -= 1
+
+        column, row, self.hat_name, value, msg = self.edit_SQL.editing_sql(self.table_used)
+        self.logs_msg('default', 1, msg, True)
+
+        try   : self.tablew(column, row, self.hat_name, value, rus_list[self.table_used])
+        except: self.tablew(column, row, self.hat_name, value)
+
+    # Building the selected table
+    def tablew(self, column, row, hat_name, value, column_tooltip=None):
+        # TableW
+        self.TableWidget.setColumnCount(column)
+        self.TableWidget.setRowCount(row)
+        self.TableWidget.setHorizontalHeaderLabels(hat_name)
+        # Color header
+        style = "::section {""background-color: #bbbabf; }"
+        self.TableWidget.horizontalHeader().setStyleSheet(style)
+        # Подсказки к столбцам
+        #if column_tooltip is not None:
+        #    for col in range(self.TableWidget.columnCount()):
+        #        self.TableWidget.horizontalHeaderItem(col).setToolTip(column_tooltip[col])
+
+        # Разрешить щелчок правой кнопкой мыши для создания меню
+        #self.TableWidget.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.TableWidget.verticalHeader().setVisible(False)
+        # column size
+        #for size_column in list_size:
+        #   self.TableWidget.setColumnWidth(size_column[0], size_column[1])
+
+        for row_t in range(row):
+            for column_t in range(column):
+                if value[row_t][column_t] is None:
+                    item = QTableWidgetItem('')
+                else:
+                    item = QTableWidgetItem(str(value[row_t][column_t]))
+                    # Подсказки к ячейкам
+                    if self.gen_func.str_find(str(value[row_t][column_t]), {'DI'}):
+                        name_signal = self.edit_SQL.search_name("di", str(value[row_t][column_t]))
+                        item.setToolTip(name_signal)
+                    elif self.gen_func.str_find(str(value[row_t][column_t]), {'DO'}):
+                        name_signal = self.edit_SQL.search_name("do", str(value[row_t][column_t]))
+                        item.setToolTip(name_signal)
+                    elif self.gen_func.str_find(str(value[row_t][column_t]), {'AI'}):
+                        name_signal = self.edit_SQL.search_name("ai", str(value[row_t][column_t]))
+                        item.setToolTip(name_signal)
+                    else: item.setToolTip('')
+                    
+                if column_t == 0: item.setFlags(Qt.ItemIsEnabled)
+     
+                # center text
+                #item.setTextAlignment(Qt.AlignHCenter)
+                # Выравнивание все столбцов по общей ширине
+                #self.TableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+                self.TableWidget.setItem(row_t, column_t, item)
+        # Выравнивание по столбцов и строк по наибольшей длине
+        self.TableWidget.resizeColumnsToContents()
+        self.TableWidget.resizeRowsToContents()
+        # Events
+        self.TableWidget.itemChanged.connect(self.click_position)
+    # Cell change on click
+    def click_position(self):
+        row    = self.TableWidget.currentRow()
+        column = self.TableWidget.currentColumn()
+
+        if row == 0 and column == 0: return
+
+        for currentQTableWidgetItem in self.TableWidget.selectedItems():
+            text_cell = self.TableWidget.item(currentQTableWidgetItem.row(), column).text()
+        # На случай, когда нет изменения в ячейке
+        try:
+            text_cell
+        except:
+            return
+        
+        check_cell = self.TableWidget.item(int(row), 0)
+        if check_cell is None: return
+
+        text_cell_id = self.TableWidget.item(int(row), 0).text()
+
+        hat_name = self.edit_SQL.column_names(self.table_used)
+        flag_NULL = True if len(text_cell) == 0 else False
+        msg = self.edit_SQL.update_row_tabl(column, text_cell, text_cell_id, self.table_used, hat_name, flag_NULL)
+        self.logs_msg('default', 1, msg, True)
+    # Logging messeges
+    def logs_msg(self, logs=None, number_color=1, buffer_msg=None, msg=False):
+        today = datetime.now()
+        errorFormat   = '<span style="color:red;">{}</span>'
+        warningFormat = '<span style="color:#9ea108;">{}</span>'
+        validFormat   = '<span style="color:black;">{}</span>'
+        newFormat     = '<span style="color:green;">{}</span>'
+        if msg:
+            for string_msg, value in buffer_msg.items():
+                if   value == 1: 
+                    self.logTextBox.append(validFormat.format(string_msg))
+                elif value == 2: 
+                    self.logTextBox.append(errorFormat.format(string_msg))
+                elif value == 3: 
+                    self.logTextBox.append(warningFormat.format(string_msg))
+                elif value == 0: 
+                    self.logTextBox.append(newFormat.format(string_msg))
+        else:
+            if   number_color == 1: self.logTextBox.append(validFormat.format(f'{today} - {logs}'))
+            elif number_color == 2: self.logTextBox.append(errorFormat.format(f'{today} - {logs}'))
+            elif number_color == 3: self.logTextBox.append(warningFormat.format(f'{today} - {logs}'))
+            elif number_color == 0: self.logTextBox.append(newFormat.format(f'{today} - {logs}'))
+ 
 
 
 

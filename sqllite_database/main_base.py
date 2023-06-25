@@ -127,8 +127,6 @@ class General_functions():
         cursor.execute(f'''SELECT COUNT (*) FROM "{table_used}"''')
         empty = cursor.fetchall()
         return True if int(empty[0][0]) == 0  else False
-
-    # Clear tabl
     def clear_tabl(self, table_used, table_name, list_tabl):
         msg = {}
         cursor = db.cursor()
@@ -168,7 +166,6 @@ class General_functions():
             msg[f'{today} - Таблица: umpna, NA[{number_NA}] обновлено {column_update_str} = {tag}'] = 3
             return msg
         return msg
-    
     def update_signal_dop(self, tabl_used_cl, tabl_used_str, name, column_update_cl, column_update_str, value):
         msg = {}
         exist_value  = tabl_used_cl.select().where(tabl_used_cl.name == name,
@@ -218,6 +215,16 @@ class General_functions():
                 list_msg.append(dict(delete = del_row_tabl,
                                      insert = ins_row_tabl))
         return list_msg
+    def all_tables(self):
+        list_tabl = []
+        cursor = db.cursor()
+        cursor.execute(f"""SELECT table_name 
+                           FROM information_schema.tables 
+                           WHERE table_schema='public'""")
+        for name in cursor.fetchall():
+            list_tabl.append(name[0])
+        return list_tabl
+
 
 # Work with filling in the table 'Signals'
 class Import_in_SQL():
@@ -2836,36 +2843,161 @@ class Filling_PZ_tm():
         msg = self.dop_function.column_check(PZ_tm, 'pz_tm', list_default)
         return msg 
 
+# Work with filling in the table 'DPS'
+class Filling_DPS():
+    def __init__(self):
+        self.cursor   = db.cursor()
+        self.dop_function = General_functions()
+    # Получаем данные с таблицы DPS
+    # def getting_modul(self):
+    #     msg = {}
+    #     count_PZ = 0
+    #     with db:
+    #         try:
+    #             try:
+    #                 if self.dop_function.empty_table('ai'): 
+    #                     msg[f'{today} - Таблица: ai пустая! Заполни таблицу!'] = 2
+    #                     return msg
+    #             except:
+    #                 msg[f'{today} - Таблица: ai пустая! Заполни таблицу!'] = 2
+    #                 return msg
+                
+    #             # Новый список из таблицы DI
+    #             self.cursor.execute(f"""SELECT id, tag, name
+    #                                     FROM ai
+    #                                     WHERE (name LIKE '%адрес%' AND name LIKE '%пусков%') OR
+    #                                           (name LIKE '%пожар%' AND name LIKE '%дымов%')  OR
+    #                                           (name LIKE '%теплов%') 
+    #                                     ORDER BY tag""")
+    #             list_pi_ai = self.cursor.fetchall()
+
+    #             # Существующий список из таблицы PI
+    #             self.cursor.execute(f'''SELECT name FROM pi''')
+    #             name_pi_old = self.cursor.fetchall()
+    #             tabl_pi_name = []
+    #             for i in name_pi_old:
+    #                 tabl_pi_name.append(i[0])
+
+    #             # Количество строк в таблице
+    #             self.cursor.execute(f'''SELECT COUNT(*) FROM pi''')
+    #             count_row = self.cursor.fetchall()[0][0]
+
+    #             for new_list_pi in list_pi_ai:
+    #                 number_ai = new_list_pi[0]
+    #                 tag_ai    = new_list_pi[1]
+    #                 name_ai   = new_list_pi[2]
+
+    #                 # Type PI
+    #                 if self.dop_function.str_find(name_ai, {'адресн'}) : type_pi  = '4'
+    #                 elif self.dop_function.str_find(name_ai, {'дымов'}): type_pi  = '3'
+    #                 elif self.dop_function.str_find(name_ai, {'теплов'}): type_pi  = '5'
+    #                 else: type_pi = ''
+    #                 # Attention
+    #                 if self.dop_function.str_find(name_ai, {'шле'}) or self.dop_function.str_find(name_ai, {'шлейф'}): 
+    #                     attention  = f'stateAI[{number_ai}].state.reg'
+    #                 else: 
+    #                     attention = ''
+    #                 # Reset
+    #                 try:
+    #                     self.cursor.execute(f"""SELECT id, tag
+    #                                             FROM "do"
+    #                                             WHERE tag LIKE '%{tag_ai}%'""")
+    #                     list_pi_do = self.cursor.fetchall()
+    #                     ctrl_DO = f'ctrlDO[{list_pi_do[0][0]}]'
+    #                 except Exception:
+    #                     ctrl_DO = ''
+
+    #                 fire_0  = f'stateAI[{number_ai}].state.reg'
+    #                 fault_1 = f'stateAI[{number_ai}].state.reg'
+    #                 fault_2 = f'stateAI[{number_ai}].state.reg'
+
+    #                 if name_ai in tabl_pi_name:
+    #                     msg.update(self.dop_function.update_signal_dop(PI, "pi", name_ai, PI.tag, 'tag', tag_ai))
+    #                     msg.update(self.dop_function.update_signal_dop(PI, "pi", name_ai, PI.name, 'name', name_ai))
+    #                     msg.update(self.dop_function.update_signal_dop(PI, "pi", name_ai, PI.Type_PI, 'Type_PI', type_pi))
+    #                     msg.update(self.dop_function.update_signal_dop(PI, "pi", name_ai, PI.Fire_0, 'Fire_0', fire_0))
+    #                     msg.update(self.dop_function.update_signal_dop(PI, "pi", name_ai, PI.Attention_1, 'Attention_1', attention))
+    #                     msg.update(self.dop_function.update_signal_dop(PI, "pi", name_ai, PI.Fault_1_glass_pollution_broken_2, 'Fault_1_glass_pollution_broken_2', fault_1))
+    #                     msg.update(self.dop_function.update_signal_dop(PI, "pi", name_ai, PI.Fault_2_fault_KZ_3, 'Fault_2_fault_KZ_3', fault_2))
+    #                     msg.update(self.dop_function.update_signal_dop(PI, "pi", name_ai, PI.Reset_Link, 'Reset_Link', ctrl_DO))
+    #                 else:
+    #                     msg[f'{today} - Таблица: pi, добавлен новый сигнал: id = {number_ai}, {name_ai}'] = 3
+    #                     count_row += 1
+    #                     list_pi.append(dict(id = count_row, 
+    #                                         variable = f'PI[{count_row}]',
+    #                                         tag = tag_ai,
+    #                                         name = name_ai,
+    #                                         Type_PI = type_pi,
+    #                                         Fire_0 = f'stateAI[{number_ai}].state.reg',
+    #                                         Attention_1 = attention,
+    #                                         Fault_1_glass_pollution_broken_2 = f'stateAI[{number_ai}].state.reg',
+    #                                         Fault_2_fault_KZ_3 = f'stateAI[{number_ai}].state.reg',
+    #                                         Yes_connection_4 = '',
+    #                                         Frequency_generator_failure_5 = '',
+    #                                         Parameter_loading_error_6 = '',
+    #                                         Communication_error_module_IPP_7 = '',
+    #                                         Supply_voltage_fault_8 = '',
+    #                                         Optics_contamination_9 = '',
+    #                                         IK_channel_failure_10 = '',
+    #                                         UF_channel_failure_11 = '',
+    #                                         Loading_12 = '',
+    #                                         Test_13 = '',
+    #                                         Reserve_14 = '',
+    #                                         Reset_Link = ctrl_DO,
+    #                                         Reset_Request = '0',
+    #                                         Through_loop_number_for_interface = '0',
+    #                                         location = '',
+    #                                         Pic = '',
+    #                                         Normal = ''))
+
+    #             # Checking for the existence of a database
+    #             PI.insert_many(list_pi).execute()
+    #             if len(msg) == 0: msg[f'{today} - Таблица: pi, обновление завершено, изменений не обнаружено!'] = 1
+    #         except Exception:
+    #             msg[f'{today} - Таблица: pi, ошибка при заполнении: {traceback.format_exc()}'] = 2
+    #         msg[f'{today} - Таблица: pi, выполнение кода завершено!'] = 1
+    #     return(msg)
+    # Заполняем таблицу pz_tm
+    def column_check(self):
+        list_default = ['variable', 'tag', 'name', 'control', 'relieve', 
+                        'actuation', 'actuation_transmitter', 'malfunction', 'voltage']
+        msg = self.dop_function.column_check(DPS, 'dps', list_default)
+        return msg 
+
 # Changing tables SQL
 class Editing_table_SQL():
     def __init__(self):
         self.cursor = db.cursor()
     def editing_sql(self, table_sql):
         unpacking_  = []
+        msg = {}
+        try:
+            self.cursor.execute(f'SELECT * FROM "{table_sql}" ORDER BY id')
+            name_column = next(zip(*self.cursor.description))
+            array_name_column = []
+            for tabl, name_c in rus_list.items():
 
-        self.cursor.execute(f'SELECT * FROM "{table_sql}" ORDER BY id')
-        name_column = next(zip(*self.cursor.description))
-        array_name_column = []
-        for tabl, name_c in rus_list.items():
+                if tabl == table_sql:
 
-            if tabl == table_sql:
+                    for name in name_column:
+                        if name in name_c.keys():
 
-                for name in name_column:
-                    if name in name_c.keys():
+                            for key, value in name_c.items():
+                                if name == key:
+                                    array_name_column.append(value)
+                                    break
+                        else:
+                            array_name_column.append(name)
 
-                        for key, value in name_c.items():
-                            if name == key:
-                                array_name_column.append(value)
-                                break
-                    else:
-                        array_name_column.append(name)
+            records = self.cursor.fetchall()
+            unpacking_.append(records)
 
-        records = self.cursor.fetchall()
-        unpacking_.append(records)
-
-        count_column = len(name_column)
-        count_row    = len(records)
-        return count_column, count_row, array_name_column, records
+            count_column = len(name_column)
+            count_row    = len(records)
+            return count_column, count_row, array_name_column, records, msg
+        except Exception:
+            msg[f'{today} - Ошибка открытия редактора: {traceback.format_exc()}'] = 2
+            return 0, 0, array_name_column, records, msg
     def func_chunks_generators(self, lst, n):
         for i in range(0, len(lst), n):
             yield lst[i : i + n]
