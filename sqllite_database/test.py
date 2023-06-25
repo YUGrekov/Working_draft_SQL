@@ -339,7 +339,6 @@ class Widget(QWidget):
         b_clear_do.move(b_width_two + 180, b_height + 90) 
         b_clear_do.clicked.connect(self.clear_do_tabl)
         # UTS
-        self.upts_is_true = False
         l_uts = QLabel('UTS:', tab_3)
         l_uts.move(b_width_one + 2, l_height + 135)
         b_uts_basket = QPushButton('Заполнить', tab_3)
@@ -357,10 +356,25 @@ class Widget(QWidget):
         b_clear_uts.resize(80,23)
         b_clear_uts.move(b_width_two, b_height + 135) 
         b_clear_uts.clicked.connect(self.clear_uts_tabl)
-        c_uts_is_upts = QCheckBox('UPTS', tab_3)
-        c_uts_is_upts.setToolTip("По умолчанию UTS")
-        c_uts_is_upts.move(40, l_height + 134) 
-        c_uts_is_upts.stateChanged.connect(self.uts_check)
+        # UPTS
+        l_upts = QLabel('UPTS:', tab_3)
+        l_upts.move(b_width_one + 2, l_height + 180)
+        b_upts_basket = QPushButton('Заполнить', tab_3)
+        b_upts_basket.setStyleSheet("background: #bfd6bf; border: 1px solid")
+        b_upts_basket.setToolTip('''Происходит поиск по ключевым словам: 'сирен' и 'табл', и также по тегам 'ВВ'. 
+        Существование сигнала определяется по шкафу,корзине, модулю и каналу. 
+        - Если сигнал существует -> происходит проверка по названию, тегу и команде включения;
+        - Если нет -> добавляется новый сигнал.''')
+        b_upts_basket.resize(80,23)
+        b_upts_basket.move(b_width_one, b_height + 180) 
+        b_upts_basket.clicked.connect(self.filling_upts)
+        b_clear_upts = QPushButton('Очистить', tab_3)
+        b_clear_upts.setStyleSheet("background: #bbbabf; border: 1px solid")
+        b_clear_upts.setToolTip("Очистить таблицу UPTS")
+        b_clear_upts.resize(80,23)
+        b_clear_upts.move(b_width_two, b_height + 180) 
+        b_clear_upts.clicked.connect(self.clear_upts_tabl)
+       
         # VV
         l_vv = QLabel('VV:', tab_3)
         l_vv.move(b_width_one + 910, l_height + 135)
@@ -691,15 +705,18 @@ class Widget(QWidget):
         # self.q_check_ao.move(10, 68) 
         # self.q_check_ao.stateChanged.connect(self.check_ao)
         self.q_check_uso = QCheckBox('USO', tab_4)
+        self.q_check_uso.setToolTip(''' ''')
         self.q_check_uso.move(10, 67) 
         self.q_check_uso.stateChanged.connect(self.check_uso)
         self.q_check_hw = QCheckBox('HardWare', tab_4)
+        self.q_check_hw.setToolTip(''' ''')
         self.q_check_hw.move(10, 83) 
         self.q_check_hw.stateChanged.connect(self.check_hw)
         # Оборудование
         l_equip = QLabel('Оборудование: ', tab_4)
         l_equip.move(100, 20)
         self.q_check_umpna = QCheckBox('UMPNA', tab_4)
+        self.q_check_umpna.setToolTip('''TblPumpsCMNA.xml\nTblPumpsUMPNA.xml\nTblPumpsKTPRAS.xml''')
         self.q_check_umpna.move(100, 35) 
         self.q_check_umpna.stateChanged.connect(self.check_umpna)
         self.q_check_zd = QCheckBox('ZD', tab_4)
@@ -709,16 +726,24 @@ class Widget(QWidget):
         self.q_check_vs.move(100, 67) 
         self.q_check_vs.stateChanged.connect(self.check_vs)
         self.q_check_vsgrp = QCheckBox('VSGRP', tab_4)
+        self.q_check_vsgrp.setToolTip(''' ''')
         self.q_check_vsgrp.move(100, 83) 
         self.q_check_vsgrp.stateChanged.connect(self.check_vsgrp)
         self.q_check_uts = QCheckBox('UTS', tab_4)
+        self.q_check_uts.setToolTip('''TblSignalingDevices.xml\nTblSignalingDevicesFemale.xml\nTblSignalingDevicesMale.xml\nTblSignalingDevicesMany.xml''')
         self.q_check_uts.move(100, 99) 
         self.q_check_uts.stateChanged.connect(self.check_uts)
+        self.q_check_upts = QCheckBox('UPTS', tab_4)
+        self.q_check_upts.move(100, 115) 
+        self.q_check_upts.stateChanged.connect(self.check_upts)
+        self.q_check_upts.setToolTip('''TblSignalingDevices.xml\nTblSignalingDevicesFemale.xml\nTblSignalingDevicesMale.xml\nTblSignalingDevicesMany.xml''')
         self.q_check_vv = QCheckBox('VV', tab_4)
-        self.q_check_vv.move(100, 115) 
+        self.q_check_vsgrp.setToolTip('''TblHighVoltageSwitches.xml''')
+        self.q_check_vv.move(100, 131) 
         self.q_check_vv.stateChanged.connect(self.check_vv)
         self.q_check_pi = QCheckBox('PI', tab_4)
-        self.q_check_pi.move(100, 131) 
+        self.q_check_vsgrp.setToolTip(''' ''')
+        self.q_check_pi.move(100, 147) 
         self.q_check_pi.stateChanged.connect(self.check_pi)
         # Оборудование(уст)
         l_equip_ust = QLabel('Оборудование\n(уставки): ', tab_4)
@@ -745,18 +770,23 @@ class Widget(QWidget):
         l_protect = QLabel('Защиты,\nготовности: ', tab_4)
         l_protect.move(280, 20)
         self.q_check_ktpr = QCheckBox('KTPR', tab_4)
+        self.q_check_ktpr.setToolTip('''TblStationDefences.xml''')
         self.q_check_ktpr.move(280, 50) 
         self.q_check_ktpr.stateChanged.connect(self.check_ktpr)
         self.q_check_ktprp = QCheckBox('KTPRP', tab_4)
+        self.q_check_ktprp.setToolTip(''' ''')
         self.q_check_ktprp.move(280, 66) 
         self.q_check_ktprp.stateChanged.connect(self.check_ktprp)
         self.q_check_ktpra = QCheckBox('KTPRA', tab_4)
+        self.q_check_ktpra.setToolTip('''TblPumpDefences.xml''')
         self.q_check_ktpra.move(280, 82) 
         self.q_check_ktpra.stateChanged.connect(self.check_ktpra)
         self.q_check_ktprs = QCheckBox('KTPRS', tab_4)
+        self.q_check_ktprs.setToolTip('''TblLimitParameters.xml''')
         self.q_check_ktprs.move(280, 98) 
         self.q_check_ktprs.stateChanged.connect(self.check_ktprs)
         self.q_check_gmpna = QCheckBox('GMPNA', tab_4)
+        self.q_check_gmpna.setToolTip('''TblPumpReadineses.xml''')
         self.q_check_gmpna.move(280, 114) 
         self.q_check_gmpna.stateChanged.connect(self.check_gmpna)
         # Установить все
@@ -1104,20 +1134,24 @@ class Widget(QWidget):
     # UTS
     def filling_uts(self):
         uts_table = Filling_UTS()
-        msg = uts_table.column_check(self.upts_is_true)
+        msg = uts_table.column_check(False)
         self.logs_msg('default', 1, msg, True)
-        msg = uts_table.getting_modul(self.upts_is_true)
+        msg = uts_table.getting_modul(False)
         self.logs_msg('default', 1, msg, True)
     def clear_uts_tabl(self):
         msg = self.dop_function.clear_tabl('uts', 'UTS', self.list_tabl)
         self.logs_msg('default', 1, msg, True)
-    def uts_check(self, checked):
-        if checked:
-            self.upts_is_true = True
-            self.logs_msg(f'Выбрана таблица UPTS - флаг установлен', 3)
-        else:
-            self.upts_is_true = False
-            self.logs_msg(f'Выбрана таблица UTS - флаг снят', 3)
+    # UPTS
+    def filling_upts(self):
+        upts_table = Filling_UTS()
+        msg = upts_table.column_check(True)
+        self.logs_msg('default', 1, msg, True)
+        msg = upts_table.getting_modul(True)
+        self.logs_msg('default', 1, msg, True)
+    def clear_upts_tabl(self):
+        msg = self.dop_function.clear_tabl('upts', 'UPTS', self.list_tabl)
+        self.logs_msg('default', 1, msg, True)
+    
     # tmUTS
     def filling_uts_tm(self):
         vs_table = Filling_UTS_tm()
@@ -1259,6 +1293,9 @@ class Widget(QWidget):
     def check_uts(self, checked):
         if checked: self.list_gen_msg.append('UTS')
         else      : self.list_gen_msg.remove('UTS')
+    def check_upts(self, checked):
+        if checked: self.list_gen_msg.append('UPTS')
+        else      : self.list_gen_msg.remove('UPTS')
     def check_vv(self, checked):
         if checked: self.list_gen_msg.append('VV')
         else      : self.list_gen_msg.remove('VV')

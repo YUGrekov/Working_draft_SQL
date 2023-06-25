@@ -2370,7 +2370,7 @@ class Filling_UTS():
                                               (name LIKE '%сирен%' AND tag LIKE '%BB%') OR
                                               (name LIKE '%звон%' AND tag LIKE '%BB%') OR
                                               (name LIKE '%ОТВ%' OR name LIKE '%отв%') OR
-                                              (name LIKE '%сигнализ%')
+                                              (name LIKE '%сигнализац%')
                                         ORDER BY tag""")
                 list_uts_do = self.cursor.fetchall()
                 # Количество строк в таблице
@@ -3036,6 +3036,18 @@ class Generate_database_SQL():
                 cursor = db.cursor()
                 msg.update(self.gen_msg_general(cursor, flag_write_db, 'vs', 'VS', 'PostgreSQL_Messages-VS'))
                 continue
+            if tabl == 'VV': 
+                cursor = db.cursor()
+                msg.update(self.gen_msg_defence(cursor, flag_write_db, 'vv', 'VV', 'PostgreSQL_Messages-VV', 'TblHighVoltageSwitches'))
+                continue
+            if tabl == 'UTS': 
+                cursor = db.cursor()
+                msg.update(self.gen_msg_uts_upts(cursor, flag_write_db, 'uts', 'upts', 'PostgreSQL_Messages-UTS'))
+                continue
+            if tabl == 'UPTS': 
+                cursor = db.cursor()
+                msg.update(self.gen_msg_uts_upts(cursor, flag_write_db, 'upts', 'UPTS', 'PostgreSQL_Messages-UPTS'))
+                continue
             if tabl == 'UMPNA': 
                 cursor = db.cursor()
                 msg.update(self.gen_msg_umpna(cursor, flag_write_db, 'umpna', 'UMPNA', 'PostgreSQL_Messages-Pumps'))
@@ -3066,7 +3078,7 @@ class Generate_database_SQL():
             try:
                 kod_msg, addr_offset = self.define_number_msg(cursor, 'AI')
                 if addr_offset == 0 or kod_msg is None or addr_offset is None: 
-                    msg[f'{today} - Сообщения AI: ошибка. Адреса из таблицы msg не определены'] = 2
+                    msg[f'{today} - Сообщения ai: ошибка. Адреса из таблицы msg не определены'] = 2
                     return msg
                 cursor.execute(f"""SELECT id, name, group_analog FROM ai""")
                 list_ai = cursor.fetchall()
@@ -3083,19 +3095,19 @@ class Generate_database_SQL():
                         list_group = cursor.fetchall()[0][0]
                         path = f'{path_sample}\{list_group}.xml'
                         if not os.path.isfile(path):
-                            msg[f'{today} - Сообщения AI: отсутствует шаблон! {id_ai} - {name_ai}'] = 2
+                            msg[f'{today} - Сообщения ai: отсутствует шаблон! {id_ai} - {name_ai}'] = 2
                             continue
                         gen_list.append(self.dop_function.parser_sample(path, start_addr, name_ai, flag_write_db, 'AI'))
                     except Exception:
-                        msg[f'{today} - Сообщения AI: отсутствует шаблон: {id_ai} - {name_ai}'] = 2
+                        msg[f'{today} - Сообщения ai: отсутствует шаблон: {id_ai} - {name_ai}'] = 2
                         continue
                 if not flag_write_db:
                     msg.update(self.write_file(gen_list, 'AI', 'PostgreSQL_Messages-AI'))
-                    msg[f'{today} - Сообщения AI: файл скрипта создан'] = 1
+                    msg[f'{today} - Сообщения ai: файл скрипта создан'] = 1
                     return(msg)
             except Exception:
-                msg[f'{today} - Сообщения AI: ошибка генерации: {traceback.format_exc()}'] = 2
-            msg[f'{today} - Сообщения AI: генерация в базу завершена'] = 1
+                msg[f'{today} - Сообщения ai: ошибка генерации: {traceback.format_exc()}'] = 2
+            msg[f'{today} - Сообщения ai: генерация в базу завершена'] = 1
         return(msg)
     def gen_msg_umpna(self, cursor, flag_write_db, tabl, sign, script_file):
                 with db:
@@ -3104,7 +3116,7 @@ class Generate_database_SQL():
                     try:
                         kod_msg, addr_offset = self.define_number_msg(cursor, sign)
                         if addr_offset == 0 or kod_msg is None or addr_offset is None: 
-                            msg[f'{today} - Сообщения {sign}: ошибка. Адреса из таблицы msg не определены'] = 2
+                            msg[f'{today} - Сообщения {tabl}: ошибка. Адреса из таблицы msg не определены'] = 2
                             return msg
                         
                         cursor.execute(f"""SELECT id, name, tabl_msg, replacement_uso_signal_vv_1, replacement_uso_signal_vv_2
@@ -3122,17 +3134,49 @@ class Generate_database_SQL():
                             start_addr = kod_msg + ((id_ - 1) * int(addr_offset))
                             path = f'{path_sample}\{table_msg}.xml'
                             if not os.path.isfile(path):
-                                msg[f'{today} - Сообщения {sign}: отсутствует шаблон!{id_} - {name}'] = 2
+                                msg[f'{today} - Сообщения {tabl}: отсутствует шаблон!{id_} - {name}'] = 2
                                 continue
                             gen_list.append(self.dop_function.parser_sample(path, start_addr, name, flag_write_db, sign, cabinet_1, cabinet_2))
                         if not flag_write_db:
                             msg.update(self.write_file(gen_list, sign, script_file))
-                            msg[f'{today} - Сообщения {sign}: файл скрипта создан'] = 1
+                            msg[f'{today} - Сообщения {tabl}: файл скрипта создан'] = 1
                             return(msg)
                     except Exception:
-                        msg[f'{today} - Сообщения {sign}: ошибка генерации: {traceback.format_exc()}'] = 2
-                    msg[f'{today} - Сообщения {sign}: генерация в базу завершена!'] = 1
+                        msg[f'{today} - Сообщения {tabl}: ошибка генерации: {traceback.format_exc()}'] = 2
+                    msg[f'{today} - Сообщения {tabl}: генерация в базу завершена!'] = 1
                 return(msg)
+    def gen_msg_uts_upts(self, cursor, flag_write_db, tabl, sign, script_file):
+            with db:
+                msg = {}
+                gen_list = []
+                try:
+                    kod_msg, addr_offset = self.define_number_msg(cursor, sign)
+                    if addr_offset == 0 or kod_msg is None or addr_offset is None: 
+                        msg[f'{today} - Сообщения {tabl}: ошибка. Адреса из таблицы msg не определены'] = 2
+                        return msg
+
+                    cursor.execute(f"""SELECT id, name FROM "{tabl}" ORDER BY id""")
+                    list_signal = cursor.fetchall()
+                    for signal in list_signal:
+                        id_       = signal[0]
+                        name      = signal[1]
+
+                        start_addr = kod_msg + ((id_ - 1) * int(addr_offset))
+                        path = f'{path_sample}\{table_msg}.xml'
+                        if not os.path.isfile(path):
+                            msg[f'{today} - Сообщения {tabl}: в папке отсутствует шаблон - {table_msg}'] = 2
+                            return msg
+
+                        gen_list.append(self.dop_function.parser_sample(path, start_addr, name, flag_write_db, sign))
+
+                    if not flag_write_db:
+                        msg.update(self.write_file(gen_list, sign, script_file))
+                        msg[f'{today} - Сообщения {tabl}: файл скрипта создан'] = 1
+                        return(msg)
+                except Exception:
+                    msg[f'{today} - Сообщения {tabl}: ошибка генерации: {traceback.format_exc()}'] = 2
+                msg[f'{today} - Сообщения {tabl}: генерация в базу завершена!'] = 1
+            return(msg)
     def gen_msg_defence(self, cursor, flag_write_db, tabl, sign, script_file, table_msg):
             with db:
                 msg = {}
@@ -3140,7 +3184,7 @@ class Generate_database_SQL():
                 try:
                     kod_msg, addr_offset = self.define_number_msg(cursor, sign)
                     if addr_offset == 0 or kod_msg is None or addr_offset is None: 
-                        msg[f'{today} - Сообщения {sign}: ошибка. Адреса из таблицы msg не определены'] = 2
+                        msg[f'{today} - Сообщения {tabl}: ошибка. Адреса из таблицы msg не определены'] = 2
                         return msg
                     
                     if sign == 'KTPRA' or sign == 'GMPNA':
@@ -3157,7 +3201,7 @@ class Generate_database_SQL():
                         start_addr = kod_msg + ((id_ - 1) * int(addr_offset))
                         path = f'{path_sample}\{table_msg}.xml'
                         if not os.path.isfile(path):
-                            msg[f'{today} - Сообщения {sign}: в папке отсутствует шаблон - {table_msg}'] = 2
+                            msg[f'{today} - Сообщения {tabl}: в папке отсутствует шаблон - {table_msg}'] = 2
                             return msg
                         if sign == 'KTPRA' or sign == 'GMPNA':
                             gen_list.append(self.dop_function.parser_sample(path, start_addr, f'{na}. {name}', flag_write_db, sign))
@@ -3165,11 +3209,11 @@ class Generate_database_SQL():
                             gen_list.append(self.dop_function.parser_sample(path, start_addr, name, flag_write_db, sign))
                     if not flag_write_db:
                         msg.update(self.write_file(gen_list, sign, script_file))
-                        msg[f'{today} - Сообщения {sign}: файл скрипта создан'] = 1
+                        msg[f'{today} - Сообщения {tabl}: файл скрипта создан'] = 1
                         return(msg)
                 except Exception:
-                    msg[f'{today} - Сообщения {sign}: ошибка генерации: {traceback.format_exc()}'] = 2
-                msg[f'{today} - Сообщения {sign}: генерация в базу завершена!'] = 1
+                    msg[f'{today} - Сообщения {tabl}: ошибка генерации: {traceback.format_exc()}'] = 2
+                msg[f'{today} - Сообщения {tabl}: генерация в базу завершена!'] = 1
             return(msg)
     def gen_msg_general(self, cursor, flag_write_db, tabl, sign, script_file):
             with db:
@@ -3178,7 +3222,7 @@ class Generate_database_SQL():
                 try:
                     kod_msg, addr_offset = self.define_number_msg(cursor, sign)
                     if addr_offset == 0 or kod_msg is None or addr_offset is None: 
-                        msg[f'{today} - Сообщения {sign}: ошибка. Адреса из таблицы msg не определены'] = 2
+                        msg[f'{today} - Сообщения {tabl}: ошибка. Адреса из таблицы msg не определены'] = 2
                         return msg
                     
                     cursor.execute(f"""SELECT id, name, tabl_msg FROM "{tabl}" ORDER BY id""")
@@ -3191,14 +3235,14 @@ class Generate_database_SQL():
                         start_addr = kod_msg + ((id_ - 1) * int(addr_offset))
                         path = f'{path_sample}\{table_msg}.xml'
                         if not os.path.isfile(path):
-                            msg[f'{today} - Сообщения {sign}: отсутствует шаблон!{id_} - {name}'] = 2
+                            msg[f'{today} - Сообщения {tabl}: отсутствует шаблон!{id_} - {name}'] = 2
                             continue
                         gen_list.append(self.dop_function.parser_sample(path, start_addr, name, flag_write_db, sign))
                     if not flag_write_db:
                         msg.update(self.write_file(gen_list, sign, script_file))
-                        msg[f'{today} - Сообщения {sign}: файл скрипта создан'] = 1
+                        msg[f'{today} - Сообщения {tabl}: файл скрипта создан'] = 1
                         return(msg)
                 except Exception:
-                    msg[f'{today} - Сообщения {sign}: ошибка генерации: {traceback.format_exc()}'] = 2
-                msg[f'{today} - Сообщения {sign}: генерация в базу завершена!'] = 1
+                    msg[f'{today} - Сообщения {tabl}: ошибка генерации: {traceback.format_exc()}'] = 2
+                msg[f'{today} - Сообщения {tabl}: генерация в базу завершена!'] = 1
             return(msg)

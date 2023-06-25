@@ -22898,3 +22898,156 @@
 2023-06-24 14:11:51.667 +05 [17532] СООБЩЕНИЕ:  контрольная точка завершена: записано буферов: 98 (0.6%); добавлено файлов WAL 0, удалено: 0, переработано: 0; запись=10.576 сек., синхр.=0.031 сек., всего=10.616 сек.; синхронизировано_файлов=40, самая_долгая_синхр.=0.003 сек., средняя=0.001 сек.; расстояние=525 kB, ожидалось=4075 kB
 2023-06-24 14:16:41.679 +05 [17532] СООБЩЕНИЕ:  начата контрольная точка: time
 2023-06-24 14:16:48.139 +05 [17532] СООБЩЕНИЕ:  контрольная точка завершена: записано буферов: 60 (0.4%); добавлено файлов WAL 0, удалено: 0, переработано: 0; запись=6.429 сек., синхр.=0.012 сек., всего=6.460 сек.; синхронизировано_файлов=13, самая_долгая_синхр.=0.004 сек., средняя=0.001 сек.; расстояние=2777 kB, ожидалось=3946 kB
+2023-06-24 15:55:05.618 +05 [17532] СООБЩЕНИЕ:  начата контрольная точка: time
+2023-06-24 15:55:06.392 +05 [17532] СООБЩЕНИЕ:  контрольная точка завершена: записано буферов: 8 (0.0%); добавлено файлов WAL 0, удалено: 0, переработано: 0; запись=0.762 сек., синхр.=0.007 сек., всего=0.775 сек.; синхронизировано_файлов=4, самая_долгая_синхр.=0.003 сек., средняя=0.002 сек.; расстояние=21 kB, ожидалось=3553 kB
+2023-06-24 15:59:37.717 +05 [20304] РћРЁРР‘РљРђ:  СЃС‚РѕР»Р±РµС† "na" РЅРµ СЃСѓС‰РµСЃС‚РІСѓРµС‚ (СЃРёРјРІРѕР» 18)
+2023-06-24 15:59:37.717 +05 [20304] РћРџР•Р РђРўРћР :  SELECT id, name, NA FROM "ktpra" ORDER BY id
+2023-06-24 16:00:05.396 +05 [17532] СООБЩЕНИЕ:  начата контрольная точка: time
+2023-06-24 16:00:05.943 +05 [17532] СООБЩЕНИЕ:  контрольная точка завершена: записано буферов: 5 (0.0%); добавлено файлов WAL 0, удалено: 0, переработано: 0; запись=0.536 сек., синхр.=0.004 сек., всего=0.548 сек.; синхронизировано_файлов=2, самая_долгая_синхр.=0.003 сек., средняя=0.002 сек.; расстояние=13 kB, ожидалось=3199 kB
+2023-06-24 16:10:05.944 +05 [17532] СООБЩЕНИЕ:  начата контрольная точка: time
+2023-06-24 16:10:19.352 +05 [17532] СООБЩЕНИЕ:  контрольная точка завершена: записано буферов: 124 (0.8%); добавлено файлов WAL 0, удалено: 0, переработано: 0; запись=13.389 сек., синхр.=0.010 сек., всего=13.408 сек.; синхронизировано_файлов=11, самая_долгая_синхр.=0.004 сек., средняя=0.001 сек.; расстояние=1266 kB, ожидалось=3006 kB
+2023-06-24 16:15:05.368 +05 [17532] СООБЩЕНИЕ:  начата контрольная точка: time
+2023-06-24 16:15:06.375 +05 [17532] СООБЩЕНИЕ:  контрольная точка завершена: записано буферов: 10 (0.1%); добавлено файлов WAL 0, удалено: 0, переработано: 0; запись=0.992 сек., синхр.=0.006 сек., всего=1.007 сек.; синхронизировано_файлов=4, самая_долгая_синхр.=0.004 сек., средняя=0.002 сек.; расстояние=64 kB, ожидалось=2712 kB
+2023-06-24 16:17:23.427 +05 [14864] РћРЁРР‘РљРђ:  РѕС‚РЅРѕС€РµРЅРёРµ "gmpna" РЅРµ СЃСѓС‰РµСЃС‚РІСѓРµС‚ (СЃРёРјРІРѕР» 28)
+2023-06-24 16:17:23.427 +05 [14864] РћРџР•Р РђРўРћР :  SELECT id, name, "NA" FROM "gmpna" ORDER BY id
+2023-06-24 16:17:28.455 +05 [16132] РћРЁРР‘РљРђ:  РѕС‚РЅРѕС€РµРЅРёРµ "gmpna" РЅРµ СЃСѓС‰РµСЃС‚РІСѓРµС‚ (СЃРёРјРІРѕР» 28)
+2023-06-24 16:17:28.455 +05 [16132] РћРџР•Р РђРўРћР :  SELECT id, name, "NA" FROM "gmpna" ORDER BY id
+2023-06-24 16:18:00.563 +05 [7648] РћРЁРР‘РљРђ:  РІ РєРѕРЅСЃС‚СЂСѓРєС†РёРё UNION С‚РёРїС‹ "char" Рё text РЅРµ РёРјРµСЋС‚ РѕР±С‰РµРіРѕ (СЃРёРјРІРѕР» 768)
+2023-06-24 16:18:00.563 +05 [7648] РћРџР•Р РђРўРћР :  select D.objoid id, C.relkind as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_class C on D.objoid = C.oid
+	where C.relnamespace = $1::oid and C.relkind != 'c'
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($2::varchar::xid), -1), -1), 2147483647)
+	union all
+	select T.oid id, 'T' as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_type T on T.oid = D.objoid or T.typrelid = D.objoid
+	  left join pg_catalog.pg_class C on T.typrelid = C.oid
+	where T.typnamespace = $3::oid and (C.relkind = 'c' or C.relkind is null)
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($4::varchar::xid), -1), -1), 2147483647)
+	union all
+	select D.objoid id, pg_catalog.translate(C.contype, 'pufc', 'kkxz') as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_constraint C on D.objoid = C.oid
+	where C.connamespace = $5::oid
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($6::varchar::xid), -1), -1), 2147483647)
+	union all
+	select D.objoid id, 't' as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_trigger T on T.oid = D.objoid
+	  join pg_catalog.pg_class C on C.oid = T.tgrelid
+	where C.relnamespace = $7::oid
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($8::varchar::xid), -1), -1), 2147483647)
+	union all
+	select D.objoid id, 'R' as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_rewrite R on R.oid = D.objoid
+	  join pg_catalog.pg_class C on C.oid = R.ev_class
+	where C.relnamespace = $9::oid
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($10::varchar::xid), -1), -1), 2147483647)
+	union all
+	select D.objoid id, 'F' as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_proc P on P.oid = D.objoid
+	where P.pronamespace = $11::oid
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($12::varchar::xid), -1), -1), 2147483647)
+	union all
+	select D.objoid id, 'O' as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_operator O on O.oid = D.objoid
+	where O.oprnamespace = $13::oid
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($14::varchar::xid), -1), -1), 2147483647)
+	union all
+	select D.objoid id, 'f' as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_opfamily O on O.oid = D.objoid
+	where O.opfnamespace = $15::oid
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($16::varchar::xid), -1), -1), 2147483647)
+	union all
+	select D.objoid id, 'c' as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_opclass O on O.oid = D.objoid
+	where O.opcnamespace = $17::oid
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($18::varchar::xid), -1), -1), 2147483647)
+	union all
+	select D.objoid id, 'C' as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_collation C on C.oid = D.objoid
+	where C.collnamespace = $19::oid
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($20::varchar::xid), -1), -1), 2147483647)
+	
+2023-06-24 16:20:05.388 +05 [17532] СООБЩЕНИЕ:  начата контрольная точка: time
+2023-06-24 16:20:26.157 +05 [17532] СООБЩЕНИЕ:  контрольная точка завершена: записано буферов: 191 (1.2%); добавлено файлов WAL 0, удалено: 0, переработано: 0; запись=20.726 сек., синхр.=0.034 сек., всего=20.770 сек.; синхронизировано_файлов=42, самая_долгая_синхр.=0.004 сек., средняя=0.001 сек.; расстояние=1497 kB, ожидалось=2590 kB
+2023-06-24 16:35:05.198 +05 [17532] СООБЩЕНИЕ:  начата контрольная точка: time
+2023-06-24 16:35:05.660 +05 [17532] СООБЩЕНИЕ:  контрольная точка завершена: записано буферов: 5 (0.0%); добавлено файлов WAL 0, удалено: 0, переработано: 0; запись=0.447 сек., синхр.=0.006 сек., всего=0.463 сек.; синхронизировано_файлов=5, самая_долгая_синхр.=0.003 сек., средняя=0.002 сек.; расстояние=57 kB, ожидалось=2337 kB
+2023-06-24 16:35:12.972 +05 [14936] РћРЁРР‘РљРђ:  РІ РІС‹СЂР°Р¶РµРЅРёРё DEFAULT (РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ) РЅРµР»СЊР·СЏ СЃСЃС‹Р»Р°С‚СЊСЃСЏ РЅР° СЃС‚РѕР»Р±С†С‹
+2023-06-24 16:35:12.972 +05 [14936] РћРџР•Р РђРўРћР :  alter table ktprs
+	    alter column variable set default РџРµСЂРµРјРµРЅРЅР°СЏ
+2023-06-24 16:40:05.667 +05 [17532] СООБЩЕНИЕ:  начата контрольная точка: time
+2023-06-24 16:40:28.326 +05 [17532] СООБЩЕНИЕ:  контрольная точка завершена: записано буферов: 209 (1.3%); добавлено файлов WAL 0, удалено: 0, переработано: 1; запись=22.623 сек., синхр.=0.010 сек., всего=22.659 сек.; синхронизировано_файлов=11, самая_долгая_синхр.=0.004 сек., средняя=0.001 сек.; расстояние=2138 kB, ожидалось=2317 kB
+2023-06-25 10:00:32.206 +05 [2988] РћРЁРР‘РљРђ:  РІ РєРѕРЅСЃС‚СЂСѓРєС†РёРё UNION С‚РёРїС‹ "char" Рё text РЅРµ РёРјРµСЋС‚ РѕР±С‰РµРіРѕ (СЃРёРјРІРѕР» 768)
+2023-06-25 10:00:32.206 +05 [2988] РћРџР•Р РђРўРћР :  select D.objoid id, C.relkind as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_class C on D.objoid = C.oid
+	where C.relnamespace = $1::oid and C.relkind != 'c'
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($2::varchar::xid), -1), -1), 2147483647)
+	union all
+	select T.oid id, 'T' as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_type T on T.oid = D.objoid or T.typrelid = D.objoid
+	  left join pg_catalog.pg_class C on T.typrelid = C.oid
+	where T.typnamespace = $3::oid and (C.relkind = 'c' or C.relkind is null)
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($4::varchar::xid), -1), -1), 2147483647)
+	union all
+	select D.objoid id, pg_catalog.translate(C.contype, 'pufc', 'kkxz') as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_constraint C on D.objoid = C.oid
+	where C.connamespace = $5::oid
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($6::varchar::xid), -1), -1), 2147483647)
+	union all
+	select D.objoid id, 't' as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_trigger T on T.oid = D.objoid
+	  join pg_catalog.pg_class C on C.oid = T.tgrelid
+	where C.relnamespace = $7::oid
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($8::varchar::xid), -1), -1), 2147483647)
+	union all
+	select D.objoid id, 'R' as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_rewrite R on R.oid = D.objoid
+	  join pg_catalog.pg_class C on C.oid = R.ev_class
+	where C.relnamespace = $9::oid
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($10::varchar::xid), -1), -1), 2147483647)
+	union all
+	select D.objoid id, 'F' as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_proc P on P.oid = D.objoid
+	where P.pronamespace = $11::oid
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($12::varchar::xid), -1), -1), 2147483647)
+	union all
+	select D.objoid id, 'O' as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_operator O on O.oid = D.objoid
+	where O.oprnamespace = $13::oid
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($14::varchar::xid), -1), -1), 2147483647)
+	union all
+	select D.objoid id, 'f' as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_opfamily O on O.oid = D.objoid
+	where O.opfnamespace = $15::oid
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($16::varchar::xid), -1), -1), 2147483647)
+	union all
+	select D.objoid id, 'c' as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_opclass O on O.oid = D.objoid
+	where O.opcnamespace = $17::oid
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($18::varchar::xid), -1), -1), 2147483647)
+	union all
+	select D.objoid id, 'C' as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_collation C on C.oid = D.objoid
+	where C.collnamespace = $19::oid
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($20::varchar::xid), -1), -1), 2147483647)
+	
+2023-06-25 10:01:24.580 +05 [17532] СООБЩЕНИЕ:  начата контрольная точка: time
+2023-06-25 10:01:29.723 +05 [17532] СООБЩЕНИЕ:  контрольная точка завершена: записано буферов: 48 (0.3%); добавлено файлов WAL 0, удалено: 0, переработано: 0; запись=5.111 сек., синхр.=0.027 сек., всего=5.144 сек.; синхронизировано_файлов=35, самая_долгая_синхр.=0.004 сек., средняя=0.001 сек.; расстояние=250 kB, ожидалось=2110 kB
