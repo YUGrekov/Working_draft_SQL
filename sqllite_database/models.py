@@ -24,6 +24,7 @@ user_msg = 'postgres'
 password_msg = 'postgres'
 host_msg = 'localhost'
 port_msg = '5432'
+
 database_ust = ''
 user_ust = ''
 password_ust = ''
@@ -1111,6 +1112,21 @@ class PZ_tm(BaseModel):
     rule_map_ust = CharField(null = True)
 
     class Meta:
-        table_name = 'pz_tm'   
+        table_name = 'pz_tm'
+
+class DPS(BaseModel):
+    variable = CharField(null = True)
+    tag = CharField(null = True)
+    name = CharField(null = True)
+    control = CharField(null = True)
+    relieve = CharField(null = True)
+    oeration = CharField(null = True)
+    minimum = CharField(null = True)
+    maximum = CharField(null = True)
+    group_ust = CharField(null = True)
+    rule_map_ust = CharField(null = True)
+
+    class Meta:
+        table_name = 'pz_tm'
 
 

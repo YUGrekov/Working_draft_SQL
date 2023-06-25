@@ -793,7 +793,8 @@ class Filling_AI():
                             msg[f'{today} - В таблице hardware не найден модуль сигнала: {id_s}, {tag}, {description}, {uso_s}_A{basket_s}_{module_s}_{channel_s}, "pValue" не заполнен'] = 2
 
                         msg[f'{today} - Таблица: ai, добавлен новый сигнал: {row_sql}'] = 1
-                        list_AI.append(dict(variable = f'AI[{count_AI}]',
+                        list_AI.append(dict(id = count_AI,
+                                            variable = f'AI[{count_AI}]',
                                             tag = tag_translate,
                                             name = description,
                                             pValue = f'mAI8[{isdigit_num}, {module_s}]',
@@ -956,16 +957,17 @@ class Filling_AO():
                             msg[f'{today} - В таблице hardware не найден модуль сигнала: {id_s}, {tag}, {description}, {uso_s}_A{basket_s}_{module_s}_{channel_s}, "pValue" не заполнен'] = 2
                         
                         msg[f'{today} - Таблица: ao, добавлен новый сигнал: {row_sql}'] = 1
-                        list_AO.append(dict(variable = f'AO[{count_AO}]',
-                                        tag = tag,
-                                        name = description,
-                                        pValue = f'{tag_h}_{prefix}_AO[{channel_s}]',
-                                        pHealth = f'mAO_HEALTH[{isdigit_num}]',
-                                        uso = uso_s, 
-                                        basket = basket_s, 
-                                        module = module_s, 
-                                        channel = channel_s,
-                                        ))
+                        list_AO.append(dict(id = count_AO,
+                                            variable = f'AO[{count_AO}]',
+                                            tag = tag,
+                                            name = description,
+                                            pValue = f'{tag_h}_{prefix}_AO[{channel_s}]',
+                                            pHealth = f'mAO_HEALTH[{isdigit_num}]',
+                                            uso = uso_s, 
+                                            basket = basket_s, 
+                                            module = module_s, 
+                                            channel = channel_s,
+                                            ))
 
                 # Checking for the existence of a database
                 AO.insert_many(list_AO).execute()
@@ -1091,7 +1093,8 @@ class Filling_DI():
                         
                         msg[f'{today} - Таблица: di, добавлен новый сигнал: {row_sql}'] = 1
 
-                        list_DI.append(dict(variable = f'DI[{count_DI}]',
+                        list_DI.append(dict(id = count_DI,
+                                            variable = f'DI[{count_DI}]',
                                             tag = tag_translate,
                                             name = description,
                                             pValue = f'{tag_h}_{prefix}_DI[{channel_s}]',
@@ -1245,16 +1248,17 @@ class Filling_DO():
                         
                         msg[f'{today} - Таблица: do, добавлен новый сигнал: {row_sql}'] = 1
 
-                        list_DO.append(dict(variable = f'DO[{count_DO}]',
-                                        tag = tag_translate,
-                                        name = description,
-                                        pValue = f'{tag_h}_{prefix}_DO[{channel_s}]',
-                                        pHealth = f'mDO_HEALTH[{str(isdigit_num)}]',
-                                        short_title = description,
-                                        uso = uso_s, basket = basket_s, module = module_s, channel = channel_s,
-                                        AlphaHMI = '', AlphaHMI_PIC1 = '', AlphaHMI_PIC1_Number_kont = '', AlphaHMI_PIC2 = '', 
-                                        AlphaHMI_PIC2_Number_kont = '', AlphaHMI_PIC3 = '', AlphaHMI_PIC3_Number_kont = '', 
-                                        AlphaHMI_PIC4 = '', AlphaHMI_PIC4_Number_kont = ''))
+                        list_DO.append(dict(id = count_DO,
+                                            variable = f'DO[{count_DO}]',
+                                            tag = tag_translate,
+                                            name = description,
+                                            pValue = f'{tag_h}_{prefix}_DO[{channel_s}]',
+                                            pHealth = f'mDO_HEALTH[{str(isdigit_num)}]',
+                                            short_title = description,
+                                            uso = uso_s, basket = basket_s, module = module_s, channel = channel_s,
+                                            AlphaHMI = '', AlphaHMI_PIC1 = '', AlphaHMI_PIC1_Number_kont = '', AlphaHMI_PIC2 = '', 
+                                            AlphaHMI_PIC2_Number_kont = '', AlphaHMI_PIC3 = '', AlphaHMI_PIC3_Number_kont = '', 
+                                            AlphaHMI_PIC4 = '', AlphaHMI_PIC4_Number_kont = ''))
 
                 # Checking for the existence of a database
                 DO.insert_many(list_DO).execute()
@@ -1281,7 +1285,8 @@ class Filling_KTPRP():
         list_KTPRP = []
         with db:
             for i in range(1, 31):
-                list_KTPRP.append(dict(variable = f'KTPRP[{i}]',
+                list_KTPRP.append(dict(id = i,
+                                       variable = f'KTPRP[{i}]',
                                        tag = '',
                                        name = 'Резерв',
                                        Number_PZ = '',
@@ -1309,7 +1314,8 @@ class Filling_KTPR():
         list_KTPR = []
         with db:
             for i in range(1, 97):
-                list_KTPR.append(dict(variable = f'KTPR[{i}]',
+                list_KTPR.append(dict(id = i,
+                                      variable = f'KTPR[{i}]',
                                       tag = '',
                                       name = 'Резерв',
                                       avar_parameter = '',
@@ -1441,7 +1447,8 @@ class Filling_KTPRA():
         with db:
             for i in range(1, 5):
                 for k in range(1, 97):
-                    list_ktpra.append(dict(variable = f'KTPRA[{i}][{k}]',
+                    list_ktpra.append(dict(id = i,
+                                            variable = f'KTPRA[{i}][{k}]',
                                             tag  = '',
                                             name = f'Резерв',
                                             NA = '',
@@ -1481,7 +1488,8 @@ class Filling_KTPRS():
         list_KTPRS = []
         with db:
             for i in range(1, 21):
-                list_KTPRS.append(dict(variable = f'KTPRS[{i}]',
+                list_KTPRS.append(dict(id = i,
+                                       variable = f'KTPRS[{i}]',
                                        tag  = '',
                                        name = 'Резерв',
                                        drawdown = '',
@@ -1516,7 +1524,8 @@ class Filling_GMPNA():
         with db:
             for i in range(1, 5):
                 for k in range(1, 65):
-                    list_GMPNA.append(dict(variable = f'GMPNA[{i}][{k}]',
+                    list_GMPNA.append(dict(id = i,
+                                            variable = f'GMPNA[{i}][{k}]',
                                             tag  = '',
                                             name = 'Резерв',
                                             name_for_Chrp_in_local_mode = '',
@@ -1584,7 +1593,9 @@ class Filling_UMPNA():
                         command_to_turn_off_the_vv_output_1 = self.dop_function.search_signal(DO, 'do', f'ABO{i}01-1')
                         command_to_turn_off_the_vv_output_2 = self.dop_function.search_signal(DO, 'do', f'ABO{i}01-2')
 
-                        list_UMPNA.append(dict(variable = f'NA[{i}]',
+                        list_UMPNA.append(dict(
+                            id = i,
+                            variable = f'NA[{i}]',
                             name ='',
                             vv_included = vv_included,
                             vv_double_included = vv_double_included,
@@ -1727,6 +1738,7 @@ class Filling_tmNA_UMPNA():
     def getting_modul(self):
         msg = {}
         count_NA = 0
+        count_row = 0
         list_tmna_umpna = []
         time_ust = [('Время на проверку корректности состояния цепей контроля ВВ  (с отключенным контролем по току)' , 'T1noCT', '3'), 
                     ('Время на проверку корректности состояния цепей контроля ВВ (с включенным контролем по току)', 'T1CT', '6'),
@@ -1760,16 +1772,18 @@ class Filling_tmNA_UMPNA():
                         msg[f'{today} - Таблица: umpna, необходимо заполнить название НА!'] = 3
                     else:
                         for ust in time_ust:
-                            list_tmna_umpna.append(dict(variable = '',
-                                                    tag  = f'HNA{count_NA}_{ust[1]}',
-                                                    name = f'{i[0]}. {ust[0]}',
-                                                    unit = 'с',
-                                                    used = '1',
-                                                    value_ust = f'{ust[2]}',
-                                                    minimum = '0',
-                                                    maximum = '65535',
-                                                    group_ust = 'Временные уставки МНА',
-                                                    rule_map_ust = 'Временные уставки'))
+                            count_row += 1
+                            list_tmna_umpna.append(dict(id = count_row, 
+                                                        variable = '',
+                                                        tag  = f'HNA{count_NA}_{ust[1]}',
+                                                        name = f'{i[0]}. {ust[0]}',
+                                                        unit = 'с',
+                                                        used = '1',
+                                                        value_ust = f'{ust[2]}',
+                                                        minimum = '0',
+                                                        maximum = '65535',
+                                                        group_ust = 'Временные уставки МНА',
+                                                        rule_map_ust = 'Временные уставки'))
                         msg[f'{today} - Таблица: umpna_tm, заполнен НА_{count_NA}'] = 1
                             
                 # Checking for the existence of a database
@@ -1906,7 +1920,8 @@ class Filling_ZD():
                         count_row += 1
         
                         msg[f'{today} - Таблица: zd, добавлена новая задвижка: ZD[{count_row}], {name}'] = 1
-                        list_zd.append(dict(variable = f'ZD[{count_row}]',
+                        list_zd.append(dict(id = count_row,
+                                            variable = f'ZD[{count_row}]',
                                             name = name,
                                             short_name = '',
                                             exists_interface = '',
@@ -1988,6 +2003,7 @@ class Filling_ZD_tm():
     def getting_modul(self):
         msg = {}
         count_ZD = 0
+        count_row = 0
         list_zd_tm = []
         time_ust = [('Время переходных процессов' , 'T1', '500', 'мс'), 
                     ('Ожидание прихода сигнала от МП после команды на открытие/закрытие', 'T2', '2', 'c'),
@@ -2014,17 +2030,19 @@ class Filling_ZD_tm():
                 for i in self.cursor.fetchall():
                     count_ZD += 1
                     for ust in time_ust:
+                        count_row += 1
                         used = '0' if ust[0] == 'Резерв' else '1' 
-                        list_zd_tm.append(dict(variable = '',
-                                            tag  = f'HZD{count_ZD}_{ust[1]}',
-                                            name = f'{i[0]}. {ust[0]}',
-                                            unit = ust[3],
-                                            used = used,
-                                            value_ust = f'{ust[2]}',
-                                            minimum = '0',
-                                            maximum = '65535',
-                                            group_ust = 'Временные уставки задвижек',
-                                            rule_map_ust = 'Временные уставки'))
+                        list_zd_tm.append(dict(id = count_row, 
+                                                variable = '',
+                                                tag  = f'HZD{count_ZD}_{ust[1]}',
+                                                name = f'{i[0]}. {ust[0]}',
+                                                unit = ust[3],
+                                                used = used,
+                                                value_ust = f'{ust[2]}',
+                                                minimum = '0',
+                                                maximum = '65535',
+                                                group_ust = 'Временные уставки задвижек',
+                                                rule_map_ust = 'Временные уставки'))
                             
                 # Checking for the existence of a database
                 ZD_tm.insert_many(list_zd_tm).execute()
@@ -2179,7 +2197,8 @@ class Filling_VS():
                         count_row += 1
                         
                         msg[f'{today} - Таблица: vs, добавлена новая вспомсистема: VS[{count_row}], {name}'] = 1
-                        list_vs.append(dict(variable = f'ZD[{count_row}]',
+                        list_vs.append(dict(id = count_row, 
+                                            variable = f'ZD[{count_row}]',
                                             name = name,
                                             short_name = '',
                                             group = '',
@@ -2233,6 +2252,7 @@ class Filling_VS_tm():
     def getting_modul(self):
         msg = {}
         count_VS = 0
+        count_row = 0
         list_vs_tm = []
 
         time_ust = [('Выдержка времени на ожидание срабатывания / исчезновения МП после включения / отключения' , 'T1', '2', 'с'), 
@@ -2253,17 +2273,19 @@ class Filling_VS_tm():
                 for i in self.cursor.fetchall():
                     count_VS += 1
                     for ust in time_ust:
+                        count_row += 1
                         used = '0' if ust[0] == 'Резерв' else '1' 
-                        list_vs_tm.append(dict(variable = '',
-                                            tag  = f'HVS{count_VS}_{ust[1]}',
-                                            name = f'{i[0]}. {ust[0]}',
-                                            unit = ust[3],
-                                            used = used,
-                                            value_ust = f'{ust[2]}',
-                                            minimum = '0',
-                                            maximum = '65535',
-                                            group_ust = 'Временные уставки вспомсистем',
-                                            rule_map_ust = 'Временные уставки'))
+                        list_vs_tm.append(dict(id = count_row, 
+                                                variable = '',
+                                                tag  = f'HVS{count_VS}_{ust[1]}',
+                                                name = f'{i[0]}. {ust[0]}',
+                                                unit = ust[3],
+                                                used = used,
+                                                value_ust = f'{ust[2]}',
+                                                minimum = '0',
+                                                maximum = '65535',
+                                                group_ust = 'Временные уставки вспомсистем',
+                                                rule_map_ust = 'Временные уставки'))
                             
                 # Checking for the existence of a database
                 VS_tm.insert_many(list_vs_tm).execute()
@@ -2297,6 +2319,7 @@ class Filling_VSGRP_tm():
     def getting_modul(self):
         msg = {}
         count_VSGRP = 0
+        count_row = 0
         list_vsgrp_tm = []
 
         time_ust = [('Выдержка времени на выполнение АПВ' , 'T1', '1', 'с')] 
@@ -2309,8 +2332,10 @@ class Filling_VSGRP_tm():
             for i in self.cursor.fetchall():
                 count_VSGRP += 1
                 for ust in time_ust:
+                    count_row += 1
                     used = '0' if ust[0] == 'Резерв' else '1' 
-                    list_vsgrp_tm.append(dict(variable = '',
+                    list_vsgrp_tm.append(dict(id = count_row, 
+                                              variable = '',
                                               tag  = f'HVSGRP{count_VSGRP}_{ust[1]}',
                                               name = f'{i[0]}. {ust[0]}',
                                               unit = ust[3],
@@ -2378,6 +2403,17 @@ class Filling_UTS():
                 count_row = self.cursor.fetchall()[0][0]
 
                 for uts_do in list_uts_do:
+                    name_uts = str(uts_do[2]).replace('Включение звонка Авария', 'Звонок Авария')
+                    name_uts = str(name_uts).replace('Включение звонка "Авария"', 'Звонок "Авария"')
+                    name_uts = str(name_uts).replace('Включение звонка авария', 'Звонок авария')
+                    name_uts = str(name_uts).replace('Включение звонка "авария"', 'Звонок "авария"')
+                    name_uts = str(name_uts).replace(' - включить', '')
+                    name_uts = str(name_uts).replace('-включить', '')
+                    name_uts = str(name_uts).replace('Включение сирены', 'Сирены')
+                    name_uts = str(name_uts).replace('Включение табло', 'Табло')
+                    name_uts = str(name_uts).replace('Включение/отключение сирены', 'Сирены')
+                    name_uts = str(name_uts).replace('Включение/отключение табло', 'Табло')
+                    name_uts = str(name_uts).replace('Включение звуковой сигнализации', 'Звуковая сигнализация')
 
                     coincidence = model_used.select().where(model_used.uso     == uts_do[3],
                                                             model_used.basket  == uts_do[4],
@@ -2386,7 +2422,7 @@ class Filling_UTS():
                     if bool(coincidence):
                         exist_vkl  = model_used.select().where(model_used.VKL  == f'ctrlDO[{uts_do[0]}]')
                         exist_tag  = model_used.select().where(model_used.tag  == uts_do[1])
-                        exist_name = model_used.select().where(model_used.name == uts_do[2])
+                        exist_name = model_used.select().where(model_used.name == name_uts)
 
                         if not bool(exist_vkl):
                             self.cursor.execute(f"""SELECT id, tag 
@@ -2428,20 +2464,21 @@ class Filling_UTS():
                                                           module={uts_do[5]} AND 
                                                           channel={uts_do[6]}""")
                             for id_, name_ in self.cursor.fetchall():
-                                msg[f'{today} - Таблица: {tabl_used}, у сигнала в таблице do обновлено name: id = {id_}, ({uts_do[1]}), {uts_do[2]}'] = 3
+                                msg[f'{today} - Таблица: {tabl_used}, у сигнала в таблице do обновлено name: id = {id_}, ({uts_do[1]}), {name_uts}'] = 3
                             self.cursor.execute(f"""UPDATE {tabl_used}
-                                                    SET "name"='{uts_do[2]}' 
+                                                    SET "name"='{name_uts}' 
                                                     WHERE uso='{uts_do[3]}' AND 
                                                           basket={uts_do[4]} AND 
                                                           module={uts_do[5]} AND 
                                                           channel={uts_do[6]}""")
                         continue
                     count_row += 1
-                    msg[f'{today} - Таблица: {tabl_used}, добавлен новый сигнал: id = {uts_do[0]}, ({uts_do[1]}), {uts_do[2]}'] = 1
-                    siren = '1' if (self.dop_function.str_find(uts_do[2], {'сирен'}) or self.dop_function.str_find(uts_do[2], {'Cирен'})) else '0' 
-                    list_uts.append(dict(variable = f'{variable}[{count_row}]',
+                    msg[f'{today} - Таблица: {tabl_used}, добавлен новый сигнал: id = {uts_do[0]}, ({uts_do[1]}), {name_uts}'] = 1
+                    siren = '1' if self.dop_function.str_find(str(name_uts).lower(), {'сирен'}) else '0' 
+                    list_uts.append(dict(id = count_row,
+                                         variable = f'{variable}[{count_row}]',
                                          tag = f'{uts_do[1]}',
-                                         name = f'{uts_do[2]}',
+                                         name = f'{name_uts}',
                                          location = '',
                                          VKL = f'ctrlDO[{uts_do[0]}]',
                                          siren = siren, 
@@ -2481,6 +2518,7 @@ class Filling_UTS_tm():
     def getting_modul(self):
         msg = {}
         count_UTS = 0
+        count_row = 0
         list_uts_tm = []
 
         time_ust = [('Время непрерывной работы' , 'T1', '1', 'с'), 
@@ -2495,8 +2533,10 @@ class Filling_UTS_tm():
                 for i in self.cursor.fetchall():
                     count_UTS += 1
                     for ust in time_ust:
+                        count_row += 1
                         used = '0' if ust[0] == 'Резерв' else '1' 
-                        list_uts_tm.append(dict(variable = '',
+                        list_uts_tm.append(dict(id = count_row, 
+                                                variable = '',
                                                 tag  = f'HUTS[{count_UTS}]_{ust[1]}',
                                                 name = f'{i[0]}. {ust[0]}',
                                                 unit = ust[3],
@@ -2590,7 +2630,8 @@ class Filling_VV():
                     else:
                         msg[f'{today} - Таблица: vv, добавлен новый сигнал: id = {id_vv}, {name_vv}'] = 3
                         count_row += 1
-                        list_vv.append(dict(variable = f'VV[{count_row}]',
+                        list_vv.append(dict(id = count_row, 
+                                            variable = f'VV[{count_row}]',
                                             name = set_name,
                                             VV_vkl  = vkl_vv,
                                             VV_otkl = otkl_vv,
@@ -2689,7 +2730,8 @@ class Filling_PI():
                     else:
                         msg[f'{today} - Таблица: pi, добавлен новый сигнал: id = {number_ai}, {name_ai}'] = 3
                         count_row += 1
-                        list_pi.append(dict(variable = f'PI[{count_row}]',
+                        list_pi.append(dict(id = count_row, 
+                                            variable = f'PI[{count_row}]',
                                             tag = tag_ai,
                                             name = name_ai,
                                             Type_PI = type_pi,
@@ -2741,6 +2783,7 @@ class Filling_PZ_tm():
     def getting_modul(self):
         msg = {}
         count_PZ = 0
+        count_row = 0
         list_pz_tm = []
 
         time_ust = [('Задержка атаки' , 'T1', '10', 'с'), 
@@ -2766,8 +2809,10 @@ class Filling_PZ_tm():
                 for i in self.cursor.fetchall():
                     count_PZ += 1
                     for ust in time_ust:
+                        count_row += 1
                         used = '0' if ust[0] == 'Резерв' else '1' 
-                        list_pz_tm.append(dict(variable = '',
+                        list_pz_tm.append(dict(id = count_row, 
+                                                variable = '',
                                                 tag  = f'HUTS[{count_PZ}]_{ust[1]}',
                                                 name = f'{i[0]}. {ust[0]}',
                                                 unit = ust[3],
@@ -3042,7 +3087,7 @@ class Generate_database_SQL():
                 continue
             if tabl == 'UTS': 
                 cursor = db.cursor()
-                msg.update(self.gen_msg_uts_upts(cursor, flag_write_db, 'uts', 'upts', 'PostgreSQL_Messages-UTS'))
+                msg.update(self.gen_msg_uts_upts(cursor, flag_write_db, 'uts', 'UTS', 'PostgreSQL_Messages-UTS'))
                 continue
             if tabl == 'UPTS': 
                 cursor = db.cursor()
@@ -3160,6 +3205,13 @@ class Generate_database_SQL():
                     for signal in list_signal:
                         id_       = signal[0]
                         name      = signal[1]
+                        
+                        if   self.dop_function.str_find(str(name).lower(), {'звонок'}): table_msg = 'TblSignalingDevicesMale'
+                        elif self.dop_function.str_find(str(name).lower(), {'табло'}) : table_msg = 'TblSignalingDevices'
+                        elif self.dop_function.str_find(str(name).lower(), {'сирена'}): table_msg = 'TblSignalingDevicesFemale'
+                        elif self.dop_function.str_find(str(name).lower(), {'сирены'}): table_msg = 'TblSignalingDevicesMany'
+                        elif self.dop_function.str_find(str(name).lower(), {'сигнализация'}): table_msg = 'TblSignalingDevicesFemale'
+                        else: table_msg = 'TblSignalingDevices'
 
                         start_addr = kod_msg + ((id_ - 1) * int(addr_offset))
                         path = f'{path_sample}\{table_msg}.xml'
