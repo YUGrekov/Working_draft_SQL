@@ -205,7 +205,7 @@ class General_functions():
                 if self.str_find(mess, {'%2'}): 
                     mess = str(mess).replace('%2', args[1])
 
-            del_row_tabl = f"""DELETE FROM messages.opmessages WHERE Category ={kod_msg + int(category)};\n"""
+            del_row_tabl = f"DELETE FROM messages.opmessages WHERE Category ={kod_msg + int(category)};\n"
             ins_row_tabl = f"INSERT INTO messages.opmessages (Category, Message, IsAck, SoundFile, IsCycle, IsSound, IsHide, Priority, IsAlert) VALUES({kod_msg + int(category)}, '{name}. {mess}', {isAck}, '{soundFile}', {isCycle}, {isSound}, {isHide}, {priority}, {isAlert});\n"
             
             if flag_write_db:
@@ -418,7 +418,8 @@ class Filling_HardWare():
                      'AO' : 'MK-514-008', 
                      'DI' : 'MK-521-032', 
                      'RS' : 'MK-541-002', 
-                     'DO' : 'MK-531-032'}
+                     'DO' : 'MK-531-032',
+                     'EthEx' : 'MK-544-040'}
         with db:
             try:
                 if self.dop_function.empty_table('signals'): 
@@ -433,7 +434,7 @@ class Filling_HardWare():
                 temp_flag    = False
                 test_s       = []
                 count_basket = 0
-                count_AI, count_AO = 0, 0
+                count_AI, count_AO, count_EthEx = 0, 0, 0
                 count_DI, count_DO, count_RS = 0, 0, 0 
                 for uso in list_uso:
                     self.cursor.execute(f"""SELECT DISTINCT basket 
@@ -446,7 +447,7 @@ class Filling_HardWare():
                     if temp_flag is False:
                         for i in range(2):
                             uso_kk = uso[0]
-                            test_s.append(dict(uso = uso[0], tag = '',
+                            test_s.append(dict(id = i + 1, uso = uso[0], tag = '',
                                             powerLink_ID ='',
                                             basket  = i + 1,
                                             type_0  = 'MK-550-024',  variable_0 = f'PSU', type_1 = f'MK-546-010', variable_1 = f'MN',
@@ -476,11 +477,14 @@ class Filling_HardWare():
                         # Если в проекте есть КК
                         if kk_is_True and count_basket == 3:
                             for i in range(4, 6, 1):
-                                test_s.append(dict(uso        = uso_kk,
+                                test_s.append(dict(id         = i + 1, 
+                                                   uso        = uso_kk,
                                                    tag        = '',
                                                    basket     = i + 1,
                                                    type_0     = 'MK-550-024',
                                                    variable_0 = f'PSU',
+                                                   type_1     = f'MK-544-040',
+                                                   variable_1 = f'EthEx',
                                                    type_2     = f'MK-504-120',
                                                    variable_2 = f'CPU'))
 
@@ -512,10 +516,16 @@ class Filling_HardWare():
                                         elif key == 'RS': 
                                             count_RS += 1
                                             type_mod = f'{key}[{count_RS}]'
+                                        elif key == 'EthEx': 
+                                            count_EthEx += 1
+                                            type_mod = f'{key}[{count_EthEx}]'
                                         else:
                                             type_mod = key
-
                                         type_kod = value
+
+                            if   kk_is_True and (count_basket == 1 or count_basket == 2): list_hw[f'id'] = count_basket + 2
+                            else: list_hw[f'id'] = count_basket + 4
+
                             list_hw[f'tag']             = ''
                             list_hw[f'powerLink_ID']    = count_basket
                             list_hw[f'type_0']          = 'MK-550-024'
@@ -3247,6 +3257,10 @@ class Generate_database_SQL():
                 cursor = db.cursor()
                 msg.update(self.gen_msg_defence(cursor, flag_write_db, 'ktprs', 'KTPRS', 'PostgreSQL_Messages-KTPRS', 'TblLimitParameters'))
                 continue
+            if tabl == 'Diag': 
+                cursor = db.cursor()
+                msg.update(self.gen_msg_diag(cursor, flag_write_db, 'hardware', 'DiagMod', 'PostgreSQL_Messages-Racks', 'TblD_Racks'))
+                continue
         return msg
     def gen_msg_ai(self, cursor, flag_write_db):
         with db:
@@ -3272,7 +3286,7 @@ class Generate_database_SQL():
                         list_group = cursor.fetchall()[0][0]
                         path = f'{path_sample}\{list_group}.xml'
                         if not os.path.isfile(path):
-                            msg[f'{today} - Сообщения ai: отсутствует шаблон! {id_ai} - {name_ai}'] = 2
+                            msg[f'{today} - Сообщения ai: отсутствует шаблон - {list_group}'] = 2
                             continue
                         gen_list.append(self.dop_function.parser_sample(path, start_addr, name_ai, flag_write_db, 'AI'))
                     except Exception:
@@ -3311,7 +3325,7 @@ class Generate_database_SQL():
                             start_addr = kod_msg + ((id_ - 1) * int(addr_offset))
                             path = f'{path_sample}\{table_msg}.xml'
                             if not os.path.isfile(path):
-                                msg[f'{today} - Сообщения {tabl}: отсутствует шаблон!{id_} - {name}'] = 2
+                                msg[f'{today} - Сообщения {tabl}: в папке отсутствует шаблон - {table_msg}'] = 2
                                 continue
                             gen_list.append(self.dop_function.parser_sample(path, start_addr, name, flag_write_db, sign, cabinet_1, cabinet_2))
                         if not flag_write_db:
@@ -3419,7 +3433,7 @@ class Generate_database_SQL():
                         start_addr = kod_msg + ((id_ - 1) * int(addr_offset))
                         path = f'{path_sample}\{table_msg}.xml'
                         if not os.path.isfile(path):
-                            msg[f'{today} - Сообщения {tabl}: отсутствует шаблон!{id_} - {name}'] = 2
+                            msg[f'{today} - Сообщения {tabl}: в папке отсутствует шаблон - {table_msg}'] = 2
                             continue
                         gen_list.append(self.dop_function.parser_sample(path, start_addr, name, flag_write_db, sign))
                     if not flag_write_db:
@@ -3430,3 +3444,49 @@ class Generate_database_SQL():
                     msg[f'{today} - Сообщения {tabl}: ошибка генерации: {traceback.format_exc()}'] = 2
                 msg[f'{today} - Сообщения {tabl}: генерация в базу завершена!'] = 1
             return(msg)
+    def gen_msg_diag(self, cursor, flag_write_db, tabl, sign, script_file, table_msg):
+        with db:
+            msg = {}
+            modul_list = []
+            gen_list   = []
+            try:
+                for column in HardWare.select().dicts():
+                    uso    = column['uso']
+                    basket = column['basket']
+                    for five_column in range(0, 33, 1):
+                        if column[f'type_{five_column}'] != '' and column[f'type_{five_column}'] is not None:
+                            type_modul = column[f'type_{five_column}']
+                            prefix_number = f'0{five_column}' if five_column < 10 else basket
+
+                            value = f'Диагностика. {uso}. Модуль А{basket}.{prefix_number} {type_modul}'
+                            modul_list.append(dict(id    = five_column,
+                                                   value = value,
+                                                   basket = basket))
+
+                kod_msg, addr_offset = self.define_number_msg(cursor, sign)
+                if addr_offset == 0 or kod_msg is None or addr_offset is None: 
+                    msg[f'{today} - Сообщения {tabl}: адрес {tabl} из таблицы msg не определен'] = 2
+                    return msg
+                
+                for modul in modul_list:
+                    number_modul = modul['id']
+                    value_modul  = modul['value']
+                    basket       = modul['basket']
+
+                    offset_basket = 32 * 14 * (basket - 1)
+                    start_addr = kod_msg + offset_basket + (number_modul* int(addr_offset))
+                    path = f'{path_sample}\{table_msg}.xml'
+                    if not os.path.isfile(path):
+                        msg[f'{today} - Сообщения {tabl}: в папке отсутствует шаблон - {table_msg}'] = 2
+                        return msg
+
+                    gen_list.append(self.dop_function.parser_sample(path, start_addr, value_modul, flag_write_db, sign))
+
+                if not flag_write_db:
+                    msg.update(self.write_file(gen_list, sign, script_file))
+                    msg[f'{today} - Сообщения {tabl}: файл скрипта создан'] = 1
+                    return(msg)
+            except Exception:
+                msg[f'{today} - Сообщения {tabl}: ошибка генерации: {traceback.format_exc()}'] = 2
+            msg[f'{today} - Сообщения {tabl}: генерация в базу завершена!'] = 1
+        return(msg)

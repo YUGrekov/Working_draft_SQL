@@ -41,14 +41,20 @@ class Widget(QWidget):
         self.combo = QComboBox(tab_5)
         self.combo.move(10, 20) 
         self.combo.resize(240,25)
-        self.combo.setStyleSheet("border-radius: 4px; border: 1px solid")
+        self.combo.setStyleSheet("border-radius: 3px; border: 1px solid")
         self.combo.setFont(QFont('Arial', 10))
 
         clickButton = QPushButton('Подключиться к таблице', tab_5)
-        clickButton.setStyleSheet("background: #bfd6bf; border-radius: 4px; border: 1px solid")
-        clickButton.resize(240,35)
+        clickButton.setStyleSheet("border-radius: 3px; border: 1px solid")
+        clickButton.resize(240,23)
         clickButton.move(10, 55) 
         clickButton.clicked.connect(self.choose_tabl)
+
+        updateButton = QPushButton('Обновить', tab_5)
+        updateButton.setStyleSheet("border-radius: 3px; border: 1px solid")
+        updateButton.resize(120,23)
+        updateButton.move(270, 20) 
+        updateButton.clicked.connect(self.update_tabl)
 
         for tabl in list_tabl:
            self.combo.addItem(str(tabl))
@@ -729,14 +735,14 @@ class Widget(QWidget):
         # self.q_check_ao = QCheckBox('AO', tab_4)
         # self.q_check_ao.move(10, 68) 
         # self.q_check_ao.stateChanged.connect(self.check_ao)
-        self.q_check_uso = QCheckBox('USO', tab_4)
+        self.q_check_uso = QCheckBox('Диагностика', tab_4)
         self.q_check_uso.setToolTip(''' ''')
         self.q_check_uso.move(10, 67) 
-        self.q_check_uso.stateChanged.connect(self.check_uso)
-        self.q_check_hw = QCheckBox('HardWare', tab_4)
-        self.q_check_hw.setToolTip(''' ''')
-        self.q_check_hw.move(10, 83) 
-        self.q_check_hw.stateChanged.connect(self.check_hw)
+        self.q_check_uso.stateChanged.connect(self.check_diag)
+        # self.q_check_hw = QCheckBox('HardWare', tab_4)
+        # self.q_check_hw.setToolTip(''' ''')
+        # self.q_check_hw.move(10, 83) 
+        # self.q_check_hw.stateChanged.connect(self.check_hw)
         # Оборудование
         l_equip = QLabel('Оборудование: ', tab_4)
         l_equip.move(100, 20)
@@ -1299,9 +1305,9 @@ class Widget(QWidget):
     def check_ao(self, checked):
         if checked: self.list_gen_msg.append('AO')
         else      : self.list_gen_msg.remove('AO')
-    def check_uso(self, checked):
-        if checked: self.list_gen_msg.append('USO')
-        else      : self.list_gen_msg.remove('USO')
+    def check_diag(self, checked):
+        if checked: self.list_gen_msg.append('Diag')
+        else      : self.list_gen_msg.remove('Diag')
     def check_hw(self, checked):
         if checked: self.list_gen_msg.append('HW')
         else      : self.list_gen_msg.remove('HW')
@@ -1376,6 +1382,12 @@ class Widget(QWidget):
         name_table = self.combo.currentText()
         self.ch_tabl = Window_update_sql(name_table)
         self.ch_tabl.show()
+    # Update table
+    def update_tabl(self):
+        list_tabl = self.dop_function.all_tables()
+        self.combo.clear()
+        for tabl in list_tabl:
+           self.combo.addItem(str(tabl))
     # Logging messeges
     def logs_msg(self, logs=None, number_color=1, buffer_msg=None, msg=False):
         today = datetime.now()
