@@ -3259,7 +3259,7 @@ class Generate_database_SQL():
                 continue
             if tabl == 'Diag': 
                 cursor = db.cursor()
-                msg.update(self.gen_msg_diag(cursor, flag_write_db, 'hardware', 'DiagMod', 'PostgreSQL_Messages-Racks', 'TblD_Racks'))
+                msg.update(self.gen_msg_diag(cursor, flag_write_db))
                 continue
         return msg
     def gen_msg_ai(self, cursor, flag_write_db):
@@ -3444,48 +3444,123 @@ class Generate_database_SQL():
                     msg[f'{today} - Сообщения {tabl}: ошибка генерации: {traceback.format_exc()}'] = 2
                 msg[f'{today} - Сообщения {tabl}: генерация в базу завершена!'] = 1
             return(msg)
-    def gen_msg_diag(self, cursor, flag_write_db, tabl, sign, script_file, table_msg):
+    def gen_msg_diag(self, cursor, flag_write_db):
         with db:
             msg = {}
             modul_list = []
-            gen_list   = []
+
+            tabl = 'hardware' 
+            count_CN, count_CPU, count_EthEx = 0, 0, 0
+            count_MN, count_PCU, count_RS = 0, 0, 0 
             try:
                 for column in HardWare.select().dicts():
-                    uso    = column['uso']
-                    basket = column['basket']
+                    id_basket = column['id']
+                    uso       = column['uso']
+                    basket    = column['basket']
                     for five_column in range(0, 33, 1):
                         if column[f'type_{five_column}'] != '' and column[f'type_{five_column}'] is not None:
                             type_modul = column[f'type_{five_column}']
                             prefix_number = f'0{five_column}' if five_column < 10 else basket
 
                             value = f'Диагностика. {uso}. Модуль А{basket}.{prefix_number} {type_modul}'
-                            modul_list.append(dict(id    = five_column,
-                                                   value = value,
-                                                   basket = basket))
+                            modul_list.append(dict(id        = id_basket,
+                                                   num_modul = five_column,
+                                                   type_modul = type_modul,
+                                                   value     = value,
+                                                   basket    = basket))
+                for i in range(2):
+                    gen_list = []
+                    if i == 0:
+                        sign = 'DiagMod' 
+                        script_file = 'PostgreSQL_Messages-Racks' 
+                        table_msg = 'TblD_Racks'
+                        tbl_racks = True
 
-                kod_msg, addr_offset = self.define_number_msg(cursor, sign)
-                if addr_offset == 0 or kod_msg is None or addr_offset is None: 
-                    msg[f'{today} - Сообщения {tabl}: адрес {tabl} из таблицы msg не определен'] = 2
-                    return msg
-                
-                for modul in modul_list:
-                    number_modul = modul['id']
-                    value_modul  = modul['value']
-                    basket       = modul['basket']
+                        kod_msg, addr_offset = self.define_number_msg(cursor, sign)
+                        if addr_offset == 0 or kod_msg is None or addr_offset is None: 
+                            msg[f'{today} - Сообщения {tabl}: адрес {tabl} из таблицы msg не определен'] = 2
+                            return msg
+                    else:
+                        script_file = 'PostgreSQL_Messages-Modul' 
+                        tbl_racks = False
+                        for j in range(6):
+                            if   j == 0: sign = 'DiagCN'
+                            elif j == 1: sign = 'DiagCPU'
+                            elif j == 2: sign = 'DiagEthEx'
+                            elif j == 3: sign = 'DiagMN'
+                            elif j == 4: sign = 'DiagCPUKC'
+                            elif j == 5: sign = 'DiagRS'
 
-                    offset_basket = 32 * 14 * (basket - 1)
-                    start_addr = kod_msg + offset_basket + (number_modul* int(addr_offset))
-                    path = f'{path_sample}\{table_msg}.xml'
-                    if not os.path.isfile(path):
-                        msg[f'{today} - Сообщения {tabl}: в папке отсутствует шаблон - {table_msg}'] = 2
-                        return msg
+                            kod_msg, addr_offset = self.define_number_msg(cursor, sign)
+                            if addr_offset == 0 or kod_msg is None or addr_offset is None: 
+                                msg[f'{today} - Сообщения {tabl}: адрес {tabl} из таблицы msg не определен'] = 2
+                                return msg
+                            
+                            if   j == 0: 
+                                kod_msg_CN     = kod_msg
+                                addr_offset_CN = addr_offset
+                            elif j == 1: 
+                                kod_msg_CPU     = kod_msg
+                                addr_offset_CPU = addr_offset
+                            elif j == 2: 
+                                kod_msg_EthEx     = kod_msg
+                                addr_offset_EthEx = addr_offset
+                            elif j == 3: 
+                                kod_msg_MN     = kod_msg
+                                addr_offset_MN = addr_offset
+                            elif j == 4: 
+                                kod_msg_PCU     = kod_msg
+                                addr_offset_PCU = addr_offset
+                            elif j == 5: 
+                                kod_msg_RS     = kod_msg
+                                addr_offset_RS = addr_offset
+                        
+                    for modul in modul_list:
+                        id_basket    = modul['id']
+                        number_modul = modul['num_modul']
+                        type_modul   = modul['type_modul']
+                        value_modul  = modul['value']
+                        basket       = modul['basket']
 
-                    gen_list.append(self.dop_function.parser_sample(path, start_addr, value_modul, flag_write_db, sign))
+                        if tbl_racks is True:
+                            offset_basket = 32 * 14 * (int(id_basket) - 1)
+                            start_addr = kod_msg + offset_basket + (number_modul* int(addr_offset))
+                        else:
+                            if   type_modul == 'MK-545-010': 
+                                start_addr = kod_msg_CN + (count_CN * int(addr_offset_CN)) 
+                                table_msg = 'TblD_ModulesCN'
+                                count_CN += 1
+                            elif type_modul == 'MK-504-120': 
+                                start_addr = kod_msg_CPU + (count_CPU * int(addr_offset_CPU)) 
+                                table_msg = 'TblD_ModulesCPU'
+                                count_CPU += 1
+                            elif type_modul == 'MK-544-040': 
+                                start_addr = kod_msg_EthEx + (count_EthEx * int(addr_offset_EthEx)) 
+                                table_msg = 'TblD_ModulesEthEx'
+                                count_EthEx += 1
+                            elif type_modul == 'MK-546-010': 
+                                start_addr = kod_msg_MN + (count_MN * int(addr_offset_MN)) 
+                                table_msg = 'TblD_ModulesMN'
+                                count_MN += 1
+                            elif type_modul == 'MK-550-024': 
+                                start_addr = kod_msg_PCU + (count_PCU * int(addr_offset_PCU)) 
+                                table_msg = 'TblD_ModulesPSU'
+                                count_PCU += 1
+                            elif type_modul == 'MK-541-002': 
+                                start_addr = kod_msg_RS + (count_RS * int(addr_offset_RS)) 
+                                table_msg = 'TblD_ModulesRS'
+                                count_RS += 1
 
-                if not flag_write_db:
-                    msg.update(self.write_file(gen_list, sign, script_file))
-                    msg[f'{today} - Сообщения {tabl}: файл скрипта создан'] = 1
-                    return(msg)
+                        path = f'{path_sample}\{table_msg}.xml'
+                        if not os.path.isfile(path):
+                            msg[f'{today} - Сообщения {tabl}: в папке отсутствует шаблон - {table_msg}'] = 2
+                            return msg
+
+                        gen_list.append(self.dop_function.parser_sample(path, start_addr, value_modul, flag_write_db, sign))
+
+                    if not flag_write_db:
+                        msg.update(self.write_file(gen_list, sign, script_file))
+                        msg[f'{today} - Сообщения {tabl}: файл скрипта создан'] = 1
             except Exception:
                 msg[f'{today} - Сообщения {tabl}: ошибка генерации: {traceback.format_exc()}'] = 2
             msg[f'{today} - Сообщения {tabl}: генерация в базу завершена!'] = 1
