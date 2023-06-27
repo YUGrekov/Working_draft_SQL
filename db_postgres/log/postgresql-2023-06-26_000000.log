@@ -1,0 +1,681 @@
+2023-06-26 20:01:34.148 +05 [17532] СООБЩЕНИЕ:  начата контрольная точка: time
+2023-06-26 20:01:34.271 +05 [17532] СООБЩЕНИЕ:  контрольная точка завершена: записано буферов: 1 (0.0%); добавлено файлов WAL 0, удалено: 0, переработано: 0; запись=0.111 сек., синхр.=0.004 сек., всего=0.124 сек.; синхронизировано_файлов=1, самая_долгая_синхр.=0.004 сек., средняя=0.004 сек.; расстояние=7 kB, ожидалось=893 kB
+2023-06-26 20:08:13.400 +05 [23760] РЎРћРћР‘Р©Р•РќРР•:  РЅРµ СѓРґР°Р»РѕСЃСЊ РїРѕР»СѓС‡РёС‚СЊ РґР°РЅРЅС‹Рµ РѕС‚ РєР»РёРµРЅС‚Р°: An existing connection was forcibly closed by the remote host.
+	
+2023-06-26 20:08:13.400 +05 [23760] РЎРћРћР‘Р©Р•РќРР•:  РЅРµРѕР¶РёРґР°РЅРЅС‹Р№ РѕР±СЂС‹РІ СЃРѕРµРґРёРЅРµРЅРёСЏ СЃ РєР»РёРµРЅС‚РѕРј РїСЂРё РѕС‚РєСЂС‹С‚РѕР№ С‚СЂР°РЅР·Р°РєС†РёРё
+2023-06-26 20:13:10.404 +05 [3916] РЎРћРћР‘Р©Р•РќРР•:  РЅРµ СѓРґР°Р»РѕСЃСЊ РїРѕР»СѓС‡РёС‚СЊ РґР°РЅРЅС‹Рµ РѕС‚ РєР»РёРµРЅС‚Р°: An existing connection was forcibly closed by the remote host.
+	
+2023-06-26 20:13:10.404 +05 [3916] РЎРћРћР‘Р©Р•РќРР•:  РЅРµРѕР¶РёРґР°РЅРЅС‹Р№ РѕР±СЂС‹РІ СЃРѕРµРґРёРЅРµРЅРёСЏ СЃ РєР»РёРµРЅС‚РѕРј РїСЂРё РѕС‚РєСЂС‹С‚РѕР№ С‚СЂР°РЅР·Р°РєС†РёРё
+2023-06-26 21:18:45.268 +05 [24400] РЎРћРћР‘Р©Р•РќРР•:  РЅРµ СѓРґР°Р»РѕСЃСЊ РїРѕР»СѓС‡РёС‚СЊ РґР°РЅРЅС‹Рµ РѕС‚ РєР»РёРµРЅС‚Р°: An existing connection was forcibly closed by the remote host.
+	
+2023-06-26 21:18:45.268 +05 [24400] РЎРћРћР‘Р©Р•РќРР•:  РЅРµРѕР¶РёРґР°РЅРЅС‹Р№ РѕР±СЂС‹РІ СЃРѕРµРґРёРЅРµРЅРёСЏ СЃ РєР»РёРµРЅС‚РѕРј РїСЂРё РѕС‚РєСЂС‹С‚РѕР№ С‚СЂР°РЅР·Р°РєС†РёРё
+2023-06-27 08:13:20.723 +05 [17532] СООБЩЕНИЕ:  начата контрольная точка: time
+2023-06-27 08:13:21.057 +05 [17532] СООБЩЕНИЕ:  контрольная точка завершена: записано буферов: 3 (0.0%); добавлено файлов WAL 0, удалено: 0, переработано: 0; запись=0.324 сек., синхр.=0.003 сек., всего=0.335 сек.; синхронизировано_файлов=1, самая_долгая_синхр.=0.003 сек., средняя=0.003 сек.; расстояние=6 kB, ожидалось=804 kB
+2023-06-27 08:18:20.061 +05 [17532] СООБЩЕНИЕ:  начата контрольная точка: time
+2023-06-27 08:18:21.589 +05 [17532] СООБЩЕНИЕ:  контрольная точка завершена: записано буферов: 15 (0.1%); добавлено файлов WAL 0, удалено: 0, переработано: 0; запись=1.517 сек., синхр.=0.007 сек., всего=1.529 сек.; синхронизировано_файлов=6, самая_долгая_синхр.=0.004 сек., средняя=0.002 сек.; расстояние=852 kB, ожидалось=852 kB
+2023-06-27 09:38:00.792 +05 [7416] РћРЁРР‘РљРђ:  РІ РєРѕРЅСЃС‚СЂСѓРєС†РёРё UNION С‚РёРїС‹ "char" Рё text РЅРµ РёРјРµСЋС‚ РѕР±С‰РµРіРѕ (СЃРёРјРІРѕР» 768)
+2023-06-27 09:38:00.792 +05 [7416] РћРџР•Р РђРўРћР :  select D.objoid id, C.relkind as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_class C on D.objoid = C.oid
+	where C.relnamespace = $1::oid and C.relkind != 'c'
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($2::varchar::xid), -1), -1), 2147483647)
+	union all
+	select T.oid id, 'T' as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_type T on T.oid = D.objoid or T.typrelid = D.objoid
+	  left join pg_catalog.pg_class C on T.typrelid = C.oid
+	where T.typnamespace = $3::oid and (C.relkind = 'c' or C.relkind is null)
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($4::varchar::xid), -1), -1), 2147483647)
+	union all
+	select D.objoid id, pg_catalog.translate(C.contype, 'pufc', 'kkxz') as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_constraint C on D.objoid = C.oid
+	where C.connamespace = $5::oid
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($6::varchar::xid), -1), -1), 2147483647)
+	union all
+	select D.objoid id, 't' as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_trigger T on T.oid = D.objoid
+	  join pg_catalog.pg_class C on C.oid = T.tgrelid
+	where C.relnamespace = $7::oid
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($8::varchar::xid), -1), -1), 2147483647)
+	union all
+	select D.objoid id, 'R' as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_rewrite R on R.oid = D.objoid
+	  join pg_catalog.pg_class C on C.oid = R.ev_class
+	where C.relnamespace = $9::oid
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($10::varchar::xid), -1), -1), 2147483647)
+	union all
+	select D.objoid id, 'F' as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_proc P on P.oid = D.objoid
+	where P.pronamespace = $11::oid
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($12::varchar::xid), -1), -1), 2147483647)
+	union all
+	select D.objoid id, 'O' as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_operator O on O.oid = D.objoid
+	where O.oprnamespace = $13::oid
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($14::varchar::xid), -1), -1), 2147483647)
+	union all
+	select D.objoid id, 'f' as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_opfamily O on O.oid = D.objoid
+	where O.opfnamespace = $15::oid
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($16::varchar::xid), -1), -1), 2147483647)
+	union all
+	select D.objoid id, 'c' as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_opclass O on O.oid = D.objoid
+	where O.opcnamespace = $17::oid
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($18::varchar::xid), -1), -1), 2147483647)
+	union all
+	select D.objoid id, 'C' as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_collation C on C.oid = D.objoid
+	where C.collnamespace = $19::oid
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($20::varchar::xid), -1), -1), 2147483647)
+	
+2023-06-27 09:38:20.730 +05 [17532] СООБЩЕНИЕ:  начата контрольная точка: time
+2023-06-27 09:38:23.260 +05 [17532] СООБЩЕНИЕ:  контрольная точка завершена: записано буферов: 24 (0.1%); добавлено файлов WAL 0, удалено: 0, переработано: 0; запись=2.505 сек., синхр.=0.018 сек., всего=2.531 сек.; синхронизировано_файлов=20, самая_долгая_синхр.=0.004 сек., средняя=0.001 сек.; расстояние=135 kB, ожидалось=780 kB
+2023-06-27 09:38:35.549 +05 [22312] РћРЁРР‘РљРђ:  РѕС‚РЅРѕС€РµРЅРёРµ "msg_cat_id_seq" РЅРµ СЃСѓС‰РµСЃС‚РІСѓРµС‚
+2023-06-27 09:38:35.549 +05 [22312] РћРџР•Р РђРўРћР :  alter table msg_cat
+	    alter column id set default nextval('msg_cat_id_seq'::regclass)
+2023-06-27 09:39:24.041 +05 [16824] РћРЁРР‘РљРђ:  РІ РєРѕРЅСЃС‚СЂСѓРєС†РёРё UNION С‚РёРїС‹ "char" Рё text РЅРµ РёРјРµСЋС‚ РѕР±С‰РµРіРѕ (СЃРёРјРІРѕР» 768)
+2023-06-27 09:39:24.041 +05 [16824] РћРџР•Р РђРўРћР :  select D.objoid id, C.relkind as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_class C on D.objoid = C.oid
+	where C.relnamespace = $1::oid and C.relkind != 'c'
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($2::varchar::xid), -1), -1), 2147483647)
+	union all
+	select T.oid id, 'T' as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_type T on T.oid = D.objoid or T.typrelid = D.objoid
+	  left join pg_catalog.pg_class C on T.typrelid = C.oid
+	where T.typnamespace = $3::oid and (C.relkind = 'c' or C.relkind is null)
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($4::varchar::xid), -1), -1), 2147483647)
+	union all
+	select D.objoid id, pg_catalog.translate(C.contype, 'pufc', 'kkxz') as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_constraint C on D.objoid = C.oid
+	where C.connamespace = $5::oid
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($6::varchar::xid), -1), -1), 2147483647)
+	union all
+	select D.objoid id, 't' as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_trigger T on T.oid = D.objoid
+	  join pg_catalog.pg_class C on C.oid = T.tgrelid
+	where C.relnamespace = $7::oid
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($8::varchar::xid), -1), -1), 2147483647)
+	union all
+	select D.objoid id, 'R' as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_rewrite R on R.oid = D.objoid
+	  join pg_catalog.pg_class C on C.oid = R.ev_class
+	where C.relnamespace = $9::oid
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($10::varchar::xid), -1), -1), 2147483647)
+	union all
+	select D.objoid id, 'F' as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_proc P on P.oid = D.objoid
+	where P.pronamespace = $11::oid
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($12::varchar::xid), -1), -1), 2147483647)
+	union all
+	select D.objoid id, 'O' as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_operator O on O.oid = D.objoid
+	where O.oprnamespace = $13::oid
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($14::varchar::xid), -1), -1), 2147483647)
+	union all
+	select D.objoid id, 'f' as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_opfamily O on O.oid = D.objoid
+	where O.opfnamespace = $15::oid
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($16::varchar::xid), -1), -1), 2147483647)
+	union all
+	select D.objoid id, 'c' as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_opclass O on O.oid = D.objoid
+	where O.opcnamespace = $17::oid
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($18::varchar::xid), -1), -1), 2147483647)
+	union all
+	select D.objoid id, 'C' as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_collation C on C.oid = D.objoid
+	where C.collnamespace = $19::oid
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($20::varchar::xid), -1), -1), 2147483647)
+	
+2023-06-27 09:41:36.154 +05 [24392] РћРЁРР‘РљРђ:  РІ РєРѕРЅСЃС‚СЂСѓРєС†РёРё UNION С‚РёРїС‹ "char" Рё text РЅРµ РёРјРµСЋС‚ РѕР±С‰РµРіРѕ (СЃРёРјРІРѕР» 768)
+2023-06-27 09:41:36.154 +05 [24392] РћРџР•Р РђРўРћР :  select D.objoid id, C.relkind as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_class C on D.objoid = C.oid
+	where C.relnamespace = $1::oid and C.relkind != 'c'
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($2::varchar::xid), -1), -1), 2147483647)
+	union all
+	select T.oid id, 'T' as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_type T on T.oid = D.objoid or T.typrelid = D.objoid
+	  left join pg_catalog.pg_class C on T.typrelid = C.oid
+	where T.typnamespace = $3::oid and (C.relkind = 'c' or C.relkind is null)
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($4::varchar::xid), -1), -1), 2147483647)
+	union all
+	select D.objoid id, pg_catalog.translate(C.contype, 'pufc', 'kkxz') as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_constraint C on D.objoid = C.oid
+	where C.connamespace = $5::oid
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($6::varchar::xid), -1), -1), 2147483647)
+	union all
+	select D.objoid id, 't' as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_trigger T on T.oid = D.objoid
+	  join pg_catalog.pg_class C on C.oid = T.tgrelid
+	where C.relnamespace = $7::oid
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($8::varchar::xid), -1), -1), 2147483647)
+	union all
+	select D.objoid id, 'R' as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_rewrite R on R.oid = D.objoid
+	  join pg_catalog.pg_class C on C.oid = R.ev_class
+	where C.relnamespace = $9::oid
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($10::varchar::xid), -1), -1), 2147483647)
+	union all
+	select D.objoid id, 'F' as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_proc P on P.oid = D.objoid
+	where P.pronamespace = $11::oid
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($12::varchar::xid), -1), -1), 2147483647)
+	union all
+	select D.objoid id, 'O' as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_operator O on O.oid = D.objoid
+	where O.oprnamespace = $13::oid
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($14::varchar::xid), -1), -1), 2147483647)
+	union all
+	select D.objoid id, 'f' as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_opfamily O on O.oid = D.objoid
+	where O.opfnamespace = $15::oid
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($16::varchar::xid), -1), -1), 2147483647)
+	union all
+	select D.objoid id, 'c' as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_opclass O on O.oid = D.objoid
+	where O.opcnamespace = $17::oid
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($18::varchar::xid), -1), -1), 2147483647)
+	union all
+	select D.objoid id, 'C' as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_collation C on C.oid = D.objoid
+	where C.collnamespace = $19::oid
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($20::varchar::xid), -1), -1), 2147483647)
+	
+2023-06-27 09:42:44.537 +05 [9168] РћРЁРР‘РљРђ:  РІ РєРѕРЅСЃС‚СЂСѓРєС†РёРё UNION С‚РёРїС‹ "char" Рё text РЅРµ РёРјРµСЋС‚ РѕР±С‰РµРіРѕ (СЃРёРјРІРѕР» 768)
+2023-06-27 09:42:44.537 +05 [9168] РћРџР•Р РђРўРћР :  select D.objoid id, C.relkind as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_class C on D.objoid = C.oid
+	where C.relnamespace = $1::oid and C.relkind != 'c'
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($2::varchar::xid), -1), -1), 2147483647)
+	union all
+	select T.oid id, 'T' as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_type T on T.oid = D.objoid or T.typrelid = D.objoid
+	  left join pg_catalog.pg_class C on T.typrelid = C.oid
+	where T.typnamespace = $3::oid and (C.relkind = 'c' or C.relkind is null)
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($4::varchar::xid), -1), -1), 2147483647)
+	union all
+	select D.objoid id, pg_catalog.translate(C.contype, 'pufc', 'kkxz') as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_constraint C on D.objoid = C.oid
+	where C.connamespace = $5::oid
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($6::varchar::xid), -1), -1), 2147483647)
+	union all
+	select D.objoid id, 't' as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_trigger T on T.oid = D.objoid
+	  join pg_catalog.pg_class C on C.oid = T.tgrelid
+	where C.relnamespace = $7::oid
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($8::varchar::xid), -1), -1), 2147483647)
+	union all
+	select D.objoid id, 'R' as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_rewrite R on R.oid = D.objoid
+	  join pg_catalog.pg_class C on C.oid = R.ev_class
+	where C.relnamespace = $9::oid
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($10::varchar::xid), -1), -1), 2147483647)
+	union all
+	select D.objoid id, 'F' as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_proc P on P.oid = D.objoid
+	where P.pronamespace = $11::oid
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($12::varchar::xid), -1), -1), 2147483647)
+	union all
+	select D.objoid id, 'O' as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_operator O on O.oid = D.objoid
+	where O.oprnamespace = $13::oid
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($14::varchar::xid), -1), -1), 2147483647)
+	union all
+	select D.objoid id, 'f' as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_opfamily O on O.oid = D.objoid
+	where O.opfnamespace = $15::oid
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($16::varchar::xid), -1), -1), 2147483647)
+	union all
+	select D.objoid id, 'c' as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_opclass O on O.oid = D.objoid
+	where O.opcnamespace = $17::oid
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($18::varchar::xid), -1), -1), 2147483647)
+	union all
+	select D.objoid id, 'C' as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_collation C on C.oid = D.objoid
+	where C.collnamespace = $19::oid
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($20::varchar::xid), -1), -1), 2147483647)
+	
+2023-06-27 09:43:20.261 +05 [17532] СООБЩЕНИЕ:  начата контрольная точка: time
+2023-06-27 09:43:23.103 +05 [17532] СООБЩЕНИЕ:  контрольная точка завершена: записано буферов: 27 (0.2%); добавлено файлов WAL 0, удалено: 0, переработано: 0; запись=2.818 сек., синхр.=0.016 сек., всего=2.843 сек.; синхронизировано_файлов=26, самая_долгая_синхр.=0.003 сек., средняя=0.001 сек.; расстояние=131 kB, ожидалось=715 kB
+2023-06-27 09:45:31.941 +05 [22312] РћРЁРР‘РљРђ:  РѕС‚РЅРѕС€РµРЅРёРµ "msg_cat_id_seq" СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚
+2023-06-27 09:45:31.941 +05 [22312] РћРџР•Р РђРўРћР :  create sequence msg_cat_id_seq
+	    as integer
+2023-06-27 09:45:46.587 +05 [22312] РћРЁРР‘РљРђ:  СѓРґР°Р»РёС‚СЊ РѕР±СЉРµРєС‚ РїРѕСЃР»РµРґРѕРІР°С‚РµР»СЊРЅРѕСЃС‚СЊ msg_cat_id_seq РЅРµР»СЊР·СЏ, С‚Р°Рє РєР°Рє РѕС‚ РЅРµРіРѕ Р·Р°РІРёСЃСЏС‚ РґСЂСѓРіРёРµ РѕР±СЉРµРєС‚С‹
+2023-06-27 09:45:46.587 +05 [22312] РџРћР”Р РћР‘РќРћРЎРўР:  Р·РЅР°С‡РµРЅРёРµ РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ РґР»СЏ СЃС‚РѕР»Р±РµС† id РѕС‚РЅРѕС€РµРЅРёСЏ С‚Р°Р±Р»РёС†Р° msg_cat Р·Р°РІРёСЃРёС‚ РѕС‚ РѕР±СЉРµРєС‚Р° РїРѕСЃР»РµРґРѕРІР°С‚РµР»СЊРЅРѕСЃС‚СЊ msg_cat_id_seq
+2023-06-27 09:45:46.587 +05 [22312] РџРћР”РЎРљРђР—РљРђ:  Р”Р»СЏ СѓРґР°Р»РµРЅРёСЏ Р·Р°РІРёСЃРёРјС‹С… РѕР±СЉРµРєС‚РѕРІ РёСЃРїРѕР»СЊР·СѓР№С‚Рµ DROP ... CASCADE.
+2023-06-27 09:45:46.587 +05 [22312] РћРџР•Р РђРўРћР :  drop sequence msg_cat_id_seq
+2023-06-27 09:46:04.744 +05 [8440] РћРЁРР‘РљРђ:  РІ РєРѕРЅСЃС‚СЂСѓРєС†РёРё UNION С‚РёРїС‹ "char" Рё text РЅРµ РёРјРµСЋС‚ РѕР±С‰РµРіРѕ (СЃРёРјРІРѕР» 768)
+2023-06-27 09:46:04.744 +05 [8440] РћРџР•Р РђРўРћР :  select D.objoid id, C.relkind as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_class C on D.objoid = C.oid
+	where C.relnamespace = $1::oid and C.relkind != 'c'
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($2::varchar::xid), -1), -1), 2147483647)
+	union all
+	select T.oid id, 'T' as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_type T on T.oid = D.objoid or T.typrelid = D.objoid
+	  left join pg_catalog.pg_class C on T.typrelid = C.oid
+	where T.typnamespace = $3::oid and (C.relkind = 'c' or C.relkind is null)
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($4::varchar::xid), -1), -1), 2147483647)
+	union all
+	select D.objoid id, pg_catalog.translate(C.contype, 'pufc', 'kkxz') as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_constraint C on D.objoid = C.oid
+	where C.connamespace = $5::oid
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($6::varchar::xid), -1), -1), 2147483647)
+	union all
+	select D.objoid id, 't' as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_trigger T on T.oid = D.objoid
+	  join pg_catalog.pg_class C on C.oid = T.tgrelid
+	where C.relnamespace = $7::oid
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($8::varchar::xid), -1), -1), 2147483647)
+	union all
+	select D.objoid id, 'R' as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_rewrite R on R.oid = D.objoid
+	  join pg_catalog.pg_class C on C.oid = R.ev_class
+	where C.relnamespace = $9::oid
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($10::varchar::xid), -1), -1), 2147483647)
+	union all
+	select D.objoid id, 'F' as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_proc P on P.oid = D.objoid
+	where P.pronamespace = $11::oid
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($12::varchar::xid), -1), -1), 2147483647)
+	union all
+	select D.objoid id, 'O' as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_operator O on O.oid = D.objoid
+	where O.oprnamespace = $13::oid
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($14::varchar::xid), -1), -1), 2147483647)
+	union all
+	select D.objoid id, 'f' as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_opfamily O on O.oid = D.objoid
+	where O.opfnamespace = $15::oid
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($16::varchar::xid), -1), -1), 2147483647)
+	union all
+	select D.objoid id, 'c' as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_opclass O on O.oid = D.objoid
+	where O.opcnamespace = $17::oid
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($18::varchar::xid), -1), -1), 2147483647)
+	union all
+	select D.objoid id, 'C' as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_collation C on C.oid = D.objoid
+	where C.collnamespace = $19::oid
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($20::varchar::xid), -1), -1), 2147483647)
+	
+2023-06-27 09:46:31.989 +05 [12856] РћРЁРР‘РљРђ:  РІ РєРѕРЅСЃС‚СЂСѓРєС†РёРё UNION С‚РёРїС‹ "char" Рё text РЅРµ РёРјРµСЋС‚ РѕР±С‰РµРіРѕ (СЃРёРјРІРѕР» 768)
+2023-06-27 09:46:31.989 +05 [12856] РћРџР•Р РђРўРћР :  select D.objoid id, C.relkind as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_class C on D.objoid = C.oid
+	where C.relnamespace = $1::oid and C.relkind != 'c'
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($2::varchar::xid), -1), -1), 2147483647)
+	union all
+	select T.oid id, 'T' as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_type T on T.oid = D.objoid or T.typrelid = D.objoid
+	  left join pg_catalog.pg_class C on T.typrelid = C.oid
+	where T.typnamespace = $3::oid and (C.relkind = 'c' or C.relkind is null)
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($4::varchar::xid), -1), -1), 2147483647)
+	union all
+	select D.objoid id, pg_catalog.translate(C.contype, 'pufc', 'kkxz') as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_constraint C on D.objoid = C.oid
+	where C.connamespace = $5::oid
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($6::varchar::xid), -1), -1), 2147483647)
+	union all
+	select D.objoid id, 't' as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_trigger T on T.oid = D.objoid
+	  join pg_catalog.pg_class C on C.oid = T.tgrelid
+	where C.relnamespace = $7::oid
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($8::varchar::xid), -1), -1), 2147483647)
+	union all
+	select D.objoid id, 'R' as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_rewrite R on R.oid = D.objoid
+	  join pg_catalog.pg_class C on C.oid = R.ev_class
+	where C.relnamespace = $9::oid
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($10::varchar::xid), -1), -1), 2147483647)
+	union all
+	select D.objoid id, 'F' as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_proc P on P.oid = D.objoid
+	where P.pronamespace = $11::oid
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($12::varchar::xid), -1), -1), 2147483647)
+	union all
+	select D.objoid id, 'O' as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_operator O on O.oid = D.objoid
+	where O.oprnamespace = $13::oid
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($14::varchar::xid), -1), -1), 2147483647)
+	union all
+	select D.objoid id, 'f' as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_opfamily O on O.oid = D.objoid
+	where O.opfnamespace = $15::oid
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($16::varchar::xid), -1), -1), 2147483647)
+	union all
+	select D.objoid id, 'c' as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_opclass O on O.oid = D.objoid
+	where O.opcnamespace = $17::oid
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($18::varchar::xid), -1), -1), 2147483647)
+	union all
+	select D.objoid id, 'C' as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_collation C on C.oid = D.objoid
+	where C.collnamespace = $19::oid
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($20::varchar::xid), -1), -1), 2147483647)
+	
+2023-06-27 09:48:20.117 +05 [17532] СООБЩЕНИЕ:  начата контрольная точка: time
+2023-06-27 09:48:23.861 +05 [17532] СООБЩЕНИЕ:  контрольная точка завершена: записано буферов: 36 (0.2%); добавлено файлов WAL 0, удалено: 0, переработано: 0; запись=3.707 сек., синхр.=0.027 сек., всего=3.745 сек.; синхронизировано_файлов=30, самая_долгая_синхр.=0.003 сек., средняя=0.001 сек.; расстояние=139 kB, ожидалось=658 kB
+2023-06-27 09:48:40.052 +05 [22312] РћРЁРР‘РљРђ:  СѓРґР°Р»РёС‚СЊ РѕР±СЉРµРєС‚ РёРЅРґРµРєСЃ msg_cat_pk РЅРµР»СЊР·СЏ, С‚Р°Рє РєР°Рє РѕРЅ РЅСѓР¶РµРЅ РѕР±СЉРµРєС‚Сѓ РѕРіСЂР°РЅРёС‡РµРЅРёРµ msg_cat_pk РІ РѕС‚РЅРѕС€РµРЅРёРё С‚Р°Р±Р»РёС†Р° msg_cat
+2023-06-27 09:48:40.052 +05 [22312] РџРћР”РЎРљРђР—РљРђ:  РћРґРЅР°РєРѕ РјРѕР¶РЅРѕ СѓРґР°Р»РёС‚СЊ РѕРіСЂР°РЅРёС‡РµРЅРёРµ msg_cat_pk РІ РѕС‚РЅРѕС€РµРЅРёРё С‚Р°Р±Р»РёС†Р° msg_cat.
+2023-06-27 09:48:40.052 +05 [22312] РћРџР•Р РђРўРћР :  drop index msg_cat_pk
+2023-06-27 09:48:46.178 +05 [22312] РћРЁРР‘РљРђ:  СѓРґР°Р»РёС‚СЊ РѕР±СЉРµРєС‚ РёРЅРґРµРєСЃ msg_cat_pk РЅРµР»СЊР·СЏ, С‚Р°Рє РєР°Рє РѕРЅ РЅСѓР¶РµРЅ РѕР±СЉРµРєС‚Сѓ РѕРіСЂР°РЅРёС‡РµРЅРёРµ msg_cat_pk РІ РѕС‚РЅРѕС€РµРЅРёРё С‚Р°Р±Р»РёС†Р° msg_cat
+2023-06-27 09:48:46.178 +05 [22312] РџРћР”РЎРљРђР—РљРђ:  РћРґРЅР°РєРѕ РјРѕР¶РЅРѕ СѓРґР°Р»РёС‚СЊ РѕРіСЂР°РЅРёС‡РµРЅРёРµ msg_cat_pk РІ РѕС‚РЅРѕС€РµРЅРёРё С‚Р°Р±Р»РёС†Р° msg_cat.
+2023-06-27 09:48:46.178 +05 [22312] РћРџР•Р РђРўРћР :  drop index msg_cat_pk
+2023-06-27 09:50:51.277 +05 [11908] РћРЁРР‘РљРђ:  РІ РєРѕРЅСЃС‚СЂСѓРєС†РёРё UNION С‚РёРїС‹ "char" Рё text РЅРµ РёРјРµСЋС‚ РѕР±С‰РµРіРѕ (СЃРёРјРІРѕР» 768)
+2023-06-27 09:50:51.277 +05 [11908] РћРџР•Р РђРўРћР :  select D.objoid id, C.relkind as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_class C on D.objoid = C.oid
+	where C.relnamespace = $1::oid and C.relkind != 'c'
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($2::varchar::xid), -1), -1), 2147483647)
+	union all
+	select T.oid id, 'T' as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_type T on T.oid = D.objoid or T.typrelid = D.objoid
+	  left join pg_catalog.pg_class C on T.typrelid = C.oid
+	where T.typnamespace = $3::oid and (C.relkind = 'c' or C.relkind is null)
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($4::varchar::xid), -1), -1), 2147483647)
+	union all
+	select D.objoid id, pg_catalog.translate(C.contype, 'pufc', 'kkxz') as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_constraint C on D.objoid = C.oid
+	where C.connamespace = $5::oid
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($6::varchar::xid), -1), -1), 2147483647)
+	union all
+	select D.objoid id, 't' as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_trigger T on T.oid = D.objoid
+	  join pg_catalog.pg_class C on C.oid = T.tgrelid
+	where C.relnamespace = $7::oid
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($8::varchar::xid), -1), -1), 2147483647)
+	union all
+	select D.objoid id, 'R' as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_rewrite R on R.oid = D.objoid
+	  join pg_catalog.pg_class C on C.oid = R.ev_class
+	where C.relnamespace = $9::oid
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($10::varchar::xid), -1), -1), 2147483647)
+	union all
+	select D.objoid id, 'F' as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_proc P on P.oid = D.objoid
+	where P.pronamespace = $11::oid
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($12::varchar::xid), -1), -1), 2147483647)
+	union all
+	select D.objoid id, 'O' as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_operator O on O.oid = D.objoid
+	where O.oprnamespace = $13::oid
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($14::varchar::xid), -1), -1), 2147483647)
+	union all
+	select D.objoid id, 'f' as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_opfamily O on O.oid = D.objoid
+	where O.opfnamespace = $15::oid
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($16::varchar::xid), -1), -1), 2147483647)
+	union all
+	select D.objoid id, 'c' as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_opclass O on O.oid = D.objoid
+	where O.opcnamespace = $17::oid
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($18::varchar::xid), -1), -1), 2147483647)
+	union all
+	select D.objoid id, 'C' as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_collation C on C.oid = D.objoid
+	where C.collnamespace = $19::oid
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($20::varchar::xid), -1), -1), 2147483647)
+	
+2023-06-27 09:51:42.925 +05 [20856] РћРЁРР‘РљРђ:  РІ РєРѕРЅСЃС‚СЂСѓРєС†РёРё UNION С‚РёРїС‹ "char" Рё text РЅРµ РёРјРµСЋС‚ РѕР±С‰РµРіРѕ (СЃРёРјРІРѕР» 768)
+2023-06-27 09:51:42.925 +05 [20856] РћРџР•Р РђРўРћР :  select D.objoid id, C.relkind as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_class C on D.objoid = C.oid
+	where C.relnamespace = $1::oid and C.relkind != 'c'
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($2::varchar::xid), -1), -1), 2147483647)
+	union all
+	select T.oid id, 'T' as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_type T on T.oid = D.objoid or T.typrelid = D.objoid
+	  left join pg_catalog.pg_class C on T.typrelid = C.oid
+	where T.typnamespace = $3::oid and (C.relkind = 'c' or C.relkind is null)
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($4::varchar::xid), -1), -1), 2147483647)
+	union all
+	select D.objoid id, pg_catalog.translate(C.contype, 'pufc', 'kkxz') as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_constraint C on D.objoid = C.oid
+	where C.connamespace = $5::oid
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($6::varchar::xid), -1), -1), 2147483647)
+	union all
+	select D.objoid id, 't' as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_trigger T on T.oid = D.objoid
+	  join pg_catalog.pg_class C on C.oid = T.tgrelid
+	where C.relnamespace = $7::oid
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($8::varchar::xid), -1), -1), 2147483647)
+	union all
+	select D.objoid id, 'R' as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_rewrite R on R.oid = D.objoid
+	  join pg_catalog.pg_class C on C.oid = R.ev_class
+	where C.relnamespace = $9::oid
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($10::varchar::xid), -1), -1), 2147483647)
+	union all
+	select D.objoid id, 'F' as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_proc P on P.oid = D.objoid
+	where P.pronamespace = $11::oid
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($12::varchar::xid), -1), -1), 2147483647)
+	union all
+	select D.objoid id, 'O' as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_operator O on O.oid = D.objoid
+	where O.oprnamespace = $13::oid
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($14::varchar::xid), -1), -1), 2147483647)
+	union all
+	select D.objoid id, 'f' as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_opfamily O on O.oid = D.objoid
+	where O.opfnamespace = $15::oid
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($16::varchar::xid), -1), -1), 2147483647)
+	union all
+	select D.objoid id, 'c' as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_opclass O on O.oid = D.objoid
+	where O.opcnamespace = $17::oid
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($18::varchar::xid), -1), -1), 2147483647)
+	union all
+	select D.objoid id, 'C' as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_collation C on C.oid = D.objoid
+	where C.collnamespace = $19::oid
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($20::varchar::xid), -1), -1), 2147483647)
+	
+2023-06-27 09:53:20.873 +05 [17532] СООБЩЕНИЕ:  начата контрольная точка: time
+2023-06-27 09:53:28.784 +05 [17532] СООБЩЕНИЕ:  контрольная точка завершена: записано буферов: 73 (0.4%); добавлено файлов WAL 0, удалено: 0, переработано: 0; запись=7.863 сек., синхр.=0.038 сек., всего=7.911 сек.; синхронизировано_файлов=43, самая_долгая_синхр.=0.004 сек., средняя=0.001 сек.; расстояние=388 kB, ожидалось=631 kB
+2023-06-27 09:53:49.872 +05 [1868] РћРЁРР‘РљРђ:  РІ РєРѕРЅСЃС‚СЂСѓРєС†РёРё UNION С‚РёРїС‹ "char" Рё text РЅРµ РёРјРµСЋС‚ РѕР±С‰РµРіРѕ (СЃРёРјРІРѕР» 768)
+2023-06-27 09:53:49.872 +05 [1868] РћРџР•Р РђРўРћР :  select D.objoid id, C.relkind as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_class C on D.objoid = C.oid
+	where C.relnamespace = $1::oid and C.relkind != 'c'
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($2::varchar::xid), -1), -1), 2147483647)
+	union all
+	select T.oid id, 'T' as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_type T on T.oid = D.objoid or T.typrelid = D.objoid
+	  left join pg_catalog.pg_class C on T.typrelid = C.oid
+	where T.typnamespace = $3::oid and (C.relkind = 'c' or C.relkind is null)
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($4::varchar::xid), -1), -1), 2147483647)
+	union all
+	select D.objoid id, pg_catalog.translate(C.contype, 'pufc', 'kkxz') as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_constraint C on D.objoid = C.oid
+	where C.connamespace = $5::oid
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($6::varchar::xid), -1), -1), 2147483647)
+	union all
+	select D.objoid id, 't' as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_trigger T on T.oid = D.objoid
+	  join pg_catalog.pg_class C on C.oid = T.tgrelid
+	where C.relnamespace = $7::oid
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($8::varchar::xid), -1), -1), 2147483647)
+	union all
+	select D.objoid id, 'R' as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_rewrite R on R.oid = D.objoid
+	  join pg_catalog.pg_class C on C.oid = R.ev_class
+	where C.relnamespace = $9::oid
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($10::varchar::xid), -1), -1), 2147483647)
+	union all
+	select D.objoid id, 'F' as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_proc P on P.oid = D.objoid
+	where P.pronamespace = $11::oid
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($12::varchar::xid), -1), -1), 2147483647)
+	union all
+	select D.objoid id, 'O' as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_operator O on O.oid = D.objoid
+	where O.oprnamespace = $13::oid
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($14::varchar::xid), -1), -1), 2147483647)
+	union all
+	select D.objoid id, 'f' as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_opfamily O on O.oid = D.objoid
+	where O.opfnamespace = $15::oid
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($16::varchar::xid), -1), -1), 2147483647)
+	union all
+	select D.objoid id, 'c' as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_opclass O on O.oid = D.objoid
+	where O.opcnamespace = $17::oid
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($18::varchar::xid), -1), -1), 2147483647)
+	union all
+	select D.objoid id, 'C' as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_collation C on C.oid = D.objoid
+	where C.collnamespace = $19::oid
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($20::varchar::xid), -1), -1), 2147483647)
+	
+2023-06-27 09:54:53.527 +05 [19584] РћРЁРР‘РљРђ:  РІ РєРѕРЅСЃС‚СЂСѓРєС†РёРё UNION С‚РёРїС‹ "char" Рё text РЅРµ РёРјРµСЋС‚ РѕР±С‰РµРіРѕ (СЃРёРјРІРѕР» 768)
+2023-06-27 09:54:53.527 +05 [19584] РћРџР•Р РђРўРћР :  select D.objoid id, C.relkind as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_class C on D.objoid = C.oid
+	where C.relnamespace = $1::oid and C.relkind != 'c'
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($2::varchar::xid), -1), -1), 2147483647)
+	union all
+	select T.oid id, 'T' as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_type T on T.oid = D.objoid or T.typrelid = D.objoid
+	  left join pg_catalog.pg_class C on T.typrelid = C.oid
+	where T.typnamespace = $3::oid and (C.relkind = 'c' or C.relkind is null)
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($4::varchar::xid), -1), -1), 2147483647)
+	union all
+	select D.objoid id, pg_catalog.translate(C.contype, 'pufc', 'kkxz') as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_constraint C on D.objoid = C.oid
+	where C.connamespace = $5::oid
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($6::varchar::xid), -1), -1), 2147483647)
+	union all
+	select D.objoid id, 't' as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_trigger T on T.oid = D.objoid
+	  join pg_catalog.pg_class C on C.oid = T.tgrelid
+	where C.relnamespace = $7::oid
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($8::varchar::xid), -1), -1), 2147483647)
+	union all
+	select D.objoid id, 'R' as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_rewrite R on R.oid = D.objoid
+	  join pg_catalog.pg_class C on C.oid = R.ev_class
+	where C.relnamespace = $9::oid
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($10::varchar::xid), -1), -1), 2147483647)
+	union all
+	select D.objoid id, 'F' as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_proc P on P.oid = D.objoid
+	where P.pronamespace = $11::oid
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($12::varchar::xid), -1), -1), 2147483647)
+	union all
+	select D.objoid id, 'O' as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_operator O on O.oid = D.objoid
+	where O.oprnamespace = $13::oid
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($14::varchar::xid), -1), -1), 2147483647)
+	union all
+	select D.objoid id, 'f' as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_opfamily O on O.oid = D.objoid
+	where O.opfnamespace = $15::oid
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($16::varchar::xid), -1), -1), 2147483647)
+	union all
+	select D.objoid id, 'c' as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_opclass O on O.oid = D.objoid
+	where O.opcnamespace = $17::oid
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($18::varchar::xid), -1), -1), 2147483647)
+	union all
+	select D.objoid id, 'C' as kind, D.objsubid sub_id, D.description
+	from pg_catalog.pg_description D
+	  join pg_catalog.pg_collation C on C.oid = D.objoid
+	where C.collnamespace = $19::oid
+	and pg_catalog.age(D.xmin) <= coalesce(nullif(greatest(pg_catalog.age($20::varchar::xid), -1), -1), 2147483647)
+	
+2023-06-27 09:58:20.800 +05 [17532] СООБЩЕНИЕ:  начата контрольная точка: time
+2023-06-27 09:58:25.863 +05 [17532] СООБЩЕНИЕ:  контрольная точка завершена: записано буферов: 47 (0.3%); добавлено файлов WAL 0, удалено: 0, переработано: 0; запись=5.028 сек., синхр.=0.027 сек., всего=5.063 сек.; синхронизировано_файлов=36, самая_долгая_синхр.=0.004 сек., средняя=0.001 сек.; расстояние=213 kB, ожидалось=589 kB
