@@ -96,7 +96,7 @@ rus_list = {'signals': {'id':'№', 'type_signal':'Тип сигнала', 'uso'
                    'uso':'Шкаф', 'basket':'Корзина', 'module':'Модуль', 'channel':'Канал'},
             
             'do': {'id':'№','variable':'Переменная', 'tag':'Идентификатор', 'name':'Название', 'pValue':'Ссылка на входное\nзначение сигнала', 
-                   'pHealth':'Ссылка на исправность\nканала', 'short_title':'Короткое название',
+                   'pHealth':'Ссылка на исправность\nканала', 'short_title':'Короткое название', 'tabl_msg':'Таблица сообщений',
                    'uso':'Шкаф', 'basket':'Корзина', 'module':'Модуль', 'channel':'Канал'},
             
             'hardware': {'id':'№', 'tag':'Идентификатор\n(не генерится!)', 'uso':'Шкаф', 'basket':'Корзина',
@@ -566,6 +566,7 @@ class DO(BaseModel):
     pValue  = CharField(null = True)
     pHealth = CharField(null = True)
     short_title = CharField(null = True)
+    tabl_msg = CharField(null = True)
 
     uso = CharField(null = True)
     basket = IntegerField(null = True)

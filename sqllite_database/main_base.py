@@ -1274,7 +1274,7 @@ class Filling_DO():
                                             name = description,
                                             pValue = f'{tag_h}_{prefix}_DO[{channel_s}]',
                                             pHealth = f'mDO_HEALTH[{str(isdigit_num)}]',
-                                            short_title = description,
+                                            short_title = description, tabl_msg = '',
                                             uso = uso_s, basket = basket_s, module = module_s, channel = channel_s,
                                             AlphaHMI = '', AlphaHMI_PIC1 = '', AlphaHMI_PIC1_Number_kont = '', AlphaHMI_PIC2 = '', 
                                             AlphaHMI_PIC2_Number_kont = '', AlphaHMI_PIC3 = '', AlphaHMI_PIC3_Number_kont = '', 
@@ -1288,7 +1288,7 @@ class Filling_DO():
         return(msg)
     # Заполняем таблицу DO
     def column_check(self):
-        list_default = ['variable', 'tag', 'name', 'pValue', 'pHealth', 'short_title', 'uso', 'basket', 'module', 'channel', 
+        list_default = ['variable', 'tag', 'name', 'pValue', 'pHealth', 'short_title', 'tabl_msg', 'uso', 'basket', 'module', 'channel', 
                         'AlphaHMI', 'AlphaHMI_PIC1', 'AlphaHMI_PIC1_Number_kont', 'AlphaHMI_PIC2',
                         'AlphaHMI_PIC2_Number_kont','AlphaHMI_PIC3', 'AlphaHMI_PIC3_Number_kont', 
                         'AlphaHMI_PIC4', 'AlphaHMI_PIC4_Number_kont']
@@ -3113,7 +3113,7 @@ class Editing_table_SQL():
         self.cursor.execute(f'''DELETE FROM {table_used}''')
     # Drop table
     def drop_tabl(self, table_used):
-        self.cursor.execute(f'''DROP TABLE {table_used}''')
+        self.cursor.execute(f'''DROP TABLE "{table_used}"''')
     # Table selection window
     def get_tabl(self):
         return db.get_tables()
@@ -3225,6 +3225,10 @@ class Generate_database_SQL():
                 cursor = db.cursor()
                 msg.update(self.gen_msg_general(cursor, flag_write_db, 'di', 'DI', 'PostgreSQL_Messages-DI'))
                 continue
+            if tabl == 'DO': 
+                cursor = db.cursor()
+                msg.update(self.gen_msg_general(cursor, flag_write_db, 'do', 'DOP', 'PostgreSQL_Messages-DO'))
+                continue
             if tabl == 'ZD': 
                 cursor = db.cursor()
                 msg.update(self.gen_msg_general(cursor, flag_write_db, 'zd', 'ZD', 'PostgreSQL_Messages-ZD'))
@@ -3292,6 +3296,10 @@ class Generate_database_SQL():
                 msg.update(self.gen_msg_nps(cursor, flag_write_db, 'nps', 'NPS','PostgreSQL_Messages-NPS', 'TblNPS'))
                 cursor = db.cursor()
                 msg.update(self.gen_msg_nps(cursor, flag_write_db, 'krmpn', 'KRMPN','PostgreSQL_Messages-KRMPN', 'TblStationCommonKRMPN'))
+                continue
+            if tabl == 'PZ': 
+                cursor = db.cursor()
+                msg.update(self.gen_msg_firezone(cursor, flag_write_db, 'pz', 'PostgreSQL_Messages-PZ'))
                 continue
         return msg
     def gen_msg_ai(self, cursor, flag_write_db):
@@ -3648,27 +3656,133 @@ class Generate_database_SQL():
                 msg[f'{today} - Сообщения {tabl}: генерация в базу завершена!'] = 1
             return(msg)
     def gen_msg_nps(self, cursor, flag_write_db, tabl, sign, script_file, table_msg):
-                with db:
-                    msg = {}
-                    gen_list = []
-                    try:
-                        kod_msg, addr_offset = self.define_number_msg(cursor, sign)
-                        if addr_offset == 0 or kod_msg is None or addr_offset is None: 
-                            msg[f'{today} - Сообщения {tabl}: ошибка. Адреса из таблицы msg не определены'] = 2
-                            return msg
-                        
+        with db:
+            msg = {}
+            gen_list = []
+            try:
+                kod_msg, addr_offset = self.define_number_msg(cursor, sign)
+                if addr_offset == 0 or kod_msg is None or addr_offset is None: 
+                    msg[f'{today} - Сообщения {tabl}: ошибка. Адреса из таблицы msg не определены'] = 2
+                    return msg
+                
+                path = f'{path_sample}\{table_msg}.xml'
+                if not os.path.isfile(path):
+                    msg[f'{today} - Сообщения {tabl}: в папке отсутствует шаблон - {table_msg}'] = 2
+                    return msg
+
+                gen_list.append(self.dop_function.parser_sample(path, kod_msg, '', flag_write_db, sign))
+            
+                if not flag_write_db:
+                    msg.update(self.write_file(gen_list, sign, script_file))
+                    msg[f'{today} - Сообщения {tabl}: файл скрипта создан'] = 1
+                    return(msg)
+            except Exception:
+                msg[f'{today} - Сообщения {tabl}: ошибка генерации: {traceback.format_exc()}'] = 2
+            msg[f'{today} - Сообщения {tabl}: генерация в базу завершена!'] = 1
+        return(msg)
+    
+    def gen_msg_firezone(self, cursor, flag_write_db, tabl, script_file):
+        with db:
+            msg = {}
+            gen_list = []
+
+            count_SPZ, count_GPZFoam, count_GPZWater = 0, 0, 0
+            count_SUP, count_ATP, count_GPZWOF, count_GPZGas = 0, 0, 0, 0 
+            try:
+                for j in range(7):
+                    if   j == 0: sign = 'SPZ'
+                    elif j == 1: sign = 'GPZFoam'
+                    elif j == 2: sign = 'GPZWater'
+                    elif j == 3: sign = 'SUP'
+                    elif j == 4: sign = 'ATP'
+                    elif j == 5: sign = 'GPZWOF'
+                    elif j == 6: sign = 'GPZGas'
+
+                    kod_msg, addr_offset = self.define_number_msg(cursor, sign)
+                    if addr_offset == 0 or kod_msg is None or addr_offset is None: 
+                        msg[f'{today} - Сообщения {tabl}: адрес {sign} из таблицы msg не определен'] = 2
+                        continue 
+                    
+                    if   j == 0: 
+                        kod_msg_SPZ    = kod_msg
+                        addr_offset_SPZ = addr_offset
+                    elif j == 1: 
+                        kod_msg_GPZFoam     = kod_msg
+                        addr_offset_GPZFoam = addr_offset
+                    elif j == 2: 
+                        kod_msg_GPZWater     = kod_msg
+                        addr_offset_GPZWater = addr_offset
+                    elif j == 3: 
+                        kod_msg_SUP     = kod_msg
+                        addr_offset_SUP = addr_offset
+                    elif j == 4: 
+                        kod_msg_ATP     = kod_msg
+                        addr_offset_ATP = addr_offset
+                    elif j == 5: 
+                        kod_msg_GPZWOF     = kod_msg
+                        addr_offset_GPZWOF = addr_offset
+                    elif j == 6: 
+                        kod_msg_GPZGas     = kod_msg
+                        addr_offset_GPZGas = addr_offset
+
+                cursor.execute(f"""SELECT id, name, "type_zone" FROM "{tabl}" ORDER BY id""")
+                list_zone = cursor.fetchall()
+
+                for zone in list_zone:
+                    id_       = zone[0]
+                    name      = zone[1]
+                    type_zone = zone[2]
+
+                    for i in range(7):
+                        if i == 0:
+                            start_addr = kod_msg_SPZ + (count_SPZ * int(addr_offset_SPZ)) 
+                            table_msg = 'TblFireZonesState'
+                            text = f'Пожарные зоны. {name}'
+                            count_SPZ += 1
+                        elif i == 1 and type_zone == -1:
+                            start_addr = kod_msg_GPZFoam + (count_GPZFoam * int(addr_offset_GPZFoam)) 
+                            table_msg = 'TblFireZonesGPZFoam'
+                            text = f'Готовности зон. {name}'
+                            count_GPZFoam += 1
+                        elif i == 2 and type_zone >= 1:
+                            start_addr = kod_msg_GPZWater + (count_GPZWater * int(addr_offset_GPZWater)) 
+                            table_msg = 'TblFireZonesGPZWater'
+                            text = f'Готовности зон. {name}'
+                            count_GPZWater += 1
+                        elif i == 3:
+                            start_addr = kod_msg_SUP + (count_SUP * int(addr_offset_SUP)) 
+                            table_msg = 'TblFireZonesMode'
+                            text = f'Пожарные зоны. {name}'
+                            count_SUP += 1
+                        elif i == 4:
+                            start_addr = kod_msg_ATP + (count_ATP * int(addr_offset_ATP)) 
+                            table_msg = 'TblFireZonesAPT'
+                            text = f'Пожарные зоны. {name}'
+                            count_ATP += 1
+                        elif i == 5 and type_zone == 0:
+                            start_addr = kod_msg_GPZWOF + (count_GPZWOF * int(addr_offset_GPZWOF)) 
+                            table_msg = 'TblFireZonesGPZWithout'
+                            text = f'Готовности зон. {name}'
+                            count_GPZWOF += 1
+                        elif i == 6 and type_zone == -1:
+                            start_addr = kod_msg_GPZGas + (count_GPZGas * int(addr_offset_GPZGas)) 
+                            table_msg = 'TblFireZonesGPZGas'
+                            text = f'Готовности зон. {name}'
+                            count_GPZGas += 1
+
                         path = f'{path_sample}\{table_msg}.xml'
                         if not os.path.isfile(path):
                             msg[f'{today} - Сообщения {tabl}: в папке отсутствует шаблон - {table_msg}'] = 2
-                            return msg
+                            msg[f'{today} - Сообщения {tabl}: {id_} - {name}'] = 2
+                            continue
 
-                        gen_list.append(self.dop_function.parser_sample(path, kod_msg, '', flag_write_db, sign))
-                    
-                        if not flag_write_db:
-                            msg.update(self.write_file(gen_list, sign, script_file))
-                            msg[f'{today} - Сообщения {tabl}: файл скрипта создан'] = 1
-                            return(msg)
-                    except Exception:
-                        msg[f'{today} - Сообщения {tabl}: ошибка генерации: {traceback.format_exc()}'] = 2
-                    msg[f'{today} - Сообщения {tabl}: генерация в базу завершена!'] = 1
-                return(msg)
+                        gen_list.append(self.dop_function.parser_sample(path, start_addr, text, flag_write_db, sign))
+            
+                if not flag_write_db:
+                    msg.update(self.write_file(gen_list, sign, script_file))
+                    msg[f'{today} - Сообщения {tabl}: файл скрипта создан'] = 1
+                    return(msg)
+            except Exception:
+                msg[f'{today} - Сообщения {tabl}: ошибка генерации: {traceback.format_exc()}'] = 2
+            msg[f'{today} - Сообщения {tabl}: генерация в базу завершена!'] = 1
+        return(msg)
