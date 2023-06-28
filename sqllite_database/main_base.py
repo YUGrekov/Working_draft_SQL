@@ -2988,19 +2988,23 @@ class Editing_table_SQL():
             self.cursor.execute(f'SELECT * FROM "{table_sql}" ORDER BY id')
             name_column = next(zip(*self.cursor.description))
             array_name_column = []
-            for tabl, name_c in rus_list.items():
+            if table_sql in rus_list.keys():
 
-                if tabl == table_sql:
+                for tabl, name_c in rus_list.items():
 
-                    for name in name_column:
-                        if name in name_c.keys():
+                    if tabl == table_sql:
 
-                            for key, value in name_c.items():
-                                if name == key:
-                                    array_name_column.append(value)
-                                    break
-                        else:
-                            array_name_column.append(name)
+                        for name in name_column:
+                            if name in name_c.keys():
+
+                                for key, value in name_c.items():
+                                    if name == key:
+                                        array_name_column.append(value)
+                                        break
+                            else:
+                                array_name_column.append(name)
+            else:
+                array_name_column = name_column
 
             records = self.cursor.fetchall()
             unpacking_.append(records)
@@ -3685,10 +3689,15 @@ class Generate_database_SQL():
         with db:
             msg = {}
             gen_list = []
-
-            count_SPZ, count_GPZFoam, count_GPZWater = 0, 0, 0
-            count_SUP, count_ATP, count_GPZWOF, count_GPZGas = 0, 0, 0, 0 
             try:
+                try:
+                    if self.dop_function.empty_table('pz') or self.dop_function.empty_table('do'): 
+                        msg[f'{today} - Таблицa: pz пустая! Заполни таблицу!'] = 2
+                        return msg
+                except:
+                    msg[f'{today} - Таблицa: pz пустая! Заполни таблицу!'] = 2
+                    return msg
+                
                 for j in range(7):
                     if   j == 0: sign = 'SPZ'
                     elif j == 1: sign = 'GPZFoam'
@@ -3701,6 +3710,7 @@ class Generate_database_SQL():
                     kod_msg, addr_offset = self.define_number_msg(cursor, sign)
                     if addr_offset == 0 or kod_msg is None or addr_offset is None: 
                         msg[f'{today} - Сообщения {tabl}: адрес {sign} из таблицы msg не определен'] = 2
+                        msg[f'{today} - Сообщения {tabl}: генерация сообщений без: {sign}'] = 2
                         continue 
                     
                     if   j == 0: 
@@ -3724,6 +3734,13 @@ class Generate_database_SQL():
                     elif j == 6: 
                         kod_msg_GPZGas     = kod_msg
                         addr_offset_GPZGas = addr_offset
+                
+                list_sample = ['TblFireZonesState', 'TblFireZonesGPZFoam', 'TblFireZonesGPZWater', 'TblFireZonesMode',
+                                'TblFireZonesAPT', 'TblFireZonesGPZWithout', 'TblFireZonesGPZGas']
+                for i in list_sample:
+                    path = f'{path_sample}\{i}.xml'
+                    if not os.path.isfile(path):
+                        msg[f'{today} - Сообщения {tabl}: в папке отсутствует шаблон - {i}'] = 2
 
                 cursor.execute(f"""SELECT id, name, "type_zone" FROM "{tabl}" ORDER BY id""")
                 list_zone = cursor.fetchall()
@@ -3733,50 +3750,46 @@ class Generate_database_SQL():
                     name      = zone[1]
                     type_zone = zone[2]
 
-                    for i in range(7):
-                        if i == 0:
-                            start_addr = kod_msg_SPZ + (count_SPZ * int(addr_offset_SPZ)) 
-                            table_msg = 'TblFireZonesState'
-                            text = f'Пожарные зоны. {name}'
-                            count_SPZ += 1
-                        elif i == 1 and type_zone == -1:
-                            start_addr = kod_msg_GPZFoam + (count_GPZFoam * int(addr_offset_GPZFoam)) 
-                            table_msg = 'TblFireZonesGPZFoam'
-                            text = f'Готовности зон. {name}'
-                            count_GPZFoam += 1
-                        elif i == 2 and type_zone >= 1:
-                            start_addr = kod_msg_GPZWater + (count_GPZWater * int(addr_offset_GPZWater)) 
-                            table_msg = 'TblFireZonesGPZWater'
-                            text = f'Готовности зон. {name}'
-                            count_GPZWater += 1
-                        elif i == 3:
-                            start_addr = kod_msg_SUP + (count_SUP * int(addr_offset_SUP)) 
-                            table_msg = 'TblFireZonesMode'
-                            text = f'Пожарные зоны. {name}'
-                            count_SUP += 1
-                        elif i == 4:
-                            start_addr = kod_msg_ATP + (count_ATP * int(addr_offset_ATP)) 
-                            table_msg = 'TblFireZonesAPT'
-                            text = f'Пожарные зоны. {name}'
-                            count_ATP += 1
-                        elif i == 5 and type_zone == 0:
-                            start_addr = kod_msg_GPZWOF + (count_GPZWOF * int(addr_offset_GPZWOF)) 
-                            table_msg = 'TblFireZonesGPZWithout'
-                            text = f'Готовности зон. {name}'
-                            count_GPZWOF += 1
-                        elif i == 6 and type_zone == -1:
-                            start_addr = kod_msg_GPZGas + (count_GPZGas * int(addr_offset_GPZGas)) 
-                            table_msg = 'TblFireZonesGPZGas'
-                            text = f'Готовности зон. {name}'
-                            count_GPZGas += 1
+                    try:
+                        for i in range(7):
+                            if i == 0:
+                                start_addr = kod_msg_SPZ + ((int(id_) - 1) * int(addr_offset_SPZ)) 
+                                table_msg = 'TblFireZonesState'
+                                text = f'Пожарные зоны. {name}'
+                            elif i == 1 and type_zone == -1:
+                                start_addr = kod_msg_GPZFoam + ((int(id_) - 1) * int(addr_offset_GPZFoam)) 
+                                table_msg = 'TblFireZonesGPZFoam'
+                                text = f'Готовности зон. {name}'
+                            elif i == 2 and type_zone >= 1:
+                                start_addr = kod_msg_GPZWater + ((int(id_) - 1) * int(addr_offset_GPZWater)) 
+                                table_msg = 'TblFireZonesGPZWater'
+                                text = f'Готовности зон. {name}'
+                            elif i == 3:
+                                start_addr = kod_msg_SUP + ((int(id_) - 1) * int(addr_offset_SUP)) 
+                                table_msg = 'TblFireZonesMode'
+                                text = f'Пожарные зоны. {name}'
+                            elif i == 4:
+                                start_addr = kod_msg_ATP + ((int(id_) - 1) * int(addr_offset_ATP)) 
+                                table_msg = 'TblFireZonesAPT'
+                                text = f'Пожарные зоны. {name}'
+                            elif i == 5 and type_zone == 0:
+                                start_addr = kod_msg_GPZWOF + ((int(id_) - 1) * int(addr_offset_GPZWOF)) 
+                                table_msg = 'TblFireZonesGPZWithout'
+                                text = f'Готовности зон. {name}'
+                            elif i == 6 and type_zone == -2:
+                                start_addr = kod_msg_GPZGas + ((int(id_) - 1) * int(addr_offset_GPZGas)) 
+                                table_msg = 'TblFireZonesGPZGas'
+                                text = f'Готовности зон. {name}'
+                            else: continue
 
-                        path = f'{path_sample}\{table_msg}.xml'
-                        if not os.path.isfile(path):
-                            msg[f'{today} - Сообщения {tabl}: в папке отсутствует шаблон - {table_msg}'] = 2
-                            msg[f'{today} - Сообщения {tabl}: {id_} - {name}'] = 2
-                            continue
-
-                        gen_list.append(self.dop_function.parser_sample(path, start_addr, text, flag_write_db, sign))
+                            path = f'{path_sample}\{table_msg}.xml'
+                            if not os.path.isfile(path):
+                                continue
+                            gen_list.append(self.dop_function.parser_sample(path, start_addr, text, flag_write_db, sign))
+                    except Exception:
+                        msg[f'{today} - Сообщения {tabl}: ошибка генерации: {traceback.format_exc()}'] = 2
+                        msg[f'{today} - Сообщения {tabl}: генерация продолжится'] = 2
+                        continue
             
                 if not flag_write_db:
                     msg.update(self.write_file(gen_list, sign, script_file))
