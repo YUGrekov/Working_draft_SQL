@@ -3305,6 +3305,10 @@ class Generate_database_SQL():
                 cursor = db.cursor()
                 msg.update(self.gen_msg_firezone(cursor, flag_write_db, 'pz', 'PostgreSQL_Messages-PZ'))
                 continue
+            if tabl == 'PI': 
+                cursor = db.cursor()
+                msg.update(self.gen_msg_defence(cursor, flag_write_db, 'pi', 'PI', 'PostgreSQL_Messages-PI', 'TblFireDetectors'))
+                continue
         return msg
     def gen_msg_ai(self, cursor, flag_write_db):
         with db:
