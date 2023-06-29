@@ -205,7 +205,7 @@ class General_functions():
                 if self.str_find(mess, {'%2'}): 
                     mess = str(mess).replace('%2', args[1])
             
-            if table == 'NPS' or table == 'KRMPN': text_mess = mess
+            if table == 'NPS' or table == 'KRMPN' or table == 'Global': text_mess = mess
             else: text_mess = f'{name}. {mess}'
 
             del_row_tabl = f"DELETE FROM messages.opmessages WHERE Category ={kod_msg + int(category)};\n"
@@ -3309,6 +3309,18 @@ class Generate_database_SQL():
                 cursor = db.cursor()
                 msg.update(self.gen_msg_defence(cursor, flag_write_db, 'pi', 'PI', 'PostgreSQL_Messages-PI', 'TblFireDetectors'))
                 continue
+            if tabl == 'BD': 
+                cursor = db.cursor()
+                msg.update(self.gen_msg_defence(cursor, flag_write_db, 'bd', 'BD', 'PostgreSQL_Messages-BD', 'TblTankDispensers'))
+                continue
+            if tabl == 'BDGRP': 
+                cursor = db.cursor()
+                msg.update(self.gen_msg_defence(cursor, flag_write_db, 'bdgrp', 'BDGrp', 'PostgreSQL_Messages-BDGrp', 'TblTankDispenserGroups'))
+                continue
+            if tabl == 'Global': 
+                cursor = db.cursor()
+                msg.update(self.gen_msg_nps(cursor, flag_write_db, 'global', 'Global', 'PostgreSQL_Messages-Global', 'TblGlobal'))
+                continue
         return msg
     def gen_msg_ai(self, cursor, flag_write_db):
         with db:
@@ -3688,7 +3700,6 @@ class Generate_database_SQL():
                 msg[f'{today} - Сообщения {tabl}: ошибка генерации: {traceback.format_exc()}'] = 2
             msg[f'{today} - Сообщения {tabl}: генерация в базу завершена!'] = 1
         return(msg)
-    
     def gen_msg_firezone(self, cursor, flag_write_db, tabl, script_file):
         with db:
             msg = {}
