@@ -304,7 +304,7 @@ rus_list = {'signals': {'id':'№', 'type_signal':'Тип сигнала', 'uso'
 
             'vs': {'id':'№','variable':'Переменная', 'name':'Название', 'short_name':'Короткое\nназвание', 'group':'Группа', 'number_in_group':'Номер в группе', 'MP':'МП', 'Pressure_is_True':'Давление норма', 
                    'Voltage':'Напряжение', 'Voltage_Sch':'Напряжение на СШ', 'Serviceability_of_circuits_of_inclusion':'Исправность цепей\nвключения', 'External_alarm':'Внешняя авария', 'Pressure_sensor_defective':'Датчик давления неисправен', 
-                   'VKL':'Включить', 'OTKL':'Отключить', 'Not_APV':'АПВ не требуется', 'Pic':'Pic', 'table_msg':'Таблица сообщений', 'Is_klapana_interface_auxsystem':'Это клапан/интерфейсная вспомсистема',
+                   'VKL':'Включить', 'OTKL':'Отключить', 'Not_APV':'АПВ не требуется', 'Pic':'Pic', 'tabl_msg':'Таблица сообщений', 'Is_klapana_interface_auxsystem':'Это клапан/интерфейсная вспомсистема',
                    'AlphaHMI':'AlphaHMI', 'AlphaHMI_PIC1':'AlphaHMI_PIC1', 'AlphaHMI_PIC1_Number_kont':'AlphaHMI_PIC1_Number_kont', 'AlphaHMI_PIC2':'AlphaHMI_PIC2',
                    'AlphaHMI_PIC2_Number_kont':'AlphaHMI_PIC2_Number_kont','AlphaHMI_PIC3':'AlphaHMI_PIC3', 'AlphaHMI_PIC3_Number_kont':'AlphaHMI_PIC3_Number_kont', 
                    'AlphaHMI_PIC4':'AlphaHMI_PIC4', 'AlphaHMI_PIC4_Number_kont':'AlphaHMI_PIC4_Number_kont'},
@@ -345,6 +345,9 @@ rus_list = {'signals': {'id':'№', 'type_signal':'Тип сигнала', 'uso'
 
             'dps': {'id':'№','variable':'Переменная', 'tag':'Идентификатор', 'name':'Название', 'control':'Контроль', 'relieve':'Деблокировка', 
                       'actuation':'Срабатывание', 'actuation_transmitter':'Срабатывание\n(трансмиттер)', 'malfunction':'Неисправность', 'voltage':'Напряжение'},
+            
+            'tm_dp': {'id':'№','variable':'Переменная', 'tag':'Идентификатор', 'name':'Название', 
+                      'link_to_link_signal':'Ссылка на сигнал\nналичия связи', 'link_to_timeout':'Ссылка на таймаут по умолчанию\ntmCommon.CSPA_t1'},
             
             'pz': {'id':'№', 'variable':'Переменная', 'tag'   :'Идентификатор', 'name':'Название',
                    'type_zone':'Тип\n0 - без тушения, -1 - пенотушение,\n>=1 - водотушение, -2 - АГП',
@@ -1001,7 +1004,7 @@ class VS(BaseModel):
     OTKL = CharField(null = True)
     Not_APV = CharField(null = True)
     Pic = CharField(null = True)
-    table_msg = CharField(null = True)
+    tabl_msg = CharField(null = True)
     Is_klapana_interface_auxsystem = CharField(null = True)
     
     AlphaHMI = CharField(null = True)
@@ -1175,5 +1178,15 @@ class DPS(BaseModel):
 
     class Meta:
         table_name = 'dps'
+class TM_DP(BaseModel):
+    variable = CharField(null = True)
+    tag = CharField(null = True)
+    name = CharField(null = True)
+    link_to_link_signal = CharField(null = True)
+    link_to_timeout = CharField(null = True)
+    Pic = CharField(null = True)
+
+    class Meta:
+        table_name = 'tm_dp'
 
 

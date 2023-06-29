@@ -2107,17 +2107,18 @@ class Filling_VS():
                 list_vs_name_split = []
                 for i in vs_name: 
                     if   self.dop_function.str_find(i[1], {'- сигнал от МП'}):
-                        list_vs_name_split.append(str(i[1]).split('- сигнал от МП')[0])
+                        list_vs_name_split.append(str(i[1]).split('- сигнал от МП')[0].strip())
                     elif self.dop_function.str_find(i, {'-сигнал от МП'}):
-                        list_vs_name_split.append(str(i[1]).split('-сигнал от МП')[0])
+                        list_vs_name_split.append(str(i[1]).split('-сигнал от МП')[0].strip())
                     elif self.dop_function.str_find(i, {'- включен'}):
-                        list_vs_name_split.append(str(i[1]).split('- включен')[0])
+                        list_vs_name_split.append(str(i[1]).split('- включен')[0].strip())
                     elif self.dop_function.str_find(i, {'-включен'}):
-                        list_vs_name_split.append(str(i[1]).split('-включен')[0])
+                        list_vs_name_split.append(str(i[1]).split('-включен')[0].strip())
                     elif self.dop_function.str_find(i, {'.Включен'}):
-                        list_vs_name_split.append(str(i[1]).split('.Включен')[0])
+                        list_vs_name_split.append(str(i[1]).split('.Включен')[0].strip())
                     elif self.dop_function.str_find(i, {'. Включен'}):
-                        list_vs_name_split.append(str(i[1]).split('. Включен')[0])
+                        list_vs_name_split.append(str(i[1]).split('. Включен')[0].strip())
+
                 unique_name = set(list_vs_name_split)
 
                 # Существующий список вспомсистем из таблицы VS
@@ -2234,7 +2235,7 @@ class Filling_VS():
                                             OTKL = close_vs,
                                             Not_APV = '0',
                                             Pic = '',
-                                            table_msg = 'TblAuxSyses',
+                                            tabl_msg = 'TblAuxSyses',
                                             Is_klapana_interface_auxsystem = '0',
                                             
                                             AlphaHMI = '',AlphaHMI_PIC1 = '',AlphaHMI_PIC1_Number_kont = '',
@@ -2257,7 +2258,7 @@ class Filling_VS():
     def column_check(self):
         list_default = ['variable', 'name', 'short_name', 'group', 'number_in_group', 'MP', 'Pressure_is_True', 'Voltage', 'Voltage_Sch', 
                         'Serviceability_of_circuits_of_inclusion', 'External_alarm', 'Pressure_sensor_defective', 'VKL', 'OTKL', 'Not_APV',
-                        'Pic', 'table_msg', 'Is_klapana_interface_auxsystem',
+                        'Pic', 'tabl_msg', 'Is_klapana_interface_auxsystem',
                         'AlphaHMI', 'AlphaHMI_PIC1', 'AlphaHMI_PIC1_Number_kont', 'AlphaHMI_PIC2',
                         'AlphaHMI_PIC2_Number_kont','AlphaHMI_PIC3', 'AlphaHMI_PIC3_Number_kont', 
                         'AlphaHMI_PIC4', 'AlphaHMI_PIC4_Number_kont']
@@ -2856,125 +2857,25 @@ class Filling_PZ_tm():
         msg = self.dop_function.column_check(PZ_tm, 'pz_tm', list_default)
         return msg 
 
-# Work with filling in the table 'DPS'
+# Work with filling in the table 
 class Filling_DPS():
     def __init__(self):
         self.cursor   = db.cursor()
         self.dop_function = General_functions()
-    # Получаем данные с таблицы DPS
-    # def getting_modul(self):
-    #     msg = {}
-    #     count_PZ = 0
-    #     with db:
-    #         try:
-    #             try:
-    #                 if self.dop_function.empty_table('ai'): 
-    #                     msg[f'{today} - Таблица: ai пустая! Заполни таблицу!'] = 2
-    #                     return msg
-    #             except:
-    #                 msg[f'{today} - Таблица: ai пустая! Заполни таблицу!'] = 2
-    #                 return msg
-                
-    #             # Новый список из таблицы DI
-    #             self.cursor.execute(f"""SELECT id, tag, name
-    #                                     FROM ai
-    #                                     WHERE (name LIKE '%адрес%' AND name LIKE '%пусков%') OR
-    #                                           (name LIKE '%пожар%' AND name LIKE '%дымов%')  OR
-    #                                           (name LIKE '%теплов%') 
-    #                                     ORDER BY tag""")
-    #             list_pi_ai = self.cursor.fetchall()
-
-    #             # Существующий список из таблицы PI
-    #             self.cursor.execute(f'''SELECT name FROM pi''')
-    #             name_pi_old = self.cursor.fetchall()
-    #             tabl_pi_name = []
-    #             for i in name_pi_old:
-    #                 tabl_pi_name.append(i[0])
-
-    #             # Количество строк в таблице
-    #             self.cursor.execute(f'''SELECT COUNT(*) FROM pi''')
-    #             count_row = self.cursor.fetchall()[0][0]
-
-    #             for new_list_pi in list_pi_ai:
-    #                 number_ai = new_list_pi[0]
-    #                 tag_ai    = new_list_pi[1]
-    #                 name_ai   = new_list_pi[2]
-
-    #                 # Type PI
-    #                 if self.dop_function.str_find(name_ai, {'адресн'}) : type_pi  = '4'
-    #                 elif self.dop_function.str_find(name_ai, {'дымов'}): type_pi  = '3'
-    #                 elif self.dop_function.str_find(name_ai, {'теплов'}): type_pi  = '5'
-    #                 else: type_pi = ''
-    #                 # Attention
-    #                 if self.dop_function.str_find(name_ai, {'шле'}) or self.dop_function.str_find(name_ai, {'шлейф'}): 
-    #                     attention  = f'stateAI[{number_ai}].state.reg'
-    #                 else: 
-    #                     attention = ''
-    #                 # Reset
-    #                 try:
-    #                     self.cursor.execute(f"""SELECT id, tag
-    #                                             FROM "do"
-    #                                             WHERE tag LIKE '%{tag_ai}%'""")
-    #                     list_pi_do = self.cursor.fetchall()
-    #                     ctrl_DO = f'ctrlDO[{list_pi_do[0][0]}]'
-    #                 except Exception:
-    #                     ctrl_DO = ''
-
-    #                 fire_0  = f'stateAI[{number_ai}].state.reg'
-    #                 fault_1 = f'stateAI[{number_ai}].state.reg'
-    #                 fault_2 = f'stateAI[{number_ai}].state.reg'
-
-    #                 if name_ai in tabl_pi_name:
-    #                     msg.update(self.dop_function.update_signal_dop(PI, "pi", name_ai, PI.tag, 'tag', tag_ai))
-    #                     msg.update(self.dop_function.update_signal_dop(PI, "pi", name_ai, PI.name, 'name', name_ai))
-    #                     msg.update(self.dop_function.update_signal_dop(PI, "pi", name_ai, PI.Type_PI, 'Type_PI', type_pi))
-    #                     msg.update(self.dop_function.update_signal_dop(PI, "pi", name_ai, PI.Fire_0, 'Fire_0', fire_0))
-    #                     msg.update(self.dop_function.update_signal_dop(PI, "pi", name_ai, PI.Attention_1, 'Attention_1', attention))
-    #                     msg.update(self.dop_function.update_signal_dop(PI, "pi", name_ai, PI.Fault_1_glass_pollution_broken_2, 'Fault_1_glass_pollution_broken_2', fault_1))
-    #                     msg.update(self.dop_function.update_signal_dop(PI, "pi", name_ai, PI.Fault_2_fault_KZ_3, 'Fault_2_fault_KZ_3', fault_2))
-    #                     msg.update(self.dop_function.update_signal_dop(PI, "pi", name_ai, PI.Reset_Link, 'Reset_Link', ctrl_DO))
-    #                 else:
-    #                     msg[f'{today} - Таблица: pi, добавлен новый сигнал: id = {number_ai}, {name_ai}'] = 3
-    #                     count_row += 1
-    #                     list_pi.append(dict(id = count_row, 
-    #                                         variable = f'PI[{count_row}]',
-    #                                         tag = tag_ai,
-    #                                         name = name_ai,
-    #                                         Type_PI = type_pi,
-    #                                         Fire_0 = f'stateAI[{number_ai}].state.reg',
-    #                                         Attention_1 = attention,
-    #                                         Fault_1_glass_pollution_broken_2 = f'stateAI[{number_ai}].state.reg',
-    #                                         Fault_2_fault_KZ_3 = f'stateAI[{number_ai}].state.reg',
-    #                                         Yes_connection_4 = '',
-    #                                         Frequency_generator_failure_5 = '',
-    #                                         Parameter_loading_error_6 = '',
-    #                                         Communication_error_module_IPP_7 = '',
-    #                                         Supply_voltage_fault_8 = '',
-    #                                         Optics_contamination_9 = '',
-    #                                         IK_channel_failure_10 = '',
-    #                                         UF_channel_failure_11 = '',
-    #                                         Loading_12 = '',
-    #                                         Test_13 = '',
-    #                                         Reserve_14 = '',
-    #                                         Reset_Link = ctrl_DO,
-    #                                         Reset_Request = '0',
-    #                                         Through_loop_number_for_interface = '0',
-    #                                         location = '',
-    #                                         Pic = '',
-    #                                         Normal = ''))
-
-    #             # Checking for the existence of a database
-    #             PI.insert_many(list_pi).execute()
-    #             if len(msg) == 0: msg[f'{today} - Таблица: pi, обновление завершено, изменений не обнаружено!'] = 1
-    #         except Exception:
-    #             msg[f'{today} - Таблица: pi, ошибка при заполнении: {traceback.format_exc()}'] = 2
-    #         msg[f'{today} - Таблица: pi, выполнение кода завершено!'] = 1
-    #     return(msg)
     # Заполняем таблицу pz_tm
     def column_check(self):
         list_default = ['variable', 'tag', 'name', 'control', 'relieve', 
                         'actuation', 'actuation_transmitter', 'malfunction', 'voltage']
         msg = self.dop_function.column_check(DPS, 'dps', list_default)
+        return msg 
+class Filling_TM_DP():
+    def __init__(self):
+        self.cursor   = db.cursor()
+        self.dop_function = General_functions()
+    # Заполняем таблицу pz_tm
+    def column_check(self):
+        list_default = ['variable', 'tag', 'name', 'link_to_link_signal', 'link_to_timeout', 'Pic']
+        msg = self.dop_function.column_check(TM_DP, 'tm_dp', list_default)
         return msg 
 
 # Changing tables SQL
@@ -3220,7 +3121,7 @@ class Generate_database_SQL():
     def write_in_sql(self, list_tabl, flag_write_db):
         msg = {}
         if len(list_tabl) == 0: return
-        for tabl in list_tabl:
+        for tabl in list_tabl: 
             if tabl == 'AI': 
                 cursor = db.cursor()
                 msg.update(self.gen_msg_ai(cursor, flag_write_db))
@@ -3320,6 +3221,10 @@ class Generate_database_SQL():
             if tabl == 'Global': 
                 cursor = db.cursor()
                 msg.update(self.gen_msg_nps(cursor, flag_write_db, 'global', 'Global', 'PostgreSQL_Messages-Global', 'TblGlobal'))
+                continue
+            if tabl == 'TM_DP': 
+                cursor = db.cursor()
+                msg.update(self.gen_msg_defence(cursor, flag_write_db, 'tm_dp', 'DiagTM_DP', 'PostgreSQL_Messages-TMDP', 'TblD_TM_DP'))
                 continue
         return msg
     def gen_msg_ai(self, cursor, flag_write_db):
@@ -3704,15 +3609,7 @@ class Generate_database_SQL():
         with db:
             msg = {}
             gen_list = []
-            try:
-                try:
-                    if self.dop_function.empty_table('pz') or self.dop_function.empty_table('do'): 
-                        msg[f'{today} - Таблицa: pz пустая! Заполни таблицу!'] = 2
-                        return msg
-                except:
-                    msg[f'{today} - Таблицa: pz пустая! Заполни таблицу!'] = 2
-                    return msg
-                
+            try:  
                 for j in range(7):
                     if   j == 0: sign = 'SPZ'
                     elif j == 1: sign = 'GPZFoam'
