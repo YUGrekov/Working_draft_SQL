@@ -673,29 +673,29 @@ class Filling_AI():
         msg = {}
         list_AI = []
         count_AI = 0
-        dop_analog = {'Аварийное отключение'  : ['', 'мА', 'Сигналы с контролем цепи', 'Сигнализаторы', 'Сигналы с контролем цепи', ['4', '20'], '1'],
-                      'Аварийный максимальный': ['', 'мА', 'Сигналы с контролем цепи', 'Сигнализаторы', 'Сигналы с контролем цепи', ['4', '20'], '1'],
-                      'Аварийный минимальный' : ['', 'мА', 'Сигналы с контролем цепи', 'Сигнализаторы', 'Сигналы с контролем цепи', ['4', '20'], '1'],
-                      'объем'                 : ['V', 'м3', '', '', '', ['', ''], '1'], 
-                      'объём'                 : ['V', 'м3', '', '', '', ['', ''], '1'],
-                      'перепад'               : ['dP', 'МПа', 'Аналоги (макс1 = макс.уставка)', 'Перепад давления', '', ['0', '1'], '2'],
-                      'давлени'               : ['P', 'МПа', 'Аналоги (макс1 = повышенная)', 'Давления', '', ['0', '6'], '2'],
-                      'загазованность'        : ['Газ', '%', 'Загазованность', 'Загазованность', '', ['0', '100'], '1'],
-                      'вертик'                : ['Xверт', 'мм/с', 'Вибрации', '', '', ['0', '30'], '1'],
-                      'горизонт'              : ['Xгор', 'мм/с', 'Вибрации', '', '', ['0', '30'], '1'],
-                      'осевая'                : ['Xос', 'мм/с', 'Вибрации', '', '', ['0', '30'], '1'],
-                      'попереч'               : ['Xпоп', 'мм/с', 'Вибрации', '', '', ['0', '30'], '1'],
-                      'осевое'                : ['Xoc', 'мм/с', 'Вибрации', 'Осевые смещения', '', ['0', '30'], '1'],
-                      'сила'                  : ['I', 'A', 'Аналоги (макс1 = повышенная)', 'Общестанционные', '', ['0', '1000'], '1'],
-                      'температура'           : ['T', '°C', 'Аналоги (макс1 = повышенная)', 'Температуры', '', ['-50', '100'], '1'],
-                      'уровень'               : ['L', 'мм', 'Аналоги (макс1 = макс.уставка)', 'Уровни', '', ['200', '1000'], '1'],
-                      'утечк'                 : ['L', 'мм', 'Сигналы с контролем цепи', 'Сигнализаторы', 'Сигналы с контролем цепи', ['4', '20'], '1'],
-                      'расход'                : ['Q', 'м3/ч', 'Аналоги (макс1 = макс.уставка)', '', '', ['0', '1000'], '1'],
-                      'положени'              : ['Q', '%', '', '', '', ['0', '100'], '1'],
-                      'затоплен'              : ['L', 'мА', 'Сигналы с контролем цепи', 'Сигнализаторы', 'Сигналы с контролем цепи', ['4', '20'], '1'],
-                      'частот'                : ['F', 'Гц', '', 'Уровни', '', ['0', '100'], '1'],
-                      'процен'                : ['Q', '%', 'Аналоги (макс1 = макс.уставка)', '', '', ['0', '100'], '0'],
-                      'заслон'                : ['Q', '%', 'Аналоги (макс1 = макс.уставка)', '', '', ['0', '100'], '0'],
+        dop_analog = {'Аварийное отключение'  : ['', 'мА', 'Сигналы с контролем цепи', 'Сигнализаторы', 'Сигналы с контролем цепи', [4, 20], 0],
+                      'Аварийный максимальный': ['', 'мА', 'Сигналы с контролем цепи', 'Сигнализаторы', 'Сигналы с контролем цепи', [4, 20], 0],
+                      'Аварийный минимальный' : ['', 'мА', 'Сигналы с контролем цепи', 'Сигнализаторы', 'Сигналы с контролем цепи', [4, 20], 0],
+                      'объем'                 : ['V', 'м3', '', '', '', [None, None], 0], 
+                      'объём'                 : ['V', 'м3', '', '', '', [None, None], 0],
+                      'перепад'               : ['dP', 'МПа', 'Аналоги (макс1 = макс.уставка)', 'Перепад давления', '', [0, 1], 2],
+                      'давлени'               : ['P', 'МПа', 'Аналоги (макс1 = повышенная)', 'Давления', '', [0, 6], 2],
+                      'загазованность'        : ['Газ', '%', 'Загазованность', 'Загазованность', '', [0, 100], 0],
+                      'вертик'                : ['Xверт', 'мм/с', 'Вибрации', '', '', [0, 30], 0],
+                      'горизонт'              : ['Xгор', 'мм/с', 'Вибрации', '', '', [0, 30], 0],
+                      'осевая'                : ['Xос', 'мм/с', 'Вибрации', '', '', [0, 30], 0],
+                      'попереч'               : ['Xпоп', 'мм/с', 'Вибрации', '', '', [0, 30], 0],
+                      'осевое'                : ['Xoc', 'мм/с', 'Вибрации', 'Осевые смещения', '', [0, 30], 0],
+                      'сила'                  : ['I', 'A', 'Аналоги (макс1 = повышенная)', 'Общестанционные', '', [0, 1000], 0],
+                      'температура'           : ['T', '°C', 'Аналоги (макс1 = повышенная)', 'Температуры', '', [-50, 100], 0],
+                      'уровень'               : ['L', 'мм', 'Аналоги (макс1 = макс.уставка)', 'Уровни', '', [200, 1000], 0],
+                      'утечк'                 : ['L', 'мм', 'Сигналы с контролем цепи', 'Сигнализаторы', 'Сигналы с контролем цепи', [4, 20], 0],
+                      'расход'                : ['Q', 'м3/ч', 'Аналоги (макс1 = макс.уставка)', '', '', [0, 1000], 0],
+                      'положени'              : ['Q', '%', '', '', '', [0, 100], 0],
+                      'затоплен'              : ['L', 'мА', 'Сигналы с контролем цепи', 'Сигнализаторы', 'Сигналы с контролем цепи', [4, 20], 0],
+                      'частот'                : ['F', 'Гц', '', 'Уровни', '', [0, 100], 0],
+                      'процен'                : ['Q', '%', 'Аналоги (макс1 = макс.уставка)', '', '', [0, 100], 0],
+                      'заслон'                : ['Q', '%', 'Аналоги (макс1 = макс.уставка)', '', '', [0, 100], 0],
                      }
         with db:
             try:
@@ -791,9 +791,9 @@ class Filling_AI():
                         rule             = ''
                         group_analog     = ''
                         group_ust_analog = ''
-                        eng_min          = ''
-                        eng_max          = ''
-                        value_precision  = ''
+                        eng_min          = None
+                        eng_max          = None
+                        value_precision  = None
 
                         for key, short in dop_analog.items():
                             if self.dop_function.str_find(str(description).lower(), {key}):
@@ -807,45 +807,52 @@ class Filling_AI():
                                 value_precision = short[6]
                                 break
 
-                        flag_MPa_kgccm2 = '1' if self.dop_function.str_find(str(description).lower(), {'давлен'}) else '0'
+                        IsPumpVibration = 1 if self.dop_function.str_find(str(description).lower(), {'вибрац'}) and self.dop_function.str_find(str(description).lower(), {'насос'}) else None
+                        vibration_motor = 1 if self.dop_function.str_find(str(description).lower(), {'вибрац'}) and self.dop_function.str_find(str(description).lower(), {'эд'}) else None
+                        current_motor = 1 if self.dop_function.str_find(str(description).lower(), {'сила тока'}) else None
+                        
+                        flag_MPa_kgccm2 = 1 if self.dop_function.str_find(str(description).lower(), {'давлен'}) else None
 
                         if isdigit_num == '':
                             msg[f'{today} - В таблице hardware не найден модуль сигнала: {id_s}, {tag}, {description}, {uso_s}_A{basket_s}_{module_s}_{channel_s}, "pValue" не заполнен'] = 2
 
                         msg[f'{today} - Таблица: ai, добавлен новый сигнал: {row_sql}'] = 1
-                        list_AI.append(dict(id = count_AI,
+                        list_AI.append(dict(Id = count_AI,
                                             variable = f'AI[{count_AI}]',
-                                            tag = tag_translate,
-                                            name = description,
+                                            Tag = tag_translate,
+                                            Name = description,
                                             pValue = f'mAI8[{isdigit_num}, {module_s}]',
                                             pHealth = f'mAI8_HEALTH[{isdigit_num}]',
-                                            group_analog = group_analog,
-                                            group_ust_analog = group_ust_analog,
-                                            unit = unit,
+                                            AnalogGroupId = group_analog,
+                                            SetpointGroupId = group_ust_analog,
+                                            Egu = unit,
                                             sign_VU = sign,
-                                            flag_MPa_kgccm2 = flag_MPa_kgccm2,
-                                            number_NA_or_aux = '',
-                                            vibration_pump = '',
-                                            vibration_motor = '',
-                                            current_motor = '',
-                                            aux_outlet_pressure = '',
-                                            number_ust_min_avar = '',
-                                            number_ust_min_pred = '',
-                                            number_ust_max_pred = '',
-                                            number_ust_max_avar = '',
-                                            field_min = '4000',
-                                            field_max = '20000',
-                                            eng_min = eng_min,
-                                            eng_max = eng_max,
-                                            reliability_min = '3900',
-                                            reliability_max = '20100',
-                                            hysteresis = '0',
-                                            filtration = '0',
-                                            ust_min_6 = '', ust_min_5 = '', ust_min_4 = '', ust_min_3 = '', ust_min_2 = '', ust_min = '',
-                                            ust_max = '', ust_max_2 = '', ust_max_3 = '', ust_max_4 = '', ust_max_5 = '', ust_max_6 = '',
-                                            value_precision = value_precision,
-                                            Pic = '', group_trend = '', hysteresis_TI = '0,1', unit_physical_ACP = 'мкА', 
-                                            setpoint_map_rule = rule, fuse = '', uso = uso_s, basket = basket_s, module = module_s, channel = channel_s,
+                                            IsOilPressure = flag_MPa_kgccm2,
+                                            number_NA_or_aux = None,
+                                            IsPumpVibration = IsPumpVibration,
+                                            vibration_motor = vibration_motor,
+                                            current_motor = current_motor,
+                                            aux_outlet_pressure = None,
+                                            number_ust_min_avar = None,
+                                            number_ust_min_pred = None,
+                                            number_ust_max_pred = None,
+                                            number_ust_max_avar = None,
+                                            LoLimField = 4000,
+                                            HiLimField = 20000,
+                                            LoLimEng = eng_min,
+                                            HiLimEng = eng_max,
+                                            LoLim = 3900,
+                                            HiLim = 20100,
+                                            Histeresis = 0,
+                                            TimeFilter = 0,
+                                            Min6 = None, Min5 = None, Min4 = None, Min3 = None, Min2 = None, Min1 = None,
+                                            Max1 = None, Max2 = None, Max3 = None, Max4 = None, Max5 = None, Max6 = None,
+                                            Precision = value_precision,
+                                            SigMask ='', 
+                                            MsgMask ='', 
+                                            CtrlMask = '',
+                                            Pic = '', TrendingGroup = None, DeltaT = 0, PhysicEgu = 'мкА', 
+                                            RuleName = rule, fuse = '', uso = uso_s, basket = basket_s, module = module_s, channel = channel_s,
                                             AlphaHMI = '', AlphaHMI_PIC1 = '', AlphaHMI_PIC1_Number_kont = '', AlphaHMI_PIC2 = '', 
                                             AlphaHMI_PIC2_Number_kont = '', AlphaHMI_PIC3 = '', AlphaHMI_PIC3_Number_kont = '', 
                                             AlphaHMI_PIC4 = '', AlphaHMI_PIC4_Number_kont = ''))
@@ -858,17 +865,18 @@ class Filling_AI():
         return(msg)
     # Заполняем таблицу AI
     def column_check(self):
-        list_default = ['variable', 'tag', 'name', 'pValue', 'pHealth', 'group_analog',
-                        'group_ust_analog',  'unit',  'sign_VU',  'flag_MPa_kgccm2',  'number_NA_or_aux',  
-                        'vibration_pump',  'vibration_motor',  'current_motor',  'aux_outlet_pressure', 
+        list_default = ['Id', 'variable', 'Tag', 'Name', 'pValue', 'pHealth', 'AnalogGroupId',
+                        'SetpointGroupId',  'Egu',  'sign_VU',  'IsOilPressure',  'number_NA_or_aux',  
+                        'IsPumpVibration',  'vibration_motor',  'current_motor',  'aux_outlet_pressure', 
                         'number_ust_min_avar',  'number_ust_min_pred',  'number_ust_max_pred',  'number_ust_max_avar', 
-                        'field_min',  'field_max',  'eng_min', 'eng_max', 'reliability_min', 'reliability_max', 
-                        'hysteresis', 'filtration', 'ust_min_6', 'ust_min_5', 'ust_min_4', 'ust_min_3', 
-                        'ust_min_2', 'ust_min', 'ust_max', 'ust_max_2', 'ust_max_3', 'ust_max_4',
-                        'ust_max_5', 'ust_max_6', 'value_precision', 'Pic', 'group_trend', 'hysteresis_TI', 
-                        'unit_physical_ACP', 'setpoint_map_rule', 'fuse', 'uso', 'basket', 'module', 'channel', 'AlphaHMI', 'AlphaHMI_PIC1', 
+                        'LoLimField',  'HiLimField',  'LoLimEng', 'HiLimEng', 'LoLim', 'HiLim', 
+                        'Histeresis', 'TimeFilter', 
+                        'Min6', 'Min5', 'Min4', 'Min3', 'Min2', 'Min1', 'Max1', 'Max2', 'Max3', 'Max4', 'Max5', 'Max6', 
+                        'SigMask', 'MsgMask', 'CtrlMask', 'Precision', 'Pic', 'TrendingGroup', 'DeltaT', 
+                        'PhysicEgu', 'RuleName', 'fuse', 'uso', 'basket', 'module', 'channel', 'AlphaHMI', 'AlphaHMI_PIC1', 
                         'AlphaHMI_PIC1_Number_kont', 'AlphaHMI_PIC2', 'AlphaHMI_PIC2_Number_kont',
                         'AlphaHMI_PIC3', 'AlphaHMI_PIC3_Number_kont', 'AlphaHMI_PIC4', 'AlphaHMI_PIC4_Number_kont']
+    
         msg = self.dop_function.column_check(AI, 'ai', list_default)
         return msg 
 
@@ -3073,7 +3081,6 @@ class Generate_database_SQL():
         except Exception:
             return kod_msg, addr_offset
         return kod_msg, addr_offset
-    # Запись скрипта в файл
     def write_file(self, list_str, tabl, name_file):
         msg = {}
         # Создаём файл запроса
@@ -3227,6 +3234,15 @@ class Generate_database_SQL():
                 msg.update(self.gen_msg_defence(cursor, flag_write_db, 'tm_dp', 'DiagTM_DP', 'PostgreSQL_Messages-TMDP', 'TblD_TM_DP'))
                 continue
         return msg
+    def write_in_sql_tabl(self, list_tabl, flag_write_db):
+            msg = {}
+            if len(list_tabl) == 0: return
+            for tabl in list_tabl: 
+                if tabl == 'AI_tabl': 
+                    cursor = db.cursor()
+                    msg.update(self.gen_table_AI(cursor, flag_write_db))
+                    continue
+            return msg
     def gen_msg_ai(self, cursor, flag_write_db):
         with db:
             msg = {}
@@ -3266,154 +3282,154 @@ class Generate_database_SQL():
             msg[f'{today} - Сообщения ai: генерация в базу завершена'] = 1
         return(msg)
     def gen_msg_umpna(self, cursor, flag_write_db, tabl, sign, script_file):
-                with db:
-                    msg = {}
-                    gen_list = []
-                    try:
-                        kod_msg, addr_offset = self.define_number_msg(cursor, sign)
-                        if addr_offset == 0 or kod_msg is None or addr_offset is None: 
-                            msg[f'{today} - Сообщения {tabl}: ошибка. Адреса из таблицы msg не определены'] = 2
-                            return msg
-                        
-                        cursor.execute(f"""SELECT id, name, tabl_msg, replacement_uso_signal_vv_1, replacement_uso_signal_vv_2
-                                           FROM "{tabl}" ORDER BY id""")
-                        list_signal = cursor.fetchall()
-                        for signal in list_signal:
-                            id_       = signal[0]
-                            name      = signal[1]
-                            table_msg = signal[2]
-                            cabinet_1 = signal[3]
-                            cabinet_2 = signal[4]
+        with db:
+            msg = {}
+            gen_list = []
+            try:
+                kod_msg, addr_offset = self.define_number_msg(cursor, sign)
+                if addr_offset == 0 or kod_msg is None or addr_offset is None: 
+                    msg[f'{today} - Сообщения {tabl}: ошибка. Адреса из таблицы msg не определены'] = 2
+                    return msg
+                
+                cursor.execute(f"""SELECT id, name, tabl_msg, replacement_uso_signal_vv_1, replacement_uso_signal_vv_2
+                                    FROM "{tabl}" ORDER BY id""")
+                list_signal = cursor.fetchall()
+                for signal in list_signal:
+                    id_       = signal[0]
+                    name      = signal[1]
+                    table_msg = signal[2]
+                    cabinet_1 = signal[3]
+                    cabinet_2 = signal[4]
 
-                            if sign == 'KTPRAS_1': table_msg = 'TblPumpsKTPRAS'
+                    if sign == 'KTPRAS_1': table_msg = 'TblPumpsKTPRAS'
 
-                            start_addr = kod_msg + ((id_ - 1) * int(addr_offset))
-                            path = f'{path_sample}\{table_msg}.xml'
-                            if not os.path.isfile(path):
-                                msg[f'{today} - Сообщения {tabl}: в папке отсутствует шаблон - {table_msg}'] = 2
-                                continue
-                            gen_list.append(self.dop_function.parser_sample(path, start_addr, name, flag_write_db, sign, cabinet_1, cabinet_2))
-                        if not flag_write_db:
-                            msg.update(self.write_file(gen_list, sign, script_file))
-                            msg[f'{today} - Сообщения {tabl}: файл скрипта создан'] = 1
-                            return(msg)
-                    except Exception:
-                        msg[f'{today} - Сообщения {tabl}: ошибка генерации: {traceback.format_exc()}'] = 2
-                    msg[f'{today} - Сообщения {tabl}: генерация в базу завершена!'] = 1
-                return(msg)
+                    start_addr = kod_msg + ((id_ - 1) * int(addr_offset))
+                    path = f'{path_sample}\{table_msg}.xml'
+                    if not os.path.isfile(path):
+                        msg[f'{today} - Сообщения {tabl}: в папке отсутствует шаблон - {table_msg}'] = 2
+                        continue
+                    gen_list.append(self.dop_function.parser_sample(path, start_addr, name, flag_write_db, sign, cabinet_1, cabinet_2))
+                if not flag_write_db:
+                    msg.update(self.write_file(gen_list, sign, script_file))
+                    msg[f'{today} - Сообщения {tabl}: файл скрипта создан'] = 1
+                    return(msg)
+            except Exception:
+                msg[f'{today} - Сообщения {tabl}: ошибка генерации: {traceback.format_exc()}'] = 2
+            msg[f'{today} - Сообщения {tabl}: генерация в базу завершена!'] = 1
+        return(msg)
     def gen_msg_uts_upts(self, cursor, flag_write_db, tabl, sign, script_file):
-            with db:
-                msg = {}
-                gen_list = []
-                try:
-                    kod_msg, addr_offset = self.define_number_msg(cursor, sign)
-                    if addr_offset == 0 or kod_msg is None or addr_offset is None: 
-                        msg[f'{today} - Сообщения {tabl}: ошибка. Адреса из таблицы msg не определены'] = 2
-                        return msg
+        with db:
+            msg = {}
+            gen_list = []
+            try:
+                kod_msg, addr_offset = self.define_number_msg(cursor, sign)
+                if addr_offset == 0 or kod_msg is None or addr_offset is None: 
+                    msg[f'{today} - Сообщения {tabl}: ошибка. Адреса из таблицы msg не определены'] = 2
+                    return msg
 
-                    cursor.execute(f"""SELECT id, name FROM "{tabl}" ORDER BY id""")
-                    list_signal = cursor.fetchall()
-                    for signal in list_signal:
-                        id_       = signal[0]
-                        name      = signal[1]
-                        
-                        if tabl == 'uts':
-                            if   self.dop_function.str_find(str(name).lower(), {'звонок'}): table_msg = 'TblSignalingDevicesMale'
-                            elif self.dop_function.str_find(str(name).lower(), {'табло'}) : table_msg = 'TblSignalingDevices'
-                            elif self.dop_function.str_find(str(name).lower(), {'сирена'}): table_msg = 'TblSignalingDevicesFemale'
-                            elif self.dop_function.str_find(str(name).lower(), {'сирены'}): table_msg = 'TblSignalingDevicesMany'
-                            elif self.dop_function.str_find(str(name).lower(), {'сигнализация'}): table_msg = 'TblSignalingDevicesFemale'
-                            else: table_msg = 'TblSignalingDevices'
-                        else:
-                            table_msg = 'TblFireSignalingDevices'
-
-                        start_addr = kod_msg + ((id_ - 1) * int(addr_offset))
-                        path = f'{path_sample}\{table_msg}.xml'
-                        if not os.path.isfile(path):
-                            msg[f'{today} - Сообщения {tabl}: в папке отсутствует шаблон - {table_msg}'] = 2
-                            return msg
-
-                        gen_list.append(self.dop_function.parser_sample(path, start_addr, name, flag_write_db, sign))
-
-                    if not flag_write_db:
-                        msg.update(self.write_file(gen_list, sign, script_file))
-                        msg[f'{today} - Сообщения {tabl}: файл скрипта создан'] = 1
-                        return(msg)
-                except Exception:
-                    msg[f'{today} - Сообщения {tabl}: ошибка генерации: {traceback.format_exc()}'] = 2
-                msg[f'{today} - Сообщения {tabl}: генерация в базу завершена!'] = 1
-            return(msg)
-    def gen_msg_defence(self, cursor, flag_write_db, tabl, sign, script_file, table_msg):
-            with db:
-                msg = {}
-                gen_list = []
-                try:
-                    kod_msg, addr_offset = self.define_number_msg(cursor, sign)
-                    if addr_offset == 0 or kod_msg is None or addr_offset is None: 
-                        msg[f'{today} - Сообщения {tabl}: ошибка. Адреса из таблицы msg не определены'] = 2
-                        return msg
+                cursor.execute(f"""SELECT id, name FROM "{tabl}" ORDER BY id""")
+                list_signal = cursor.fetchall()
+                for signal in list_signal:
+                    id_       = signal[0]
+                    name      = signal[1]
                     
-                    if sign == 'KTPRA' or sign == 'GMPNA':
-                        cursor.execute(f"""SELECT id, name, "NA" FROM "{tabl}" ORDER BY id""")
+                    if tabl == 'uts':
+                        if   self.dop_function.str_find(str(name).lower(), {'звонок'}): table_msg = 'TblSignalingDevicesMale'
+                        elif self.dop_function.str_find(str(name).lower(), {'табло'}) : table_msg = 'TblSignalingDevices'
+                        elif self.dop_function.str_find(str(name).lower(), {'сирена'}): table_msg = 'TblSignalingDevicesFemale'
+                        elif self.dop_function.str_find(str(name).lower(), {'сирены'}): table_msg = 'TblSignalingDevicesMany'
+                        elif self.dop_function.str_find(str(name).lower(), {'сигнализация'}): table_msg = 'TblSignalingDevicesFemale'
+                        else: table_msg = 'TblSignalingDevices'
                     else:
-                        cursor.execute(f"""SELECT id, name FROM "{tabl}" ORDER BY id""")
-                    list_signal = cursor.fetchall()
-                    for signal in list_signal:
-                        id_       = signal[0]
-                        name      = signal[1]
-                        if sign == 'KTPRA' or sign == 'GMPNA':
-                            na    = signal[2]
+                        table_msg = 'TblFireSignalingDevices'
 
-                        start_addr = kod_msg + ((id_ - 1) * int(addr_offset))
-                        path = f'{path_sample}\{table_msg}.xml'
-                        if not os.path.isfile(path):
-                            msg[f'{today} - Сообщения {tabl}: в папке отсутствует шаблон - {table_msg}'] = 2
-                            return msg
-                        if sign == 'KTPRA' or sign == 'GMPNA':
-                            gen_list.append(self.dop_function.parser_sample(path, start_addr, f'{na}. {name}', flag_write_db, sign))
-                        if sign == 'KTPRP':
-                            gen_list.append(self.dop_function.parser_sample(path, start_addr, f'Пожарная защита. {name}', flag_write_db, sign))
-                        else:
-                            gen_list.append(self.dop_function.parser_sample(path, start_addr, name, flag_write_db, sign))
-                    if not flag_write_db:
-                        msg.update(self.write_file(gen_list, sign, script_file))
-                        msg[f'{today} - Сообщения {tabl}: файл скрипта создан'] = 1
-                        return(msg)
-                except Exception:
-                    msg[f'{today} - Сообщения {tabl}: ошибка генерации: {traceback.format_exc()}'] = 2
-                msg[f'{today} - Сообщения {tabl}: генерация в базу завершена!'] = 1
-            return(msg)
-    def gen_msg_general(self, cursor, flag_write_db, tabl, sign, script_file):
-            with db:
-                msg = {}
-                gen_list = []
-                try:
-                    kod_msg, addr_offset = self.define_number_msg(cursor, sign)
-                    if addr_offset == 0 or kod_msg is None or addr_offset is None: 
-                        msg[f'{today} - Сообщения {tabl}: ошибка. Адреса из таблицы msg не определены'] = 2
+                    start_addr = kod_msg + ((id_ - 1) * int(addr_offset))
+                    path = f'{path_sample}\{table_msg}.xml'
+                    if not os.path.isfile(path):
+                        msg[f'{today} - Сообщения {tabl}: в папке отсутствует шаблон - {table_msg}'] = 2
                         return msg
-                    
-                    cursor.execute(f"""SELECT id, name, tabl_msg FROM "{tabl}" ORDER BY id""")
-                    list_signal = cursor.fetchall()
-                    for signal in list_signal:
-                        id_       = signal[0]
-                        name      = signal[1]
-                        table_msg = signal[2]
 
-                        start_addr = kod_msg + ((id_ - 1) * int(addr_offset))
-                        path = f'{path_sample}\{table_msg}.xml'
-                        if not os.path.isfile(path):
-                            msg[f'{today} - Сообщения {tabl}: в папке отсутствует шаблон - {table_msg}'] = 2
-                            continue
+                    gen_list.append(self.dop_function.parser_sample(path, start_addr, name, flag_write_db, sign))
+
+                if not flag_write_db:
+                    msg.update(self.write_file(gen_list, sign, script_file))
+                    msg[f'{today} - Сообщения {tabl}: файл скрипта создан'] = 1
+                    return(msg)
+            except Exception:
+                msg[f'{today} - Сообщения {tabl}: ошибка генерации: {traceback.format_exc()}'] = 2
+            msg[f'{today} - Сообщения {tabl}: генерация в базу завершена!'] = 1
+        return(msg)
+    def gen_msg_defence(self, cursor, flag_write_db, tabl, sign, script_file, table_msg):
+        with db:
+            msg = {}
+            gen_list = []
+            try:
+                kod_msg, addr_offset = self.define_number_msg(cursor, sign)
+                if addr_offset == 0 or kod_msg is None or addr_offset is None: 
+                    msg[f'{today} - Сообщения {tabl}: ошибка. Адреса из таблицы msg не определены'] = 2
+                    return msg
+                
+                if sign == 'KTPRA' or sign == 'GMPNA':
+                    cursor.execute(f"""SELECT id, name, "NA" FROM "{tabl}" ORDER BY id""")
+                else:
+                    cursor.execute(f"""SELECT id, name FROM "{tabl}" ORDER BY id""")
+                list_signal = cursor.fetchall()
+                for signal in list_signal:
+                    id_       = signal[0]
+                    name      = signal[1]
+                    if sign == 'KTPRA' or sign == 'GMPNA':
+                        na    = signal[2]
+
+                    start_addr = kod_msg + ((id_ - 1) * int(addr_offset))
+                    path = f'{path_sample}\{table_msg}.xml'
+                    if not os.path.isfile(path):
+                        msg[f'{today} - Сообщения {tabl}: в папке отсутствует шаблон - {table_msg}'] = 2
+                        return msg
+                    if sign == 'KTPRA' or sign == 'GMPNA':
+                        gen_list.append(self.dop_function.parser_sample(path, start_addr, f'{na}. {name}', flag_write_db, sign))
+                    if sign == 'KTPRP':
+                        gen_list.append(self.dop_function.parser_sample(path, start_addr, f'Пожарная защита. {name}', flag_write_db, sign))
+                    else:
                         gen_list.append(self.dop_function.parser_sample(path, start_addr, name, flag_write_db, sign))
-                    if not flag_write_db:
-                        msg.update(self.write_file(gen_list, sign, script_file))
-                        msg[f'{today} - Сообщения {tabl}: файл скрипта создан'] = 1
-                        return(msg)
-                except Exception:
-                    msg[f'{today} - Сообщения {tabl}: ошибка генерации: {traceback.format_exc()}'] = 2
-                msg[f'{today} - Сообщения {tabl}: генерация в базу завершена!'] = 1
-            return(msg)
+                if not flag_write_db:
+                    msg.update(self.write_file(gen_list, sign, script_file))
+                    msg[f'{today} - Сообщения {tabl}: файл скрипта создан'] = 1
+                    return(msg)
+            except Exception:
+                msg[f'{today} - Сообщения {tabl}: ошибка генерации: {traceback.format_exc()}'] = 2
+            msg[f'{today} - Сообщения {tabl}: генерация в базу завершена!'] = 1
+        return(msg)
+    def gen_msg_general(self, cursor, flag_write_db, tabl, sign, script_file):
+        with db:
+            msg = {}
+            gen_list = []
+            try:
+                kod_msg, addr_offset = self.define_number_msg(cursor, sign)
+                if addr_offset == 0 or kod_msg is None or addr_offset is None: 
+                    msg[f'{today} - Сообщения {tabl}: ошибка. Адреса из таблицы msg не определены'] = 2
+                    return msg
+                
+                cursor.execute(f"""SELECT id, name, tabl_msg FROM "{tabl}" ORDER BY id""")
+                list_signal = cursor.fetchall()
+                for signal in list_signal:
+                    id_       = signal[0]
+                    name      = signal[1]
+                    table_msg = signal[2]
+
+                    start_addr = kod_msg + ((id_ - 1) * int(addr_offset))
+                    path = f'{path_sample}\{table_msg}.xml'
+                    if not os.path.isfile(path):
+                        msg[f'{today} - Сообщения {tabl}: в папке отсутствует шаблон - {table_msg}'] = 2
+                        continue
+                    gen_list.append(self.dop_function.parser_sample(path, start_addr, name, flag_write_db, sign))
+                if not flag_write_db:
+                    msg.update(self.write_file(gen_list, sign, script_file))
+                    msg[f'{today} - Сообщения {tabl}: файл скрипта создан'] = 1
+                    return(msg)
+            except Exception:
+                msg[f'{today} - Сообщения {tabl}: ошибка генерации: {traceback.format_exc()}'] = 2
+            msg[f'{today} - Сообщения {tabl}: генерация в базу завершена!'] = 1
+        return(msg)
     def gen_msg_diag(self, cursor, flag_write_db):
         with db:
             msg = {}
@@ -3536,50 +3552,50 @@ class Generate_database_SQL():
             msg[f'{today} - Сообщения {tabl}: генерация в базу завершена!'] = 1
         return(msg)
     def gen_msg_others(self, cursor, flag_write_db, tabl, sign, script_file):
-            with db:
-                msg = {}
-                gen_list = []
-                try:
-                    kod_msg, addr_offset = self.define_number_msg(cursor, sign)
-                    if addr_offset == 0 or kod_msg is None or addr_offset is None: 
-                        msg[f'{today} - Сообщения {tabl}: ошибка. Адреса из таблицы msg не определены'] = 2
-                        return msg
-                    
-                    cursor.execute(f"""SELECT id, text, priority, "isAck", "IsAlert", "IsCycle", "IsSound", "SoundFile", "IsHide"
-                                       FROM "{tabl}" ORDER BY id""")
-                    list_signal = cursor.fetchall()
-
-                    for signal in list_signal:
-                        id_       = signal[0]
-                        text      = signal[1]
-                        priority  = signal[2]
-                        isAck     = signal[3]
-                        IsAlert   = signal[4]
-                        IsCycle   = signal[5]
-                        IsSound   = signal[6]
-                        SoundFile = signal[7]
-                        IsHide    = signal[8]
-
-                        if SoundFile is None: SoundFile = ''
-
-                        del_row_tabl = f"DELETE FROM messages.opmessages WHERE Category ={kod_msg + int(id_)};\n"
-                        ins_row_tabl = f"INSERT INTO messages.opmessages (Category, Message, IsAck, SoundFile, IsCycle, IsSound, IsHide, Priority, IsAlert) VALUES({kod_msg + int(id_)}, '{text}', {isAck}, '{SoundFile}', {IsCycle}, {IsSound}, {IsHide}, {priority}, {IsAlert});\n"
-
-                        if flag_write_db:
-                            cursor.execute(del_row_tabl)
-                            cursor.execute(ins_row_tabl)
-                        else:
-                            gen_list.append(dict(delete = del_row_tabl,
-                                                 insert = ins_row_tabl))
+        with db:
+            msg = {}
+            gen_list = []
+            try:
+                kod_msg, addr_offset = self.define_number_msg(cursor, sign)
+                if addr_offset == 0 or kod_msg is None or addr_offset is None: 
+                    msg[f'{today} - Сообщения {tabl}: ошибка. Адреса из таблицы msg не определены'] = 2
+                    return msg
                 
-                    if not flag_write_db:
-                        msg.update(self.write_file(gen_list, sign, script_file))
-                        msg[f'{today} - Сообщения {tabl}: файл скрипта создан'] = 1
-                        return(msg)
-                except Exception:
-                    msg[f'{today} - Сообщения {tabl}: ошибка генерации: {traceback.format_exc()}'] = 2
-                msg[f'{today} - Сообщения {tabl}: генерация в базу завершена!'] = 1
-            return(msg)
+                cursor.execute(f"""SELECT id, text, priority, "isAck", "IsAlert", "IsCycle", "IsSound", "SoundFile", "IsHide"
+                                    FROM "{tabl}" ORDER BY id""")
+                list_signal = cursor.fetchall()
+
+                for signal in list_signal:
+                    id_       = signal[0]
+                    text      = signal[1]
+                    priority  = signal[2]
+                    isAck     = signal[3]
+                    IsAlert   = signal[4]
+                    IsCycle   = signal[5]
+                    IsSound   = signal[6]
+                    SoundFile = signal[7]
+                    IsHide    = signal[8]
+
+                    if SoundFile is None: SoundFile = ''
+
+                    del_row_tabl = f"DELETE FROM messages.opmessages WHERE Category ={kod_msg + int(id_)};\n"
+                    ins_row_tabl = f"INSERT INTO messages.opmessages (Category, Message, IsAck, SoundFile, IsCycle, IsSound, IsHide, Priority, IsAlert) VALUES({kod_msg + int(id_)}, '{text}', {isAck}, '{SoundFile}', {IsCycle}, {IsSound}, {IsHide}, {priority}, {IsAlert});\n"
+
+                    if flag_write_db:
+                        cursor.execute(del_row_tabl)
+                        cursor.execute(ins_row_tabl)
+                    else:
+                        gen_list.append(dict(delete = del_row_tabl,
+                                                insert = ins_row_tabl))
+            
+                if not flag_write_db:
+                    msg.update(self.write_file(gen_list, sign, script_file))
+                    msg[f'{today} - Сообщения {tabl}: файл скрипта создан'] = 1
+                    return(msg)
+            except Exception:
+                msg[f'{today} - Сообщения {tabl}: ошибка генерации: {traceback.format_exc()}'] = 2
+            msg[f'{today} - Сообщения {tabl}: генерация в базу завершена!'] = 1
+        return(msg)
     def gen_msg_nps(self, cursor, flag_write_db, tabl, sign, script_file, table_msg):
         with db:
             msg = {}
@@ -3711,3 +3727,163 @@ class Generate_database_SQL():
                 msg[f'{today} - Сообщения {tabl}: ошибка генерации: {traceback.format_exc()}'] = 2
             msg[f'{today} - Сообщения {tabl}: генерация в базу завершена!'] = 1
         return(msg)
+    # Генерация таблиц
+    def gen_table_AI(self, cursor, flag_write_db):
+        text_start = '''\tCREATE SCHEMA IF NOT EXISTS objects;\n
+                        \tCREATE TABLE IF NOT EXISTS objects.TblAnalogs(\n
+                        \t\tId INT NOT NULL,\n
+                        \t\tPrefix VARCHAR(1024),\n
+                        \t\tSystemIndex INT NOT NULL,\n
+                        \t\tTag VARCHAR(1024),\n
+                        \t\tName VARCHAR(1024),\n
+                        \t\tAnalogGroupId INT,\n
+                        \t\tSetpointGroupId INT,\n
+                        \t\tEgu VARCHAR(1024),\n
+                        \t\tPhysicEgu VARCHAR(1024),\n
+                        \t\tIsOilPressure BOOLEAN NOT NULL,\n
+                        \t\tIsInterface BOOLEAN NOT NULL,\n
+                        \t\tIsPhysic BOOLEAN NOT NULL,\n
+                        \t\tIsPumpVibration BOOLEAN,\n
+                        \t\tPrecision INT NOT NULL,\n
+                        \t\tIsTrending BOOLEAN NOT NULL,\n
+                        \t\tTrendingSettings VARCHAR(1024),\n
+                        \t\tTrendingGroup INT,\n
+                        \t\tLoLimField DOUBLE PRECISION,\n
+                        \t\tHiLimField DOUBLE PRECISION,\n
+                        \t\tLoLimEng DOUBLE PRECISION,\n
+                        \t\tHiLimEng DOUBLE PRECISION,\n
+                        \t\tLoLim DOUBLE PRECISION,\n
+                        \t\tHiLim DOUBLE PRECISION,\n
+                        \t\tMin6 DOUBLE PRECISION,\n
+                        \t\tMin5 DOUBLE PRECISION,\n
+                        \t\tMin4 DOUBLE PRECISION,\n
+                        \t\tMin3 DOUBLE PRECISION,\n
+                        \t\tMin2 DOUBLE PRECISION,\n
+                        \t\tMin1 DOUBLE PRECISION,\n
+                        \t\tMax1 DOUBLE PRECISION,\n
+                        \t\tMax2 DOUBLE PRECISION,\n
+                        \t\tMax3 DOUBLE PRECISION,\n
+                        \t\tMax4 DOUBLE PRECISION,\n
+                        \t\tMax5 DOUBLE PRECISION,\n
+                        \t\tMax6 DOUBLE PRECISION,\n
+                        \t\tHisteresis DOUBLE PRECISION,\n
+                        \t\tDeltaHi DOUBLE PRECISION,\n
+                        \t\tDeltaLo DOUBLE PRECISION,\n
+                        \t\tDeltaT DOUBLE PRECISION,\n
+                        \t\tSmoothFactor DOUBLE PRECISION,\n
+                        \t\tCtrl SMALLINT,\n
+                        \t\tMsgMask INT,\n
+                        \t\tSigMask INT,\n
+                        \t\tCtrlMask SMALLINT,\n
+                        \t\tTimeFilter DOUBLE PRECISION,\n
+                        \t\tIsBackup BOOLEAN NOT NULL,\n
+                        \t\tRuleName VARCHAR(1024),\n
+                        \t\tCONSTRAINT TblAnalogs_pkey PRIMARY KEY (Id,SystemIndex)\n
+                    \t);\n
+                    \tDELETE FROM objects.TblAnalogs  WHERE SystemIndex = 0;\n'''
+        
+        with db:
+            msg = {}
+            gen_list = []
+            try:
+                cursor.execute(f"""SELECT "Id", "Tag", "Name", "AnalogGroupId", "SetpointGroupId", "Egu", "PhysicEgu", "IsOilPressure", 
+                                          "IsPumpVibration", "Precision", "TrendingGroup", "LoLimField", "HiLimField", "LoLimEng", 
+                                          "HiLimEng", "LoLim", "HiLim", "Min6", "Min5", "Min4", "Min3", "Min2", "Min1", "Max1", "Max2", "Max3", 
+                                          "Max4", "Max5", "Max6", "Histeresis", "DeltaT", "MsgMask", "SigMask", "CtrlMask", "RuleName", "TimeFilter", "module","channel"
+                                   FROM "ai" ORDER BY Id""")
+                list_signal = cursor.fetchall()
+                for signal in list_signal:
+                    Id, Tag, Name, AnalogGroupId                          = signal[0], signal[1], signal[2], signal[3]
+                    SetpointGroupId, Egu, PhysicEgu, IsOilPressure        = signal[4], signal[5], signal[6], signal[7]
+                    IsPumpVibration, Precision, TrendingGroup, LoLimField = signal[8], signal[9], signal[10], signal[11]
+                    HiLimField, LoLimEng, HiLimEng, LoLim                 = signal[12], signal[13], signal[14], signal[15]
+                    HiLim, Min6, Min5, Min4                               = signal[16], signal[17], signal[18], signal[19]
+                    Min3, Min2, Min1, Max1                                = signal[20], signal[21], signal[22], signal[23]
+                    Max2, Max3, Max4, Max5                                = signal[24], signal[25], signal[26], signal[27]
+                    Max6, Histeresis, DeltaT, MsgMask                     = signal[28], signal[29], signal[30], signal[31]
+                    SigMask, CtrlMask, RuleName, TimeFilter               = signal[32], signal[33], signal[34], signal[35]
+                    module, channel                                       = signal[36], signal[37]
+
+                    # Prefix
+                    Prefix = 'NULL' if prefix_system == '' or prefix_system is None else prefix_system
+                    # SystemIndex
+                    SystemIndex = 0
+                    # AnalogGroupId
+                    cursor.execute(f"""SELECT id FROM "ai_grp" WHERE name='{AnalogGroupId}'""")
+                    try   : AnalogGroupId = cursor.fetchall()[0][0]
+                    except: AnalogGroupId = 'NULL'
+                    # SetpointGroupId
+                    cursor.execute(f"""SELECT id FROM "sp_grp" WHERE name_group='{SetpointGroupId}'""")
+                    try   : SetpointGroupId = cursor.fetchall()[0][0]
+                    except: SetpointGroupId = 'NULL'
+                    # IsOilPressure
+                    IsOilPressure = 'NULL' if IsOilPressure is None else IsOilPressure
+                    # IsPumpVibration
+                    IsPumpVibration = 'NULL' if IsPumpVibration is None else IsPumpVibration
+                    # IsInterface
+                    IsInterface = False
+                    # IsBackup
+                    IsBackup = True if self.dop_function.str_find(str(Name).lower(), {'резерв'}) else False
+                    # IsPhysic
+                    IsPhysic = True if module is not None and channel is not None and IsBackup is False else False
+                    # IsTrending
+                    IsTrending = True if IsBackup is False else False
+                    # DeltaHi
+                    DeltaHi = 'NULL'
+                    # DeltaLo
+                    DeltaLo = 'NULL'
+                    # SmoothFactor
+                    SmoothFactor = 'NULL'
+                    # Ctrl
+                    Ctrl= 0
+                    # MsgMask
+                    # SigMask
+                    # CtrlMask
+                    # RuleName
+                    cursor.execute(f"""SELECT rule_name FROM "sp_rules" WHERE name_rules='{RuleName}'""")
+                    try   : RuleName = cursor.fetchall()[0][0]
+                    except: RuleName = 'NULL'
+
+                    ins_row_tabl = f"""INSERT INTO objects.TblAnalogs (Id, Prefix, SystemIndex, Tag, Name, AnalogGroupId, SetpointGroupId, Egu, PhysicEgu, IsOilPressure, IsInterface, IsPhysic, IsPumpVibration, Precision, IsTrending, TrendingSettings, TrendingGroup, LoLimField, HiLimField, LoLimEng, HiLimEng, LoLim, HiLim, Min6, Min5, Min4, Min3, Min2, Min1, Max1, Max2, Max3, Max4, Max5, Max6, Histeresis, DeltaHi, DeltaLo, DeltaT, SmoothFactor, Ctrl, MsgMask, SigMask, CtrlMask, TimeFilter, IsBackup, RuleName) VALUES({Id}, {Prefix}, {SystemIndex}, {Tag}, {Name}, {AnalogGroupId}, {SetpointGroupId}, {Egu}, {PhysicEgu}, {IsOilPressure}, {IsInterface}, {IsPhysic}, {IsPumpVibration}, {Precision}, {IsTrending}, 'Historian(Collector = NA_ModbusServer, sourceaddress = %MF{999 + 2 * Id}, InputScaling = 0)', {TrendingGroup}, {LoLimField}, {HiLimField}, {LoLimEng}, {HiLimEng}, {LoLim}, {HiLim}, {Min6}, {Min5}, {Min4}, {Min3}, {Min2}, {Min1}, {Max1}, {Max2}, {Max3}, {Max4}, {Max5}, {Max6}, {Histeresis}, {DeltaHi}, {DeltaLo}, {DeltaT}, {SmoothFactor}, {Ctrl}, {MsgMask}, {SigMask}, {CtrlMask}, {TimeFilter}, {IsBackup}, {RuleName});\n"""
+            
+                    #if flag_write_db:
+                    #    cursor.execute(ins_row_tabl)
+                    #else:
+                    gen_list.append(dict(insert = ins_row_tabl))
+                
+                for i in gen_list:
+                    print(i)
+
+
+                #     id_       = signal[0]
+                #     name      = signal[1]
+                    
+                #     if tabl == 'uts':
+                #         if   self.dop_function.str_find(str(name).lower(), {'звонок'}): table_msg = 'TblSignalingDevicesMale'
+                #         elif self.dop_function.str_find(str(name).lower(), {'табло'}) : table_msg = 'TblSignalingDevices'
+                #         elif self.dop_function.str_find(str(name).lower(), {'сирена'}): table_msg = 'TblSignalingDevicesFemale'
+                #         elif self.dop_function.str_find(str(name).lower(), {'сирены'}): table_msg = 'TblSignalingDevicesMany'
+                #         elif self.dop_function.str_find(str(name).lower(), {'сигнализация'}): table_msg = 'TblSignalingDevicesFemale'
+                #         else: table_msg = 'TblSignalingDevices'
+                #     else:
+                #         table_msg = 'TblFireSignalingDevices'
+
+                #     start_addr = kod_msg + ((id_ - 1) * int(addr_offset))
+                #     path = f'{path_sample}\{table_msg}.xml'
+                #     if not os.path.isfile(path):
+                #         msg[f'{today} - Сообщения {tabl}: в папке отсутствует шаблон - {table_msg}'] = 2
+                #         return msg
+
+                #     gen_list.append(self.dop_function.parser_sample(path, start_addr, name, flag_write_db, sign))
+
+                # if not flag_write_db:
+                #     msg.update(self.write_file(gen_list, sign, script_file))
+                #     msg[f'{today} - Сообщения {tabl}: файл скрипта создан'] = 1
+                #     return(msg)
+            except Exception:
+                msg[f'{today} - TblAnalogs: ошибка генерации: {traceback.format_exc()}'] = 2
+            msg[f'{today} - TblAnalogs: генерация в базу завершена!'] = 1
+        return(msg)
+
+
+

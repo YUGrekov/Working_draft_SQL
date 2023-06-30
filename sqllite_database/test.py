@@ -836,34 +836,38 @@ class Widget(QWidget):
         self.q_check_gmpna.move(300, 114) 
         self.q_check_gmpna.stateChanged.connect(self.check_gmpna)
 
-        # Оборудование(уст)
+        # Таблицы
+        self.list_gen_tabl = []
         l_equip_ust = QLabel('Оборудование\n(уставки): ', tab_4)
         l_equip_ust.move(550, 20)
-        self.q_check_umpna_ust = QCheckBox('UMPNA_tm', tab_4)
-        self.q_check_umpna_ust.move(550, 50) 
-        self.q_check_umpna_ust.stateChanged.connect(self.check_umpna_tm)
-        self.q_check_zd_ust = QCheckBox('ZD_tm', tab_4)
-        self.q_check_zd_ust.move(550, 66) 
-        self.q_check_zd_ust.stateChanged.connect(self.check_zd_tm)
-        self.q_check_vs_ust = QCheckBox('VS_tm', tab_4)
-        self.q_check_vs_ust.move(550, 82) 
-        self.q_check_vs_ust.stateChanged.connect(self.check_vs_tm)
-        self.q_check_vsgrp_ust = QCheckBox('VSGRP_tm', tab_4)
-        self.q_check_vsgrp_ust.move(550, 98) 
-        self.q_check_vsgrp_ust.stateChanged.connect(self.check_vsgrp_tm)
-        self.q_check_uts_ust = QCheckBox('UTS_tm', tab_4)
-        self.q_check_uts_ust.move(550, 114) 
-        self.q_check_uts_ust.stateChanged.connect(self.check_uts_tm)
-        self.q_check_pz_ust = QCheckBox('PZ_tm', tab_4)
-        self.q_check_pz_ust.move(550, 130) 
-        self.q_check_pz_ust.stateChanged.connect(self.check_pz_tm)
+        # self.q_check_umpna_ust = QCheckBox('UMPNA_tm', tab_4)
+        # self.q_check_umpna_ust.move(550, 50) 
+        # self.q_check_umpna_ust.stateChanged.connect(self.check_umpna_tm)
+        # self.q_check_zd_ust = QCheckBox('ZD_tm', tab_4)
+        # self.q_check_zd_ust.move(550, 66) 
+        # self.q_check_zd_ust.stateChanged.connect(self.check_zd_tm)
+        # self.q_check_vs_ust = QCheckBox('VS_tm', tab_4)
+        # self.q_check_vs_ust.move(550, 82) 
+        # self.q_check_vs_ust.stateChanged.connect(self.check_vs_tm)
+        # self.q_check_vsgrp_ust = QCheckBox('VSGRP_tm', tab_4)
+        # self.q_check_vsgrp_ust.move(550, 98) 
+        # self.q_check_vsgrp_ust.stateChanged.connect(self.check_vsgrp_tm)
+        # self.q_check_uts_ust = QCheckBox('UTS_tm', tab_4)
+        # self.q_check_uts_ust.move(550, 114) 
+        # self.q_check_uts_ust.stateChanged.connect(self.check_uts_tm)
+        # self.q_check_pz_ust = QCheckBox('PZ_tm', tab_4)
+        # self.q_check_pz_ust.move(550, 130) 
+        # self.q_check_pz_ust.stateChanged.connect(self.check_pz_tm)
+        self.q_check_ai_tabl = QCheckBox('TblAnalogs', tab_4)
+        self.q_check_ai_tabl.move(550, 50) 
+        self.q_check_ai_tabl.stateChanged.connect(self.check_ai_tabl)
 
         # Установить все
         check_all = QCheckBox('Установить/Снять', tab_4)
         check_all.setToolTip('Установить или снять все флаги')
         check_all.move(10, 140) 
         check_all.stateChanged.connect(self.check_all)
-        # Подтверждение
+        # Подтверждение msg
         b_export_list = QPushButton('Файл импорта', tab_4)
         b_export_list.setStyleSheet("border: 1px solid; border-radius: 3px;")
         b_export_list.setToolTip('''Генерировать файлы сообщений для базы данных PostgreSQL''')
@@ -876,6 +880,19 @@ class Widget(QWidget):
         b_export_sql.resize(120,23)
         b_export_sql.move(150, 180) 
         b_export_sql.clicked.connect(self.write_in_sql)
+        # Подтверждение tabl
+        b_export_list_tabl = QPushButton('Файл импорта', tab_4)
+        b_export_list_tabl.setStyleSheet("border: 1px solid; border-radius: 3px;")
+        b_export_list_tabl.setToolTip('''Генерировать файлы таблиц для базы данных PostgreSQL''')
+        b_export_list_tabl.resize(120,23)
+        b_export_list_tabl.move(550, 180) 
+        b_export_list_tabl.clicked.connect(self.export_list_tabl)
+        b_export_sql_tabl = QPushButton('Генерировать в базу', tab_4)
+        b_export_sql_tabl.setStyleSheet("border: 1px solid; border-radius: 3px;")
+        b_export_sql_tabl.setToolTip('''Создать и заполнить таблицу TblAnalogs''')
+        b_export_sql_tabl.resize(120,23)
+        b_export_sql_tabl.move(700, 180) 
+        b_export_sql_tabl.clicked.connect(self.write_in_sql_tabl)
 
         # Logs
         self.logTextBox = QTextEdit(self)
@@ -1442,14 +1459,24 @@ class Widget(QWidget):
     def check_gmpna(self, checked):
         if checked: self.list_gen_msg.append('GMPNA')
         else      : self.list_gen_msg.remove('GMPNA')
-    # Button
+    def check_ai_tabl(self, checked):
+        if checked: self.list_gen_tabl.append('AI_tabl')
+        else      : self.list_gen_tabl.remove('AI_tabl')
+
+    # Button msg
     def export_list(self):
         msg = self.gen_sql.write_in_sql(self.list_gen_msg, False)
         self.logs_msg('default', 1, msg, True)
     def write_in_sql(self):
         msg = self.gen_sql.write_in_sql(self.list_gen_msg, True)
         self.logs_msg('default', 1, msg, True)
-
+    # Button tabl
+    def export_list_tabl(self):
+        msg = self.gen_sql.write_in_sql_tabl(self.list_gen_tabl, False)
+        self.logs_msg('default', 1, msg, True)
+    def write_in_sql_tabl(self):
+        msg = self.gen_sql.write_in_sql_tabl(self.list_gen_tabl, True)
+        self.logs_msg('default', 1, msg, True)
     # ------------------Окно редактирования------------------
     # Choose table
     def choose_tabl(self):

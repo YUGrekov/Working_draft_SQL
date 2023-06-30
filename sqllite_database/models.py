@@ -16,6 +16,7 @@ path_to_exel = 'D:\\Development\\New_SQL_generator\\Working_draft_SQL\\sqllite_d
 path_sample  = 'D:\Development\Generation_msg\Sample\\'
 path_location_file = 'D:\Development\Generation_msg\Script\\'
 name_project = 'Тест'
+prefix_system = ''
 path_to_devstudio = 'D:\Development\Generation_msg\Script\\'
 
 
@@ -46,6 +47,8 @@ port_ust = ''
 #             path_location_file = split_str[1]
 #         if split_str[0] == 'name_project':
 #             name_project = split_str[1]
+#         if split_str[0] == 'prefix_system':
+#             prefix_system = split_str[1]
 
 
 #         if split_str[0] == 'database_msg':
@@ -130,20 +133,23 @@ rus_list = {'signals': {'id':'№', 'type_signal':'Тип сигнала', 'uso'
             'ao': {'id':'№','variable':'Переменная', 'tag':'Идентификатор', 'name':'Название', 'pValue':'Ссылка на входное значение сигнала',
                    'pHealth':'Ссылка на исправность канала', 'uso':'Шкаф', 'basket':'Корзина', 'module':'Модуль', 'channel':'Канал'},
             
-            'ai': {'id':'№','variable':'Переменная', 'tag':'Идентификатор', 'name':'Название', 'pValue':'Ссылка на входное\nзначение сигнала',
-                   'pHealth':'Ссылка на исправность\nканала','group_analog':'Группа аналогов',
-                   'group_ust_analog':'Группа уставок\nаналогов', 'unit':'Единица измерения', 'sign_VU':'Подпись для ВУ', 
-                   'flag_MPa_kgccm2':'Давление нефти/нефтепродукта\n(флаг для пересчета в кгс/см2)', 'number_NA_or_aux':'Номер НА или вспом.', 
-                   'vibration_pump':'Вибрация насоса', 'vibration_motor':'Вибрация ЭД', 'current_motor':'Ток ЭД НА', 
+            'ai': {'Id':'№','variable':'Переменная', 'Tag':'Идентификатор', 'Name':'Название', 'pValue':'Ссылка на входное\nзначение сигнала',
+                   'pHealth':'Ссылка на исправность\nканала','AnalogGroupId':'Группа аналогов',
+                   'SetpointGroupId':'Группа уставок\nаналогов', 'Egu':'Единица измерения', 'sign_VU':'Подпись для ВУ', 
+                   'IsOilPressure':'Давление нефти/нефтепродукта\n(флаг для пересчета в кгс/см2)', 'number_NA_or_aux':'Номер НА или вспом.', 
+                   'IsPumpVibration':'Вибрация насоса', 'vibration_motor':'Вибрация ЭД', 'current_motor':'Ток ЭД НА', 
                    'aux_outlet_pressure':'Давление на вых. вспом.', 'number_ust_min_avar':'№ уставки мин. авар.', 
                    'number_ust_min_pred':'№ уставки мин. пред.', 'number_ust_max_pred':'№ уставки макс. пред.', 'number_ust_max_avar':'№ уставки макс. авар.', 
-                   'field_min':'Пол. мин.', 'field_max':'Пол. макс.', 'eng_min':'Инж. Мин.', 'eng_max':'Инж. Макс.', 'reliability_min':'Достоверность мин.', 
-                   'reliability_max':'Достоверность макс.', 'hysteresis':'Гистерезис', 'filtration':'Фильтрация', 
-                   'ust_min_6':'Мин.6', 'ust_min_5':'Мин.5', 'ust_min_4':'Мин.4', 'ust_min_3':'Мин.3', 'ust_min_2':'Мин.2', 'ust_min':'Мин.', 
-                   'ust_max':'Макс.', 'ust_max_2':'Макс.2', 'ust_max_3':'Макс.3', 'ust_max_4':'Макс.4', 'ust_max_5':'Макс.5', 'ust_max62':'Макс.6', 
-                   'value_precision':'Отображаемая точность\nзначения', 'Pic':'Pic', 
-                   'group_trend':'Группа сброса трендов', 'hysteresis_TI':'Гистерезис ТИ', 'unit_physical_ACP':'Единица измерения физической\nвеличины (АЦП)',
-                   'setpoint_map_rule':'Правило для карты\nуставок', 'fuse':'Предохранитель',
+                   'LoLimField':'Пол. мин.', 'HiLimField':'Пол. макс.', 'LoLimEng':'Инж. Мин.', 'HiLimEng':'Инж. Макс.', 'LoLim':'Достоверность мин.', 
+                   'HiLim':'Достоверность макс.', 'Histeresis':'Гистерезис', 'TimeFilter':'Фильтрация', 
+                   'Min6':'Мин.6', 'Min5':'Мин.5', 'Min4':'Мин.4', 'Min3':'Мин.3', 'Min2':'Мин.2', 'Min1':'Мин.', 
+                   'Max1':'Макс.', 'Max2':'Макс.2', 'Max3':'Макс.3', 'Max4':'Макс.4', 'Max5':'Макс.5', 'Max6':'Макс.6', 
+                   'MsgMask':'''Настройки уставок, Сообщение\nДвоичная маска, порядок следования битов: 15-резерв, 14-ВПД, 13-Макс6, 12-Макс5, 11-Макс4,\n10-Макс3, 9-Макс2, 8-Макс1, 7-Норма, 6-Мин1, 5-Мин2, 4-Мин3, 3-Мин4, 2-Мин5, 1-Мин6, 0-НПД''', 
+                   'SigMask':'''Настройки уставок, Сигнализация\nДвоичная маска, порядок следования битов: 15-резерв, 14-ВПД, 13-Макс6, 12-Макс5, 11-Макс4,\n10-Макс3, 9-Макс2, 8-Макс1, 7-Норма, 6-Мин1, 5-Мин2, 4-Мин3, 3-Мин4, 2-Мин5, 1-Мин6, 0-НПД''', 
+                    'CtrlMask':'''Маска контроля уставок при имитации\nМаска 16 бит. Порядок следования битов уставок: 15-13-резерв, 12-Недостоверность, 11-Макс6,\n10-Макс5, 9-Макс4, 8-Макс3, 7-Макс2, 6-Макс1, 5-Мин1, 4-Мин2, 3-Мин3, 2-Мин4, 1-Мин5, 0-Мин6''',
+                   'Precision':'Отображаемая точность\nзначения', 'Pic':'Pic', 
+                   'TrendingGroup':'Группа сброса трендов', 'DeltaT':'Гистерезис ТИ', 'PhysicEgu':'Единица измерения физической\nвеличины (АЦП)',
+                   'RuleName':'Правило для карты\nуставок', 'fuse':'Предохранитель',
                    'uso':'Шкаф', 'basket':'Корзина', 'module':'Модуль', 'channel':'Канал'},
 
             'ktprp': {'id':'№','variable':'Переменная', 'tag':'Идентификатор', 'name':'Название',
@@ -482,56 +488,61 @@ class HardWare(BaseModel):
     class Meta:
         table_name = 'hardware'
 class AI(BaseModel):
-    variable = CharField(null = True)
-    tag              = CharField(null = True)
-    name             = CharField(null = True)
+    Id               = IntegerField(null = True)
+    variable         = CharField(null = True)
+    Tag              = CharField(null = True)
+    Name             = CharField(null = True)
     pValue           = CharField(null = True)
     pHealth          = CharField(null = True)
-    group_analog     = CharField(null = True)
-    group_ust_analog = CharField(null = True)
-    unit             = CharField(null = True)
+    AnalogGroupId    = CharField(null = True)
+    SetpointGroupId = CharField(null = True)
+    Egu             = CharField(null = True)
     sign_VU          = CharField(null = True)
-    flag_MPa_kgccm2  = CharField(null = True)
+    IsOilPressure  = BooleanField(null = True)
 
-    number_NA_or_aux = CharField(null = True)
-    vibration_pump   = CharField(null = True)
-    vibration_motor  = CharField(null = True)
-    current_motor    = CharField(null = True)
-    aux_outlet_pressure = CharField(null = True)
+    number_NA_or_aux = IntegerField(null = True)
+    IsPumpVibration   = BooleanField(null = True)
+    vibration_motor  = IntegerField(null = True)
+    current_motor    = IntegerField(null = True)
+    aux_outlet_pressure = IntegerField(null = True)
 
-    number_ust_min_avar = CharField(null = True)
-    number_ust_min_pred = CharField(null = True)
-    number_ust_max_pred = CharField(null = True)
-    number_ust_max_avar = CharField(null = True)
+    number_ust_min_avar = IntegerField(null = True)
+    number_ust_min_pred = IntegerField(null = True)
+    number_ust_max_pred = IntegerField(null = True)
+    number_ust_max_avar = IntegerField(null = True)
 
-    field_min = CharField(null = True)
-    field_max = CharField(null = True)
-    eng_min = CharField(null = True)
-    eng_max = CharField(null = True)
-    reliability_min = CharField(null = True)
-    reliability_max = CharField(null = True)
-    hysteresis = CharField(null = True)
-    filtration = CharField(null = True)
+    LoLimField = DoubleField(null = True)
+    HiLimField = DoubleField(null = True)
+    LoLimEng = DoubleField(null = True)
+    HiLimEng = DoubleField(null = True)
+    LoLim = DoubleField(null = True)
+    HiLim = DoubleField(null = True)
+    Histeresis = DoubleField(null = True)
+    TimeFilter = DoubleField(null = True)
 
-    ust_min_6 = CharField(null = True)
-    ust_min_5 = CharField(null = True)
-    ust_min_4 = CharField(null = True)
-    ust_min_3 = CharField(null = True)
-    ust_min_2 = CharField(null = True)
-    ust_min = CharField(null = True)
-    ust_max = CharField(null = True)
-    ust_max_2 = CharField(null = True)
-    ust_max_3 = CharField(null = True)
-    ust_max_4 = CharField(null = True)
-    ust_max_5 = CharField(null = True)
-    ust_max_6 = CharField(null = True)
+    Min6 = DoubleField(null = True)
+    Min5 = DoubleField(null = True)
+    Min4 = DoubleField(null = True)
+    Min3 = DoubleField(null = True)
+    Min2 = DoubleField(null = True)
+    Min1 = DoubleField(null = True)
+    Max1 = DoubleField(null = True)
+    Max2 = DoubleField(null = True)
+    Max3 = DoubleField(null = True)
+    Max4 = DoubleField(null = True)
+    Max5 = DoubleField(null = True)
+    Max6 = DoubleField(null = True)
 
-    value_precision = CharField(null = True)
+    SigMask = CharField(null = True)
+    MsgMask = CharField(null = True)
+    CtrlMask = CharField(null = True)
+
+    Precision = IntegerField(null = True)
     Pic = CharField(null = True)
-    group_trend = CharField(null = True)
-    hysteresis_TI = CharField(null = True)
-    unit_physical_ACP = CharField(null = True)
-    setpoint_map_rule = CharField(null = True)
+    TrendingGroup = IntegerField(null = True)
+    DeltaT = DoubleField(null = True)
+    PhysicEgu = CharField(null = True)
+    RuleName = CharField(null = True)
     fuse = CharField(null = True)
 
     uso = CharField(null = True)
