@@ -807,11 +807,71 @@ class Filling_AI():
                                 value_precision = short[6]
                                 break
 
+                        flag_MPa_kgccm2 = 1 if self.dop_function.str_find(str(description).lower(), {'давлен'}) else 0
+
                         IsPumpVibration = 1 if self.dop_function.str_find(str(description).lower(), {'вибрац'}) and self.dop_function.str_find(str(description).lower(), {'насос'}) else None
                         vibration_motor = 1 if self.dop_function.str_find(str(description).lower(), {'вибрац'}) and self.dop_function.str_find(str(description).lower(), {'эд'}) else None
                         current_motor = 1 if self.dop_function.str_find(str(description).lower(), {'сила тока'}) else None
+
+                        current_motor = 1 if self.dop_function.str_find(str(description).lower(), {'сила тока'}) else None
                         
-                        flag_MPa_kgccm2 = 1 if self.dop_function.str_find(str(description).lower(), {'давлен'}) else None
+                        if self.dop_function.str_find(str(description).lower(), {'вибрац'}) and self.dop_function.str_find(str(description).lower(), {'насос'}):
+                            SigMask = '0111_1111_0111_0001'
+                            MsgMask = '0111_1111_0111_0001'
+                            CtrlMask = '0000_1111_0000_0000'
+                        elif self.dop_function.str_find(str(description).lower(), {'вибрац'}) and \
+                            (self.dop_function.str_find(str(description).lower(), {'эд'} or self.dop_function.str_find(str(description).lower(), {'двигат'}))):
+                            SigMask = '0111_0110_0111_0001'
+                            MsgMask = '0111_0110_0111_0001'
+                            CtrlMask = '0000_1101_0000_0000'
+                        elif self.dop_function.str_find(str(description).lower(), {'аварийное откл'}) or \
+                             self.dop_function.str_find(str(description).lower(), {'аварийн'}) or \
+                             self.dop_function.str_find(str(description).lower(), {'затоплен'}) or \
+                             self.dop_function.str_find(str(description).lower(), {'утечк'}) or \
+                             self.dop_function.str_find(str(description).lower(), {'пожар'}):
+                            SigMask = '0100_0100_0000_0001'
+                            MsgMask = '0100_0100_0000_0001'
+                            CtrlMask = '0000_1111_0000_1111'
+                        elif self.dop_function.str_find(str(description).lower(), {'температура нефт'}) or \
+                             self.dop_function.str_find(str(description).lower(), {'уровень неф'}) or \
+                             self.dop_function.str_find(str(description).lower(), {'температура охл'}) or \
+                             self.dop_function.str_find(str(description).lower(), {'давление неф'}) or \
+                             self.dop_function.str_find(str(description).lower(), {'пожар'}):
+                            SigMask = '0100_0000_0000_0001'
+                            MsgMask = '0100_0000_0000_0001'
+                            CtrlMask = '0000_0000_0000_0000'
+                        elif self.dop_function.str_find(str(description).lower(), {'давление на вых'}) or \
+                             self.dop_function.str_find(str(description).lower(), {'давление мас'}) or \
+                             self.dop_function.str_find(str(description).lower(), {'перепад давл'}):
+                            SigMask = '0100_0000_0001_0001'
+                            MsgMask = '0100_0000_0001_0001'
+                            CtrlMask = '0000_0000_0000_0000'
+                        elif self.dop_function.str_find(str(description).lower(), {'сила тока'}):
+                            SigMask = '0100_0000_0010_0001'
+                            MsgMask = '0100_0000_0010_0001'
+                            CtrlMask = '0000_0000_0000_0000'
+                        elif self.dop_function.str_find(str(description).lower(), {'Температура возд'}):
+                            SigMask = '0100_0010_0010_0001'
+                            MsgMask = '0100_0010_0010_0001'
+                            CtrlMask = '0000_0000_0000_0000'
+                        elif self.dop_function.str_find(str(description).lower(), {'температура горяч'}) or \
+                             self.dop_function.str_find(str(description).lower(), {'температура задн'}) or \
+                             self.dop_function.str_find(str(description).lower(), {'температура корп'}) or \
+                             self.dop_function.str_find(str(description).lower(), {'температура упор'}) or \
+                             self.dop_function.str_find(str(description).lower(), {'температура холо'}):
+                            SigMask = '0100_0101_0000_0001'
+                            MsgMask = '0100_0101_0000_0001'
+                            CtrlMask = '0000_1111_0000_1111'
+                        elif self.dop_function.str_find(str(description).lower(), {'загазован'}) or \
+                             self.dop_function.str_find(str(description).lower(), {'Температура желез'}) or \
+                             self.dop_function.str_find(str(description).lower(), {'температура обмо'}):
+                            SigMask = '0100_0110_0000_0001'
+                            MsgMask = '0100_0111_1000_0001'
+                            CtrlMask = '0000_1111_0000_1111'
+                        else:
+                            SigMask = '0000_0000_0000_0000'
+                            MsgMask = '0000_0000_0000_0000'
+                            CtrlMask = '0000_0000_0000_0000'
 
                         if isdigit_num == '':
                             msg[f'{today} - В таблице hardware не найден модуль сигнала: {id_s}, {tag}, {description}, {uso_s}_A{basket_s}_{module_s}_{channel_s}, "pValue" не заполнен'] = 2
@@ -848,9 +908,9 @@ class Filling_AI():
                                             Min6 = None, Min5 = None, Min4 = None, Min3 = None, Min2 = None, Min1 = None,
                                             Max1 = None, Max2 = None, Max3 = None, Max4 = None, Max5 = None, Max6 = None,
                                             Precision = value_precision,
-                                            SigMask ='', 
-                                            MsgMask ='', 
-                                            CtrlMask = '',
+                                            SigMask = SigMask, 
+                                            MsgMask = MsgMask, 
+                                            CtrlMask = CtrlMask,
                                             Pic = '', TrendingGroup = None, DeltaT = 0, PhysicEgu = 'мкА', 
                                             RuleName = rule, fuse = '', uso = uso_s, basket = basket_s, module = module_s, channel = channel_s,
                                             AlphaHMI = '', AlphaHMI_PIC1 = '', AlphaHMI_PIC1_Number_kont = '', AlphaHMI_PIC2 = '', 
@@ -3729,58 +3789,58 @@ class Generate_database_SQL():
         return(msg)
     # Генерация таблиц
     def gen_table_AI(self, cursor, flag_write_db):
-        text_start = '''\tCREATE SCHEMA IF NOT EXISTS objects;\n
-                        \tCREATE TABLE IF NOT EXISTS objects.TblAnalogs(\n
-                        \t\tId INT NOT NULL,\n
-                        \t\tPrefix VARCHAR(1024),\n
-                        \t\tSystemIndex INT NOT NULL,\n
-                        \t\tTag VARCHAR(1024),\n
-                        \t\tName VARCHAR(1024),\n
-                        \t\tAnalogGroupId INT,\n
-                        \t\tSetpointGroupId INT,\n
-                        \t\tEgu VARCHAR(1024),\n
-                        \t\tPhysicEgu VARCHAR(1024),\n
-                        \t\tIsOilPressure BOOLEAN NOT NULL,\n
-                        \t\tIsInterface BOOLEAN NOT NULL,\n
-                        \t\tIsPhysic BOOLEAN NOT NULL,\n
-                        \t\tIsPumpVibration BOOLEAN,\n
-                        \t\tPrecision INT NOT NULL,\n
-                        \t\tIsTrending BOOLEAN NOT NULL,\n
-                        \t\tTrendingSettings VARCHAR(1024),\n
-                        \t\tTrendingGroup INT,\n
-                        \t\tLoLimField DOUBLE PRECISION,\n
-                        \t\tHiLimField DOUBLE PRECISION,\n
-                        \t\tLoLimEng DOUBLE PRECISION,\n
-                        \t\tHiLimEng DOUBLE PRECISION,\n
-                        \t\tLoLim DOUBLE PRECISION,\n
-                        \t\tHiLim DOUBLE PRECISION,\n
-                        \t\tMin6 DOUBLE PRECISION,\n
-                        \t\tMin5 DOUBLE PRECISION,\n
-                        \t\tMin4 DOUBLE PRECISION,\n
-                        \t\tMin3 DOUBLE PRECISION,\n
-                        \t\tMin2 DOUBLE PRECISION,\n
-                        \t\tMin1 DOUBLE PRECISION,\n
-                        \t\tMax1 DOUBLE PRECISION,\n
-                        \t\tMax2 DOUBLE PRECISION,\n
-                        \t\tMax3 DOUBLE PRECISION,\n
-                        \t\tMax4 DOUBLE PRECISION,\n
-                        \t\tMax5 DOUBLE PRECISION,\n
-                        \t\tMax6 DOUBLE PRECISION,\n
-                        \t\tHisteresis DOUBLE PRECISION,\n
-                        \t\tDeltaHi DOUBLE PRECISION,\n
-                        \t\tDeltaLo DOUBLE PRECISION,\n
-                        \t\tDeltaT DOUBLE PRECISION,\n
-                        \t\tSmoothFactor DOUBLE PRECISION,\n
-                        \t\tCtrl SMALLINT,\n
-                        \t\tMsgMask INT,\n
-                        \t\tSigMask INT,\n
-                        \t\tCtrlMask SMALLINT,\n
-                        \t\tTimeFilter DOUBLE PRECISION,\n
-                        \t\tIsBackup BOOLEAN NOT NULL,\n
-                        \t\tRuleName VARCHAR(1024),\n
-                        \t\tCONSTRAINT TblAnalogs_pkey PRIMARY KEY (Id,SystemIndex)\n
-                    \t);\n
-                    \tDELETE FROM objects.TblAnalogs  WHERE SystemIndex = 0;\n'''
+        text_start = ('\tCREATE SCHEMA IF NOT EXISTS objects;\n'
+                        '\tCREATE TABLE IF NOT EXISTS objects.TblAnalogs(\n'
+                        '\t\tId INT NOT NULL,\n'
+                        '\t\tPrefix VARCHAR(1024),\n'
+                        '\t\tSystemIndex INT NOT NULL,\n'
+                        '\t\tTag VARCHAR(1024),\n'
+                        '\t\tName VARCHAR(1024),\n'
+                       '\t\tAnalogGroupId INT,\n'
+                       '\t\tSetpointGroupId INT,\n'
+                        '\t\tEgu VARCHAR(1024),\n'
+                        '\t\tPhysicEgu VARCHAR(1024),\n'
+                        '\t\tIsOilPressure BOOLEAN NOT NULL,\n'
+                        '\t\tIsInterface BOOLEAN NOT NULL,\n'
+                        '\t\tIsPhysic BOOLEAN NOT NULL,\n'
+                        '\t\tIsPumpVibration BOOLEAN,\n'
+                        '\t\tPrecision INT NOT NULL,\n'
+                        '\t\tIsTrending BOOLEAN NOT NULL,\n'
+                        '\t\tTrendingSettings VARCHAR(1024),\n'
+                        '\t\tTrendingGroup INT,\n'
+                        '\t\tLoLimField DOUBLE PRECISION,\n'
+                        '\t\tHiLimField DOUBLE PRECISION,\n'
+                        '\t\tLoLimEng DOUBLE PRECISION,\n'
+                        '\t\tHiLimEng DOUBLE PRECISION,\n'
+                        '\t\tLoLim DOUBLE PRECISION,\n'
+                        '\t\tHiLim DOUBLE PRECISION,\n'
+                        '\t\tMin6 DOUBLE PRECISION,\n'
+                        '\t\tMin5 DOUBLE PRECISION,\n'
+                        '\t\tMin4 DOUBLE PRECISION,\n'
+                        '\t\tMin3 DOUBLE PRECISION,\n'
+                        '\t\tMin2 DOUBLE PRECISION,\n'
+                        '\t\tMin1 DOUBLE PRECISION,\n'
+                        '\t\tMax1 DOUBLE PRECISION,\n'
+                        '\t\tMax2 DOUBLE PRECISION,\n'
+                        '\t\tMax3 DOUBLE PRECISION,\n'
+                        '\t\tMax4 DOUBLE PRECISION,\n'
+                        '\t\tMax5 DOUBLE PRECISION,\n'
+                        '\t\tMax6 DOUBLE PRECISION,\n'
+                        '\t\tHisteresis DOUBLE PRECISION,\n'
+                        '\t\tDeltaHi DOUBLE PRECISION,\n'
+                        '\t\tDeltaLo DOUBLE PRECISION,\n'
+                        '\t\tDeltaT DOUBLE PRECISION,\n'
+                        '\t\tSmoothFactor DOUBLE PRECISION,\n'
+                        '\t\tCtrl SMALLINT,\n'
+                        '\t\tMsgMask INT,\n'
+                        '\t\tSigMask INT,\n'
+                        '\t\tCtrlMask SMALLINT,\n'
+                        '\t\tTimeFilter DOUBLE PRECISION,\n'
+                        '\t\tIsBackup BOOLEAN NOT NULL,\n'
+                        '\t\tRuleName VARCHAR(1024),\n'
+                        '\t\tCONSTRAINT TblAnalogs_pkey PRIMARY KEY (Id,SystemIndex)\n'
+                    '\t);\n'
+                    '\tDELETE FROM objects.TblAnalogs  WHERE SystemIndex = 0;\n')
         
         with db:
             msg = {}
@@ -3805,7 +3865,7 @@ class Generate_database_SQL():
                     module, channel                                       = signal[36], signal[37]
 
                     # Prefix
-                    Prefix = 'NULL' if prefix_system == '' or prefix_system is None else prefix_system
+                    Prefix = 'NULL' if prefix_system == '' or prefix_system is None else str(prefix_system)
                     # SystemIndex
                     SystemIndex = 0
                     # AnalogGroupId
@@ -3828,6 +3888,24 @@ class Generate_database_SQL():
                     IsPhysic = True if module is not None and channel is not None and IsBackup is False else False
                     # IsTrending
                     IsTrending = True if IsBackup is False else False
+   
+                    TrendingGroup = 'NULL' if TrendingGroup is None else TrendingGroup
+                    LoLimEng = 'NULL' if HiLimEng is None else HiLimEng
+                    LoLim = 'NULL' if LoLim is None else LoLim
+                    HiLim = 'NULL' if HiLim is None else HiLim
+                    Min6 = 'NULL' if Min6 is None else Min6
+                    Min5 = 'NULL' if Min5 is None else Min5
+                    Min4 = 'NULL' if Min4 is None else Min4
+                    Min3 = 'NULL' if Min3 is None else Min3
+                    Min2 = 'NULL' if Min2 is None else Min2
+                    Min1 = 'NULL' if Min1 is None else Min1
+                    Max1 = 'NULL' if Max1 is None else Max1
+                    Max2 = 'NULL' if Max2 is None else Max2
+                    Max3 = 'NULL' if Max3 is None else Max3
+                    Max4 = 'NULL' if Max4 is None else Max4
+                    Max5 = 'NULL' if Max5 is None else Max5
+                    Max6 = 'NULL' if Max6 is None else Max6
+
                     # DeltaHi
                     DeltaHi = 'NULL'
                     # DeltaLo
@@ -3837,49 +3915,41 @@ class Generate_database_SQL():
                     # Ctrl
                     Ctrl= 0
                     # MsgMask
+                    MsgMask = int(str(MsgMask).replace('_', ''), 2)
                     # SigMask
+                    SigMask = int(str(SigMask).replace('_', ''), 2)
                     # CtrlMask
+                    CtrlMask = int(str(CtrlMask).replace('_', ''), 2)
                     # RuleName
                     cursor.execute(f"""SELECT rule_name FROM "sp_rules" WHERE name_rules='{RuleName}'""")
                     try   : RuleName = cursor.fetchall()[0][0]
                     except: RuleName = 'NULL'
 
-                    ins_row_tabl = f"""INSERT INTO objects.TblAnalogs (Id, Prefix, SystemIndex, Tag, Name, AnalogGroupId, SetpointGroupId, Egu, PhysicEgu, IsOilPressure, IsInterface, IsPhysic, IsPumpVibration, Precision, IsTrending, TrendingSettings, TrendingGroup, LoLimField, HiLimField, LoLimEng, HiLimEng, LoLim, HiLim, Min6, Min5, Min4, Min3, Min2, Min1, Max1, Max2, Max3, Max4, Max5, Max6, Histeresis, DeltaHi, DeltaLo, DeltaT, SmoothFactor, Ctrl, MsgMask, SigMask, CtrlMask, TimeFilter, IsBackup, RuleName) VALUES({Id}, {Prefix}, {SystemIndex}, {Tag}, {Name}, {AnalogGroupId}, {SetpointGroupId}, {Egu}, {PhysicEgu}, {IsOilPressure}, {IsInterface}, {IsPhysic}, {IsPumpVibration}, {Precision}, {IsTrending}, 'Historian(Collector = NA_ModbusServer, sourceaddress = %MF{999 + 2 * Id}, InputScaling = 0)', {TrendingGroup}, {LoLimField}, {HiLimField}, {LoLimEng}, {HiLimEng}, {LoLim}, {HiLim}, {Min6}, {Min5}, {Min4}, {Min3}, {Min2}, {Min1}, {Max1}, {Max2}, {Max3}, {Max4}, {Max5}, {Max6}, {Histeresis}, {DeltaHi}, {DeltaLo}, {DeltaT}, {SmoothFactor}, {Ctrl}, {MsgMask}, {SigMask}, {CtrlMask}, {TimeFilter}, {IsBackup}, {RuleName});\n"""
+                    ins_row_tabl = f"""INSERT INTO objects.TblAnalogs (Id, Prefix, SystemIndex, Tag, Name, AnalogGroupId, SetpointGroupId, Egu, PhysicEgu, IsOilPressure, IsInterface, IsPhysic, IsPumpVibration, Precision, IsTrending, TrendingSettings, TrendingGroup, LoLimField, HiLimField, LoLimEng, HiLimEng, LoLim, HiLim, Min6, Min5, Min4, Min3, Min2, Min1, Max1, Max2, Max3, Max4, Max5, Max6, Histeresis, DeltaHi, DeltaLo, DeltaT, SmoothFactor, Ctrl, MsgMask, SigMask, CtrlMask, TimeFilter, IsBackup, RuleName) VALUES({Id}, {Prefix}, {SystemIndex}, '{Tag}','{Name}', {AnalogGroupId}, {SetpointGroupId}, {Egu}, {PhysicEgu}, {IsOilPressure}, {IsInterface}, {IsPhysic}, {IsPumpVibration}, {Precision}, {IsTrending}, 'Historian(Collector = NA_ModbusServer, sourceaddress = %MF{999 + 2 * Id}, InputScaling = 0)', {TrendingGroup}, {LoLimField}, {HiLimField}, {LoLimEng}, {HiLimEng}, {LoLim}, {HiLim}, {Min6}, {Min5}, {Min4}, {Min3}, {Min2}, {Min1}, {Max1}, {Max2}, {Max3}, {Max4}, {Max5}, {Max6}, {Histeresis}, {DeltaHi}, {DeltaLo}, {DeltaT}, {SmoothFactor}, {Ctrl}, {MsgMask}, {SigMask}, {CtrlMask}, {TimeFilter}, {IsBackup}, {RuleName});\n"""
             
-                    #if flag_write_db:
-                    #    cursor.execute(ins_row_tabl)
-                    #else:
-                    gen_list.append(dict(insert = ins_row_tabl))
-                
-                for i in gen_list:
-                    print(i)
+                    if flag_write_db:
+                       cursor.execute(ins_row_tabl)
+                    else:
+                        gen_list.append(ins_row_tabl)
+            
+                if not flag_write_db:
+                    # Создаём файл запроса
+                    path_request = f'{path_location_file}\\PostgreSQL-TblAnalogs.sql'
+                    if not os.path.exists(path_request):
+                        file = codecs.open(path_request, 'w', 'utf-8')
+                    else:
+                        os.remove(path_request)
+                        file = codecs.open(path_request, 'w', 'utf-8')
 
-
-                #     id_       = signal[0]
-                #     name      = signal[1]
+                    if path_location_file == '' or path_location_file is None or len(path_location_file) == 0:
+                        msg[f'{today} - TblAnalogs: не указана конечная папка'] = 2
+                        return msg
                     
-                #     if tabl == 'uts':
-                #         if   self.dop_function.str_find(str(name).lower(), {'звонок'}): table_msg = 'TblSignalingDevicesMale'
-                #         elif self.dop_function.str_find(str(name).lower(), {'табло'}) : table_msg = 'TblSignalingDevices'
-                #         elif self.dop_function.str_find(str(name).lower(), {'сирена'}): table_msg = 'TblSignalingDevicesFemale'
-                #         elif self.dop_function.str_find(str(name).lower(), {'сирены'}): table_msg = 'TblSignalingDevicesMany'
-                #         elif self.dop_function.str_find(str(name).lower(), {'сигнализация'}): table_msg = 'TblSignalingDevicesFemale'
-                #         else: table_msg = 'TblSignalingDevices'
-                #     else:
-                #         table_msg = 'TblFireSignalingDevices'
-
-                #     start_addr = kod_msg + ((id_ - 1) * int(addr_offset))
-                #     path = f'{path_sample}\{table_msg}.xml'
-                #     if not os.path.isfile(path):
-                #         msg[f'{today} - Сообщения {tabl}: в папке отсутствует шаблон - {table_msg}'] = 2
-                #         return msg
-
-                #     gen_list.append(self.dop_function.parser_sample(path, start_addr, name, flag_write_db, sign))
-
-                # if not flag_write_db:
-                #     msg.update(self.write_file(gen_list, sign, script_file))
-                #     msg[f'{today} - Сообщения {tabl}: файл скрипта создан'] = 1
-                #     return(msg)
+                    file.write(text_start)
+                    for insert in gen_list:
+                        file.write(insert)
+                    file.write(f'COMMIT;')
+                    file.close()
             except Exception:
                 msg[f'{today} - TblAnalogs: ошибка генерации: {traceback.format_exc()}'] = 2
             msg[f'{today} - TblAnalogs: генерация в базу завершена!'] = 1
