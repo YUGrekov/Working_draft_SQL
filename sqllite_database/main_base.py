@@ -3300,7 +3300,8 @@ class Generate_database_SQL():
             for tabl in list_tabl: 
                 if tabl == 'AI_tabl': 
                     cursor = db.cursor()
-                    msg.update(self.gen_table_AI(cursor, flag_write_db))
+                    cursor_prj = db_prj.cursor()
+                    msg.update(self.gen_table_AI(cursor, cursor_prj, flag_write_db))
                     continue
             return msg
     def gen_msg_ai(self, cursor, flag_write_db):
@@ -3788,7 +3789,7 @@ class Generate_database_SQL():
             msg[f'{today} - Сообщения {tabl}: генерация в базу завершена!'] = 1
         return(msg)
     # Генерация таблиц
-    def gen_table_AI(self, cursor, flag_write_db):
+    def gen_table_AI(self, cursor, cursor_prj, flag_write_db):
         text_start = ('\tCREATE SCHEMA IF NOT EXISTS objects;\n'
                         '\tCREATE TABLE IF NOT EXISTS objects.TblAnalogs(\n'
                         '\t\tId INT NOT NULL,\n'
@@ -3842,117 +3843,168 @@ class Generate_database_SQL():
                     '\t);\n'
                     '\tDELETE FROM objects.TblAnalogs  WHERE SystemIndex = 0;\n')
         
-        with db:
-            msg = {}
-            gen_list = []
-            try:
-                cursor.execute(f"""SELECT "Id", "Tag", "Name", "AnalogGroupId", "SetpointGroupId", "Egu", "PhysicEgu", "IsOilPressure", 
-                                          "IsPumpVibration", "Precision", "TrendingGroup", "LoLimField", "HiLimField", "LoLimEng", 
-                                          "HiLimEng", "LoLim", "HiLim", "Min6", "Min5", "Min4", "Min3", "Min2", "Min1", "Max1", "Max2", "Max3", 
-                                          "Max4", "Max5", "Max6", "Histeresis", "DeltaT", "MsgMask", "SigMask", "CtrlMask", "RuleName", "TimeFilter", "module","channel"
-                                   FROM "ai" ORDER BY Id""")
-                list_signal = cursor.fetchall()
-                for signal in list_signal:
-                    Id, Tag, Name, AnalogGroupId                          = signal[0], signal[1], signal[2], signal[3]
-                    SetpointGroupId, Egu, PhysicEgu, IsOilPressure        = signal[4], signal[5], signal[6], signal[7]
-                    IsPumpVibration, Precision, TrendingGroup, LoLimField = signal[8], signal[9], signal[10], signal[11]
-                    HiLimField, LoLimEng, HiLimEng, LoLim                 = signal[12], signal[13], signal[14], signal[15]
-                    HiLim, Min6, Min5, Min4                               = signal[16], signal[17], signal[18], signal[19]
-                    Min3, Min2, Min1, Max1                                = signal[20], signal[21], signal[22], signal[23]
-                    Max2, Max3, Max4, Max5                                = signal[24], signal[25], signal[26], signal[27]
-                    Max6, Histeresis, DeltaT, MsgMask                     = signal[28], signal[29], signal[30], signal[31]
-                    SigMask, CtrlMask, RuleName, TimeFilter               = signal[32], signal[33], signal[34], signal[35]
-                    module, channel                                       = signal[36], signal[37]
+        msg = {}
+        gen_list = []
+        try:
+            cursor.execute(f"""SELECT "Id", "Tag", "Name", "AnalogGroupId", "SetpointGroupId", "Egu", "PhysicEgu", "IsOilPressure", 
+                                        "IsPumpVibration", "Precision", "TrendingGroup", "LoLimField", "HiLimField", "LoLimEng", 
+                                        "HiLimEng", "LoLim", "HiLim", "Min6", "Min5", "Min4", "Min3", "Min2", "Min1", "Max1", "Max2", "Max3", 
+                                        "Max4", "Max5", "Max6", "Histeresis", "DeltaT", "MsgMask", "SigMask", "CtrlMask", "RuleName", "TimeFilter", "module","channel"
+                                FROM "ai" ORDER BY Id""")
+            list_signal = cursor.fetchall()
+        except Exception:
+            msg[f'{today} - TblAnalogs: ошибка генерации: {traceback.format_exc()}'] = 2
 
-                    # Prefix
-                    Prefix = 'NULL' if prefix_system == '' or prefix_system is None else str(prefix_system)
-                    # SystemIndex
-                    SystemIndex = 0
-                    # AnalogGroupId
-                    cursor.execute(f"""SELECT id FROM "ai_grp" WHERE name='{AnalogGroupId}'""")
-                    try   : AnalogGroupId = cursor.fetchall()[0][0]
-                    except: AnalogGroupId = 'NULL'
-                    # SetpointGroupId
-                    cursor.execute(f"""SELECT id FROM "sp_grp" WHERE name_group='{SetpointGroupId}'""")
-                    try   : SetpointGroupId = cursor.fetchall()[0][0]
-                    except: SetpointGroupId = 'NULL'
-                    # IsOilPressure
-                    IsOilPressure = 'NULL' if IsOilPressure is None else IsOilPressure
-                    # IsPumpVibration
-                    IsPumpVibration = 'NULL' if IsPumpVibration is None else IsPumpVibration
-                    # IsInterface
-                    IsInterface = False
-                    # IsBackup
-                    IsBackup = True if self.dop_function.str_find(str(Name).lower(), {'резерв'}) else False
-                    # IsPhysic
-                    IsPhysic = True if module is not None and channel is not None and IsBackup is False else False
-                    # IsTrending
-                    IsTrending = True if IsBackup is False else False
-   
-                    TrendingGroup = 'NULL' if TrendingGroup is None else TrendingGroup
-                    LoLimEng = 'NULL' if HiLimEng is None else HiLimEng
-                    LoLim = 'NULL' if LoLim is None else LoLim
-                    HiLim = 'NULL' if HiLim is None else HiLim
-                    Min6 = 'NULL' if Min6 is None else Min6
-                    Min5 = 'NULL' if Min5 is None else Min5
-                    Min4 = 'NULL' if Min4 is None else Min4
-                    Min3 = 'NULL' if Min3 is None else Min3
-                    Min2 = 'NULL' if Min2 is None else Min2
-                    Min1 = 'NULL' if Min1 is None else Min1
-                    Max1 = 'NULL' if Max1 is None else Max1
-                    Max2 = 'NULL' if Max2 is None else Max2
-                    Max3 = 'NULL' if Max3 is None else Max3
-                    Max4 = 'NULL' if Max4 is None else Max4
-                    Max5 = 'NULL' if Max5 is None else Max5
-                    Max6 = 'NULL' if Max6 is None else Max6
+        for signal in list_signal:
+            Id, Tag, Name, AnalogGroupId                          = signal[0], signal[1], signal[2], signal[3]
+            SetpointGroupId, Egu, PhysicEgu, IsOilPressure        = signal[4], signal[5], signal[6], signal[7]
+            IsPumpVibration, Precision, TrendingGroup, LoLimField = signal[8], signal[9], signal[10], signal[11]
+            HiLimField, LoLimEng, HiLimEng, LoLim                 = signal[12], signal[13], signal[14], signal[15]
+            HiLim, Min6, Min5, Min4                               = signal[16], signal[17], signal[18], signal[19]
+            Min3, Min2, Min1, Max1                                = signal[20], signal[21], signal[22], signal[23]
+            Max2, Max3, Max4, Max5                                = signal[24], signal[25], signal[26], signal[27]
+            Max6, Histeresis, DeltaT, MsgMask                     = signal[28], signal[29], signal[30], signal[31]
+            SigMask, CtrlMask, RuleName, TimeFilter               = signal[32], signal[33], signal[34], signal[35]
+            module, channel                                       = signal[36], signal[37]
 
-                    # DeltaHi
-                    DeltaHi = 'NULL'
-                    # DeltaLo
-                    DeltaLo = 'NULL'
-                    # SmoothFactor
-                    SmoothFactor = 'NULL'
-                    # Ctrl
-                    Ctrl= 0
-                    # MsgMask
-                    MsgMask = int(str(MsgMask).replace('_', ''), 2)
-                    # SigMask
-                    SigMask = int(str(SigMask).replace('_', ''), 2)
-                    # CtrlMask
-                    CtrlMask = int(str(CtrlMask).replace('_', ''), 2)
-                    # RuleName
-                    cursor.execute(f"""SELECT rule_name FROM "sp_rules" WHERE name_rules='{RuleName}'""")
-                    try   : RuleName = cursor.fetchall()[0][0]
-                    except: RuleName = 'NULL'
+            # Prefix
+            Prefix = 'NULL' if prefix_system == '' or prefix_system is None else str(prefix_system)
+            # SystemIndex
+            SystemIndex = 0
+            # AnalogGroupId
+            cursor.execute(f"""SELECT id FROM "ai_grp" WHERE name='{AnalogGroupId}'""")
+            try   : AnalogGroupId = cursor.fetchall()[0][0]
+            except: AnalogGroupId = 'NULL'
+            # SetpointGroupId
+            cursor.execute(f"""SELECT id FROM "sp_grp" WHERE name_group='{SetpointGroupId}'""")
+            try   : SetpointGroupId = cursor.fetchall()[0][0]
+            except: SetpointGroupId = 'NULL'
+            # IsOilPressure
+            IsOilPressure = 'NULL' if IsOilPressure is None else IsOilPressure
+            # IsPumpVibration
+            IsPumpVibration = 'NULL' if IsPumpVibration is None else IsPumpVibration
+            # IsInterface
+            IsInterface = False
+            # IsBackup
+            IsBackup = True if self.dop_function.str_find(str(Name).lower(), {'резерв'}) else False
+            # IsPhysic
+            IsPhysic = True if module is not None and channel is not None and IsBackup is False else False
+            # IsTrending
+            IsTrending = True if IsBackup is False else False
 
-                    ins_row_tabl = f"""INSERT INTO objects.TblAnalogs (Id, Prefix, SystemIndex, Tag, Name, AnalogGroupId, SetpointGroupId, Egu, PhysicEgu, IsOilPressure, IsInterface, IsPhysic, IsPumpVibration, Precision, IsTrending, TrendingSettings, TrendingGroup, LoLimField, HiLimField, LoLimEng, HiLimEng, LoLim, HiLim, Min6, Min5, Min4, Min3, Min2, Min1, Max1, Max2, Max3, Max4, Max5, Max6, Histeresis, DeltaHi, DeltaLo, DeltaT, SmoothFactor, Ctrl, MsgMask, SigMask, CtrlMask, TimeFilter, IsBackup, RuleName) VALUES({Id}, {Prefix}, {SystemIndex}, '{Tag}','{Name}', {AnalogGroupId}, {SetpointGroupId}, {Egu}, {PhysicEgu}, {IsOilPressure}, {IsInterface}, {IsPhysic}, {IsPumpVibration}, {Precision}, {IsTrending}, 'Historian(Collector = NA_ModbusServer, sourceaddress = %MF{999 + 2 * Id}, InputScaling = 0)', {TrendingGroup}, {LoLimField}, {HiLimField}, {LoLimEng}, {HiLimEng}, {LoLim}, {HiLim}, {Min6}, {Min5}, {Min4}, {Min3}, {Min2}, {Min1}, {Max1}, {Max2}, {Max3}, {Max4}, {Max5}, {Max6}, {Histeresis}, {DeltaHi}, {DeltaLo}, {DeltaT}, {SmoothFactor}, {Ctrl}, {MsgMask}, {SigMask}, {CtrlMask}, {TimeFilter}, {IsBackup}, {RuleName});\n"""
-            
-                    if flag_write_db:
-                       cursor.execute(ins_row_tabl)
-                    else:
-                        gen_list.append(ins_row_tabl)
-            
-                if not flag_write_db:
-                    # Создаём файл запроса
-                    path_request = f'{path_location_file}\\PostgreSQL-TblAnalogs.sql'
-                    if not os.path.exists(path_request):
-                        file = codecs.open(path_request, 'w', 'utf-8')
-                    else:
-                        os.remove(path_request)
-                        file = codecs.open(path_request, 'w', 'utf-8')
+            TrendingGroup = 'NULL' if TrendingGroup is None else TrendingGroup
+            LoLimEng = 'NULL' if HiLimEng is None else HiLimEng
+            LoLim   = 'NULL' if LoLim is None else LoLim
+            HiLim = 'NULL' if HiLim is None else HiLim
 
-                    if path_location_file == '' or path_location_file is None or len(path_location_file) == 0:
-                        msg[f'{today} - TblAnalogs: не указана конечная папка'] = 2
-                        return msg
-                    
-                    file.write(text_start)
-                    for insert in gen_list:
-                        file.write(insert)
-                    file.write(f'COMMIT;')
-                    file.close()
-            except Exception:
-                msg[f'{today} - TblAnalogs: ошибка генерации: {traceback.format_exc()}'] = 2
-            msg[f'{today} - TblAnalogs: генерация в базу завершена!'] = 1
+            # Ctrl
+            Ctrl_list = ['0000', '0', '0','0','0','0','0','0','0','0','0','0','0']
+            if Min6 is None: Min6 = 'NULL'
+            else: 
+                Min6 = Min6
+                Ctrl_list[12] = '1'
+            if Min5 is None: Min5 = 'NULL'
+            else: 
+                Min5 = Min5
+                Ctrl_list[11] = '1'
+            if Min4 is None: Min4 = 'NULL'
+            else: 
+                Min4 = Min4
+                Ctrl_list[10] = '1'
+            if Min3 is None: Min3 = 'NULL'
+            else: 
+                Min3 = Min3
+                Ctrl_list[9] = '1'
+            if Min2 is None: Min2 = 'NULL'
+            else: 
+                Min2 = Min2
+                Ctrl_list[8] = '1'
+            if Min1 is None: Min1 = 'NULL'
+            else: 
+                Min1 = Min1
+                Ctrl_list[7] = '1'            
+            if Max1 is None: Max1 = 'NULL'
+            else: 
+                Max1 = Max1
+                Ctrl_list[6] = '1'
+            if Max2 is None: Max2 = 'NULL'
+            else: 
+                Max2 = Max2
+                Ctrl_list[5] = '1'
+            if Max3 is None: Max3 = 'NULL'
+            else: 
+                Max3 = Max3
+                Ctrl_list[4] = '1'
+            if Max4 is None: Max4 = 'NULL'
+            else: 
+                Max4 = Max4
+                Ctrl_list[3] = '1'
+            if Max5 is None: Max5 = 'NULL'
+            else: 
+                Max5 = Max5
+                Ctrl_list[2] = '1'
+            if Max6 is None: Max6 = 'NULL'
+            else: 
+                Max6 = Max6
+                Ctrl_list[1] = '1'
+            Ctrl = int(''.join(Ctrl_list), 2)
+            # LoLimField
+            LoLimField = 'NULL' if LoLimField is None else LoLimField
+            # HiLimField
+            HiLimField = 'NULL' if HiLimField is None else HiLimField
+            # LoLimEng
+            LoLimEng = 'NULL' if LoLimEng is None else LoLimEng
+            # HiLimEng
+            HiLimEng = 'NULL' if HiLimEng is None else HiLimEng
+            # LoLim
+            LoLim = 'NULL' if LoLim is None else LoLim
+            # HiLim
+            HiLim = 'NULL' if HiLim is None else HiLim
+            # DeltaHi
+            DeltaHi = 'NULL'
+            # DeltaLo
+            DeltaLo = 'NULL'
+            # SmoothFactor
+            SmoothFactor = 'NULL'
+            # MsgMask
+            MsgMask = int(str(MsgMask).replace('_', ''), 2)
+            # SigMask
+            SigMask = int(str(SigMask).replace('_', ''), 2)
+            # CtrlMask
+            CtrlMask = int(str(CtrlMask).replace('_', ''), 2)
+            # RuleName
+            cursor.execute(f"""SELECT rule_name FROM "sp_rules" WHERE name_rules='{RuleName}'""")
+            try   : RuleName = cursor.fetchall()[0][0]
+            except: RuleName = 'NULL'
+            del_row_tabl = f"DELETE FROM objects.TblAnalogs WHERE Id ={Id};\n"
+            ins_row_tabl = f"INSERT INTO objects.TblAnalogs (Id, Prefix, SystemIndex, Tag, Name, AnalogGroupId, SetpointGroupId, Egu, PhysicEgu, IsOilPressure, IsInterface, IsPhysic, IsPumpVibration, Precision, IsTrending, TrendingSettings, TrendingGroup, LoLimField, HiLimField, LoLimEng, HiLimEng, LoLim, HiLim, Min6, Min5, Min4, Min3, Min2, Min1, Max1, Max2, Max3, Max4, Max5, Max6, Histeresis, DeltaHi, DeltaLo, DeltaT, SmoothFactor, Ctrl, MsgMask, SigMask, CtrlMask, TimeFilter, IsBackup, RuleName) VALUES({Id}, {Prefix}, {SystemIndex}, '{Tag}','{Name}', {AnalogGroupId}, {SetpointGroupId}, '{Egu}', '{PhysicEgu}', {IsOilPressure}, {IsInterface}, {IsPhysic}, {IsPumpVibration}, {Precision}, {IsTrending}, 'Historian(Collector = NA_ModbusServer, sourceaddress = %MF{999 + 2 * Id}, InputScaling = 0)', {TrendingGroup}, {LoLimField}, {HiLimField}, {LoLimEng}, {HiLimEng}, {LoLim}, {HiLim}, {Min6}, {Min5}, {Min4}, {Min3}, {Min2}, {Min1}, {Max1}, {Max2}, {Max3}, {Max4}, {Max5}, {Max6}, {Histeresis}, {DeltaHi}, {DeltaLo}, {DeltaT}, {SmoothFactor}, {Ctrl}, {MsgMask}, {SigMask}, {CtrlMask}, {TimeFilter}, {IsBackup}, {RuleName});\n"
+            if flag_write_db:
+                try:
+                    cursor_prj.execute(del_row_tabl)
+                    cursor_prj.execute(ins_row_tabl)
+                except Exception:
+                    msg[f'{today} - TblAnalogs: ошибка генерации: {traceback.format_exc()}'] = 2
+            else:
+                gen_list.append(ins_row_tabl)
+    
+        if not flag_write_db:
+            # Создаём файл запроса
+            path_request = f'{path_location_file}\\PostgreSQL-TblAnalogs.sql'
+            if not os.path.exists(path_request):
+                file = codecs.open(path_request, 'w', 'utf-8')
+            else:
+                os.remove(path_request)
+                file = codecs.open(path_request, 'w', 'utf-8')
+            if path_location_file == '' or path_location_file is None or len(path_location_file) == 0:
+                msg[f'{today} - TblAnalogs: не указана конечная папка'] = 2
+                return msg
+            file.write(text_start)
+            for insert in gen_list:
+                file.write(insert)
+            file.write(f'COMMIT;')
+            file.close()
+
+            msg[f'{today} - TblAnalogs: генерация завершена!'] = 1
         return(msg)
 
 

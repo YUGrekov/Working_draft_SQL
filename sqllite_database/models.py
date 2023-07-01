@@ -26,11 +26,11 @@ password_msg = 'postgres'
 host_msg = 'localhost'
 port_msg = '5432'
 
-database_ust = ''
-user_ust = ''
-password_ust = ''
-host_ust = ''
-port_ust = ''
+database_prj = 'asutp'
+user_prj = 'postgres'
+password_prj = 'postgres'
+host_prj = 'localhost'
+port_prj = '5432'
 
 #db = PostgresqlDatabase('mydatabase', user='postgress', password='postgres', host='localhost', port=5432)
 
@@ -63,18 +63,19 @@ port_ust = ''
 #             port_msg = split_str[1]
         
 #         if split_str[0] == 'database':
-#             database_ust = split_str[1]
+#             database_prj = split_str[1]
 #         if split_str[0] == 'user':
-#             user_ust = split_str[1]
+#             user_prj = split_str[1]
 #         if split_str[0] == 'password':
-#             password_ust = split_str[1]
+#             password_prj = split_str[1]
 #         if split_str[0] == 'host':
-#             host_ust = split_str[1]
+#             host_prj = split_str[1]
 #         if split_str[0] == 'port':
-#             port_ust = split_str[1]
+#             port_prj = split_str[1]
 
 
 db = PostgresqlDatabase(database_msg, user=user_msg, password=password_msg, host=host_msg, port=port_msg)
+db_prj = PostgresqlDatabase(database_prj, user=user_prj, password=password_prj, host=host_prj, port=port_prj)
 #db = SqliteDatabase(path_to_base)
 migrator = SqliteMigrator(db)
 
