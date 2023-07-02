@@ -179,7 +179,7 @@ class General_functions():
             return msg
         return msg
     def parser_sample(self, path, kod_msg, name, flag_write_db, table, *args):
-        cursor = db.cursor()
+        cursor = db_prj.cursor()
         parser = etree.XMLParser(remove_blank_text=True)
         tree = etree.parse(path, parser)
         root = tree.getroot()
@@ -793,7 +793,7 @@ class Filling_AI():
                         group_ust_analog = ''
                         eng_min          = None
                         eng_max          = None
-                        value_precision  = None
+                        value_precision  = 0
 
                         for key, short in dop_analog.items():
                             if self.dop_function.str_find(str(description).lower(), {key}):
@@ -3190,108 +3190,81 @@ class Generate_database_SQL():
         if len(list_tabl) == 0: return
         for tabl in list_tabl: 
             if tabl == 'AI': 
-                cursor = db.cursor()
-                msg.update(self.gen_msg_ai(cursor, flag_write_db))
+                msg.update(self.gen_msg_ai(flag_write_db))
                 continue
             if tabl == 'DI': 
-                cursor = db.cursor()
-                msg.update(self.gen_msg_general(cursor, flag_write_db, 'di', 'DI', 'PostgreSQL_Messages-DI'))
+                msg.update(self.gen_msg_general(flag_write_db, 'di', 'DI', 'PostgreSQL_Messages-DI'))
                 continue
             if tabl == 'DO': 
-                cursor = db.cursor()
-                msg.update(self.gen_msg_general(cursor, flag_write_db, 'do', 'DOP', 'PostgreSQL_Messages-DO'))
+                msg.update(self.gen_msg_general(flag_write_db, 'do', 'DOP', 'PostgreSQL_Messages-DO'))
                 continue
             if tabl == 'ZD': 
-                cursor = db.cursor()
-                msg.update(self.gen_msg_general(cursor, flag_write_db, 'zd', 'ZD', 'PostgreSQL_Messages-ZD'))
+                msg.update(self.gen_msg_general(flag_write_db, 'zd', 'ZD', 'PostgreSQL_Messages-ZD'))
                 continue
             if tabl == 'VS': 
-                cursor = db.cursor()
-                msg.update(self.gen_msg_general(cursor, flag_write_db, 'vs', 'VS', 'PostgreSQL_Messages-VS'))
+                msg.update(self.gen_msg_general(flag_write_db, 'vs', 'VS', 'PostgreSQL_Messages-VS'))
                 continue
             if tabl == 'VV': 
-                cursor = db.cursor()
-                msg.update(self.gen_msg_defence(cursor, flag_write_db, 'vv', 'VV', 'PostgreSQL_Messages-VV', 'TblHighVoltageSwitches'))
+                msg.update(self.gen_msg_defence(flag_write_db, 'vv', 'VV', 'PostgreSQL_Messages-VV', 'TblHighVoltageSwitches'))
                 continue
             if tabl == 'UTS': 
-                cursor = db.cursor()
-                msg.update(self.gen_msg_uts_upts(cursor, flag_write_db, 'uts', 'UTS', 'PostgreSQL_Messages-UTS'))
+                msg.update(self.gen_msg_uts_upts(flag_write_db, 'uts', 'UTS', 'PostgreSQL_Messages-UTS'))
                 continue
             if tabl == 'UPTS': 
-                cursor = db.cursor()
-                msg.update(self.gen_msg_uts_upts(cursor, flag_write_db, 'upts', 'UPTS', 'PostgreSQL_Messages-UPTS'))
+                msg.update(self.gen_msg_uts_upts(flag_write_db, 'upts', 'UPTS', 'PostgreSQL_Messages-UPTS'))
                 continue
             if tabl == 'UMPNA': 
-                cursor = db.cursor()
-                msg.update(self.gen_msg_umpna(cursor, flag_write_db, 'umpna', 'UMPNA', 'PostgreSQL_Messages-Pumps'))
-                cursor = db.cursor()
-                msg.update(self.gen_msg_umpna(cursor, flag_write_db, 'umpna', 'KTPRAS_1', 'PostgreSQL_Messages-KTPRAS_1'))
+                msg.update(self.gen_msg_umpna(flag_write_db, 'umpna', 'UMPNA', 'PostgreSQL_Messages-Pumps'))
+                msg.update(self.gen_msg_umpna(flag_write_db, 'umpna', 'KTPRAS_1', 'PostgreSQL_Messages-KTPRAS_1'))
                 continue
             if tabl == 'KTPR': 
-                cursor = db.cursor()
-                msg.update(self.gen_msg_defence(cursor, flag_write_db, 'ktpr', 'KTPR', 'PostgreSQL_Messages-KTPR', 'TblStationDefences'))
+                msg.update(self.gen_msg_defence(flag_write_db, 'ktpr', 'KTPR', 'PostgreSQL_Messages-KTPR', 'TblStationDefences'))
                 continue
             if tabl == 'KTPRP': 
-                cursor = db.cursor()
-                msg.update(self.gen_msg_defence(cursor, flag_write_db, 'ktprp', 'KTPRP', 'PostgreSQL_Messages-KTPRP', 'TblFireDefences'))
+                msg.update(self.gen_msg_defence(flag_write_db, 'ktprp', 'KTPRP', 'PostgreSQL_Messages-KTPRP', 'TblFireDefences'))
                 continue
             if tabl == 'KTPRA': 
-                cursor = db.cursor()
-                msg.update(self.gen_msg_defence(cursor, flag_write_db, 'ktpra', 'KTPRA', 'PostgreSQL_Messages-KTPRA', 'TblPumpDefences'))
+                msg.update(self.gen_msg_defence(flag_write_db, 'ktpra', 'KTPRA', 'PostgreSQL_Messages-KTPRA', 'TblPumpDefences'))
                 continue
             if tabl == 'GMPNA': 
-                cursor = db.cursor()
-                msg.update(self.gen_msg_defence(cursor, flag_write_db, 'gmpna', 'GMPNA', 'PostgreSQL_Messages-GMPNA', 'TblPumpReadineses'))
+                msg.update(self.gen_msg_defence(flag_write_db, 'gmpna', 'GMPNA', 'PostgreSQL_Messages-GMPNA', 'TblPumpReadineses'))
                 continue
             if tabl == 'KTPRS': 
-                cursor = db.cursor()
-                msg.update(self.gen_msg_defence(cursor, flag_write_db, 'ktprs', 'KTPRS', 'PostgreSQL_Messages-KTPRS', 'TblLimitParameters'))
+                msg.update(self.gen_msg_defence(flag_write_db, 'ktprs', 'KTPRS', 'PostgreSQL_Messages-KTPRS', 'TblLimitParameters'))
                 continue
             if tabl == 'Diag': 
-                cursor = db.cursor()
-                msg.update(self.gen_msg_diag(cursor, flag_write_db))
+                msg.update(self.gen_msg_diag(flag_write_db))
                 continue
             if tabl == 'SS': 
-                cursor = db.cursor()
-                msg.update(self.gen_msg_defence(cursor, flag_write_db, 'ss', 'DiagSS', 'PostgreSQL_Messages-SS', 'TblD_RelatedSystems'))
+                msg.update(self.gen_msg_defence(flag_write_db, 'ss', 'DiagSS', 'PostgreSQL_Messages-SS', 'TblD_RelatedSystems'))
                 continue
             if tabl == 'DPS': 
-                cursor = db.cursor()
-                msg.update(self.gen_msg_defence(cursor, flag_write_db, 'dps', 'DPS', 'PostgreSQL_Messages-DPS', 'TblPigSignallers'))
+                msg.update(self.gen_msg_defence(flag_write_db, 'dps', 'DPS', 'PostgreSQL_Messages-DPS', 'TblPigSignallers'))
                 continue
             if tabl == 'Others': 
-                cursor = db.cursor()
-                msg.update(self.gen_msg_others(cursor, flag_write_db, 'msg_others', 'Others', 'PostgreSQL_Messages-Others'))
+                msg.update(self.gen_msg_others(flag_write_db, 'msg_others', 'Others', 'PostgreSQL_Messages-Others'))
                 continue
             if tabl == 'NPS': 
-                cursor = db.cursor()
-                msg.update(self.gen_msg_nps(cursor, flag_write_db, 'nps', 'NPS','PostgreSQL_Messages-NPS', 'TblNPS'))
-                cursor = db.cursor()
-                msg.update(self.gen_msg_nps(cursor, flag_write_db, 'krmpn', 'KRMPN','PostgreSQL_Messages-KRMPN', 'TblStationCommonKRMPN'))
+                msg.update(self.gen_msg_nps(flag_write_db, 'nps', 'NPS','PostgreSQL_Messages-NPS', 'TblNPS'))
+                msg.update(self.gen_msg_nps(flag_write_db, 'krmpn', 'KRMPN','PostgreSQL_Messages-KRMPN', 'TblStationCommonKRMPN'))
                 continue
             if tabl == 'PZ': 
-                cursor = db.cursor()
-                msg.update(self.gen_msg_firezone(cursor, flag_write_db, 'pz', 'PostgreSQL_Messages-PZ'))
+                msg.update(self.gen_msg_firezone(flag_write_db, 'pz', 'PostgreSQL_Messages-PZ'))
                 continue
             if tabl == 'PI': 
-                cursor = db.cursor()
-                msg.update(self.gen_msg_defence(cursor, flag_write_db, 'pi', 'PI', 'PostgreSQL_Messages-PI', 'TblFireDetectors'))
+                msg.update(self.gen_msg_defence(flag_write_db, 'pi', 'PI', 'PostgreSQL_Messages-PI', 'TblFireDetectors'))
                 continue
             if tabl == 'BD': 
-                cursor = db.cursor()
-                msg.update(self.gen_msg_defence(cursor, flag_write_db, 'bd', 'BD', 'PostgreSQL_Messages-BD', 'TblTankDispensers'))
+                msg.update(self.gen_msg_defence(flag_write_db, 'bd', 'BD', 'PostgreSQL_Messages-BD', 'TblTankDispensers'))
                 continue
             if tabl == 'BDGRP': 
-                cursor = db.cursor()
-                msg.update(self.gen_msg_defence(cursor, flag_write_db, 'bdgrp', 'BDGrp', 'PostgreSQL_Messages-BDGrp', 'TblTankDispenserGroups'))
+                msg.update(self.gen_msg_defence(flag_write_db, 'bdgrp', 'BDGrp', 'PostgreSQL_Messages-BDGrp', 'TblTankDispenserGroups'))
                 continue
             if tabl == 'Global': 
-                cursor = db.cursor()
-                msg.update(self.gen_msg_nps(cursor, flag_write_db, 'global', 'Global', 'PostgreSQL_Messages-Global', 'TblGlobal'))
+                msg.update(self.gen_msg_nps(flag_write_db, 'global', 'Global', 'PostgreSQL_Messages-Global', 'TblGlobal'))
                 continue
             if tabl == 'TM_DP': 
-                cursor = db.cursor()
-                msg.update(self.gen_msg_defence(cursor, flag_write_db, 'tm_dp', 'DiagTM_DP', 'PostgreSQL_Messages-TMDP', 'TblD_TM_DP'))
+                msg.update(self.gen_msg_defence(flag_write_db, 'tm_dp', 'DiagTM_DP', 'PostgreSQL_Messages-TMDP', 'TblD_TM_DP'))
                 continue
         return msg
     def write_in_sql_tabl(self, list_tabl, flag_write_db):
@@ -3299,497 +3272,507 @@ class Generate_database_SQL():
             if len(list_tabl) == 0: return
             for tabl in list_tabl: 
                 if tabl == 'AI_tabl': 
-                    cursor = db.cursor()
-                    cursor_prj = db_prj.cursor()
-                    msg.update(self.gen_table_AI(cursor, cursor_prj, flag_write_db))
+                    msg.update(self.gen_table_AI(flag_write_db))
                     continue
             return msg
-    def gen_msg_ai(self, cursor, flag_write_db):
-        with db:
-            msg = {}
-            gen_list = []
-            try:
-                kod_msg, addr_offset = self.define_number_msg(cursor, 'AI')
-                if addr_offset == 0 or kod_msg is None or addr_offset is None: 
-                    msg[f'{today} - Сообщения ai: ошибка. Адреса из таблицы msg не определены'] = 2
-                    return msg
-                cursor.execute(f"""SELECT id, name, group_analog FROM ai""")
-                list_ai = cursor.fetchall()
-                for analog in list_ai:
-                    id_ai    = analog[0]
-                    name_ai  = analog[1]
-                    group_ai = analog[2]
+    # msg
+    def gen_msg_ai(self, flag_write_db):
+        msg = {}
+        gen_list = []
+        cursor = db.cursor()
+        try:
+            kod_msg, addr_offset = self.define_number_msg(cursor, 'AI')
+            if addr_offset == 0 or kod_msg is None or addr_offset is None: 
+                msg[f'{today} - Сообщения ai: ошибка. Адреса из таблицы msg не определены'] = 2
+                return msg
+            cursor.execute(f"""SELECT id, "Name", "AnalogGroupId" FROM ai""")
+            list_ai = cursor.fetchall()
+            for analog in list_ai:
+                id_ai    = analog[0]
+                name_ai  = analog[1]
+                group_ai = analog[2]
 
-                    start_addr = kod_msg + ((id_ai - 1) * int(addr_offset))
-                    try:
-                        cursor.execute(f"""SELECT "Table_msg" 
-                                           FROM ai_grp
-                                           WHERE name_group='{group_ai}'""")
-                        list_group = cursor.fetchall()[0][0]
-                        path = f'{path_sample}\{list_group}.xml'
-                        if not os.path.isfile(path):
-                            msg[f'{today} - Сообщения ai: отсутствует шаблон - {list_group}'] = 2
-                            continue
-                        gen_list.append(self.dop_function.parser_sample(path, start_addr, name_ai, flag_write_db, 'AI'))
-                    except Exception:
-                        msg[f'{today} - Сообщения ai: отсутствует шаблон: {id_ai} - {name_ai}'] = 2
+                start_addr = kod_msg + ((id_ai - 1) * int(addr_offset))
+                try:
+                    cursor.execute(f"""SELECT "Table_msg" 
+                                       FROM ai_grp
+                                       WHERE name_group='{group_ai}'""")
+                    list_group = cursor.fetchall()[0][0]
+                    path = f'{path_sample}\{list_group}.xml'
+                    if not os.path.isfile(path):
+                        msg[f'{today} - Сообщения ai: отсутствует шаблон - {list_group}'] = 2
                         continue
-                if not flag_write_db:
-                    msg.update(self.write_file(gen_list, 'AI', 'PostgreSQL_Messages-AI'))
-                    msg[f'{today} - Сообщения ai: файл скрипта создан'] = 1
-                    return(msg)
-            except Exception:
-                msg[f'{today} - Сообщения ai: ошибка генерации: {traceback.format_exc()}'] = 2
-            msg[f'{today} - Сообщения ai: генерация в базу завершена'] = 1
+                    gen_list.append(self.dop_function.parser_sample(path, start_addr, name_ai, flag_write_db, 'AI'))
+                except Exception:
+                    msg[f'{today} - Сообщения ai: отсутствует шаблон: {id_ai} - {name_ai}'] = 2
+                    continue
+            if not flag_write_db:
+                msg.update(self.write_file(gen_list, 'AI', 'PostgreSQL_Messages-AI'))
+                msg[f'{today} - Сообщения ai: файл скрипта создан'] = 1
+                return(msg)
+        except Exception:
+            msg[f'{today} - Сообщения ai: ошибка генерации: {traceback.format_exc()}'] = 2
+        msg[f'{today} - Сообщения ai: генерация завершена'] = 1
         return(msg)
-    def gen_msg_umpna(self, cursor, flag_write_db, tabl, sign, script_file):
-        with db:
-            msg = {}
-            gen_list = []
-            try:
-                kod_msg, addr_offset = self.define_number_msg(cursor, sign)
-                if addr_offset == 0 or kod_msg is None or addr_offset is None: 
-                    msg[f'{today} - Сообщения {tabl}: ошибка. Адреса из таблицы msg не определены'] = 2
-                    return msg
-                
-                cursor.execute(f"""SELECT id, name, tabl_msg, replacement_uso_signal_vv_1, replacement_uso_signal_vv_2
-                                    FROM "{tabl}" ORDER BY id""")
-                list_signal = cursor.fetchall()
-                for signal in list_signal:
-                    id_       = signal[0]
-                    name      = signal[1]
-                    table_msg = signal[2]
-                    cabinet_1 = signal[3]
-                    cabinet_2 = signal[4]
-
-                    if sign == 'KTPRAS_1': table_msg = 'TblPumpsKTPRAS'
-
-                    start_addr = kod_msg + ((id_ - 1) * int(addr_offset))
-                    path = f'{path_sample}\{table_msg}.xml'
-                    if not os.path.isfile(path):
-                        msg[f'{today} - Сообщения {tabl}: в папке отсутствует шаблон - {table_msg}'] = 2
-                        continue
-                    gen_list.append(self.dop_function.parser_sample(path, start_addr, name, flag_write_db, sign, cabinet_1, cabinet_2))
-                if not flag_write_db:
-                    msg.update(self.write_file(gen_list, sign, script_file))
-                    msg[f'{today} - Сообщения {tabl}: файл скрипта создан'] = 1
-                    return(msg)
-            except Exception:
-                msg[f'{today} - Сообщения {tabl}: ошибка генерации: {traceback.format_exc()}'] = 2
-            msg[f'{today} - Сообщения {tabl}: генерация в базу завершена!'] = 1
-        return(msg)
-    def gen_msg_uts_upts(self, cursor, flag_write_db, tabl, sign, script_file):
-        with db:
-            msg = {}
-            gen_list = []
-            try:
-                kod_msg, addr_offset = self.define_number_msg(cursor, sign)
-                if addr_offset == 0 or kod_msg is None or addr_offset is None: 
-                    msg[f'{today} - Сообщения {tabl}: ошибка. Адреса из таблицы msg не определены'] = 2
-                    return msg
-
-                cursor.execute(f"""SELECT id, name FROM "{tabl}" ORDER BY id""")
-                list_signal = cursor.fetchall()
-                for signal in list_signal:
-                    id_       = signal[0]
-                    name      = signal[1]
-                    
-                    if tabl == 'uts':
-                        if   self.dop_function.str_find(str(name).lower(), {'звонок'}): table_msg = 'TblSignalingDevicesMale'
-                        elif self.dop_function.str_find(str(name).lower(), {'табло'}) : table_msg = 'TblSignalingDevices'
-                        elif self.dop_function.str_find(str(name).lower(), {'сирена'}): table_msg = 'TblSignalingDevicesFemale'
-                        elif self.dop_function.str_find(str(name).lower(), {'сирены'}): table_msg = 'TblSignalingDevicesMany'
-                        elif self.dop_function.str_find(str(name).lower(), {'сигнализация'}): table_msg = 'TblSignalingDevicesFemale'
-                        else: table_msg = 'TblSignalingDevices'
-                    else:
-                        table_msg = 'TblFireSignalingDevices'
-
-                    start_addr = kod_msg + ((id_ - 1) * int(addr_offset))
-                    path = f'{path_sample}\{table_msg}.xml'
-                    if not os.path.isfile(path):
-                        msg[f'{today} - Сообщения {tabl}: в папке отсутствует шаблон - {table_msg}'] = 2
-                        return msg
-
-                    gen_list.append(self.dop_function.parser_sample(path, start_addr, name, flag_write_db, sign))
-
-                if not flag_write_db:
-                    msg.update(self.write_file(gen_list, sign, script_file))
-                    msg[f'{today} - Сообщения {tabl}: файл скрипта создан'] = 1
-                    return(msg)
-            except Exception:
-                msg[f'{today} - Сообщения {tabl}: ошибка генерации: {traceback.format_exc()}'] = 2
-            msg[f'{today} - Сообщения {tabl}: генерация в базу завершена!'] = 1
-        return(msg)
-    def gen_msg_defence(self, cursor, flag_write_db, tabl, sign, script_file, table_msg):
-        with db:
-            msg = {}
-            gen_list = []
-            try:
-                kod_msg, addr_offset = self.define_number_msg(cursor, sign)
-                if addr_offset == 0 or kod_msg is None or addr_offset is None: 
-                    msg[f'{today} - Сообщения {tabl}: ошибка. Адреса из таблицы msg не определены'] = 2
-                    return msg
-                
-                if sign == 'KTPRA' or sign == 'GMPNA':
-                    cursor.execute(f"""SELECT id, name, "NA" FROM "{tabl}" ORDER BY id""")
-                else:
-                    cursor.execute(f"""SELECT id, name FROM "{tabl}" ORDER BY id""")
-                list_signal = cursor.fetchall()
-                for signal in list_signal:
-                    id_       = signal[0]
-                    name      = signal[1]
-                    if sign == 'KTPRA' or sign == 'GMPNA':
-                        na    = signal[2]
-
-                    start_addr = kod_msg + ((id_ - 1) * int(addr_offset))
-                    path = f'{path_sample}\{table_msg}.xml'
-                    if not os.path.isfile(path):
-                        msg[f'{today} - Сообщения {tabl}: в папке отсутствует шаблон - {table_msg}'] = 2
-                        return msg
-                    if sign == 'KTPRA' or sign == 'GMPNA':
-                        gen_list.append(self.dop_function.parser_sample(path, start_addr, f'{na}. {name}', flag_write_db, sign))
-                    if sign == 'KTPRP':
-                        gen_list.append(self.dop_function.parser_sample(path, start_addr, f'Пожарная защита. {name}', flag_write_db, sign))
-                    else:
-                        gen_list.append(self.dop_function.parser_sample(path, start_addr, name, flag_write_db, sign))
-                if not flag_write_db:
-                    msg.update(self.write_file(gen_list, sign, script_file))
-                    msg[f'{today} - Сообщения {tabl}: файл скрипта создан'] = 1
-                    return(msg)
-            except Exception:
-                msg[f'{today} - Сообщения {tabl}: ошибка генерации: {traceback.format_exc()}'] = 2
-            msg[f'{today} - Сообщения {tabl}: генерация в базу завершена!'] = 1
-        return(msg)
-    def gen_msg_general(self, cursor, flag_write_db, tabl, sign, script_file):
-        with db:
-            msg = {}
-            gen_list = []
-            try:
-                kod_msg, addr_offset = self.define_number_msg(cursor, sign)
-                if addr_offset == 0 or kod_msg is None or addr_offset is None: 
-                    msg[f'{today} - Сообщения {tabl}: ошибка. Адреса из таблицы msg не определены'] = 2
-                    return msg
-                
-                cursor.execute(f"""SELECT id, name, tabl_msg FROM "{tabl}" ORDER BY id""")
-                list_signal = cursor.fetchall()
-                for signal in list_signal:
-                    id_       = signal[0]
-                    name      = signal[1]
-                    table_msg = signal[2]
-
-                    start_addr = kod_msg + ((id_ - 1) * int(addr_offset))
-                    path = f'{path_sample}\{table_msg}.xml'
-                    if not os.path.isfile(path):
-                        msg[f'{today} - Сообщения {tabl}: в папке отсутствует шаблон - {table_msg}'] = 2
-                        continue
-                    gen_list.append(self.dop_function.parser_sample(path, start_addr, name, flag_write_db, sign))
-                if not flag_write_db:
-                    msg.update(self.write_file(gen_list, sign, script_file))
-                    msg[f'{today} - Сообщения {tabl}: файл скрипта создан'] = 1
-                    return(msg)
-            except Exception:
-                msg[f'{today} - Сообщения {tabl}: ошибка генерации: {traceback.format_exc()}'] = 2
-            msg[f'{today} - Сообщения {tabl}: генерация в базу завершена!'] = 1
-        return(msg)
-    def gen_msg_diag(self, cursor, flag_write_db):
-        with db:
-            msg = {}
-            modul_list = []
-
-            tabl = 'hardware' 
-            count_CN, count_CPU, count_EthEx = 0, 0, 0
-            count_MN, count_PCU, count_RS = 0, 0, 0 
-            try:
-                for column in HardWare.select().dicts():
-                    id_basket = column['id']
-                    uso       = column['uso']
-                    basket    = column['basket']
-                    for five_column in range(0, 33, 1):
-                        if column[f'type_{five_column}'] != '' and column[f'type_{five_column}'] is not None:
-                            type_modul = column[f'type_{five_column}']
-                            prefix_number = f'0{five_column}' if five_column < 10 else basket
-
-                            value = f'Диагностика. {uso}. Модуль А{basket}.{prefix_number} {type_modul}'
-                            modul_list.append(dict(id        = id_basket,
-                                                   num_modul = five_column,
-                                                   type_modul = type_modul,
-                                                   value     = value,
-                                                   basket    = basket))
-                for i in range(2):
-                    gen_list = []
-                    if i == 0:
-                        sign = 'DiagMod' 
-                        script_file = 'PostgreSQL_Messages-Racks' 
-                        table_msg = 'TblD_Racks'
-                        tbl_racks = True
-
-                        kod_msg, addr_offset = self.define_number_msg(cursor, sign)
-                        if addr_offset == 0 or kod_msg is None or addr_offset is None: 
-                            msg[f'{today} - Сообщения {tabl}: адрес {tabl} из таблицы msg не определен'] = 2
-                            return msg
-                    else:
-                        script_file = 'PostgreSQL_Messages-Modul' 
-                        tbl_racks = False
-                        for j in range(6):
-                            if   j == 0: sign = 'DiagCN'
-                            elif j == 1: sign = 'DiagCPU'
-                            elif j == 2: sign = 'DiagEthEx'
-                            elif j == 3: sign = 'DiagMN'
-                            elif j == 4: sign = 'DiagCPUKC'
-                            elif j == 5: sign = 'DiagRS'
-
-                            kod_msg, addr_offset = self.define_number_msg(cursor, sign)
-                            if addr_offset == 0 or kod_msg is None or addr_offset is None: 
-                                msg[f'{today} - Сообщения {tabl}: адрес {tabl} из таблицы msg не определен'] = 2
-                                return msg
-                            
-                            if   j == 0: 
-                                kod_msg_CN     = kod_msg
-                                addr_offset_CN = addr_offset
-                            elif j == 1: 
-                                kod_msg_CPU     = kod_msg
-                                addr_offset_CPU = addr_offset
-                            elif j == 2: 
-                                kod_msg_EthEx     = kod_msg
-                                addr_offset_EthEx = addr_offset
-                            elif j == 3: 
-                                kod_msg_MN     = kod_msg
-                                addr_offset_MN = addr_offset
-                            elif j == 4: 
-                                kod_msg_PCU     = kod_msg
-                                addr_offset_PCU = addr_offset
-                            elif j == 5: 
-                                kod_msg_RS     = kod_msg
-                                addr_offset_RS = addr_offset
-                        
-                    for modul in modul_list:
-                        id_basket    = modul['id']
-                        number_modul = modul['num_modul']
-                        type_modul   = modul['type_modul']
-                        value_modul  = modul['value']
-                        basket       = modul['basket']
-
-                        if tbl_racks is True:
-                            offset_basket = 32 * 14 * (int(id_basket) - 1)
-                            start_addr = kod_msg + offset_basket + (number_modul* int(addr_offset))
-                        else:
-                            if   type_modul == 'MK-545-010': 
-                                start_addr = kod_msg_CN + (count_CN * int(addr_offset_CN)) 
-                                table_msg = 'TblD_ModulesCN'
-                                count_CN += 1
-                            elif type_modul == 'MK-504-120': 
-                                start_addr = kod_msg_CPU + (count_CPU * int(addr_offset_CPU)) 
-                                table_msg = 'TblD_ModulesCPU'
-                                count_CPU += 1
-                            elif type_modul == 'MK-544-040': 
-                                start_addr = kod_msg_EthEx + (count_EthEx * int(addr_offset_EthEx)) 
-                                table_msg = 'TblD_ModulesEthEx'
-                                count_EthEx += 1
-                            elif type_modul == 'MK-546-010': 
-                                start_addr = kod_msg_MN + (count_MN * int(addr_offset_MN)) 
-                                table_msg = 'TblD_ModulesMN'
-                                count_MN += 1
-                            elif type_modul == 'MK-550-024': 
-                                start_addr = kod_msg_PCU + (count_PCU * int(addr_offset_PCU)) 
-                                table_msg = 'TblD_ModulesPSU'
-                                count_PCU += 1
-                            elif type_modul == 'MK-541-002': 
-                                start_addr = kod_msg_RS + (count_RS * int(addr_offset_RS)) 
-                                table_msg = 'TblD_ModulesRS'
-                                count_RS += 1
-
-                        path = f'{path_sample}\{table_msg}.xml'
-                        if not os.path.isfile(path):
-                            msg[f'{today} - Сообщения {tabl}: в папке отсутствует шаблон - {table_msg}'] = 2
-                            return msg
-
-                        gen_list.append(self.dop_function.parser_sample(path, start_addr, value_modul, flag_write_db, sign))
-
-                    if not flag_write_db:
-                        msg.update(self.write_file(gen_list, sign, script_file))
-                        msg[f'{today} - Сообщения {tabl}: файл скрипта создан'] = 1
-            except Exception:
-                msg[f'{today} - Сообщения {tabl}: ошибка генерации: {traceback.format_exc()}'] = 2
-            msg[f'{today} - Сообщения {tabl}: генерация в базу завершена!'] = 1
-        return(msg)
-    def gen_msg_others(self, cursor, flag_write_db, tabl, sign, script_file):
-        with db:
-            msg = {}
-            gen_list = []
-            try:
-                kod_msg, addr_offset = self.define_number_msg(cursor, sign)
-                if addr_offset == 0 or kod_msg is None or addr_offset is None: 
-                    msg[f'{today} - Сообщения {tabl}: ошибка. Адреса из таблицы msg не определены'] = 2
-                    return msg
-                
-                cursor.execute(f"""SELECT id, text, priority, "isAck", "IsAlert", "IsCycle", "IsSound", "SoundFile", "IsHide"
-                                    FROM "{tabl}" ORDER BY id""")
-                list_signal = cursor.fetchall()
-
-                for signal in list_signal:
-                    id_       = signal[0]
-                    text      = signal[1]
-                    priority  = signal[2]
-                    isAck     = signal[3]
-                    IsAlert   = signal[4]
-                    IsCycle   = signal[5]
-                    IsSound   = signal[6]
-                    SoundFile = signal[7]
-                    IsHide    = signal[8]
-
-                    if SoundFile is None: SoundFile = ''
-
-                    del_row_tabl = f"DELETE FROM messages.opmessages WHERE Category ={kod_msg + int(id_)};\n"
-                    ins_row_tabl = f"INSERT INTO messages.opmessages (Category, Message, IsAck, SoundFile, IsCycle, IsSound, IsHide, Priority, IsAlert) VALUES({kod_msg + int(id_)}, '{text}', {isAck}, '{SoundFile}', {IsCycle}, {IsSound}, {IsHide}, {priority}, {IsAlert});\n"
-
-                    if flag_write_db:
-                        cursor.execute(del_row_tabl)
-                        cursor.execute(ins_row_tabl)
-                    else:
-                        gen_list.append(dict(delete = del_row_tabl,
-                                                insert = ins_row_tabl))
+    def gen_msg_umpna(self, flag_write_db, tabl, sign, script_file):
+        msg = {}
+        gen_list = []
+        cursor = db.cursor()
+        try:
+            kod_msg, addr_offset = self.define_number_msg(cursor, sign)
+            if addr_offset == 0 or kod_msg is None or addr_offset is None: 
+                msg[f'{today} - Сообщения {tabl}: ошибка. Адреса из таблицы msg не определены'] = 2
+                return msg
             
-                if not flag_write_db:
-                    msg.update(self.write_file(gen_list, sign, script_file))
-                    msg[f'{today} - Сообщения {tabl}: файл скрипта создан'] = 1
-                    return(msg)
-            except Exception:
-                msg[f'{today} - Сообщения {tabl}: ошибка генерации: {traceback.format_exc()}'] = 2
-            msg[f'{today} - Сообщения {tabl}: генерация в базу завершена!'] = 1
+            cursor.execute(f"""SELECT id, name, tabl_msg, replacement_uso_signal_vv_1, replacement_uso_signal_vv_2
+                                FROM "{tabl}" ORDER BY id""")
+            list_signal = cursor.fetchall()
+            for signal in list_signal:
+                id_       = signal[0]
+                name      = signal[1]
+                table_msg = signal[2]
+                cabinet_1 = signal[3]
+                cabinet_2 = signal[4]
+
+                if sign == 'KTPRAS_1': table_msg = 'TblPumpsKTPRAS'
+
+                start_addr = kod_msg + ((id_ - 1) * int(addr_offset))
+                path = f'{path_sample}\{table_msg}.xml'
+                if not os.path.isfile(path):
+                    msg[f'{today} - Сообщения {tabl}: в папке отсутствует шаблон - {table_msg}'] = 2
+                    continue
+                gen_list.append(self.dop_function.parser_sample(path, start_addr, name, flag_write_db, sign, cabinet_1, cabinet_2))
+
+            if not flag_write_db:
+                msg.update(self.write_file(gen_list, sign, script_file))
+                msg[f'{today} - Сообщения {tabl}: файл скрипта создан'] = 1
+                return(msg)
+        except Exception:
+            msg[f'{today} - Сообщения {tabl}: ошибка генерации: {traceback.format_exc()}'] = 2
+        msg[f'{today} - Сообщения {tabl}: генерация завершена!'] = 1
         return(msg)
-    def gen_msg_nps(self, cursor, flag_write_db, tabl, sign, script_file, table_msg):
-        with db:
-            msg = {}
-            gen_list = []
-            try:
-                kod_msg, addr_offset = self.define_number_msg(cursor, sign)
-                if addr_offset == 0 or kod_msg is None or addr_offset is None: 
-                    msg[f'{today} - Сообщения {tabl}: ошибка. Адреса из таблицы msg не определены'] = 2
-                    return msg
+    def gen_msg_uts_upts(self, flag_write_db, tabl, sign, script_file):
+        msg = {}
+        gen_list = []
+        cursor = db.cursor()
+        try:
+            kod_msg, addr_offset = self.define_number_msg(cursor, sign)
+            if addr_offset == 0 or kod_msg is None or addr_offset is None: 
+                msg[f'{today} - Сообщения {tabl}: ошибка. Адреса из таблицы msg не определены'] = 2
+                return msg
+
+            cursor.execute(f"""SELECT id, name FROM "{tabl}" ORDER BY id""")
+            list_signal = cursor.fetchall()
+            for signal in list_signal:
+                id_       = signal[0]
+                name      = signal[1]
                 
+                if tabl == 'uts':
+                    if   self.dop_function.str_find(str(name).lower(), {'звонок'}): table_msg = 'TblSignalingDevicesMale'
+                    elif self.dop_function.str_find(str(name).lower(), {'табло'}) : table_msg = 'TblSignalingDevices'
+                    elif self.dop_function.str_find(str(name).lower(), {'сирена'}): table_msg = 'TblSignalingDevicesFemale'
+                    elif self.dop_function.str_find(str(name).lower(), {'сирены'}): table_msg = 'TblSignalingDevicesMany'
+                    elif self.dop_function.str_find(str(name).lower(), {'сигнализация'}): table_msg = 'TblSignalingDevicesFemale'
+                    else: table_msg = 'TblSignalingDevices'
+                else:
+                    table_msg = 'TblFireSignalingDevices'
+
+                start_addr = kod_msg + ((id_ - 1) * int(addr_offset))
                 path = f'{path_sample}\{table_msg}.xml'
                 if not os.path.isfile(path):
                     msg[f'{today} - Сообщения {tabl}: в папке отсутствует шаблон - {table_msg}'] = 2
                     return msg
 
-                gen_list.append(self.dop_function.parser_sample(path, kod_msg, '', flag_write_db, sign))
-            
-                if not flag_write_db:
-                    msg.update(self.write_file(gen_list, sign, script_file))
-                    msg[f'{today} - Сообщения {tabl}: файл скрипта создан'] = 1
-                    return(msg)
-            except Exception:
-                msg[f'{today} - Сообщения {tabl}: ошибка генерации: {traceback.format_exc()}'] = 2
-            msg[f'{today} - Сообщения {tabl}: генерация в базу завершена!'] = 1
+                gen_list.append(self.dop_function.parser_sample(path, start_addr, name, flag_write_db, sign))
+
+            if not flag_write_db:
+                msg.update(self.write_file(gen_list, sign, script_file))
+                msg[f'{today} - Сообщения {tabl}: файл скрипта создан'] = 1
+                return(msg)
+        except Exception:
+            msg[f'{today} - Сообщения {tabl}: ошибка генерации: {traceback.format_exc()}'] = 2
+        msg[f'{today} - Сообщения {tabl}: генерация завершена!'] = 1
         return(msg)
-    def gen_msg_firezone(self, cursor, flag_write_db, tabl, script_file):
-        with db:
-            msg = {}
-            gen_list = []
-            try:  
-                for j in range(7):
-                    if   j == 0: sign = 'SPZ'
-                    elif j == 1: sign = 'GPZFoam'
-                    elif j == 2: sign = 'GPZWater'
-                    elif j == 3: sign = 'SUP'
-                    elif j == 4: sign = 'ATP'
-                    elif j == 5: sign = 'GPZWOF'
-                    elif j == 6: sign = 'GPZGas'
+    def gen_msg_defence(self, flag_write_db, tabl, sign, script_file, table_msg):
+        msg = {}
+        gen_list = []
+        cursor = db.cursor()
+        try:
+            kod_msg, addr_offset = self.define_number_msg(cursor, sign)
+            if addr_offset == 0 or kod_msg is None or addr_offset is None: 
+                msg[f'{today} - Сообщения {tabl}: ошибка. Адреса из таблицы msg не определены'] = 2
+                return msg
+            
+            if sign == 'KTPRA' or sign == 'GMPNA':
+                cursor.execute(f"""SELECT id, name, "NA" FROM "{tabl}" ORDER BY id""")
+            else:
+                cursor.execute(f"""SELECT id, name FROM "{tabl}" ORDER BY id""")
+            list_signal = cursor.fetchall()
+            for signal in list_signal:
+                id_       = signal[0]
+                name      = signal[1]
+                if sign == 'KTPRA' or sign == 'GMPNA': na = signal[2]
+
+                start_addr = kod_msg + ((id_ - 1) * int(addr_offset))
+                path = f'{path_sample}\{table_msg}.xml'
+                if not os.path.isfile(path):
+                    msg[f'{today} - Сообщения {tabl}: в папке отсутствует шаблон - {table_msg}'] = 2
+                    return msg
+                if sign == 'KTPRA' or sign == 'GMPNA':
+                    gen_list.append(self.dop_function.parser_sample(path, start_addr, f'{na}. {name}', flag_write_db, sign))
+                if sign == 'KTPRP':
+                    gen_list.append(self.dop_function.parser_sample(path, start_addr, f'Пожарная защита. {name}', flag_write_db, sign))
+                else:
+                    gen_list.append(self.dop_function.parser_sample(path, start_addr, name, flag_write_db, sign))
+            if not flag_write_db:
+                msg.update(self.write_file(gen_list, sign, script_file))
+                msg[f'{today} - Сообщения {tabl}: файл скрипта создан'] = 1
+                return(msg)
+        except Exception:
+            msg[f'{today} - Сообщения {tabl}: ошибка генерации: {traceback.format_exc()}'] = 2
+        msg[f'{today} - Сообщения {tabl}: генерация завершена!'] = 1
+        return(msg)
+    def gen_msg_general(self, flag_write_db, tabl, sign, script_file):
+        msg = {}
+        gen_list = []
+        cursor = db.cursor()
+        try:
+            kod_msg, addr_offset = self.define_number_msg(cursor, sign)
+            if addr_offset == 0 or kod_msg is None or addr_offset is None: 
+                msg[f'{today} - Сообщения {tabl}: ошибка. Адреса из таблицы msg не определены'] = 2
+                return msg
+            
+            cursor.execute(f"""SELECT id, name, tabl_msg FROM "{tabl}" ORDER BY id""")
+            list_signal = cursor.fetchall()
+            for signal in list_signal:
+                id_       = signal[0]
+                name      = signal[1]
+                table_msg = signal[2]
+
+                start_addr = kod_msg + ((id_ - 1) * int(addr_offset))
+                path = f'{path_sample}\{table_msg}.xml'
+                if not os.path.isfile(path):
+                    msg[f'{today} - Сообщения {tabl}: в папке отсутствует шаблон - {table_msg}'] = 2
+                    continue
+                gen_list.append(self.dop_function.parser_sample(path, start_addr, name, flag_write_db, sign))
+            if not flag_write_db:
+                msg.update(self.write_file(gen_list, sign, script_file))
+                msg[f'{today} - Сообщения {tabl}: файл скрипта создан'] = 1
+                return(msg)
+        except Exception:
+            msg[f'{today} - Сообщения {tabl}: ошибка генерации: {traceback.format_exc()}'] = 2
+        msg[f'{today} - Сообщения {tabl}: генерация завершена!'] = 1
+        return(msg)
+    def gen_msg_diag(self, flag_write_db):
+        msg = {}
+        modul_list = []
+        cursor = db.cursor()
+
+        tabl = 'hardware' 
+        count_CN, count_CPU, count_EthEx = 0, 0, 0
+        count_MN, count_PCU, count_RS = 0, 0, 0 
+        try:
+            for column in HardWare.select().dicts():
+                id_basket = column['id']
+                uso       = column['uso']
+                basket    = column['basket']
+                for five_column in range(0, 33, 1):
+                    if column[f'type_{five_column}'] != '' and column[f'type_{five_column}'] is not None:
+                        type_modul = column[f'type_{five_column}']
+                        prefix_number = f'0{five_column}' if five_column < 10 else basket
+
+                        value = f'Диагностика. {uso}. Модуль А{basket}.{prefix_number} {type_modul}'
+                        modul_list.append(dict(id          = id_basket,
+                                                num_modul  = five_column,
+                                                type_modul = type_modul,
+                                                value      = value,
+                                                basket     = basket))
+            for i in range(2):
+                gen_list = []
+                if i == 0:
+                    sign = 'DiagMod' 
+                    script_file = 'PostgreSQL_Messages-Racks' 
+                    table_msg = 'TblD_Racks'
+                    tbl_racks = True
 
                     kod_msg, addr_offset = self.define_number_msg(cursor, sign)
                     if addr_offset == 0 or kod_msg is None or addr_offset is None: 
-                        msg[f'{today} - Сообщения {tabl}: адрес {sign} из таблицы msg не определен'] = 2
-                        msg[f'{today} - Сообщения {tabl}: генерация сообщений без: {sign}'] = 2
-                        continue 
+                        msg[f'{today} - Сообщения {tabl}: адрес {tabl} из таблицы msg не определен'] = 2
+                        return msg
+                else:
+                    script_file = 'PostgreSQL_Messages-Modul' 
+                    tbl_racks = False
+                    for j in range(6):
+                        if   j == 0: sign = 'DiagCN'
+                        elif j == 1: sign = 'DiagCPU'
+                        elif j == 2: sign = 'DiagEthEx'
+                        elif j == 3: sign = 'DiagMN'
+                        elif j == 4: sign = 'DiagCPUKC'
+                        elif j == 5: sign = 'DiagRS'
+
+                        kod_msg, addr_offset = self.define_number_msg(cursor, sign)
+                        if addr_offset == 0 or kod_msg is None or addr_offset is None: 
+                            msg[f'{today} - Сообщения {tabl}: адрес {tabl} из таблицы msg не определен'] = 2
+                            return msg
+                        
+                        if   j == 0: 
+                            kod_msg_CN     = kod_msg
+                            addr_offset_CN = addr_offset
+                        elif j == 1: 
+                            kod_msg_CPU     = kod_msg
+                            addr_offset_CPU = addr_offset
+                        elif j == 2: 
+                            kod_msg_EthEx     = kod_msg
+                            addr_offset_EthEx = addr_offset
+                        elif j == 3: 
+                            kod_msg_MN     = kod_msg
+                            addr_offset_MN = addr_offset
+                        elif j == 4: 
+                            kod_msg_PCU     = kod_msg
+                            addr_offset_PCU = addr_offset
+                        elif j == 5: 
+                            kod_msg_RS     = kod_msg
+                            addr_offset_RS = addr_offset
                     
-                    if   j == 0: 
-                        kod_msg_SPZ    = kod_msg
-                        addr_offset_SPZ = addr_offset
-                    elif j == 1: 
-                        kod_msg_GPZFoam     = kod_msg
-                        addr_offset_GPZFoam = addr_offset
-                    elif j == 2: 
-                        kod_msg_GPZWater     = kod_msg
-                        addr_offset_GPZWater = addr_offset
-                    elif j == 3: 
-                        kod_msg_SUP     = kod_msg
-                        addr_offset_SUP = addr_offset
-                    elif j == 4: 
-                        kod_msg_ATP     = kod_msg
-                        addr_offset_ATP = addr_offset
-                    elif j == 5: 
-                        kod_msg_GPZWOF     = kod_msg
-                        addr_offset_GPZWOF = addr_offset
-                    elif j == 6: 
-                        kod_msg_GPZGas     = kod_msg
-                        addr_offset_GPZGas = addr_offset
-                
-                list_sample = ['TblFireZonesState', 'TblFireZonesGPZFoam', 'TblFireZonesGPZWater', 'TblFireZonesMode',
-                                'TblFireZonesAPT', 'TblFireZonesGPZWithout', 'TblFireZonesGPZGas']
-                for i in list_sample:
-                    path = f'{path_sample}\{i}.xml'
+                for modul in modul_list:
+                    id_basket    = modul['id']
+                    number_modul = modul['num_modul']
+                    type_modul   = modul['type_modul']
+                    value_modul  = modul['value']
+                    basket       = modul['basket']
+
+                    if tbl_racks is True:
+                        offset_basket = 32 * 14 * (int(id_basket) - 1)
+                        start_addr = kod_msg + offset_basket + (number_modul* int(addr_offset))
+                    else:
+                        if   type_modul == 'MK-545-010': 
+                            start_addr = kod_msg_CN + (count_CN * int(addr_offset_CN)) 
+                            table_msg = 'TblD_ModulesCN'
+                            count_CN += 1
+                        elif type_modul == 'MK-504-120': 
+                            start_addr = kod_msg_CPU + (count_CPU * int(addr_offset_CPU)) 
+                            table_msg = 'TblD_ModulesCPU'
+                            count_CPU += 1
+                        elif type_modul == 'MK-544-040': 
+                            start_addr = kod_msg_EthEx + (count_EthEx * int(addr_offset_EthEx)) 
+                            table_msg = 'TblD_ModulesEthEx'
+                            count_EthEx += 1
+                        elif type_modul == 'MK-546-010': 
+                            start_addr = kod_msg_MN + (count_MN * int(addr_offset_MN)) 
+                            table_msg = 'TblD_ModulesMN'
+                            count_MN += 1
+                        elif type_modul == 'MK-550-024': 
+                            start_addr = kod_msg_PCU + (count_PCU * int(addr_offset_PCU)) 
+                            table_msg = 'TblD_ModulesPSU'
+                            count_PCU += 1
+                        elif type_modul == 'MK-541-002': 
+                            start_addr = kod_msg_RS + (count_RS * int(addr_offset_RS)) 
+                            table_msg = 'TblD_ModulesRS'
+                            count_RS += 1
+
+                    path = f'{path_sample}\{table_msg}.xml'
                     if not os.path.isfile(path):
-                        msg[f'{today} - Сообщения {tabl}: в папке отсутствует шаблон - {i}'] = 2
+                        msg[f'{today} - Сообщения {tabl}: в папке отсутствует шаблон - {table_msg}'] = 2
+                        return msg
 
-                cursor.execute(f"""SELECT id, name, "type_zone" FROM "{tabl}" ORDER BY id""")
-                list_zone = cursor.fetchall()
+                    gen_list.append(self.dop_function.parser_sample(path, start_addr, value_modul, flag_write_db, sign))
 
-                for zone in list_zone:
-                    id_       = zone[0]
-                    name      = zone[1]
-                    type_zone = zone[2]
-
-                    try:
-                        for i in range(7):
-                            if i == 0:
-                                start_addr = kod_msg_SPZ + ((int(id_) - 1) * int(addr_offset_SPZ)) 
-                                table_msg = 'TblFireZonesState'
-                                text = f'Пожарные зоны. {name}'
-                            elif i == 1 and type_zone == -1:
-                                start_addr = kod_msg_GPZFoam + ((int(id_) - 1) * int(addr_offset_GPZFoam)) 
-                                table_msg = 'TblFireZonesGPZFoam'
-                                text = f'Готовности зон. {name}'
-                            elif i == 2 and type_zone >= 1:
-                                start_addr = kod_msg_GPZWater + ((int(id_) - 1) * int(addr_offset_GPZWater)) 
-                                table_msg = 'TblFireZonesGPZWater'
-                                text = f'Готовности зон. {name}'
-                            elif i == 3:
-                                start_addr = kod_msg_SUP + ((int(id_) - 1) * int(addr_offset_SUP)) 
-                                table_msg = 'TblFireZonesMode'
-                                text = f'Пожарные зоны. {name}'
-                            elif i == 4:
-                                start_addr = kod_msg_ATP + ((int(id_) - 1) * int(addr_offset_ATP)) 
-                                table_msg = 'TblFireZonesAPT'
-                                text = f'Пожарные зоны. {name}'
-                            elif i == 5 and type_zone == 0:
-                                start_addr = kod_msg_GPZWOF + ((int(id_) - 1) * int(addr_offset_GPZWOF)) 
-                                table_msg = 'TblFireZonesGPZWithout'
-                                text = f'Готовности зон. {name}'
-                            elif i == 6 and type_zone == -2:
-                                start_addr = kod_msg_GPZGas + ((int(id_) - 1) * int(addr_offset_GPZGas)) 
-                                table_msg = 'TblFireZonesGPZGas'
-                                text = f'Готовности зон. {name}'
-                            else: continue
-
-                            path = f'{path_sample}\{table_msg}.xml'
-                            if not os.path.isfile(path):
-                                continue
-                            gen_list.append(self.dop_function.parser_sample(path, start_addr, text, flag_write_db, sign))
-                    except Exception:
-                        msg[f'{today} - Сообщения {tabl}: ошибка генерации: {traceback.format_exc()}'] = 2
-                        msg[f'{today} - Сообщения {tabl}: генерация продолжится'] = 2
-                        continue
-            
                 if not flag_write_db:
                     msg.update(self.write_file(gen_list, sign, script_file))
                     msg[f'{today} - Сообщения {tabl}: файл скрипта создан'] = 1
-                    return(msg)
-            except Exception:
-                msg[f'{today} - Сообщения {tabl}: ошибка генерации: {traceback.format_exc()}'] = 2
-            msg[f'{today} - Сообщения {tabl}: генерация в базу завершена!'] = 1
+        except Exception:
+            msg[f'{today} - Сообщения {tabl}: ошибка генерации: {traceback.format_exc()}'] = 2
+        msg[f'{today} - Сообщения {tabl}: генерация завершена!'] = 1
         return(msg)
-    # Генерация таблиц
-    def gen_table_AI(self, cursor, cursor_prj, flag_write_db):
+    def gen_msg_others(self, flag_write_db, tabl, sign, script_file):
+        msg = {}
+        gen_list = []
+        cursor = db.cursor()
+        cursor_prj = db_prj.cursor()
+        
+        kod_msg, addr_offset = self.define_number_msg(cursor, sign)
+        if addr_offset == 0 or kod_msg is None or addr_offset is None: 
+            msg[f'{today} - Сообщения {tabl}: ошибка. Адреса из таблицы msg не определены'] = 2
+            return msg
+        try:
+            cursor.execute(f"""SELECT id, text, priority, "isAck", "IsAlert", "IsCycle", "IsSound", "SoundFile", "IsHide"
+                                FROM "{tabl}" ORDER BY id""")
+            list_signal = cursor.fetchall()
+        except Exception:
+            msg[f'{today} - Сообщения {tabl}: ошибка генерации: {traceback.format_exc()}'] = 2
+            return msg
+
+        for signal in list_signal:
+            id_       = signal[0]
+            text      = signal[1]
+            priority  = signal[2]
+            isAck     = signal[3]
+            IsAlert   = signal[4]
+            IsCycle   = signal[5]
+            IsSound   = signal[6]
+            SoundFile = signal[7]
+            IsHide    = signal[8]
+
+            if SoundFile is None: SoundFile = ''
+
+            del_row_tabl = f"DELETE FROM messages.opmessages WHERE Category ={kod_msg + int(id_)};\n"
+            ins_row_tabl = f"INSERT INTO messages.opmessages (Category, Message, IsAck, SoundFile, IsCycle, IsSound, IsHide, Priority, IsAlert) VALUES({kod_msg + int(id_)}, '{text}', {isAck}, '{SoundFile}', {IsCycle}, {IsSound}, {IsHide}, {priority}, {IsAlert});\n"
+
+            if flag_write_db:
+                try:
+                    cursor_prj.execute(del_row_tabl)
+                    cursor_prj.execute(ins_row_tabl)
+                except Exception:
+                    msg[f'{today} - Сообщения {tabl}: ошибка добавления строки, пропускается: {traceback.format_exc()}'] = 2
+                    continue
+            else:
+                gen_list.append(dict(delete = del_row_tabl,
+                                     insert = ins_row_tabl))
+    
+        if not flag_write_db:
+            msg.update(self.write_file(gen_list, sign, script_file))
+            msg[f'{today} - Сообщения {tabl}: файл скрипта создан'] = 1
+            return(msg)
+
+        msg[f'{today} - Сообщения {tabl}: генерация завершена!'] = 1
+        return(msg)
+    def gen_msg_nps(self, flag_write_db, tabl, sign, script_file, table_msg):
+        msg = {}
+        gen_list = []
+        cursor = db.cursor()
+
+        try:
+            kod_msg, addr_offset = self.define_number_msg(cursor, sign)
+            if addr_offset == 0 or kod_msg is None or addr_offset is None: 
+                msg[f'{today} - Сообщения {tabl}: ошибка. Адреса из таблицы msg не определены'] = 2
+                return msg
+            
+            path = f'{path_sample}\{table_msg}.xml'
+            if not os.path.isfile(path):
+                msg[f'{today} - Сообщения {tabl}: в папке отсутствует шаблон - {table_msg}'] = 2
+                return msg
+
+            gen_list.append(self.dop_function.parser_sample(path, kod_msg, '', flag_write_db, sign))
+        
+            if not flag_write_db:
+                msg.update(self.write_file(gen_list, sign, script_file))
+                msg[f'{today} - Сообщения {tabl}: файл скрипта создан'] = 1
+                return(msg)
+        except Exception:
+            msg[f'{today} - Сообщения {tabl}: ошибка генерации: {traceback.format_exc()}'] = 2
+        msg[f'{today} - Сообщения {tabl}: генерация завершена!'] = 1
+        return(msg)
+    def gen_msg_firezone(self, flag_write_db, tabl, script_file):
+        msg = {}
+        gen_list = []
+        cursor = db.cursor()
+        try:  
+            for j in range(7):
+                if   j == 0: sign = 'SPZ'
+                elif j == 1: sign = 'GPZFoam'
+                elif j == 2: sign = 'GPZWater'
+                elif j == 3: sign = 'SUP'
+                elif j == 4: sign = 'ATP'
+                elif j == 5: sign = 'GPZWOF'
+                elif j == 6: sign = 'GPZGas'
+
+                kod_msg, addr_offset = self.define_number_msg(cursor, sign)
+                if addr_offset == 0 or kod_msg is None or addr_offset is None: 
+                    msg[f'{today} - Сообщения {tabl}: адрес {sign} из таблицы msg не определен'] = 2
+                    msg[f'{today} - Сообщения {tabl}: генерация сообщений без: {sign}'] = 2
+                    continue 
+                
+                if   j == 0: 
+                    kod_msg_SPZ    = kod_msg
+                    addr_offset_SPZ = addr_offset
+                elif j == 1: 
+                    kod_msg_GPZFoam     = kod_msg
+                    addr_offset_GPZFoam = addr_offset
+                elif j == 2: 
+                    kod_msg_GPZWater     = kod_msg
+                    addr_offset_GPZWater = addr_offset
+                elif j == 3: 
+                    kod_msg_SUP     = kod_msg
+                    addr_offset_SUP = addr_offset
+                elif j == 4: 
+                    kod_msg_ATP     = kod_msg
+                    addr_offset_ATP = addr_offset
+                elif j == 5: 
+                    kod_msg_GPZWOF     = kod_msg
+                    addr_offset_GPZWOF = addr_offset
+                elif j == 6: 
+                    kod_msg_GPZGas     = kod_msg
+                    addr_offset_GPZGas = addr_offset
+            
+            list_sample = ['TblFireZonesState', 'TblFireZonesGPZFoam', 'TblFireZonesGPZWater', 'TblFireZonesMode',
+                            'TblFireZonesAPT', 'TblFireZonesGPZWithout', 'TblFireZonesGPZGas']
+            for i in list_sample:
+                path = f'{path_sample}\{i}.xml'
+                if not os.path.isfile(path):
+                    msg[f'{today} - Сообщения {tabl}: в папке отсутствует шаблон - {i}'] = 2
+
+            cursor.execute(f"""SELECT id, name, "type_zone" FROM "{tabl}" ORDER BY id""")
+            list_zone = cursor.fetchall()
+
+            for zone in list_zone:
+                id_       = zone[0]
+                name      = zone[1]
+                type_zone = zone[2]
+
+                try:
+                    for i in range(7):
+                        if i == 0:
+                            start_addr = kod_msg_SPZ + ((int(id_) - 1) * int(addr_offset_SPZ)) 
+                            table_msg = 'TblFireZonesState'
+                            text = f'Пожарные зоны. {name}'
+                        elif i == 1 and type_zone == -1:
+                            start_addr = kod_msg_GPZFoam + ((int(id_) - 1) * int(addr_offset_GPZFoam)) 
+                            table_msg = 'TblFireZonesGPZFoam'
+                            text = f'Готовности зон. {name}'
+                        elif i == 2 and type_zone >= 1:
+                            start_addr = kod_msg_GPZWater + ((int(id_) - 1) * int(addr_offset_GPZWater)) 
+                            table_msg = 'TblFireZonesGPZWater'
+                            text = f'Готовности зон. {name}'
+                        elif i == 3:
+                            start_addr = kod_msg_SUP + ((int(id_) - 1) * int(addr_offset_SUP)) 
+                            table_msg = 'TblFireZonesMode'
+                            text = f'Пожарные зоны. {name}'
+                        elif i == 4:
+                            start_addr = kod_msg_ATP + ((int(id_) - 1) * int(addr_offset_ATP)) 
+                            table_msg = 'TblFireZonesAPT'
+                            text = f'Пожарные зоны. {name}'
+                        elif i == 5 and type_zone == 0:
+                            start_addr = kod_msg_GPZWOF + ((int(id_) - 1) * int(addr_offset_GPZWOF)) 
+                            table_msg = 'TblFireZonesGPZWithout'
+                            text = f'Готовности зон. {name}'
+                        elif i == 6 and type_zone == -2:
+                            start_addr = kod_msg_GPZGas + ((int(id_) - 1) * int(addr_offset_GPZGas)) 
+                            table_msg = 'TblFireZonesGPZGas'
+                            text = f'Готовности зон. {name}'
+                        else: continue
+
+                        path = f'{path_sample}\{table_msg}.xml'
+                        if not os.path.isfile(path):
+                            continue
+                        gen_list.append(self.dop_function.parser_sample(path, start_addr, text, flag_write_db, sign))
+                except Exception:
+                    msg[f'{today} - Сообщения {tabl}: ошибка генерации: {traceback.format_exc()}'] = 2
+                    msg[f'{today} - Сообщения {tabl}: генерация продолжится'] = 2
+                    continue
+        
+            if not flag_write_db:
+                msg.update(self.write_file(gen_list, sign, script_file))
+                msg[f'{today} - Сообщения {tabl}: файл скрипта создан'] = 1
+                return(msg)
+        except Exception:
+            msg[f'{today} - Сообщения {tabl}: ошибка генерации: {traceback.format_exc()}'] = 2
+        msg[f'{today} - Сообщения {tabl}: генерация завершена!'] = 1
+        return(msg)
+    # tabl
+    def gen_table_AI(self, flag_write_db):
+        cursor = db.cursor()
+        cursor_prj = db_prj.cursor()
+    
         text_start = ('\tCREATE SCHEMA IF NOT EXISTS objects;\n'
                         '\tCREATE TABLE IF NOT EXISTS objects.TblAnalogs(\n'
                         '\t\tId INT NOT NULL,\n'
@@ -3845,6 +3828,7 @@ class Generate_database_SQL():
         
         msg = {}
         gen_list = []
+        flag_del_tabl = False
         try:
             cursor.execute(f"""SELECT "Id", "Tag", "Name", "AnalogGroupId", "SetpointGroupId", "Egu", "PhysicEgu", "IsOilPressure", 
                                         "IsPumpVibration", "Precision", "TrendingGroup", "LoLimField", "HiLimField", "LoLimEng", 
@@ -3854,155 +3838,167 @@ class Generate_database_SQL():
             list_signal = cursor.fetchall()
         except Exception:
             msg[f'{today} - TblAnalogs: ошибка генерации: {traceback.format_exc()}'] = 2
+            return msg
 
         for signal in list_signal:
-            Id, Tag, Name, AnalogGroupId                          = signal[0], signal[1], signal[2], signal[3]
-            SetpointGroupId, Egu, PhysicEgu, IsOilPressure        = signal[4], signal[5], signal[6], signal[7]
-            IsPumpVibration, Precision, TrendingGroup, LoLimField = signal[8], signal[9], signal[10], signal[11]
-            HiLimField, LoLimEng, HiLimEng, LoLim                 = signal[12], signal[13], signal[14], signal[15]
-            HiLim, Min6, Min5, Min4                               = signal[16], signal[17], signal[18], signal[19]
-            Min3, Min2, Min1, Max1                                = signal[20], signal[21], signal[22], signal[23]
-            Max2, Max3, Max4, Max5                                = signal[24], signal[25], signal[26], signal[27]
-            Max6, Histeresis, DeltaT, MsgMask                     = signal[28], signal[29], signal[30], signal[31]
-            SigMask, CtrlMask, RuleName, TimeFilter               = signal[32], signal[33], signal[34], signal[35]
-            module, channel                                       = signal[36], signal[37]
+            try:
+                Id, Tag, Name, AnalogGroupId                          = signal[0], signal[1], signal[2], signal[3]
+                SetpointGroupId, Egu, PhysicEgu, IsOilPressure        = signal[4], signal[5], signal[6], signal[7]
+                IsPumpVibration, Precision, TrendingGroup, LoLimField = signal[8], signal[9], signal[10], signal[11]
+                HiLimField, LoLimEng, HiLimEng, LoLim                 = signal[12], signal[13], signal[14], signal[15]
+                HiLim, Min6, Min5, Min4                               = signal[16], signal[17], signal[18], signal[19]
+                Min3, Min2, Min1, Max1                                = signal[20], signal[21], signal[22], signal[23]
+                Max2, Max3, Max4, Max5                                = signal[24], signal[25], signal[26], signal[27]
+                Max6, Histeresis, DeltaT, MsgMask                     = signal[28], signal[29], signal[30], signal[31]
+                SigMask, CtrlMask, RuleName, TimeFilter               = signal[32], signal[33], signal[34], signal[35]
+                module, channel                                       = signal[36], signal[37]
 
-            # Prefix
-            Prefix = 'NULL' if prefix_system == '' or prefix_system is None else str(prefix_system)
-            # SystemIndex
-            SystemIndex = 0
-            # AnalogGroupId
-            cursor.execute(f"""SELECT id FROM "ai_grp" WHERE name='{AnalogGroupId}'""")
-            try   : AnalogGroupId = cursor.fetchall()[0][0]
-            except: AnalogGroupId = 'NULL'
-            # SetpointGroupId
-            cursor.execute(f"""SELECT id FROM "sp_grp" WHERE name_group='{SetpointGroupId}'""")
-            try   : SetpointGroupId = cursor.fetchall()[0][0]
-            except: SetpointGroupId = 'NULL'
-            # IsOilPressure
-            IsOilPressure = 'NULL' if IsOilPressure is None else IsOilPressure
-            # IsPumpVibration
-            IsPumpVibration = 'NULL' if IsPumpVibration is None else IsPumpVibration
-            # IsInterface
-            IsInterface = False
-            # IsBackup
-            IsBackup = True if self.dop_function.str_find(str(Name).lower(), {'резерв'}) else False
-            # IsPhysic
-            IsPhysic = True if module is not None and channel is not None and IsBackup is False else False
-            # IsTrending
-            IsTrending = True if IsBackup is False else False
+                # Prefix
+                Prefix = 'NULL' if prefix_system == '' or prefix_system is None else str(prefix_system)
+                # SystemIndex
+                SystemIndex = 0
+                # AnalogGroupId
+                cursor.execute(f"""SELECT id FROM "ai_grp" WHERE name='{AnalogGroupId}'""")
+                try   : AnalogGroupId = cursor.fetchall()[0][0]
+                except: AnalogGroupId = 'NULL'
+                # SetpointGroupId
+                cursor.execute(f"""SELECT id FROM "sp_grp" WHERE name_group='{SetpointGroupId}'""")
+                try   : SetpointGroupId = cursor.fetchall()[0][0]
+                except: SetpointGroupId = 'NULL'
+                # IsOilPressure
+                IsOilPressure = 'NULL' if IsOilPressure is None else IsOilPressure
+                # IsPumpVibration
+                IsPumpVibration = 'NULL' if IsPumpVibration is None else IsPumpVibration
+                # IsInterface
+                IsInterface = False
+                # IsBackup
+                IsBackup = True if self.dop_function.str_find(str(Name).lower(), {'резерв'}) else False
+                # IsPhysic
+                IsPhysic = True if module is not None and channel is not None and IsBackup is False else False
+                # IsTrending
+                IsTrending = True if IsBackup is False else False
 
-            TrendingGroup = 'NULL' if TrendingGroup is None else TrendingGroup
-            LoLimEng = 'NULL' if HiLimEng is None else HiLimEng
-            LoLim   = 'NULL' if LoLim is None else LoLim
-            HiLim = 'NULL' if HiLim is None else HiLim
+                TrendingGroup = 'NULL' if TrendingGroup is None else TrendingGroup
+                LoLimEng = 'NULL' if HiLimEng is None else HiLimEng
+                LoLim   = 'NULL' if LoLim is None else LoLim
+                HiLim = 'NULL' if HiLim is None else HiLim
 
-            # Ctrl
-            Ctrl_list = ['0000', '0', '0','0','0','0','0','0','0','0','0','0','0']
-            if Min6 is None: Min6 = 'NULL'
-            else: 
-                Min6 = Min6
-                Ctrl_list[12] = '1'
-            if Min5 is None: Min5 = 'NULL'
-            else: 
-                Min5 = Min5
-                Ctrl_list[11] = '1'
-            if Min4 is None: Min4 = 'NULL'
-            else: 
-                Min4 = Min4
-                Ctrl_list[10] = '1'
-            if Min3 is None: Min3 = 'NULL'
-            else: 
-                Min3 = Min3
-                Ctrl_list[9] = '1'
-            if Min2 is None: Min2 = 'NULL'
-            else: 
-                Min2 = Min2
-                Ctrl_list[8] = '1'
-            if Min1 is None: Min1 = 'NULL'
-            else: 
-                Min1 = Min1
-                Ctrl_list[7] = '1'            
-            if Max1 is None: Max1 = 'NULL'
-            else: 
-                Max1 = Max1
-                Ctrl_list[6] = '1'
-            if Max2 is None: Max2 = 'NULL'
-            else: 
-                Max2 = Max2
-                Ctrl_list[5] = '1'
-            if Max3 is None: Max3 = 'NULL'
-            else: 
-                Max3 = Max3
-                Ctrl_list[4] = '1'
-            if Max4 is None: Max4 = 'NULL'
-            else: 
-                Max4 = Max4
-                Ctrl_list[3] = '1'
-            if Max5 is None: Max5 = 'NULL'
-            else: 
-                Max5 = Max5
-                Ctrl_list[2] = '1'
-            if Max6 is None: Max6 = 'NULL'
-            else: 
-                Max6 = Max6
-                Ctrl_list[1] = '1'
-            Ctrl = int(''.join(Ctrl_list), 2)
-            # LoLimField
-            LoLimField = 'NULL' if LoLimField is None else LoLimField
-            # HiLimField
-            HiLimField = 'NULL' if HiLimField is None else HiLimField
-            # LoLimEng
-            LoLimEng = 'NULL' if LoLimEng is None else LoLimEng
-            # HiLimEng
-            HiLimEng = 'NULL' if HiLimEng is None else HiLimEng
-            # LoLim
-            LoLim = 'NULL' if LoLim is None else LoLim
-            # HiLim
-            HiLim = 'NULL' if HiLim is None else HiLim
-            # DeltaHi
-            DeltaHi = 'NULL'
-            # DeltaLo
-            DeltaLo = 'NULL'
-            # SmoothFactor
-            SmoothFactor = 'NULL'
-            # MsgMask
-            MsgMask = int(str(MsgMask).replace('_', ''), 2)
-            # SigMask
-            SigMask = int(str(SigMask).replace('_', ''), 2)
-            # CtrlMask
-            CtrlMask = int(str(CtrlMask).replace('_', ''), 2)
-            # RuleName
-            cursor.execute(f"""SELECT rule_name FROM "sp_rules" WHERE name_rules='{RuleName}'""")
-            try   : RuleName = cursor.fetchall()[0][0]
-            except: RuleName = 'NULL'
-            del_row_tabl = f"DELETE FROM objects.TblAnalogs WHERE Id ={Id};\n"
+                # Ctrl
+                Ctrl_list = ['0000', '0', '0','0','0','0','0','0','0','0','0','0','0']
+                if Min6 is None: Min6 = 'NULL'
+                else: 
+                    Min6 = Min6
+                    Ctrl_list[12] = '1'
+                if Min5 is None: Min5 = 'NULL'
+                else: 
+                    Min5 = Min5
+                    Ctrl_list[11] = '1'
+                if Min4 is None: Min4 = 'NULL'
+                else: 
+                    Min4 = Min4
+                    Ctrl_list[10] = '1'
+                if Min3 is None: Min3 = 'NULL'
+                else: 
+                    Min3 = Min3
+                    Ctrl_list[9] = '1'
+                if Min2 is None: Min2 = 'NULL'
+                else: 
+                    Min2 = Min2
+                    Ctrl_list[8] = '1'
+                if Min1 is None: Min1 = 'NULL'
+                else: 
+                    Min1 = Min1
+                    Ctrl_list[7] = '1'            
+                if Max1 is None: Max1 = 'NULL'
+                else: 
+                    Max1 = Max1
+                    Ctrl_list[6] = '1'
+                if Max2 is None: Max2 = 'NULL'
+                else: 
+                    Max2 = Max2
+                    Ctrl_list[5] = '1'
+                if Max3 is None: Max3 = 'NULL'
+                else: 
+                    Max3 = Max3
+                    Ctrl_list[4] = '1'
+                if Max4 is None: Max4 = 'NULL'
+                else: 
+                    Max4 = Max4
+                    Ctrl_list[3] = '1'
+                if Max5 is None: Max5 = 'NULL'
+                else: 
+                    Max5 = Max5
+                    Ctrl_list[2] = '1'
+                if Max6 is None: Max6 = 'NULL'
+                else: 
+                    Max6 = Max6
+                    Ctrl_list[1] = '1'
+                Ctrl = int(''.join(Ctrl_list), 2)
+                # LoLimField
+                LoLimField = 'NULL' if LoLimField is None else LoLimField
+                # HiLimField
+                HiLimField = 'NULL' if HiLimField is None else HiLimField
+                # LoLimEng
+                LoLimEng = 'NULL' if LoLimEng is None else LoLimEng
+                # HiLimEng
+                HiLimEng = 'NULL' if HiLimEng is None else HiLimEng
+                # LoLim
+                LoLim = 'NULL' if LoLim is None else LoLim
+                # HiLim
+                HiLim = 'NULL' if HiLim is None else HiLim
+                # DeltaHi
+                DeltaHi = 'NULL'
+                # DeltaLo
+                DeltaLo = 'NULL'
+                # SmoothFactor
+                SmoothFactor = 'NULL'
+                # MsgMask
+                MsgMask = int(str(MsgMask).replace('_', ''), 2)
+                # SigMask
+                SigMask = int(str(SigMask).replace('_', ''), 2)
+                # CtrlMask
+                CtrlMask = int(str(CtrlMask).replace('_', ''), 2)
+                # RuleName
+                cursor.execute(f"""SELECT rule_name FROM "sp_rules" WHERE name_rules='{RuleName}'""")
+                try   : RuleName = cursor.fetchall()[0][0]
+                except: RuleName = 'NULL'
+            except Exception:
+                msg[f'{today} - TblAnalogs: ошибка добавления строки, пропускается: {traceback.format_exc()}'] = 2
+                continue
+            
             ins_row_tabl = f"INSERT INTO objects.TblAnalogs (Id, Prefix, SystemIndex, Tag, Name, AnalogGroupId, SetpointGroupId, Egu, PhysicEgu, IsOilPressure, IsInterface, IsPhysic, IsPumpVibration, Precision, IsTrending, TrendingSettings, TrendingGroup, LoLimField, HiLimField, LoLimEng, HiLimEng, LoLim, HiLim, Min6, Min5, Min4, Min3, Min2, Min1, Max1, Max2, Max3, Max4, Max5, Max6, Histeresis, DeltaHi, DeltaLo, DeltaT, SmoothFactor, Ctrl, MsgMask, SigMask, CtrlMask, TimeFilter, IsBackup, RuleName) VALUES({Id}, {Prefix}, {SystemIndex}, '{Tag}','{Name}', {AnalogGroupId}, {SetpointGroupId}, '{Egu}', '{PhysicEgu}', {IsOilPressure}, {IsInterface}, {IsPhysic}, {IsPumpVibration}, {Precision}, {IsTrending}, 'Historian(Collector = NA_ModbusServer, sourceaddress = %MF{999 + 2 * Id}, InputScaling = 0)', {TrendingGroup}, {LoLimField}, {HiLimField}, {LoLimEng}, {HiLimEng}, {LoLim}, {HiLim}, {Min6}, {Min5}, {Min4}, {Min3}, {Min2}, {Min1}, {Max1}, {Max2}, {Max3}, {Max4}, {Max5}, {Max6}, {Histeresis}, {DeltaHi}, {DeltaLo}, {DeltaT}, {SmoothFactor}, {Ctrl}, {MsgMask}, {SigMask}, {CtrlMask}, {TimeFilter}, {IsBackup}, {RuleName});\n"
+            
             if flag_write_db:
                 try:
-                    cursor_prj.execute(del_row_tabl)
+                    if flag_del_tabl is False :
+                        cursor_prj.execute(text_start)
+                        flag_del_tabl = True
                     cursor_prj.execute(ins_row_tabl)
                 except Exception:
-                    msg[f'{today} - TblAnalogs: ошибка генерации: {traceback.format_exc()}'] = 2
+                    msg[f'{today} - TblAnalogs: ошибка добавления строки, пропускается: {traceback.format_exc()}'] = 2
+                    continue
             else:
                 gen_list.append(ins_row_tabl)
     
-        if not flag_write_db:
-            # Создаём файл запроса
-            path_request = f'{path_location_file}\\PostgreSQL-TblAnalogs.sql'
-            if not os.path.exists(path_request):
-                file = codecs.open(path_request, 'w', 'utf-8')
-            else:
-                os.remove(path_request)
-                file = codecs.open(path_request, 'w', 'utf-8')
-            if path_location_file == '' or path_location_file is None or len(path_location_file) == 0:
-                msg[f'{today} - TblAnalogs: не указана конечная папка'] = 2
-                return msg
-            file.write(text_start)
-            for insert in gen_list:
-                file.write(insert)
-            file.write(f'COMMIT;')
-            file.close()
+            if not flag_write_db:
+                try:
+                    # Создаём файл запроса
+                    path_request = f'{path_location_file}\\PostgreSQL-TblAnalogs.sql'
+                    if not os.path.exists(path_request):
+                        file = codecs.open(path_request, 'w', 'utf-8')
+                    else:
+                        os.remove(path_request)
+                        file = codecs.open(path_request, 'w', 'utf-8')
+                    if path_location_file == '' or path_location_file is None or len(path_location_file) == 0:
+                        msg[f'{today} - TblAnalogs: не указана конечная папка'] = 2
+                        return msg
+                    file.write(text_start)
+                    for insert in gen_list:
+                        file.write(insert)
+                    file.write(f'COMMIT;')
+                    file.close()
+                except Exception:
+                    msg[f'{today} - TblAnalogs: ошибка записи в файл: {traceback.format_exc()}'] = 2
 
             msg[f'{today} - TblAnalogs: генерация завершена!'] = 1
         return(msg)
