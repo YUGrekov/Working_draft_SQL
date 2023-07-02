@@ -852,23 +852,26 @@ class Widget(QWidget):
         self.q_check_vs_tabl.setToolTip('''Название файла скрипта: TblAuxSysTimeSetpoints''')
         self.q_check_vs_tabl.move(550, 82) 
         self.q_check_vs_tabl.stateChanged.connect(self.check_vs_tabl)
-
-        # self.q_check_zd_ust = QCheckBox('ZD_tm', tab_4)
-        # self.q_check_zd_ust.move(550, 66) 
-        # self.q_check_zd_ust.stateChanged.connect(self.check_zd_tm)
-        # self.q_check_vs_ust = QCheckBox('VS_tm', tab_4)
-        # self.q_check_vs_ust.move(550, 82) 
-        # self.q_check_vs_ust.stateChanged.connect(self.check_vs_tm)
-        # self.q_check_vsgrp_ust = QCheckBox('VSGRP_tm', tab_4)
-        # self.q_check_vsgrp_ust.move(550, 98) 
-        # self.q_check_vsgrp_ust.stateChanged.connect(self.check_vsgrp_tm)
-        # self.q_check_uts_ust = QCheckBox('UTS_tm', tab_4)
-        # self.q_check_uts_ust.move(550, 114) 
-        # self.q_check_uts_ust.stateChanged.connect(self.check_uts_tm)
-        # self.q_check_pz_ust = QCheckBox('PZ_tm', tab_4)
-        # self.q_check_pz_ust.move(550, 130) 
-        # self.q_check_pz_ust.stateChanged.connect(self.check_pz_tm)
-
+        self.q_check_vsgrp_tabl = QCheckBox('TblAuxsysgrouptimesetpoints', tab_4)
+        self.q_check_vsgrp_tabl.setToolTip('''Название файла скрипта: TblAuxsysgrouptimesetpoints''')
+        self.q_check_vsgrp_tabl.move(550, 98) 
+        self.q_check_vsgrp_tabl.stateChanged.connect(self.check_vsgrp_tabl)
+        self.q_check_pupm_tabl = QCheckBox('TblPumpTimeSetpoints', tab_4)
+        self.q_check_pupm_tabl.setToolTip('''Название файла скрипта: TblPumpTimeSetpoints''')
+        self.q_check_pupm_tabl.move(550, 114) 
+        self.q_check_pupm_tabl.stateChanged.connect(self.check_pump_tabl)
+        self.q_check_pupm_time_tabl = QCheckBox('TblOpTimeSetpoints', tab_4)
+        self.q_check_pupm_time_tabl.setToolTip('''Название файла скрипта: TblOpTimeSetpoints''')
+        self.q_check_pupm_time_tabl.move(550, 130) 
+        self.q_check_pupm_time_tabl.stateChanged.connect(self.check_pump_time_tabl)
+        self.q_check_uts_tabl = QCheckBox('Tblsignalingdevicetimesetpoints', tab_4)
+        self.q_check_uts_tabl.setToolTip('''Название файла скрипта: TblSignalingdevicetimesetpoints''')
+        self.q_check_uts_tabl.move(550, 146) 
+        self.q_check_uts_tabl.stateChanged.connect(self.check_uts_tabl)
+        self.q_check_prj_tabl = QCheckBox('TblProjecttimesetpoints', tab_4)
+        self.q_check_prj_tabl.setToolTip('''Название файла скрипта: TblProjecttimesetpoints''')
+        self.q_check_prj_tabl.move(550, 160) 
+        self.q_check_prj_tabl.stateChanged.connect(self.check_prj_tabl)
 
         # Установить все
         check_all = QCheckBox('Установить/Снять', tab_4)
@@ -1476,7 +1479,21 @@ class Widget(QWidget):
     def check_vs_tabl(self, checked):
         if checked: self.list_gen_tabl.append('VS_tabl')
         else      : self.list_gen_tabl.remove('VS_tabl')
-
+    def check_vsgrp_tabl(self, checked):
+        if checked: self.list_gen_tabl.append('VSGRP_tabl')
+        else      : self.list_gen_tabl.remove('VSGRP_tabl')
+    def check_pump_tabl(self, checked):
+        if checked: self.list_gen_tabl.append('Pump_tabl')
+        else      : self.list_gen_tabl.remove('Pump_tabl')
+    def check_pump_time_tabl(self, checked):
+        if checked: self.list_gen_tabl.append('PumpTime_tabl')
+        else      : self.list_gen_tabl.remove('PumpTime_tabl')
+    def check_uts_tabl(self, checked):
+        if checked: self.list_gen_tabl.append('UTS_tabl')
+        else      : self.list_gen_tabl.remove('UTS_tabl')
+    def check_prj_tabl(self, checked):
+        if checked: self.list_gen_tabl.append('Prj_tabl')
+        else      : self.list_gen_tabl.remove('Prj_tabl')
     # Button msg
     def export_list(self):
         msg = self.gen_sql.write_in_sql(self.list_gen_msg, False)

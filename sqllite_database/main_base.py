@@ -275,6 +275,14 @@ class Import_in_SQL():
                     values.append(uso)
                     array = {k: v for k, v in zip(keys, values)}
                     data.append(array)
+        # Количество строк в таблице
+        cursor = db.cursor()
+        try:
+            cursor.execute(f'''SELECT COUNT(*) FROM signals''')
+            count_row = cursor.fetchall()[0][0]
+        except:
+            count_row = 0
+
         # Delete basket is None
         data_new = []
         for row in data:
@@ -285,13 +293,15 @@ class Import_in_SQL():
             channel     = row['channel']
 
             if basket is None or module is None or channel is None: continue
+            count_row += 1
 
             list_type = ['CPU', 'PSU', 'CN', 'MN', 'AI','AO', 'DI', 'RS','DO']
             for value in list_type:
                 if str(scheme).find(value) != -1: 
                     type_signal = value
 
-            dict_column = {'type_signal' : type_signal,
+            dict_column = {'id'          : count_row,
+                           'type_signal' : type_signal,
                            'uso'         : uso,
                            'tag'         : row['tag'],
                            'description' : row['description'],
@@ -588,19 +598,21 @@ class Filling_USO():
                     msg[f'{today} - Таблицы: ai или di не найдены!'] = 2
                     return msg
                 self.cursor.execute(f'''SELECT DISTINCT uso 
-                                        FROM signals''')
+                                        FROM signals 
+                                        ORDER BY uso''')
                 list_uso = self.cursor.fetchall()
                 for uso in list_uso:
                     count_DI  = 0
                     count_USO += 1
                     list_diag = {}
 
+                    list_diag['id']       = f'{count_USO}'
                     list_diag['variable'] = f'USO[{count_USO}]'
                     list_diag['name']     = f'{uso[0]}'
 
-                    self.cursor.execute(f"""SELECT variable, name
+                    self.cursor.execute(f"""SELECT variable, "Name"
                                             FROM ai
-                                            WHERE name LIKE '%{uso[0]}%'""")
+                                            WHERE "Name" LIKE '%{uso[0]}%'""")
                     current_ai = self.cursor.fetchall()
                     try:
                         if len(current_ai) == 0: raise
@@ -734,7 +746,7 @@ class Filling_AI():
                             exist_name = AI.select().where(AI.name == description)
 
                             if not bool(exist_tag):
-                                self.cursor.execute(f"""SELECT id, tag 
+                                self.cursor.execute(f"""SELECT Id, "Tag" 
                                                         FROM ai
                                                         WHERE uso='{uso_s}' AND 
                                                               basket={basket_s} AND 
@@ -743,23 +755,23 @@ class Filling_AI():
                                 for id_, tag_ in self.cursor.fetchall():
                                     msg[f'{today} - Таблица: ai, у сигнала обновлен tag: id = {id_}, ({tag_}) {tag_translate}'] = 2
                                 self.cursor.execute(f'''UPDATE ai
-                                                        SET tag='{tag_translate}' 
+                                                        SET Tag='{tag_translate}' 
                                                         WHERE uso='{uso_s}' AND 
                                                             basket={basket_s} AND 
                                                             module={module_s} AND 
                                                             channel={channel_s}''')
         
                             if not bool(exist_name):
-                                self.cursor.execute(f'''SELECT id, name 
+                                self.cursor.execute(f'''SELECT Id, "Name" 
                                                         FROM ai
                                                         WHERE uso='{uso_s}' AND 
-                                                        basket={basket_s} AND 
-                                                        module={module_s} AND 
-                                                        channel={channel_s}''')
+                                                              basket={basket_s} AND 
+                                                              module={module_s} AND 
+                                                              channel={channel_s}''')
                                 for id_, name_ in self.cursor.fetchall():
                                     msg[f'{today} - Таблица: ai, у сигнала обновлено name: id = {id_}, ({name_}) {description}'] = 2
                                 self.cursor.execute(f'''UPDATE ai
-                                                        SET name='{description}' 
+                                                        SET Name='{description}' 
                                                         WHERE uso='{uso_s}' AND 
                                                               basket={basket_s} AND 
                                                               module={module_s} AND 
@@ -2259,9 +2271,9 @@ class Filling_VS():
                     new_name = str(new_name).replace('Прит', 'прит')
                     new_name = str(new_name).replace('Вытяж', 'вытяж')
 
-                    self.cursor.execute(f"""SELECT id, name 
+                    self.cursor.execute(f"""SELECT Id, "Name" 
                                             FROM ai
-                                            WHERE name LIKE '%{new_name}%'""")
+                                            WHERE "Name" LIKE '%{new_name}%'""")
                     try: 
                         number_id = self.cursor.fetchall()[0][0]
                         pressure_norm = f'AI[{number_id}].Norm'
@@ -2759,12 +2771,12 @@ class Filling_PI():
                     return msg
                 
                 # Новый список из таблицы DI
-                self.cursor.execute(f"""SELECT id, tag, name
+                self.cursor.execute(f"""SELECT Id, "Tag", "Name"
                                         FROM ai
-                                        WHERE (name LIKE '%адрес%' AND name LIKE '%пусков%') OR
-                                              (name LIKE '%пожар%' AND name LIKE '%дымов%')  OR
-                                              (name LIKE '%теплов%') 
-                                        ORDER BY tag""")
+                                        WHERE ("Name" LIKE '%адрес%' AND "Name" LIKE '%пусков%') OR
+                                              ("Name" LIKE '%пожар%' AND "Name" LIKE '%дымов%')  OR
+                                              ("Name" LIKE '%теплов%') 
+                                        ORDER BY "Tag" """)
                 list_pi_ai = self.cursor.fetchall()
 
                 # Существующий список из таблицы PI
@@ -3291,7 +3303,7 @@ class Generate_database_SQL():
             if addr_offset == 0 or kod_msg is None or addr_offset is None: 
                 msg[f'{today} - Сообщения ai: ошибка. Адреса из таблицы msg не определены'] = 2
                 return msg
-            cursor.execute(f"""SELECT id, "Name", "AnalogGroupId" FROM ai""")
+            cursor.execute(f"""SELECT Id, "Name", "AnalogGroupId" FROM ai""")
             list_ai = cursor.fetchall()
             for analog in list_ai:
                 id_ai    = analog[0]

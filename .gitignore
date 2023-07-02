@@ -97,3 +97,4 @@ db_postgres/pg_xact/0000
 db_postgres/base/17439/2619
 db_postgres/log/postgresql-2023-07-01_000000.log
 db_postgres/pg_wal/000000010000000000000017
+db_postgres/log/postgresql-2023-07-02_000000.log
