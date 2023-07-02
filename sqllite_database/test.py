@@ -840,9 +840,19 @@ class Widget(QWidget):
         self.list_gen_tabl = []
         l_equip_ust = QLabel('Оборудование\n(уставки): ', tab_4)
         l_equip_ust.move(550, 20)
-        # self.q_check_umpna_ust = QCheckBox('UMPNA_tm', tab_4)
-        # self.q_check_umpna_ust.move(550, 50) 
-        # self.q_check_umpna_ust.stateChanged.connect(self.check_umpna_tm)
+        self.q_check_ai_tabl = QCheckBox('TblAnalogs', tab_4)
+        self.q_check_ai_tabl.setToolTip('''Название файла скрипта: TblAnalogs''')
+        self.q_check_ai_tabl.move(550, 50) 
+        self.q_check_ai_tabl.stateChanged.connect(self.check_ai_tabl)
+        self.q_check_zd_tabl = QCheckBox('TblValveTimeSetpoints', tab_4)
+        self.q_check_zd_tabl.setToolTip('''Название файла скрипта: TblValveTimeSetpoints''')
+        self.q_check_zd_tabl.move(550, 66) 
+        self.q_check_zd_tabl.stateChanged.connect(self.check_zd_tabl)
+        self.q_check_vs_tabl = QCheckBox('TblAuxSysTimeSetpoints', tab_4)
+        self.q_check_vs_tabl.setToolTip('''Название файла скрипта: TblAuxSysTimeSetpoints''')
+        self.q_check_vs_tabl.move(550, 82) 
+        self.q_check_vs_tabl.stateChanged.connect(self.check_vs_tabl)
+
         # self.q_check_zd_ust = QCheckBox('ZD_tm', tab_4)
         # self.q_check_zd_ust.move(550, 66) 
         # self.q_check_zd_ust.stateChanged.connect(self.check_zd_tm)
@@ -858,10 +868,7 @@ class Widget(QWidget):
         # self.q_check_pz_ust = QCheckBox('PZ_tm', tab_4)
         # self.q_check_pz_ust.move(550, 130) 
         # self.q_check_pz_ust.stateChanged.connect(self.check_pz_tm)
-        self.q_check_ai_tabl = QCheckBox('TblAnalogs', tab_4)
-        self.q_check_ai_tabl.setToolTip('''Название файла скрипта: TblAnalogs''')
-        self.q_check_ai_tabl.move(550, 50) 
-        self.q_check_ai_tabl.stateChanged.connect(self.check_ai_tabl)
+
 
         # Установить все
         check_all = QCheckBox('Установить/Снять', tab_4)
@@ -1463,6 +1470,12 @@ class Widget(QWidget):
     def check_ai_tabl(self, checked):
         if checked: self.list_gen_tabl.append('AI_tabl')
         else      : self.list_gen_tabl.remove('AI_tabl')
+    def check_zd_tabl(self, checked):
+        if checked: self.list_gen_tabl.append('ZD_tabl')
+        else      : self.list_gen_tabl.remove('ZD_tabl')
+    def check_vs_tabl(self, checked):
+        if checked: self.list_gen_tabl.append('VS_tabl')
+        else      : self.list_gen_tabl.remove('VS_tabl')
 
     # Button msg
     def export_list(self):

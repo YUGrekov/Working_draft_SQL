@@ -2121,7 +2121,7 @@ class Filling_ZD_tm():
                         count_row += 1
                         used = '0' if ust[0] == 'Резерв' else '1' 
                         list_zd_tm.append(dict(id = count_row, 
-                                                variable = '',
+                                                variable = f'tmZD[{count_ZD}].{ust[1]}',
                                                 tag  = f'HZD{count_ZD}_{ust[1]}',
                                                 name = f'{i[0]}. {ust[0]}',
                                                 unit = ust[3],
@@ -2365,7 +2365,7 @@ class Filling_VS_tm():
                         count_row += 1
                         used = '0' if ust[0] == 'Резерв' else '1' 
                         list_vs_tm.append(dict(id = count_row, 
-                                                variable = '',
+                                                variable = f'tmVS[{count_VS}].{ust[1]}',
                                                 tag  = f'HVS{count_VS}_{ust[1]}',
                                                 name = f'{i[0]}. {ust[0]}',
                                                 unit = ust[3],
@@ -3274,6 +3274,12 @@ class Generate_database_SQL():
                 if tabl == 'AI_tabl': 
                     msg.update(self.gen_table_AI(flag_write_db))
                     continue
+                if tabl == 'ZD_tabl': 
+                    msg.update(self.gen_table_general(flag_write_db, 'zd_tm', 'TblValveTimeSetpoints'))
+                    continue
+                if tabl == 'VS_tabl': 
+                    msg.update(self.gen_table_general(flag_write_db, 'vs_tm', 'AuxSysTimeSetpoints'))
+                    continue
             return msg
     # msg
     def gen_msg_ai(self, flag_write_db):
@@ -4002,6 +4008,95 @@ class Generate_database_SQL():
 
             msg[f'{today} - TblAnalogs: генерация завершена!'] = 1
         return(msg)
+    def gen_table_general(self, flag_write_db, tabl_sql, sign):
+            cursor = db.cursor()
+            cursor_prj = db_prj.cursor()
+        
+            text_start = ('\tCREATE SCHEMA IF NOT EXISTS objects;\n'
+                          '\tCREATE TABLE IF NOT EXISTS objects.TblValveTimeSetpoints(\n'
+                          '\t\tId INT NOT NULL,\n'
+                          '\t\tPrefix VARCHAR(1024),\n'
+                          '\t\tSetpointGroupId INT,\n'
+                          '\t\tTag VARCHAR(1024),\n'
+                          '\t\tName VARCHAR(1024),\n'
+                          '\t\tSource VARCHAR(1024),\n'
+                          '\t\tValue INT,\n'
+                          '\t\tEgu VARCHAR(1024),\n'
+                          '\t\tRuleName VARCHAR(1024),\n'
+                          '\t\tCONSTRAINT TblValveTimeSetpoints_pkey PRIMARY KEY (Id)\n'
+                          '\t);\n'
+                          '\t\tDELETE FROM objects.TblValveTimeSetpoints ;\n')
+            
+            msg = {}
+            gen_list = []
+            flag_del_tabl = False
+            try:
+                cursor.execute(f"""SELECT id, variable, tag, name, unit, used, value_ust, group_ust, rule_map_ust
+                                   FROM "{tabl_sql}" ORDER BY Id""")
+                list_signal = cursor.fetchall()
+            except Exception:
+                msg[f'{today} - {sign}: ошибка генерации: {traceback.format_exc()}'] = 2
+                return msg
 
+            for signal in list_signal:
+                try:
+                    Id, variable, tag, name, unit            = signal[0], signal[1], signal[2], signal[3], signal[4]
+                    used, value_ust, group_ust, rule_map_ust = signal[5], signal[6], signal[7], signal[8]
+
+                    if used == '0': continue
+
+                    # Prefix
+                    Prefix = 'NULL' if prefix_system == '' or prefix_system is None else str(prefix_system)
+                    
+                    # SetpointGroupId
+                    cursor.execute(f"""SELECT id FROM "sp_grp" WHERE name_group='{group_ust}'""")
+                    try   : SetpointGroupId = cursor.fetchall()[0][0]
+                    except: SetpointGroupId = 'NULL'
+
+                    # RuleName
+                    cursor.execute(f"""SELECT rule_name FROM "sp_rules" WHERE name_rules='{rule_map_ust}'""")
+                    try   : RuleName = cursor.fetchall()[0][0]
+                    except: RuleName = 'NULL'
+
+                except Exception:
+                    msg[f'{today} - {sign}: ошибка добавления строки, пропускается: {traceback.format_exc()}'] = 2
+                    continue
+                
+                ins_row_tabl = f"INSERT INTO objects.TblValveTimeSetpoints (Id, Prefix, SetpointGroupId, Tag, Name, Source, Value, Egu, RuleName) VALUES({Id},'{Prefix}', {SetpointGroupId}, '{tag}', '{name}', '{variable}', {value_ust}, '{unit}', '{RuleName}');\n"
+                
+                if flag_write_db:
+                    try:
+                        if flag_del_tabl is False :
+                            cursor_prj.execute(text_start)
+                            flag_del_tabl = True
+                        cursor_prj.execute(ins_row_tabl)
+                    except Exception:
+                        msg[f'{today} - {sign}: ошибка добавления строки, пропускается: {traceback.format_exc()}'] = 2
+                        continue
+                else:
+                    gen_list.append(ins_row_tabl)
+        
+                if not flag_write_db:
+                    try:
+                        # Создаём файл запроса
+                        path_request = f'{path_location_file}\\PostgreSQL-{sign}.sql'
+                        if not os.path.exists(path_request):
+                            file = codecs.open(path_request, 'w', 'utf-8')
+                        else:
+                            os.remove(path_request)
+                            file = codecs.open(path_request, 'w', 'utf-8')
+                        if path_location_file == '' or path_location_file is None or len(path_location_file) == 0:
+                            msg[f'{today} - {sign}: не указана конечная папка'] = 2
+                            return msg
+                        file.write(text_start)
+                        for insert in gen_list:
+                            file.write(insert)
+                        file.write(f'COMMIT;')
+                        file.close()
+                    except Exception:
+                        msg[f'{today} - {sign}: ошибка записи в файл: {traceback.format_exc()}'] = 2
+
+                msg[f'{today} - {sign}: генерация завершена!'] = 1
+            return(msg)
 
 
