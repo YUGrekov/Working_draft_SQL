@@ -295,6 +295,9 @@ rus_list = {'signals': {'id':'№', 'type_signal':'Тип сигнала', 'uso'
             'umpna_tm': {'id':'№','variable':'Переменная', 'tag':'Идентификатор', 'name':'Название', 'unit':'Единица измерения', 'used':'Используется', 'value_ust':'Значение уставки', 'minimum':'Минимум', 
                        'maximum':'Максимум', 'group_ust':'Группа уставок', 'rule_map_ust':'Правило для карты уставок'},
             
+            'umpna_narab_tm': {'id':'№','variable':'Переменная', 'tag':'Идентификатор', 'name':'Название', 'unit':'Единица измерения', 'used':'Используется', 'value_ust':'Значение уставки', 'minimum':'Минимум', 
+                       'maximum':'Максимум', 'group_ust':'Группа уставок', 'rule_map_ust':'Правило для карты уставок'},
+                       
             'zd': {'id':'№','variable':'Переменная', 'name':'Название', 'short_name':'Короткое название', 'exists_interface':'Наличие ИНТЕРФЕЙСА', 'KVO':'КВО', 'KVZ':'КВЗ', 'MPO':'МПО', 
                    'MPZ':'МПЗ', 'Dist':'Дист_ф', 'Mufta':'Муфта', 'Drive_failure':'Авария привода', 'Open':'Открыть', 'Close':'Закрыть', 'Stop':'Остановить', 'Opening_stop':'Открытие остановить', 
                    'Closeing_stop':'Закрытие остановить', 'KVO_i':'КВО_и', 'KVZ_i':'КВЗ_и', 'MPO_i':'МПО_и', 'MPZ_i':'МПЗ_и', 'Dist_i':'Дист_и', 'Mufta_i':'Муфта_и','Drive_failure_i':'Авария привода_и', 
@@ -846,15 +849,29 @@ class tmNA_UMPNA(BaseModel):
     tag = CharField(null = True)
     name = CharField(null = True)
     unit = CharField(null = True)
-    used = CharField(null = True)
-    value_ust = CharField(null = True)
-    minimum = CharField(null = True)
-    maximum = CharField(null = True)
+    used = BooleanField(null = True)
+    value_ust = IntegerField(null = True)
+    minimum = IntegerField(null = True)
+    maximum = IntegerField(null = True)
     group_ust = CharField(null = True)
     rule_map_ust = CharField(null = True)
 
     class Meta:
         table_name = 'umpna_tm'
+class tmNA_UMPNA_narab(BaseModel):
+    variable = CharField(null = True)
+    tag = CharField(null = True)
+    name = CharField(null = True)
+    unit = CharField(null = True)
+    used = BooleanField(null = True)
+    value_ust = IntegerField(null = True)
+    minimum = IntegerField(null = True)
+    maximum = IntegerField(null = True)
+    group_ust = CharField(null = True)
+    rule_map_ust = CharField(null = True)
+
+    class Meta:
+        table_name = 'umpna_narab_tm'
 class UMPNA(BaseModel):
     variable = CharField(null = True)
     name = CharField(null = True)
@@ -990,10 +1007,10 @@ class ZD_tm(BaseModel):
     tag = CharField(null = True)
     name = CharField(null = True)
     unit = CharField(null = True)
-    used = CharField(null = True)
-    value_ust = CharField(null = True)
-    minimum = CharField(null = True)
-    maximum = CharField(null = True)
+    used = BooleanField(null = True)
+    value_ust = IntegerField(null = True)
+    minimum = IntegerField(null = True)
+    maximum = IntegerField(null = True)
     group_ust = CharField(null = True)
     rule_map_ust = CharField(null = True)
 
@@ -1036,10 +1053,10 @@ class VS_tm(BaseModel):
     tag = CharField(null = True)
     name = CharField(null = True)
     unit = CharField(null = True)
-    used = CharField(null = True)
-    value_ust = CharField(null = True)
-    minimum = CharField(null = True)
-    maximum = CharField(null = True)
+    used = BooleanField(null = True)
+    value_ust = IntegerField(null = True)
+    minimum = IntegerField(null = True)
+    maximum = IntegerField(null = True)
     group_ust = CharField(null = True)
     rule_map_ust = CharField(null = True)
 
@@ -1050,8 +1067,8 @@ class VSGRP(BaseModel):
     tag = CharField(null = True)
     name = CharField(null = True)
     fire_or_watering = CharField(null = True)
-    Number_of_auxsystem_in_group = CharField(null = True)
-    WarnOff_flag_if_one_auxsystem_in_the_group_is_running = CharField(null = True)
+    Number_of_auxsystem_in_group = IntegerField(null = True)
+    WarnOff_flag_if_one_auxsystem_in_the_group_is_running = IntegerField(null = True)
 
     class Meta:
         table_name = 'vsgrp'
@@ -1060,10 +1077,10 @@ class VSGRP_tm(BaseModel):
     tag = CharField(null = True)
     name = CharField(null = True)
     unit = CharField(null = True)
-    used = CharField(null = True)
-    value_ust = CharField(null = True)
-    minimum = CharField(null = True)
-    maximum = CharField(null = True)
+    used = BooleanField(null = True)
+    value_ust = IntegerField(null = True)
+    minimum = IntegerField(null = True)
+    maximum = IntegerField(null = True)
     group_ust = CharField(null = True)
     rule_map_ust = CharField(null = True)
 
@@ -1116,10 +1133,10 @@ class UTS_tm(BaseModel):
     tag = CharField(null = True)
     name = CharField(null = True)
     unit = CharField(null = True)
-    used = CharField(null = True)
-    value_ust = CharField(null = True)
-    minimum = CharField(null = True)
-    maximum = CharField(null = True)
+    used = BooleanField(null = True)
+    value_ust = IntegerField(null = True)
+    minimum = IntegerField(null = True)
+    maximum = IntegerField(null = True)
     group_ust = CharField(null = True)
     rule_map_ust = CharField(null = True)
 
@@ -1168,10 +1185,10 @@ class PZ_tm(BaseModel):
     tag = CharField(null = True)
     name = CharField(null = True)
     unit = CharField(null = True)
-    used = CharField(null = True)
-    value_ust = CharField(null = True)
-    minimum = CharField(null = True)
-    maximum = CharField(null = True)
+    used = BooleanField(null = True)
+    value_ust = IntegerField(null = True)
+    minimum = IntegerField(null = True)
+    maximum = IntegerField(null = True)
     group_ust = CharField(null = True)
     rule_map_ust = CharField(null = True)
 

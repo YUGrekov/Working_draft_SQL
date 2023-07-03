@@ -543,6 +543,23 @@ class Widget(QWidget):
         b_clear_tm_umpna.resize(80,23)
         b_clear_tm_umpna.move(b_width_two + 720, b_height) 
         b_clear_tm_umpna.clicked.connect(self.clear_tmNA_umpna_tabl)
+        # tmNA_narab_UMPNA
+        l_tm_umpna = QLabel('UMPNA_narab_tm:', tab_3)
+        l_tm_umpna.move(b_width_one + 182, l_height + 180)
+        b_tm_umpna_basket = QPushButton('Заполнить', tab_3)
+        b_tm_umpna_basket.setStyleSheet("background: #bfd6bf; border: 1px solid; border-radius: 3px;")
+        b_tm_umpna_basket.setToolTip('''Временные уставки наработки UMPNA.
+        Должна быть заполнена таблица UMPNA, откуда берется название и по умолчанию добавляются уставки.
+        Проверки нет! Для нового заполнения необходимо очистить таблицу, иначе новые записи добавятся в конец таблицы!''')
+        b_tm_umpna_basket.resize(80,23)
+        b_tm_umpna_basket.move(b_width_one + 180, b_height + 180) 
+        b_tm_umpna_basket.clicked.connect(self.filling_tmNA_umpna_narab)
+        b_clear_tm_umpna = QPushButton('Очистить', tab_3)
+        b_clear_tm_umpna.setStyleSheet("background: #bbbabf; border: 1px solid; border-radius: 3px;")
+        b_clear_tm_umpna.setToolTip("Очистить таблицу Временные уставки UMPNA")
+        b_clear_tm_umpna.resize(80,23)
+        b_clear_tm_umpna.move(b_width_two + 180, b_height + 180) 
+        b_clear_tm_umpna.clicked.connect(self.clear_tmNA_umpna_narab_tabl)
         # ZD
         l_zd = QLabel('ZD:', tab_3)
         l_zd.move(b_width_one + 546, l_height + 45)
@@ -719,7 +736,7 @@ class Widget(QWidget):
         l_msg_desc = QLabel('Сообщения', tab_4)
         l_msg_desc.move(150, 5)
         l_tabl_desc = QLabel('Таблицы', tab_4)
-        l_tabl_desc.move(550, 5)
+        l_tabl_desc.move(690, 5)
         
         l_diagn = QLabel('Диагностика: ', tab_4)
         l_diagn.move(10, 20)
@@ -735,9 +752,6 @@ class Widget(QWidget):
         self.q_check_do.setToolTip('''tag: DOP''')
         self.q_check_do.move(10, 67) 
         self.q_check_do.stateChanged.connect(self.check_do)
-        # self.q_check_ao = QCheckBox('AO', tab_4)
-        # self.q_check_ao.move(10, 68) 
-        # self.q_check_ao.stateChanged.connect(self.check_ao)
         self.q_check_uso = QCheckBox('Диагностика', tab_4)
         self.q_check_uso.setToolTip('''tag: DiagMod, DiagCPUKC, DiagCPU, DiagMN, DiagCN, DiagRS, DiagEthEx''')
         self.q_check_uso.move(10, 83) 
@@ -838,40 +852,42 @@ class Widget(QWidget):
 
         # Таблицы
         self.list_gen_tabl = []
-        l_equip_ust = QLabel('Оборудование\n(уставки): ', tab_4)
-        l_equip_ust.move(550, 20)
         self.q_check_ai_tabl = QCheckBox('TblAnalogs', tab_4)
         self.q_check_ai_tabl.setToolTip('''Название файла скрипта: TblAnalogs''')
-        self.q_check_ai_tabl.move(550, 50) 
+        self.q_check_ai_tabl.move(550, 25) 
         self.q_check_ai_tabl.stateChanged.connect(self.check_ai_tabl)
         self.q_check_zd_tabl = QCheckBox('TblValveTimeSetpoints', tab_4)
         self.q_check_zd_tabl.setToolTip('''Название файла скрипта: TblValveTimeSetpoints''')
-        self.q_check_zd_tabl.move(550, 66) 
+        self.q_check_zd_tabl.move(550, 41) 
         self.q_check_zd_tabl.stateChanged.connect(self.check_zd_tabl)
         self.q_check_vs_tabl = QCheckBox('TblAuxSysTimeSetpoints', tab_4)
         self.q_check_vs_tabl.setToolTip('''Название файла скрипта: TblAuxSysTimeSetpoints''')
-        self.q_check_vs_tabl.move(550, 82) 
+        self.q_check_vs_tabl.move(550, 57) 
         self.q_check_vs_tabl.stateChanged.connect(self.check_vs_tabl)
         self.q_check_vsgrp_tabl = QCheckBox('TblAuxsysgrouptimesetpoints', tab_4)
         self.q_check_vsgrp_tabl.setToolTip('''Название файла скрипта: TblAuxsysgrouptimesetpoints''')
-        self.q_check_vsgrp_tabl.move(550, 98) 
+        self.q_check_vsgrp_tabl.move(550, 73) 
         self.q_check_vsgrp_tabl.stateChanged.connect(self.check_vsgrp_tabl)
         self.q_check_pupm_tabl = QCheckBox('TblPumpTimeSetpoints', tab_4)
         self.q_check_pupm_tabl.setToolTip('''Название файла скрипта: TblPumpTimeSetpoints''')
-        self.q_check_pupm_tabl.move(550, 114) 
+        self.q_check_pupm_tabl.move(750, 25) 
         self.q_check_pupm_tabl.stateChanged.connect(self.check_pump_tabl)
         self.q_check_pupm_time_tabl = QCheckBox('TblOpTimeSetpoints', tab_4)
         self.q_check_pupm_time_tabl.setToolTip('''Название файла скрипта: TblOpTimeSetpoints''')
-        self.q_check_pupm_time_tabl.move(550, 130) 
+        self.q_check_pupm_time_tabl.move(750, 41) 
         self.q_check_pupm_time_tabl.stateChanged.connect(self.check_pump_time_tabl)
-        self.q_check_uts_tabl = QCheckBox('Tblsignalingdevicetimesetpoints', tab_4)
+        self.q_check_uts_tabl = QCheckBox('TblSignalingdevicetimesetpoints', tab_4)
         self.q_check_uts_tabl.setToolTip('''Название файла скрипта: TblSignalingdevicetimesetpoints''')
-        self.q_check_uts_tabl.move(550, 146) 
+        self.q_check_uts_tabl.move(750, 57) 
         self.q_check_uts_tabl.stateChanged.connect(self.check_uts_tabl)
         self.q_check_prj_tabl = QCheckBox('TblProjecttimesetpoints', tab_4)
         self.q_check_prj_tabl.setToolTip('''Название файла скрипта: TblProjecttimesetpoints''')
-        self.q_check_prj_tabl.move(550, 160) 
+        self.q_check_prj_tabl.move(750, 73) 
         self.q_check_prj_tabl.stateChanged.connect(self.check_prj_tabl)
+        self.q_check_pz_tabl = QCheckBox('TblFirezonetimesetpoints', tab_4)
+        self.q_check_pz_tabl.setToolTip('''Название файла скрипта: TblFirezonetimesetpoints''')
+        self.q_check_pz_tabl.move(750, 89) 
+        self.q_check_pz_tabl.stateChanged.connect(self.check_pz_tabl)
 
         # Установить все
         check_all = QCheckBox('Установить/Снять', tab_4)
@@ -896,13 +912,13 @@ class Widget(QWidget):
         b_export_list_tabl.setStyleSheet("border: 1px solid; border-radius: 3px;")
         b_export_list_tabl.setToolTip('''Создается отдельный файл таблиц для ручной генерации базы данных PostgreSQL''')
         b_export_list_tabl.resize(120,23)
-        b_export_list_tabl.move(550, 180) 
+        b_export_list_tabl.move(590, 115) 
         b_export_list_tabl.clicked.connect(self.export_list_tabl)
         b_export_sql_tabl = QPushButton('Генерировать в базу', tab_4)
         b_export_sql_tabl.setStyleSheet("border: 1px solid; border-radius: 3px;")
         b_export_sql_tabl.setToolTip('''Схема: objects\nСуществующая таблица удаляется, создается новая и заполняется''')
         b_export_sql_tabl.resize(120,23)
-        b_export_sql_tabl.move(700, 180) 
+        b_export_sql_tabl.move(740, 115) 
         b_export_sql_tabl.clicked.connect(self.write_in_sql_tabl)
 
         # Logs
@@ -1168,7 +1184,17 @@ class Widget(QWidget):
         msg = tmNA_umpna_table.getting_modul()
         self.logs_msg('default', 1, msg, True)
     def clear_tmNA_umpna_tabl(self):
-        msg = self.dop_function.clear_tabl('tmna_umpna', 'tmNA_UMPNA', self.list_tabl)
+        msg = self.dop_function.clear_tabl('umpna_tm', 'tmNA_UMPNA', self.list_tabl)
+        self.logs_msg('default', 1, msg, True)
+    # tmNA_UMPNA_narab
+    def filling_tmNA_umpna_narab(self):
+        tmNA_umpna_narab_table = Filling_tmNA_UMPNA_narab()
+        msg = tmNA_umpna_narab_table.column_check()
+        self.logs_msg('default', 1, msg, True)
+        msg = tmNA_umpna_narab_table.getting_modul()
+        self.logs_msg('default', 1, msg, True)
+    def clear_tmNA_umpna_narab_tabl(self):
+        msg = self.dop_function.clear_tabl('umpna_narab_tm', 'tmNA_UMPNA_narab', self.list_tabl)
         self.logs_msg('default', 1, msg, True)
     # ZD
     def filling_valves(self):
@@ -1494,6 +1520,9 @@ class Widget(QWidget):
     def check_prj_tabl(self, checked):
         if checked: self.list_gen_tabl.append('Prj_tabl')
         else      : self.list_gen_tabl.remove('Prj_tabl')
+    def check_pz_tabl(self, checked):
+        if checked: self.list_gen_tabl.append('PZ_tabl')
+        else      : self.list_gen_tabl.remove('PZ_tabl')
     # Button msg
     def export_list(self):
         msg = self.gen_sql.write_in_sql(self.list_gen_msg, False)
