@@ -12,7 +12,7 @@ from playhouse.migrate import *
 #path_to_exel = f'D:\\Development\\New_SQL_generator\\Working_draft_SQL\\sqllite_database\\П3 - КЗФКП Аксинино-2_MK500_20230405.xlsx'
 #path_to_base = f'D:\\Development\\New_SQL_generator\\Working_draft_SQL\\sqllite_database\\asutp.db'
 
-path_to_exel = 'D:\\Development\\New_SQL_generator\\Working_draft_SQL\\sqllite_database\\П4.1.1 - ТС ТП НПС Салым-4_кор14_ЗПСИ.xlsm'
+path_to_exel = 'D:\\Development\\New_SQL_generator\\Working_draft_SQL\\sqllite_database\\П3 - КЗФКП Аксинино-2_MK500_20230405.xlsx'
 path_sample  = 'D:\Development\Generation_msg\Sample\\'
 path_location_file = 'D:\Development\Generation_msg\Script\\'
 name_project = 'Тест'
@@ -20,7 +20,7 @@ prefix_system = ''
 path_to_devstudio = 'D:\Development\Generation_msg\Script\\'
 
 
-database_msg = 'mydatabase'
+database_msg = 'asutp_temp'
 user_msg = 'postgres'
 password_msg = 'postgres'
 host_msg = 'localhost'
@@ -79,8 +79,8 @@ db_prj = PostgresqlDatabase(database_prj, user=user_prj, password=password_prj, 
 #db = SqliteDatabase(path_to_base)
 migrator = SqliteMigrator(db)
 
+
 class BaseModel(Model):
-    id = PrimaryKeyField(unique=True)
     class Meta:
         database = db
         order_by = id
@@ -134,7 +134,7 @@ rus_list = {'signals': {'id':'№', 'type_signal':'Тип сигнала', 'uso'
             'ao': {'id':'№','variable':'Переменная', 'tag':'Идентификатор', 'name':'Название', 'pValue':'Ссылка на входное значение сигнала',
                    'pHealth':'Ссылка на исправность канала', 'uso':'Шкаф', 'basket':'Корзина', 'module':'Модуль', 'channel':'Канал'},
             
-            'ai': {'Id':'№','variable':'Переменная', 'Tag':'Идентификатор', 'Name':'Название', 'pValue':'Ссылка на входное\nзначение сигнала',
+            'ai': {'id':'№','variable':'Переменная', 'tag':'Идентификатор', 'Name':'Название', 'pValue':'Ссылка на входное\nзначение сигнала',
                    'pHealth':'Ссылка на исправность\nканала','AnalogGroupId':'Группа аналогов',
                    'SetpointGroupId':'Группа уставок\nаналогов', 'Egu':'Единица измерения', 'sign_VU':'Подпись для ВУ', 
                    'IsOilPressure':'Давление нефти/нефтепродукта\n(флаг для пересчета в кгс/см2)', 'number_NA_or_aux':'Номер НА или вспом.', 
@@ -492,9 +492,8 @@ class HardWare(BaseModel):
     class Meta:
         table_name = 'hardware'
 class AI(BaseModel):
-    Id               = IntegerField(null = True)
     variable         = CharField(null = True)
-    Tag              = CharField(null = True)
+    tag              = CharField(null = True)
     Name             = CharField(null = True)
     pValue           = CharField(null = True)
     pHealth          = CharField(null = True)
@@ -800,11 +799,11 @@ class KTPRA(BaseModel):
     name = CharField(null = True)
     NA = CharField(null = True)
     avar_parameter = CharField(null = True)
-    stop_type = CharField(null = True)
-    AVR = CharField(null = True)
-    close_valves = CharField(null = True)
+    stop_type = IntegerField(null = True)
+    AVR = BooleanField(null = True)
+    close_valves = BooleanField(null = True)
     DisableMasking = BooleanField(null = True)
-    time_ust = CharField(null = True)
+    time_ust = IntegerField(null = True)
     Pic = CharField(null = True)
     group_ust = CharField(null = True)
     rule_map_ust = CharField(null = True)
