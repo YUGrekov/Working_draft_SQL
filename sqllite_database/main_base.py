@@ -795,7 +795,7 @@ class Filling_AI():
                                     break
                         except Exception:
                             msg[f'{today} - Таблица: ai, ошибка при заполнении. Заполнение продолжится: {traceback.format_exc()}'] = 2
-                            msg[f'{today} - Таблица: signals, ошибка в этой строке. Строка пропускается: {row_sql}'] = 2
+                            msg[f'{today} - Таблица: signals, ошибка в строке. Строка пропускается: {row_sql}'] = 2
                             continue
 
                         sign             = ''
@@ -1050,7 +1050,7 @@ class Filling_AO():
                             else            : prefix = f'{module_s}'
                         except Exception:
                             msg[f'{today} - Таблица: ao, ошибка при заполнении. Заполнение продолжится: {traceback.format_exc()}'] = 2
-                            msg[f'{today} - Таблица: signals, ошибка в этой строке. Строка пропусается: {row_sql}'] = 2
+                            msg[f'{today} - Таблица: signals, ошибка в строке. Строка пропусается: {row_sql}'] = 2
                             continue
                         
                         if isdigit_num == '':
@@ -1159,7 +1159,6 @@ class Filling_DI():
                                                               module={module_s} AND 
                                                               channel={channel_s}''')
                             continue
-
                         # Сквозной номер модуля
                         try:
                             for through_module_number in HardWare.select().dicts():
@@ -1172,7 +1171,10 @@ class Filling_DI():
                                     type_mod = through_module_number[f'variable_{module_s}']
                                     isdigit_num  = re.findall('\d+', str(type_mod))
 
-                                    try   : isdigit_num = isdigit_num[0]
+                                    try   : 
+                                        isdigit_num = isdigit_num[0]
+                                        if tag_h == '':
+                                            msg[f'{today} - В таблице hardware не заполнен tag: {id_s}, {description}, "pValue" некорректно заполнено'] = 2
                                     except: 
                                         msg[f'{today} - В таблице hardware не найден модуль сигнала: {id_s}, {tag}, {description}, {uso_s}_A{basket_s}_{module_s}_{channel_s}, "pValue" не заполнен'] = 2
                                     break
@@ -1181,7 +1183,7 @@ class Filling_DI():
                             else            : prefix = f'{module_s}'
                         except Exception:
                             msg[f'{today} - Таблица: di, ошибка при заполнении. Заполнение продолжится: {traceback.format_exc()}'] = 2
-                            msg[f'{today} - Таблица: signals, ошибка в этой строке. Строка пропусается: {row_sql}'] = 2
+                            msg[f'{today} - Таблица: signals, ошибка в строке. Строка пропусается: {row_sql}'] = 2
                             continue
 
                         if self.dop_function.str_find(str(tag).lower(), {'csc'}) : group_diskrets = 'Диагностика'
@@ -1340,7 +1342,7 @@ class Filling_DO():
                             else            : prefix = f'{module_s}'
                         except Exception:
                             msg[f'{today} - Таблица: do, ошибка при заполнении. Заполнение продолжится: {traceback.format_exc()}'] = 2
-                            msg[f'{today} - Таблица: signals, ошибка в этой строке. Строка пропусается: {row_sql}'] = 2
+                            msg[f'{today} - Таблица: signals, ошибка в строке. Строка пропусается: {row_sql}'] = 2
                             continue
 
                         if isdigit_num == '':
@@ -1504,7 +1506,7 @@ class Filling_KTPR():
     # Заполняем таблицу KTPR
     def column_check(self):
         list_default = ['variable', 'tag', 'name', 
-                        'avar_parameter', 'prohibition_masking', 'auto_unlock_protection', 'shutdown_PNS_a_time_delay_up_5s_after_turning',
+                        'avar_parameter', 'DisableMasking', 'auto_unlock_protection', 'shutdown_PNS_a_time_delay_up_5s_after_turning',
                         'bitmask_protection_group_membership', 'stop_type_NA', 'pump_station_stop_type',
                         'closing_gate_valves_at_the_inlet_NPS', 'closing_gate_valves_at_the_outlet_NPS', 'closing_gate_valves_between_PNS_and_MNS',
                         'closing_gate_valves_between_RP_and_PNS', 'closing_valves_inlet_and_outlet_MNS', 'closing_valves_inlet_and_outlet_PNS',
@@ -1544,36 +1546,43 @@ class Filling_KTPRA():
     def getting_modul(self):
         msg = {}
         list_ktpra = []
+        count_defence = 0
         with db:
-            for i in range(1, 5):
-                for k in range(1, 97):
-                    list_ktpra.append(dict(id = i,
-                                            variable = f'KTPRA[{i}][{k}]',
-                                            tag  = '',
-                                            name = f'Резерв',
-                                            NA = '',
-                                            avar_parameter = '',
-                                            stop_type = '',
-                                            AVR = '',
-                                            close_valves = '',
-                                            prohibition_of_masking = '',
-                                            time_setting = '',
-                                            Pic = '',
-                                            group_ust = f'Tm - Агрегатные защиты МНА{i}',
-                                            rule_map_ust = 'Временные уставки',
-                                            # number_list_VU = ,
-                                            # number_protect_VU = '',
-                                            number_pump_VU = i
-                                            ))
-            # Checking for the existence of a database
-            KTPRA.insert_many(list_ktpra).execute()
+            try:
+                for i in range(1, 5):
+                    for k in range(1, 97):
+                        count_defence += 1
+                        list_ktpra.append(dict(id = count_defence,
+                                               id_num = k,
+                                                variable = f'KTPRA[{i}][{k}]',
+                                                tag  = '',
+                                                name = f'Резерв',
+                                                NA = '',
+                                                avar_parameter = '',
+                                                stop_type = '',
+                                                AVR = '',
+                                                close_valves = '',
+                                                DisableMasking = False,
+                                                time_ust = '',
+                                                Pic = '',
+                                                group_ust = f'Tm - Агрегатные защиты МНА{i}',
+                                                rule_map_ust = 'Временные уставки',
+                                                #number_list_VU = ,
+                                                #number_protect_VU = '',
+                                                number_pump_VU = i
+                                                ))
+                # Checking for the existence of a database
+                KTPRA.insert_many(list_ktpra).execute()
+            except Exception:
+                msg[f'{today} - Таблица: ktpra, ошибка при заполнении: {traceback.format_exc()}'] = 2
+                return msg
         msg[f'{today} - Таблица: ktpra подготовлена'] = 1
         return(msg)
     # Заполняем таблицу KTPRA
     def column_check(self):
         list_default = ['variable', 'tag', 'name', 
                         'NA', 'avar_parameter', 'stop_type', 'AVR', 'close_valves',
-                        'prohibition_of_masking', 'time_setting', 'Pic', 
+                        'DisableMasking', 'time_ust', 'Pic', 
                         'group_ust', 'rule_map_ust', 'number_list_VU', 'number_protect_VU', 'number_pump_VU']
         msg = self.dop_function.column_check(KTPRA, 'ktpra', list_default)
         return msg 
@@ -1621,31 +1630,37 @@ class Filling_GMPNA():
     def getting_modul(self):
         msg = {}
         list_GMPNA = []
-        with db:
-            for i in range(1, 5):
-                for k in range(1, 65):
-                    list_GMPNA.append(dict(id = i,
-                                            variable = f'GMPNA[{i}][{k}]',
-                                            tag  = '',
-                                            name = 'Резерв',
-                                            name_for_Chrp_in_local_mode = '',
-                                            NA = '',
-                                            time_setting = '',
-                                            setting = '',
-                                            group_ust = f'Tm - Агрегатные готовности МНА{i}',
-                                            rule_map_ust = 'Временные уставки',
-                                            # number_list_VU = '',
-                                            # number_protect_VU = '',
-                                            number_pump_VU = i))
+        count_defence = 0
+        try:
+            with db:
+                for i in range(1, 5):
+                    for k in range(1, 65):
+                        count_defence += 1
+                        list_GMPNA.append(dict(id = count_defence,
+                                               id_num = k,
+                                                variable = f'GMPNA[{i}][{k}]',
+                                                tag  = '',
+                                                name = 'Резерв',
+                                                name_for_Chrp_in_local_mode = '',
+                                                NA = '',
+                                                #used_time_ust = '',
+                                                #time_ust = '',
+                                                group_ust = f'Tm - Агрегатные готовности МНА{i}',
+                                                rule_map_ust = 'Временные уставки',
+                                                # number_list_VU = '',
+                                                # number_protect_VU = '',
+                                                number_pump_VU = i))
 
-            # Checking for the existence of a database
-            GMPNA.insert_many(list_GMPNA).execute()
-
+                # Checking for the existence of a database
+                GMPNA.insert_many(list_GMPNA).execute()
+        except Exception:
+            msg[f'{today} - Таблица: gmpna, ошибка при заполнении: {traceback.format_exc()}'] = 2
+            return msg
         msg[f'{today} - Таблица: gmpna подготовлена'] = 1
         return(msg)
     # Заполняем таблицу GMPNA
     def column_check(self):
-        list_default = ['variable', 'tag', 'name', 'name_for_Chrp_in_local_mode', 'NA', 'time_setting', 'setting', 'group_ust', 
+        list_default = ['variable', 'tag', 'name', 'name_for_Chrp_in_local_mode', 'NA', 'used_time_ust', 'time_ust', 'group_ust', 
                         'rule_map_ust', 'number_list_VU', 'number_protect_VU', 'number_pump_VU']
         msg = self.dop_function.column_check(GMPNA, 'gmpna', list_default)
         return msg 
@@ -3351,22 +3366,31 @@ class Generate_database_SQL():
                     msg.update(self.gen_table_general(flag_write_db, 'vs_tm', 'TblAuxSysTimeSetpoints'))
                     continue
                 if tabl == 'VSGRP_tabl': 
-                    msg.update(self.gen_table_general(flag_write_db, 'vsgrp_tm', 'TblAuxsysgrouptimesetpoints'))
+                    msg.update(self.gen_table_general(flag_write_db, 'vsgrp_tm', 'TblAuxsysgrouptimeSetpoints'))
                     continue
                 if tabl == 'Pump_tabl': 
-                    msg.update(self.gen_table_general(flag_write_db, 'umpna_tm', 'TblPumptimesetpoints'))
+                    msg.update(self.gen_table_general(flag_write_db, 'umpna_tm', 'TblPumptimeSetpoints'))
                     continue
                 if tabl == 'UTS_tabl': 
-                    msg.update(self.gen_table_general(flag_write_db, 'uts_tm', 'TblSignalingdevicetimesetpoints'))
+                    msg.update(self.gen_table_general(flag_write_db, 'uts_tm', 'TblSignalingdevicetimeSetpoints'))
                     continue
                 if tabl == 'Prj_tabl': 
-                    msg.update(self.gen_table_general(flag_write_db, 'prj_tm', 'TblProjecttimesetpoints'))
+                    msg.update(self.gen_table_general(flag_write_db, 'prj_tm', 'TblProjecttimeSetpoints'))
                     continue
                 if tabl == 'PZ_tabl': 
-                    msg.update(self.gen_table_general(flag_write_db, 'pz_tm', 'TblFirezonetimesetpoints'))
+                    msg.update(self.gen_table_general(flag_write_db, 'pz_tm', 'TblFirezonetimeSetpoints'))
                     continue
                 if tabl == 'PumpTime_tabl': 
                     msg.update(self.gen_table_general(flag_write_db, 'umpna_narab_tm', 'TblOpTimeSetpoints'))
+                    continue
+                if tabl == 'KTPR_tabl': 
+                    msg.update(self.gen_table_ktpr(flag_write_db))
+                    continue
+                if tabl == 'KTPRA_tabl': 
+                    msg.update(self.gen_table_ktpra(flag_write_db))
+                    continue
+                if tabl == 'GMPNA_tabl': 
+                    msg.update(self.gen_table_gmpna(flag_write_db))
                     continue
             return msg
     # msg
@@ -4117,6 +4141,21 @@ class Generate_database_SQL():
                         '\t);\n'
                         f'\t\tDELETE FROM objects.{sign} ;\n')
         
+        text_start_pump = ('\tCREATE SCHEMA IF NOT EXISTS objects;\n'
+                            f'\tCREATE TABLE IF NOT EXISTS objects.{sign}(\n'
+                            '\t\tId INT NOT NULL,\n'
+                            '\t\tPrefix VARCHAR(1024),\n'
+                            '\t\tSetpointGroupId INT,\n'
+                            '\t\tTag VARCHAR(1024),\n'
+                            '\t\tName VARCHAR(1024),\n'
+                            '\t\tSource VARCHAR(1024),\n'
+                            '\t\tValue INT,\n'
+                            '\t\t\Valuereal DOUBLE PRECISION,\n'
+                            '\t\tEgu VARCHAR(1024),\n'
+                            '\t\tRuleName VARCHAR(1024),\n'
+                            f'\t\tCONSTRAINT {sign}_pkey PRIMARY KEY (Id)\n'
+                            '\t);\n'
+                            f'\t\tDELETE FROM objects.{sign} ;\n')
         msg = {}
         gen_list = []
         flag_del_tabl = False
@@ -4157,8 +4196,10 @@ class Generate_database_SQL():
             if flag_write_db:
                 try:
                     if flag_del_tabl is False :
-                        cursor_prj.execute(text_start)
+                        if sign == 'TblPumptimesetpoints': cursor_prj.execute(text_start_pump)
+                        else                             : cursor_prj.execute(text_start)
                         flag_del_tabl = True
+
                     cursor_prj.execute(ins_row_tabl)
                 except Exception:
                     msg[f'{today} - {sign}: ошибка добавления строки, пропускается: {traceback.format_exc()}'] = 2
@@ -4189,6 +4230,298 @@ class Generate_database_SQL():
                 msg[f'{today} - {sign}: ошибка записи в файл: {traceback.format_exc()}'] = 2
         msg[f'{today} - {sign}: генерация завершена!'] = 1
         return(msg)
+    def gen_table_ktpr(self, flag_write_db):
+        cursor = db.cursor()
+        cursor_prj = db_prj.cursor()
+    
+        text_start = ('\tCREATE SCHEMA IF NOT EXISTS objects;\n'
+                        f'\tCREATE TABLE IF NOT EXISTS objects.TblStationDefencesSetpoints(\n'
+                        '\t\tId INT NOT NULL,\n'
+                        '\t\tPrefix VARCHAR(1024),\n'
+                        '\t\tInput VARCHAR(1024),\n'
+                        '\t\tDisableMasking BOOLEAN NOT NULL,\n'
+                        '\t\tAutoDeblock BOOLEAN NOT NULL,\n'
+                        '\t\tSource VARCHAR(1024),\n'
+                        '\t\tValue INT,\n'
+                        '\t\tEgu VARCHAR(1024),\n'
+                        '\t\tSetpointGroupId INT,\n'
+                        '\t\tRuleName VARCHAR(1024),\n'
+                        f'\t\tCONSTRAINT TblStationDefencesSetpoints PRIMARY KEY (Id)\n'
+                        '\t);\n'
+                        f'\t\tDELETE FROM objects.TblStationDefencesSetpoints ;\n')
+        
+        msg = {}
+        gen_list = []
+        flag_del_tabl = False
+        try:
+            cursor.execute(f"""SELECT id, variable, tag, name, "avar_parameter", "prohibition_masking", "auto_unlock_protection", "time_ust", "group_ust", "rule_map_ust"
+                               FROM "ktpr" ORDER BY Id""")
+            list_signal = cursor.fetchall()
+        except Exception:
+            msg[f'{today} - TblStationDefencesSetpoints: ошибка генерации: {traceback.format_exc()}'] = 2
+            return msg
 
+        for signal in list_signal:
+            try:
+                Id, variable, tag, name,            = signal[0], signal[1], signal[2], signal[3],
+                avar_parameter, prohibition_masking = signal[4], signal[5]
+                auto_unlock_protection, time_ust    = signal[6], signal[7]
+                group_ust, rule_map_ust             = signal[8], signal[9]
 
+                # Prefix
+                Prefix = 'NULL' if prefix_system == '' or prefix_system is None else str(prefix_system)
+                # tag
+                tag = 'NULL' if tag == '' or tag is None else str(tag)
+                # avar_parameter
+                avar_parameter = 'NULL' if avar_parameter == '' or avar_parameter is None else str(avar_parameter)
+                # Value
+                time_ust = 'NULL' if time_ust == '' or time_ust is None else time_ust
+                # DisableMasking
+                prohibition_masking = False if prohibition_masking == '' or prohibition_masking is None else True
+                # AutoDeblock
+                auto_unlock_protection = False if auto_unlock_protection == '' or auto_unlock_protection is None else True
+                # SetpointGroupId
+                cursor.execute(f"""SELECT id FROM "sp_grp" WHERE name_group='{group_ust}'""")
+                try   : SetpointGroupId = cursor.fetchall()[0][0]
+                except: SetpointGroupId = 'NULL'
+                # RuleName
+                cursor.execute(f"""SELECT rule_name FROM "sp_rules" WHERE name_rules='{rule_map_ust}'""")
+                try   : RuleName = cursor.fetchall()[0][0]
+                except: RuleName = 'NULL'
+            except Exception:
+                msg[f'{today} - TblStationDefencesSetpoints: ошибка добавления строки, пропускается: {traceback.format_exc()}'] = 2
+                continue
+            
+            ins_row_tabl = f"INSERT INTO objects.TblStationDefencesSetpoints (Id, Prefix, Tag, Name, Input, DisableMasking, AutoDeblock, Source, Value, Egu, SetpointGroupId, RuleName) VALUES({Id}, {Prefix}, '{tag}', '{name}', '{avar_parameter}', {prohibition_masking}, {auto_unlock_protection}, '{variable}', {time_ust}, 'c', {SetpointGroupId}, '{RuleName}');\n"
 
+            if flag_write_db:
+                try:
+                    if flag_del_tabl is False :
+                        cursor_prj.execute(text_start)
+                        flag_del_tabl = True
+                    cursor_prj.execute(ins_row_tabl)
+                except Exception:
+                    msg[f'{today} - TblStationDefencesSetpoints: ошибка добавления строки, пропускается: {traceback.format_exc()}'] = 2
+                    continue
+            else:
+                gen_list.append(ins_row_tabl)
+    
+        if not flag_write_db:
+            try:
+                # Создаём файл запроса
+                path_request = f'{path_location_file}\\PostgreSQL-TblStationDefencesSetpoints.sql'
+                if not os.path.exists(path_request):
+                    file = codecs.open(path_request, 'w', 'utf-8')
+                else:
+                    os.remove(path_request)
+                    file = codecs.open(path_request, 'w', 'utf-8')
+                if path_location_file == '' or path_location_file is None or len(path_location_file) == 0:
+                    msg[f'{today} - TblStationDefencesSetpoints: не указана конечная папка'] = 2
+                    return msg
+                file.write(text_start)
+                for insert in gen_list:
+                    file.write(insert)
+                file.write(f'COMMIT;')
+                file.close()
+                msg[f'{today} - TblStationDefencesSetpoints: файл скрипта создан'] = 1
+                return(msg)
+            except Exception:
+                msg[f'{today} - TblStationDefencesSetpoints: ошибка записи в файл: {traceback.format_exc()}'] = 2
+        msg[f'{today} - TblStationDefencesSetpoints: генерация завершена!'] = 1
+        return(msg)
+    def gen_table_ktpra(self, flag_write_db):
+        cursor = db.cursor()
+        cursor_prj = db_prj.cursor()
+    
+        text_start = ('\tCREATE SCHEMA IF NOT EXISTS objects;\n'
+                        f'\tCREATE TABLE IF NOT EXISTS objects.TblPumpDefencesSetpoints(\n'
+                        '\t\tId INT NOT NULL,\n'
+                        '\t\tPumpId INT NOT NULL,\n'
+                        '\t\tPrefix VARCHAR(1024),\n'
+                        '\t\tName VARCHAR(1024),\n'
+                        '\t\tTag VARCHAR(1024),\n'
+                        '\t\tPumpName VARCHAR(1024),\n'
+                        '\t\tDisableMasking BOOLEAN NOT NULL,\n'
+                        '\t\tSource VARCHAR(1024),\n'
+                        '\t\tValue INT,\n'
+                        '\t\tEgu VARCHAR(1024),\n'
+                        '\t\tSetpointGroupId INT,\n'
+                        '\t\tRuleName VARCHAR(1024),\n'
+                        f'\t\tCONSTRAINT TblPumpDefencesSetpoints PRIMARY KEY (Id,PumpId)\n'
+                        '\t);\n'
+                        f'\t\tDELETE FROM objects.TblPumpDefencesSetpoints ;\n')
+        msg = {}
+        gen_list = []
+        flag_del_tabl = False
+        try:
+            cursor.execute(f"""SELECT id, variable, tag, name, "NA", "DisableMasking", "time_ust", "group_ust", "rule_map_ust", "number_pump_VU"
+                               FROM "ktpra" ORDER BY Id, "number_pump_VU", "NA" """)
+            list_signal = cursor.fetchall()
+        except Exception:
+            msg[f'{today} - TblPumpDefencesSetpoints: ошибка генерации: {traceback.format_exc()}'] = 2
+            return msg
+
+        for signal in list_signal:
+            try:
+                Id, variable, tag, name, PumpName, DisableMasking = signal[0], signal[1], signal[2], signal[3], signal[4], signal[5]
+                time_ust, group_ust, rule_map_ust, number_pump_VU = signal[6], signal[7], signal[8], signal[9] 
+
+                # Prefix
+                Prefix = 'NULL' if prefix_system == '' or prefix_system is None else str(prefix_system)
+                # PumpId
+                PumpId = 'NULL' if number_pump_VU == '' or number_pump_VU is None else number_pump_VU
+                # PumpName
+                PumpName = 'NULL' if PumpName == '' or PumpName is None else str(PumpName)
+                # tag
+                tag = 'NULL' if tag == '' or tag is None else str(tag)
+                # Value
+                time_ust = 'NULL' if time_ust == '' or time_ust is None else time_ust
+                # DisableMasking
+                DisableMasking = False if DisableMasking == '' or DisableMasking is None else True
+                # SetpointGroupId
+                cursor.execute(f"""SELECT id FROM "sp_grp" WHERE name_group='{group_ust}'""")
+                try   : SetpointGroupId = cursor.fetchall()[0][0]
+                except: SetpointGroupId = 'NULL'
+                # RuleName
+                cursor.execute(f"""SELECT rule_name FROM "sp_rules" WHERE name_rules='{rule_map_ust}'""")
+                try   : RuleName = cursor.fetchall()[0][0]
+                except: RuleName = 'NULL'
+            except Exception:
+                msg[f'{today} - TblPumpDefencesSetpoints: ошибка добавления строки, пропускается: {traceback.format_exc()}'] = 2
+                continue
+            
+            ins_row_tabl = f"INSERT INTO objects.TblPumpDefencesSetpoints (Id, PumpId, Prefix, Name, Tag, PumpName, DisableMasking, Source, Value, Egu, SetpointGroupId, RuleName) VALUES({Id}, {PumpId}, {Prefix}, '{PumpName}. {name}', '{tag}', '{PumpName}', {DisableMasking}, 'tm{variable}', {time_ust}, 'c', {SetpointGroupId}, '{RuleName}');\n"
+
+            if flag_write_db:
+                try:
+                    if flag_del_tabl is False :
+                        cursor_prj.execute(text_start)
+                        flag_del_tabl = True
+                    cursor_prj.execute(ins_row_tabl)
+                except Exception:
+                    msg[f'{today} - TblPumpDefencesSetpoints: ошибка добавления строки, пропускается: {traceback.format_exc()}'] = 2
+                    continue
+            else:
+                gen_list.append(ins_row_tabl)
+    
+        if not flag_write_db:
+            try:
+                # Создаём файл запроса
+                path_request = f'{path_location_file}\\PostgreSQL-TblPumpDefencesSetpoints.sql'
+                if not os.path.exists(path_request):
+                    file = codecs.open(path_request, 'w', 'utf-8')
+                else:
+                    os.remove(path_request)
+                    file = codecs.open(path_request, 'w', 'utf-8')
+                if path_location_file == '' or path_location_file is None or len(path_location_file) == 0:
+                    msg[f'{today} - TblPumpDefencesSetpoints: не указана конечная папка'] = 2
+                    return msg
+                file.write(text_start)
+                for insert in gen_list:
+                    file.write(insert)
+                file.write(f'COMMIT;')
+                file.close()
+                msg[f'{today} - TblPumpDefencesSetpoints: файл скрипта создан'] = 1
+                return(msg)
+            except Exception:
+                msg[f'{today} - TblPumpDefencesSetpoints: ошибка записи в файл: {traceback.format_exc()}'] = 2
+        msg[f'{today} - TblPumpDefencesSetpoints: генерация завершена!'] = 1
+        return(msg)
+    def gen_table_gmpna(self, flag_write_db):
+        cursor = db.cursor()
+        cursor_prj = db_prj.cursor()
+
+        text_start = ('\tCREATE SCHEMA IF NOT EXISTS objects;\n'
+                        f'\tCREATE TABLE IF NOT EXISTS objects.TblPumpReadinesesSetpoints(\n'
+                        '\t\tId INT NOT NULL,\n'
+                        '\t\tPumpId INT NOT NULL,\n'
+                        '\t\tPrefix VARCHAR(1024),\n'
+                        '\t\tName VARCHAR(1024),\n'
+                        '\t\tTag VARCHAR(1024),\n'
+                        '\t\tPumpName VARCHAR(1024),\n'
+                        '\t\tSource VARCHAR(1024),\n'
+                        '\t\tValue INT,\n'
+                        '\t\tEgu VARCHAR(1024),\n'
+                        '\t\tSetpointGroupId INT,\n'
+                        '\t\tRuleName VARCHAR(1024),\n'
+                        f'\t\tCONSTRAINT TblPumpReadinesesSetpoints PRIMARY KEY (Id,PumpId)\n'
+                        '\t);\n'
+                        f'\t\tDELETE FROM objects.TblPumpReadinesesSetpoints ;\n')
+        msg = {}
+        gen_list = []
+        flag_del_tabl = False
+        try:
+            cursor.execute(f"""SELECT id, variable, tag, name, "NA", "used_time_ust", "time_ust", "group_ust", "rule_map_ust", "number_pump_VU"
+                                FROM "gmpna" ORDER BY Id, "number_pump_VU", "NA" """)
+            list_signal = cursor.fetchall()
+        except Exception:
+            msg[f'{today} - TblPumpReadinesesSetpoints: ошибка генерации: {traceback.format_exc()}'] = 2
+            return msg
+
+        for signal in list_signal:
+            try:
+                Id, variable, tag, name, PumpName, used_ust = signal[0], signal[1], signal[2], signal[3], signal[4], signal[5]
+                time_ust, group_ust, rule_map_ust, number_pump_VU = signal[6], signal[7], signal[8], signal[9]
+                
+                if used_ust is not True: continue
+                # Prefix
+                Prefix = 'NULL' if prefix_system == '' or prefix_system is None else str(prefix_system)
+                # PumpId
+                PumpId = 'NULL' if number_pump_VU == '' or number_pump_VU is None else number_pump_VU
+                # name
+                name = '' if name == '' or name is None else str(name)
+                # PumpName
+                PumpName = 'NULL' if PumpName == '' or PumpName is None else str(PumpName)
+                # tag
+                tag = 'NULL' if tag == '' or tag is None else f'{tag}'
+                # Value
+                time_ust = 'NULL' if time_ust == '' or time_ust is None else time_ust
+                # SetpointGroupId
+                cursor.execute(f"""SELECT id FROM "sp_grp" WHERE name_group='{group_ust}'""")
+                try   : SetpointGroupId = cursor.fetchall()[0][0]
+                except: SetpointGroupId = 'NULL'
+                # RuleName
+                cursor.execute(f"""SELECT rule_name FROM "sp_rules" WHERE name_rules='{rule_map_ust}'""")
+                try   : RuleName = cursor.fetchall()[0][0]
+                except: RuleName = 'NULL'
+            except Exception:
+                msg[f'{today} - TblPumpReadinesesSetpoints: ошибка добавления строки, пропускается: {traceback.format_exc()}'] = 2
+                continue
+            
+            ins_row_tabl = f"INSERT INTO objects.TblPumpReadinesesSetpoints (Id, PumpId, Prefix, Name, Tag, PumpName, Source, Value, Egu, SetpointGroupId, RuleName) VALUES({Id}, {PumpId}, {Prefix}, '{PumpName}. {name}', '{tag}', '{PumpName}', 'tm{variable}', {time_ust}, 'c', {SetpointGroupId}, '{RuleName}');\n"
+
+            if flag_write_db:
+                try:
+                    if flag_del_tabl is False :
+                        cursor_prj.execute(text_start)
+                        flag_del_tabl = True
+                    cursor_prj.execute(ins_row_tabl)
+                except Exception:
+                    msg[f'{today} - TblPumpReadinesesSetpoints: ошибка добавления строки, пропускается: {traceback.format_exc()}'] = 2
+                    continue
+            else:
+                gen_list.append(ins_row_tabl)
+
+        if not flag_write_db:
+            try:
+                # Создаём файл запроса
+                path_request = f'{path_location_file}\\PostgreSQL-TblPumpReadinesesSetpoints.sql'
+                if not os.path.exists(path_request):
+                    file = codecs.open(path_request, 'w', 'utf-8')
+                else:
+                    os.remove(path_request)
+                    file = codecs.open(path_request, 'w', 'utf-8')
+                if path_location_file == '' or path_location_file is None or len(path_location_file) == 0:
+                    msg[f'{today} - TblPumpReadinesesSetpoints: не указана конечная папка'] = 2
+                    return msg
+                file.write(text_start)
+                for insert in gen_list:
+                    file.write(insert)
+                file.write(f'COMMIT;')
+                file.close()
+                msg[f'{today} - TblPumpReadinesesSetpoints: файл скрипта создан'] = 1
+                return(msg)
+            except Exception:
+                msg[f'{today} - TblPumpReadinesesSetpoints: ошибка записи в файл: {traceback.format_exc()}'] = 2
+        msg[f'{today} - TblPumpReadinesesSetpoints: генерация завершена!'] = 1
+        return(msg)

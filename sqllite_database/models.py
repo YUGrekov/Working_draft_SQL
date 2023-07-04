@@ -79,11 +79,11 @@ db_prj = PostgresqlDatabase(database_prj, user=user_prj, password=password_prj, 
 #db = SqliteDatabase(path_to_base)
 migrator = SqliteMigrator(db)
 
-
-
 class BaseModel(Model):
+    id = PrimaryKeyField(unique=True)
     class Meta:
         database = db
+        order_by = id
 
 rus_list = {'signals': {'id':'№', 'type_signal':'Тип сигнала', 'uso':'Шкаф', 'tag':'Идентификатор', 'description':'Наименование', 
                         'schema':'Схема', 'klk':'Клеммник', 'contact':'Контакт', 'basket':'Корзина', 'module':'Модуль', 'channel':'Канал'},
@@ -158,7 +158,7 @@ rus_list = {'signals': {'id':'№', 'type_signal':'Тип сигнала', 'uso'
                       'number_list_VU':'Номер листа\n(для ВУ)', 'number_protect_VU':'Номер защиты\n(для ВУ)'},
             
             'ktpr': {'id':'№','variable':'Переменная', 'tag':'Идентификатор', 'name':'Название',
-                     'avar_parameter':'Аварийный параметр\n(pInput)', 'prohibition_masking':'Запрет маскирования\n(1 - запрет)', 
+                     'avar_parameter':'Аварийный параметр\n(pInput)', 'DisableMasking':'Запрет маскирования\n(1 - запрет)', 
                      'auto_unlock_protection':'Автоматическая деблокировка \nзащиты (1 - разрешена)', 
                      'shutdown_PNS_a_time_delay_up_5s_after_turning':'Откл. ПНС с выдержкой времени до 5с\nпосле откл. всех МНА',
                      'bitmask_protection_group_membership':'Битовая маска принадлежности защиты группе\n(1 в N бите - разрешение сраб. данной защиты на N группе (плече))', 
@@ -241,11 +241,11 @@ rus_list = {'signals': {'id':'№', 'type_signal':'Тип сигнала', 'uso'
                      'Pic':'Pic',
                      'group_ust':'Группа уставок', 'rule_map_ust':'Правило для карты уставок', 'number_list_VU':'Номер листа (для ВУ)', 'number_protect_VU':'Номер защиты (для ВУ)'},
             
-            'ktpra': {'id':'№','variable':'Переменная', 'tag':'Идентификатор', 'name':'Название', 'NA':'Имя НА', 'avar_parameter':'Аварийный параметр', 
+            'ktpra': {'id':'№', 'id_num':'Номер защиты', 'variable':'Переменная', 'tag':'Идентификатор', 'name':'Название', 'NA':'Имя НА', 'avar_parameter':'Аварийный параметр', 
                     'stop_type':'''Тип остановки(0 - None,\n1 - ManageStop,\n2 - ElectricStop,\n3 - ManageStopOffVV,\n4 - ChRPAlarmStop,\n5 - StopAuto,\n6 - StopAuto2,\n7 - PovtorOtkl1)''',  
-                    'AVR':'Флаг необходимости АВР НА при срабатывании защиты' , 'close_valves':'Флаг необходимости закрытия агрегатных задвижек НА при срабатывании защиты', 
-                    'prohibition_of_masking':'Флаг запрета маскирования', 'time_setting':'Временная уставка', 
-                    'Pic':'Номера листов на которых данный сигнал участвует в формировании рамки квитирования', 'group_ust':'Группа уставок', 
+                    'AVR':'Флаг необходимости АВР\nНА при срабатывании защиты' , 'close_valves':'Флаг необходимости закрытия\nагрегатных задвижек НА\nпри срабатывании защиты', 
+                    'DisableMasking':'Флаг запрета маскирования', 'time_ust':'Временная уставка', 
+                    'Pic':'Pic', 'group_ust':'Группа уставок', 
                     'rule_map_ust':'Правило для карты уставок', 
                     'number_list_VU':'Номер листа (для ВУ)', 'number_protect_VU':'Номер защиты (для ВУ)', 'number_pump_VU':'Номер агрегата (для ВУ)'},
             
@@ -255,9 +255,9 @@ rus_list = {'signals': {'id':'№', 'type_signal':'Тип сигнала', 'uso'
                        'prohibition_issuing_msg':'Запрет выдачи сообщений', 
                        'Pic':'Номера листов на которых данный сигнал участвует в формировании рамки квитирования'},
             
-            'gmpna': {'id':'№','variable':'Переменная', 'tag':'Идентификатор', 'name':'Название', 
-                      'name_for_Chrp_in_local_mode':'Название для ЧРП в местном режиме', 'NA':'Имя НА', 'time_setting':'Использовать временную уставку', 
-                      'setting':'Уставка', 'group_ust':'Группа уставок', 'rule_map_ust':'Правило для карты уставок', 
+            'gmpna': {'id':'№', 'id_num':'Номер защиты', 'variable':'Переменная', 'tag':'Идентификатор', 'name':'Название', 
+                      'name_for_Chrp_in_local_mode':'Название для ЧРП в местном режиме', 'NA':'Имя НА', 'used_time_ust':'Использовать временную уставку', 
+                      'time_ust':'Уставка', 'group_ust':'Группа уставок', 'rule_map_ust':'Правило для карты уставок', 
                       'number_list_VU':'Номер листа (для ВУ)', 'number_protect_VU':'Номер защиты (для ВУ)', 'number_pump_VU':'Номер агрегата (для ВУ)'},
             
             'umpna':{'id':'№','variable':'Переменная', 'name':'Название', 'vv_included':'ВВ Включен', 'vv_double_included':'ВВ Включен дубль', 'vv_disabled':'ВВ отключен', 'vv_double_disabled':'ВВ отключен дубль', 
@@ -708,8 +708,8 @@ class KTPR(BaseModel):
     name = CharField(null = True)
 
     avar_parameter = CharField(null = True)
-    prohibition_masking = CharField(null = True)
-    auto_unlock_protection = CharField(null = True)
+    DisableMasking = BooleanField(null = True)
+    auto_unlock_protection = BooleanField(null = True)
     shutdown_PNS_a_time_delay_up_5s_after_turning = CharField(null = True)
     bitmask_protection_group_membership = CharField(null = True)
     stop_type_NA = CharField(null = True)
@@ -794,6 +794,7 @@ class KTPR(BaseModel):
     class Meta:
         table_name = 'ktpr'
 class KTPRA(BaseModel):
+    id_num = IntegerField(null = True)
     variable = CharField(null = True)
     tag  = CharField(null = True)
     name = CharField(null = True)
@@ -802,8 +803,8 @@ class KTPRA(BaseModel):
     stop_type = CharField(null = True)
     AVR = CharField(null = True)
     close_valves = CharField(null = True)
-    prohibition_of_masking = CharField(null = True)
-    time_setting = CharField(null = True)
+    DisableMasking = BooleanField(null = True)
+    time_ust = CharField(null = True)
     Pic = CharField(null = True)
     group_ust = CharField(null = True)
     rule_map_ust = CharField(null = True)
@@ -813,7 +814,7 @@ class KTPRA(BaseModel):
     number_pump_VU = IntegerField(null = True)
     
     class Meta:
-        table_name = 'ktpra'
+        table_name = 'ktpra'      
 class KTPRS(BaseModel):
     variable = CharField(null = True)
     tag  = CharField(null = True)
@@ -828,13 +829,14 @@ class KTPRS(BaseModel):
     class Meta:
         table_name = 'ktprs'
 class GMPNA(BaseModel):
+    id_num = IntegerField(null = True)
     variable = CharField(null = True)
     tag  = CharField(null = True)
     name = CharField(null = True)
     name_for_Chrp_in_local_mode = CharField(null = True)
     NA = CharField(null = True)
-    time_setting = CharField(null = True)
-    setting = CharField(null = True)
+    used_time_ust = BooleanField(null = True)
+    time_ust = IntegerField(null = True)
     group_ust = CharField(null = True)
     rule_map_ust = CharField(null = True)
 
