@@ -35,6 +35,7 @@ class Widget(QWidget):
 
         # ------------------Окно редактирования------------------
         list_tabl = self.dop_function.all_tables()
+        list_tabl.sort()
         l_table = QLabel('Выберите таблицу: ', tab_5)
         l_table.move(10, 5)
 
@@ -560,6 +561,111 @@ class Widget(QWidget):
         b_clear_tm_umpna.resize(80,23)
         b_clear_tm_umpna.move(b_width_two + 180, b_height + 180) 
         b_clear_tm_umpna.clicked.connect(self.clear_tmNA_umpna_narab_tabl)
+        # TM_TS
+        l_tm_ts = QLabel('TM_TS:', tab_3)
+        l_tm_ts.move(b_width_one + 364, l_height + 180)
+        b_tm_ts_basket = QPushButton('Подготовить', tab_3)
+        b_tm_ts_basket.setStyleSheet("background: #bfd6bf; border: 1px solid; border-radius: 3px;")
+        b_tm_ts_basket.setToolTip('''Подготавливается таблица на 2544 строки''')
+        b_tm_ts_basket.resize(80,23)
+        b_tm_ts_basket.move(b_width_one + 360, b_height + 180) 
+        b_tm_ts_basket.clicked.connect(self.filling_tmts)
+        b_clear_tm_ts = QPushButton('Очистить', tab_3)
+        b_clear_tm_ts.setStyleSheet("background: #bbbabf; border: 1px solid; border-radius: 3px;")
+        b_clear_tm_ts.setToolTip("Очистить таблицу Телемеханика - ТС")
+        b_clear_tm_ts.resize(80,23)
+        b_clear_tm_ts.move(b_width_two + 360, b_height + 180) 
+        b_clear_tm_ts.clicked.connect(self.clear_tmts_tabl)
+        # TM_TI4
+        l_tm_ti4 = QLabel('TM_TI4:', tab_3)
+        l_tm_ti4.move(b_width_one + 364, l_height + 220)
+        b_tm_ti4_basket = QPushButton('Подготовить', tab_3)
+        b_tm_ti4_basket.setStyleSheet("background: #bfd6bf; border: 1px solid; border-radius: 3px;")
+        b_tm_ti4_basket.setToolTip('''Подготавливается таблица на 108 строки''')
+        b_tm_ti4_basket.resize(80,23)
+        b_tm_ti4_basket.move(b_width_one + 360, b_height + 215) 
+        b_tm_ti4_basket.clicked.connect(self.filling_tmti4)
+        b_clear_tm_ti4 = QPushButton('Очистить', tab_3)
+        b_clear_tm_ti4.setStyleSheet("background: #bbbabf; border: 1px solid; border-radius: 3px;")
+        b_clear_tm_ti4.setToolTip("Очистить таблицу Телемеханика - ТИ4")
+        b_clear_tm_ti4.resize(80,23)
+        b_clear_tm_ti4.move(b_width_two + 360, b_height + 215) 
+        b_clear_tm_ti4.clicked.connect(self.clear_tmti4_tabl)
+        # TM_TI2
+        l_tm_ti2 = QLabel('TM_TI2:', tab_3)
+        l_tm_ti2.move(b_width_one + 546, l_height + 220)
+        b_tm_ti2_basket = QPushButton('Подготовить', tab_3)
+        b_tm_ti2_basket.setStyleSheet("background: #bfd6bf; border: 1px solid; border-radius: 3px;")
+        b_tm_ti2_basket.setToolTip('''Подготавливается таблица на 50 строк''')
+        b_tm_ti2_basket.resize(80,23)
+        b_tm_ti2_basket.move(b_width_one + 540, b_height + 215) 
+        b_tm_ti2_basket.clicked.connect(self.filling_tmti2)
+        b_clear_tm_ti2 = QPushButton('Очистить', tab_3)
+        b_clear_tm_ti2.setStyleSheet("background: #bbbabf; border: 1px solid; border-radius: 3px;")
+        b_clear_tm_ti2.setToolTip("Очистить таблицу Телемеханика - ТИ2")
+        b_clear_tm_ti2.resize(80,23)
+        b_clear_tm_ti2.move(b_width_two + 540, b_height + 215) 
+        b_clear_tm_ti2.clicked.connect(self.clear_tmti2_tabl)
+        # TM_TII
+        l_tm_tii = QLabel('TM_TII:', tab_3)
+        l_tm_tii.move(b_width_one + 546, l_height + 180)
+        b_tm_tii_basket = QPushButton('Подготовить', tab_3)
+        b_tm_tii_basket.setStyleSheet("background: #bfd6bf; border: 1px solid; border-radius: 3px;")
+        b_tm_tii_basket.setToolTip('''Подготавливается таблица на 54 строк''')
+        b_tm_tii_basket.resize(80,23)
+        b_tm_tii_basket.move(b_width_one + 540, b_height + 180) 
+        b_tm_tii_basket.clicked.connect(self.filling_tmtii)
+        b_clear_tm_tii = QPushButton('Очистить', tab_3)
+        b_clear_tm_tii.setStyleSheet("background: #bbbabf; border: 1px solid; border-radius: 3px;")
+        b_clear_tm_tii.setToolTip("Очистить таблицу Телемеханика - ТИИ")
+        b_clear_tm_tii.resize(80,23)
+        b_clear_tm_tii.move(b_width_two + 540, b_height + 180) 
+        b_clear_tm_tii.clicked.connect(self.clear_tmtii_tabl)
+        # TM_TU
+        l_tm_tu = QLabel('TM_TU:', tab_3)
+        l_tm_tu.move(b_width_one + 728, l_height + 180)
+        b_tm_tu_basket = QPushButton('Подготовить', tab_3)
+        b_tm_tu_basket.setStyleSheet("background: #bfd6bf; border: 1px solid; border-radius: 3px;")
+        b_tm_tu_basket.setToolTip('''Подготавливается таблица на 240 строк''')
+        b_tm_tu_basket.resize(80,23)
+        b_tm_tu_basket.move(b_width_one + 720, b_height + 180) 
+        b_tm_tu_basket.clicked.connect(self.filling_tmtu)
+        b_clear_tm_tu = QPushButton('Очистить', tab_3)
+        b_clear_tm_tu.setStyleSheet("background: #bbbabf; border: 1px solid; border-radius: 3px;")
+        b_clear_tm_tu.setToolTip("Очистить таблицу Телемеханика - ТУ")
+        b_clear_tm_tu.resize(80,23)
+        b_clear_tm_tu.move(b_width_two + 720, b_height + 180) 
+        b_clear_tm_tu.clicked.connect(self.clear_tmtu_tabl)
+        # TM_TR4
+        l_tm_tr4 = QLabel('TM_TR4:', tab_3)
+        l_tm_tr4.move(b_width_one + 728, l_height + 220)
+        b_tm_tr4_basket = QPushButton('Подготовить', tab_3)
+        b_tm_tr4_basket.setStyleSheet("background: #bfd6bf; border: 1px solid; border-radius: 3px;")
+        b_tm_tr4_basket.setToolTip('''Подготавливается таблица на 10 строк''')
+        b_tm_tr4_basket.resize(80,23)
+        b_tm_tr4_basket.move(b_width_one + 720, b_height + 215) 
+        b_tm_tr4_basket.clicked.connect(self.filling_tmtr4)
+        b_clear_tm_tr4 = QPushButton('Очистить', tab_3)
+        b_clear_tm_tr4.setStyleSheet("background: #bbbabf; border: 1px solid; border-radius: 3px;")
+        b_clear_tm_tr4.setToolTip("Очистить таблицу Телемеханика - ТP4")
+        b_clear_tm_tr4.resize(80,23)
+        b_clear_tm_tr4.move(b_width_two + 720, b_height + 215) 
+        b_clear_tm_tr4.clicked.connect(self.clear_tmtr4_tabl)
+        # TM_TR2
+        l_tm_tr2 = QLabel('TM_TR2:', tab_3)
+        l_tm_tr2.move(b_width_one + 910, l_height + 180)
+        b_tm_tr2_basket = QPushButton('Подготовить', tab_3)
+        b_tm_tr2_basket.setStyleSheet("background: #bfd6bf; border: 1px solid; border-radius: 3px;")
+        b_tm_tr2_basket.setToolTip('''Подготавливается таблица на 10 строк''')
+        b_tm_tr2_basket.resize(80,23)
+        b_tm_tr2_basket.move(b_width_one + 900, b_height + 180) 
+        b_tm_tr2_basket.clicked.connect(self.filling_tmtr2)
+        b_clear_tm_tr2 = QPushButton('Очистить', tab_3)
+        b_clear_tm_tr2.setStyleSheet("background: #bbbabf; border: 1px solid; border-radius: 3px;")
+        b_clear_tm_tr2.setToolTip("Очистить таблицу Телемеханика - ТP2")
+        b_clear_tm_tr2.resize(80,23)
+        b_clear_tm_tr2.move(b_width_two + 900, b_height + 180) 
+        b_clear_tm_tr2.clicked.connect(self.clear_tmtr2_tabl)
         # ZD
         l_zd = QLabel('ZD:', tab_3)
         l_zd.move(b_width_one + 546, l_height + 45)
@@ -712,8 +818,8 @@ class Widget(QWidget):
         b_clear_tm_pz.resize(80,23)
         b_clear_tm_pz.move(b_width_two + 900, b_height + 45) 
         b_clear_tm_pz.clicked.connect(self.clear_tmpz_tabl)
-        # KTPR
-        l_ktprp = QLabel('KTPR:', tab_3)
+        # KTPRP
+        l_ktprp = QLabel('KTPRP:', tab_3)
         l_ktprp.move(b_width_one + 910, l_height + 90)
         b_ktprp_basket = QPushButton('Подготовить', tab_3)
         b_ktprp_basket.setStyleSheet("background: #bfd6bf; border: 1px solid; border-radius: 3px;")
@@ -1287,7 +1393,6 @@ class Widget(QWidget):
     def clear_upts_tabl(self):
         msg = self.dop_function.clear_tabl('upts', 'UPTS', self.list_tabl)
         self.logs_msg('default', 1, msg, True)
-    
     # tmUTS
     def filling_uts_tm(self):
         vs_table = Filling_UTS_tm()
@@ -1327,6 +1432,76 @@ class Widget(QWidget):
         self.logs_msg('default', 1, msg, True)
     def clear_tmpz_tabl(self):
         msg = self.dop_function.clear_tabl('pz_tm', 'PZ_tm', self.list_tabl)
+        self.logs_msg('default', 1, msg, True)
+    # TM_TS
+    def filling_tmts(self):
+        tm_ts_table = Filling_TM_TS()
+        msg = tm_ts_table.column_check()
+        self.logs_msg('default', 1, msg, True)
+        msg = tm_ts_table.getting_modul()
+        self.logs_msg('default', 1, msg, True)
+    def clear_tmts_tabl(self):
+        msg = self.dop_function.clear_tabl('tm_ts', 'TM_TS', self.list_tabl)
+        self.logs_msg('default', 1, msg, True)
+    # TM_TI4
+    def filling_tmti4(self):
+        tm_ti4_table = Filling_TM_TI4()
+        msg = tm_ti4_table.column_check()
+        self.logs_msg('default', 1, msg, True)
+        msg = tm_ti4_table.getting_modul()
+        self.logs_msg('default', 1, msg, True)
+    def clear_tmti4_tabl(self):
+        msg = self.dop_function.clear_tabl('tm_ti4', 'TM_TI4', self.list_tabl)
+        self.logs_msg('default', 1, msg, True)
+    # TM_TI2
+    def filling_tmti2(self):
+        tm_ti2_table = Filling_TM_TI2()
+        msg = tm_ti2_table.column_check()
+        self.logs_msg('default', 1, msg, True)
+        msg = tm_ti2_table.getting_modul()
+        self.logs_msg('default', 1, msg, True)
+    def clear_tmti2_tabl(self):
+        msg = self.dop_function.clear_tabl('tm_ti2', 'TM_TI2', self.list_tabl)
+        self.logs_msg('default', 1, msg, True)
+    # TM_TII
+    def filling_tmtii(self):
+        tm_tii_table = Filling_TM_TII()
+        msg = tm_tii_table.column_check()
+        self.logs_msg('default', 1, msg, True)
+        msg = tm_tii_table.getting_modul()
+        self.logs_msg('default', 1, msg, True)
+    def clear_tmtii_tabl(self):
+        msg = self.dop_function.clear_tabl('tm_tii', 'TM_TII', self.list_tabl)
+        self.logs_msg('default', 1, msg, True)
+    # TM_TU
+    def filling_tmtu(self):
+        tm_tu_table = Filling_TM_TU()
+        msg = tm_tu_table.column_check()
+        self.logs_msg('default', 1, msg, True)
+        msg = tm_tu_table.getting_modul()
+        self.logs_msg('default', 1, msg, True)
+    def clear_tmtu_tabl(self):
+        msg = self.dop_function.clear_tabl('tm_tu', 'TM_TU', self.list_tabl)
+        self.logs_msg('default', 1, msg, True)
+    # TM_TR4
+    def filling_tmtr4(self):
+        tm_tr4_table = Filling_TM_TR4()
+        msg = tm_tr4_table.column_check()
+        self.logs_msg('default', 1, msg, True)
+        msg = tm_tr4_table.getting_modul()
+        self.logs_msg('default', 1, msg, True)
+    def clear_tmtr4_tabl(self):
+        msg = self.dop_function.clear_tabl('tm_tr4', 'TM_TR4', self.list_tabl)
+        self.logs_msg('default', 1, msg, True)
+    # TM_TR2
+    def filling_tmtr2(self):
+        tm_tr2_table = Filling_TM_TR2()
+        msg = tm_tr2_table.column_check()
+        self.logs_msg('default', 1, msg, True)
+        msg = tm_tr2_table.getting_modul()
+        self.logs_msg('default', 1, msg, True)
+    def clear_tmtr2_tabl(self):
+        msg = self.dop_function.clear_tabl('tm_tr2', 'TM_TR2', self.list_tabl)
         self.logs_msg('default', 1, msg, True)
     # ------------------Сообщения------------------
     # Check sql
@@ -1568,6 +1743,7 @@ class Widget(QWidget):
     # Update table
     def update_tabl(self):
         list_tabl = self.dop_function.all_tables()
+        list_tabl.sort()
         self.combo.clear()
         for tabl in list_tabl:
            self.combo.addItem(str(tabl))
@@ -1595,38 +1771,6 @@ class Widget(QWidget):
             elif number_color == 0: self.logTextBox.append(newFormat.format(f'{today} - {logs}'))
 
 
-# Выбор окна для просмотр и редактирования таблицы
-class Window_tabl_checkbox(QWidget):
-    def __init__(self, list_tabl):
-        super(Window_tabl_checkbox, self).__init__()
-        self.setWindowTitle('Список таблиц')
-        self.setStyleSheet("background-color: #e1e5e5;")
-        self.resize(260, 100)
-
-        l_table = QLabel('Выберите таблицу: ', self)
-        l_table.move(10, 5)
-
-        self.combo = QComboBox(self)
-        self.combo.move(10, 20) 
-        self.combo.resize(240,25)
-        self.combo.setStyleSheet("border-radius: 4px; border: 1px solid")
-        self.combo.setFont(QFont('Arial', 10))
-
-        clickButton = QPushButton('Подключиться к таблице', self)
-        clickButton.setStyleSheet("background: #bfd6bf; border-radius: 4px; border: 1px solid")
-        clickButton.resize(240,35)
-        clickButton.move(10, 55) 
-        clickButton.clicked.connect(self.choose_tabl)
-
-        for tabl in list_tabl:
-           self.combo.addItem(str(tabl))
-        
-    # Choose table
-    def choose_tabl(self):
-        name_table = self.combo.currentText()
-        self.ch_tabl = Window_update_sql(name_table)
-        self.ch_tabl.show()
-        self.close()
 # Тип таблицы
 class Window_type_tabl_sql(QWidget):
     def __init__(self, table_list):
@@ -1647,6 +1791,42 @@ class Window_type_tabl_sql(QWidget):
         self.TableWidget.setColumnCount(3)
         self.TableWidget.setRowCount(len(table_list))
         tabl = ['Имя_eng', 'Имя_rus', 'Тип']
+        self.TableWidget.setHorizontalHeaderLabels(tabl)
+        # Color header
+        style = "::section {""background-color: #bbbabf; }"
+        self.TableWidget.horizontalHeader().setStyleSheet(style)
+
+        for row_t in range(len(table_list)):
+            for column_t in range(3):
+                if column_t == 0: value = table_list[row_t][column_t]
+                if column_t == 1: value = table_list[row_t][column_t]
+                if column_t == 2: value = table_list[row_t][column_t]
+
+                item = QTableWidgetItem(value)
+                item.setFlags(Qt.ItemIsEnabled)
+                self.TableWidget.setItem(row_t, column_t, item)
+
+        self.setLayout(innerOutLayout)
+# Дополнительное окно контекстного меню
+class Window_contexmenu_sql(QWidget):
+    def __init__(self, table_list):
+        super(Window_contexmenu_sql, self).__init__()
+        self.setWindowTitle('Дополнительное окно выбора сигнала')
+        self.setStyleSheet("background-color: #e1e5e5;")
+        self.setWindowFlags(Qt.WindowCloseButtonHint)
+        self.resize(500, 600)
+
+        self.TableWidget = QTableWidget(self)
+        self.TableWidget.move(500,600)
+        self.TableWidget.verticalHeader().setVisible(False)
+        self.TableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+
+        innerOutLayout = QVBoxLayout()
+        innerOutLayout.addWidget(self.TableWidget)
+
+        self.TableWidget.setColumnCount(3)
+        self.TableWidget.setRowCount(len(table_list))
+        tabl = ['№', 'Тэг', 'Название']
         self.TableWidget.setHorizontalHeaderLabels(tabl)
         # Color header
         style = "::section {""background-color: #bbbabf; }"
@@ -1908,9 +2088,12 @@ class Window_update_sql(QWidget):
         #    for col in range(self.TableWidget.columnCount()):
         #        self.TableWidget.horizontalHeaderItem(col).setToolTip(column_tooltip[col])
 
-        # Разрешить щелчок правой кнопкой мыши для создания меню
-        #self.TableWidget.setContextMenuPolicy(Qt.CustomContextMenu)
         self.TableWidget.verticalHeader().setVisible(False)
+
+        # Разрешить щелчок правой кнопкой мыши для создания меню
+        self.TableWidget.setContextMenuPolicy(Qt.CustomContextMenu)
+        self.TableWidget.customContextMenuRequested.connect(self.generateMenu)
+
         # column size
         #for size_column in list_size:
         #   self.TableWidget.setColumnWidth(size_column[0], size_column[1])
@@ -1922,13 +2105,13 @@ class Window_update_sql(QWidget):
                 else:
                     item = QTableWidgetItem(str(value[row_t][column_t]))
                     # Подсказки к ячейкам
-                    if self.gen_func.str_find(str(value[row_t][column_t]), {'DI'}):
+                    if self.gen_func.str_find(str(value[row_t][column_t]).lower(), {'di'}):
                         name_signal = self.edit_SQL.search_name("di", str(value[row_t][column_t]))
                         item.setToolTip(name_signal)
-                    elif self.gen_func.str_find(str(value[row_t][column_t]), {'DO'}):
+                    elif self.gen_func.str_find(str(value[row_t][column_t]).lower(), {'do'}):
                         name_signal = self.edit_SQL.search_name("do", str(value[row_t][column_t]))
                         item.setToolTip(name_signal)
-                    elif self.gen_func.str_find(str(value[row_t][column_t]), {'AI'}):
+                    elif self.gen_func.str_find(str(value[row_t][column_t]).lower(), {'ai'}):
                         name_signal = self.edit_SQL.search_name("ai", str(value[row_t][column_t]))
                         item.setToolTip(name_signal)
                     else: item.setToolTip('')
@@ -1991,6 +2174,45 @@ class Window_update_sql(QWidget):
             elif number_color == 2: self.logTextBox.append(errorFormat.format(f'{today} - {logs}'))
             elif number_color == 3: self.logTextBox.append(warningFormat.format(f'{today} - {logs}'))
             elif number_color == 0: self.logTextBox.append(newFormat.format(f'{today} - {logs}'))
+    # ContexMenu
+    def generateMenu(self, pos):
+        # # Get index
+        # for i in self.TableWidget.selectionModel().selection().indexes(): rowNum = i.row()
+        # # If the selected row index is less than 1, the context menu will pop up
+        # #if columnNum > 3:
+        # menu = QMenu()
+        # item1 = menu.addAction('AI')
+        # item2 = menu.addAction('DI')
+        # item3 = menu.addAction('DO')
+        # # Make the menu display in the normal position
+        # screenPos = self.TableWidget.mapToGlobal(pos)
+
+        # # Click on a menu item to return, making it blocked
+        # action = menu.exec(screenPos)
+        # if action == item1:
+        #     self.test()
+        #     #print('Select Menu 1', self.TableWidget.item(rowNum, 0).text())
+        # if action == item2:
+        #     list_di = self.edit_SQL.dop_window_signal('di')
+        #     di_tabl = Window_contexmenu_sql(list_di)
+        #     di_tabl.show()
+        #     #print('Select menu 2', self.TableWidget.item(rowNum, 0).text())
+        # if action == item3:
+        #     list_do = self.edit_SQL.dop_window_signal('do')
+        #     do_tabl = Window_contexmenu_sql(list_do)
+        #     do_tabl.show()
+        #     #print('Select menu 3', self.TableWidget.item(rowNum, 0).text())
+        # else: return
+        menu = QMenu()
+        menu.addAction("Foo Action TW")
+        menu.exec_(self.TableWidget.mapToGlobal(pos))
+        self.test()
+    def test(self):
+            list_ai = self.edit_SQL.dop_window_signal('ai')
+            ai_tabl = Window_contexmenu_sql(list_ai)
+            ai_tabl.show()
+
+
  
 
 

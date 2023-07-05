@@ -134,7 +134,7 @@ rus_list = {'signals': {'id':'№', 'type_signal':'Тип сигнала', 'uso'
             'ao': {'id':'№','variable':'Переменная', 'tag':'Идентификатор', 'name':'Название', 'pValue':'Ссылка на входное значение сигнала',
                    'pHealth':'Ссылка на исправность канала', 'uso':'Шкаф', 'basket':'Корзина', 'module':'Модуль', 'channel':'Канал'},
             
-            'ai': {'id':'№','variable':'Переменная', 'tag':'Идентификатор', 'Name':'Название', 'pValue':'Ссылка на входное\nзначение сигнала',
+            'ai': {'id':'№','variable':'Переменная', 'tag':'Идентификатор', 'name':'Название', 'pValue':'Ссылка на входное\nзначение сигнала',
                    'pHealth':'Ссылка на исправность\nканала','AnalogGroupId':'Группа аналогов',
                    'SetpointGroupId':'Группа уставок\nаналогов', 'Egu':'Единица измерения', 'sign_VU':'Подпись для ВУ', 
                    'IsOilPressure':'Давление нефти/нефтепродукта\n(флаг для пересчета в кгс/см2)', 'number_NA_or_aux':'Номер НА или вспом.', 
@@ -323,7 +323,7 @@ rus_list = {'signals': {'id':'№', 'type_signal':'Тип сигнала', 'uso'
                        'maximum':'Максимум', 'group_ust':'Группа уставок', 'rule_map_ust':'Правило для карты уставок'},
 
             'vsgrp': {'id':'№','variable':'Переменная', 'tag':'Идентификатор', 'name':'Название', 'fire_or_watering':'Пож или водоорош', 'Number_of_auxsystem_in_group':'Количество вспомсистем в группе',
-                      'WarnOff_flag_if_one_auxsystem_in_the_group_is_running':'Требуется выставлять флаг WarnOff если работает одна вспомсистема в группе'},
+                      'count_auxsys_in_group':'Количество вспомсистем в группе', 'WarnOff_flag_if_one_auxsystem_in_the_group_is_running':'Требуется выставлять флаг WarnOff если работает одна вспомсистема в группе'},
 
             'vsgrp_tm': {'id':'№','variable':'Переменная', 'tag':'Идентификатор', 'name':'Название', 'unit':'Единица измерения', 'used':'Используется', 'value_ust':'Значение уставки', 'minimum':'Минимум', 
                        'maximum':'Максимум', 'group_ust':'Группа уставок', 'rule_map_ust':'Правило для карты уставок'},
@@ -358,6 +358,29 @@ rus_list = {'signals': {'id':'№', 'type_signal':'Тип сигнала', 'uso'
             
             'tm_dp': {'id':'№','variable':'Переменная', 'tag':'Идентификатор', 'name':'Название', 
                       'link_to_link_signal':'Ссылка на сигнал\nналичия связи', 'link_to_timeout':'Ссылка на таймаут по умолчанию\ntmCommon.CSPA_t1'},
+            
+            'tm_ts': {'id':'№','variable':'Переменная', 'tag':'Идентификатор', 'name':'Название', 
+                      'function_ASDU':'Функция ASDU', 'addr_object':'Адрес объекта', 'link_value':'Ссылка на значение'},
+            
+            'tm_ti4': {'id':'№','variable':'Переменная', 'tag':'Идентификатор', 'name':'Название', 
+                      'function_ASDU':'Функция ASDU', 'addr_object':'Адрес объекта', 'variable_value':'Переменная - значение', 'variable_status':'Переменная - статус',
+                      'variable_Aiparam':'Переменная - Aiparam'},
+
+            'tm_ti2': {'id':'№','variable':'Переменная', 'tag':'Идентификатор', 'name':'Название', 
+                      'function_ASDU':'Функция ASDU', 'addr_object':'Адрес объекта', 'variable_value':'Переменная - значение', 'variable_status':'Переменная - статус'},
+
+            'tm_tii': {'id':'№','variable':'Переменная', 'tag':'Идентификатор', 'name':'Название', 
+                      'function_ASDU':'Функция ASDU', 'addr_object':'Адрес объекта', 'variable_value':'Переменная - значение', 'variable_status':'Переменная - статус'},
+
+            'tm_tu': {'id':'№','variable':'Переменная', 'tag':'Идентификатор', 'name':'Название', 
+                      'function_ASDU':'Функция ASDU', 'addr_object':'Адрес объекта', 'variable_change':'Изменяемая переменная', 'change_bit':'Изменяемый бит',
+                      'descriptionTU':'descriptionTU\nне более 32 символа латиницы'},
+
+            'tm_tr4': {'id':'№','variable':'Переменная', 'tag':'Идентификатор', 'name':'Название', 
+                      'function_ASDU':'Функция ASDU', 'addr_object':'Адрес объекта', 'variable_change':'Изменяемая переменная', 'descriptionTR4':'descriptionTR4\nне более 32 символа латиницы'},
+            
+            'tm_tr2': {'id':'№','variable':'Переменная', 'tag':'Идентификатор', 'name':'Название', 
+                      'function_ASDU':'Функция ASDU', 'addr_object':'Адрес объекта', 'variable_change':'Изменяемая переменная', 'descriptionTR4':'descriptionTR4\nне более 32 символа латиницы'},
             
             'pz': {'id':'№', 'variable':'Переменная', 'tag'   :'Идентификатор', 'name':'Название',
                    'type_zone':'Тип\n0 - без тушения, -1 - пенотушение,\n>=1 - водотушение, -2 - АГП',
@@ -494,7 +517,7 @@ class HardWare(BaseModel):
 class AI(BaseModel):
     variable         = CharField(null = True)
     tag              = CharField(null = True)
-    Name             = CharField(null = True)
+    name             = CharField(null = True)
     pValue           = CharField(null = True)
     pHealth          = CharField(null = True)
     AnalogGroupId    = CharField(null = True)
@@ -709,80 +732,80 @@ class KTPR(BaseModel):
     avar_parameter = CharField(null = True)
     DisableMasking = BooleanField(null = True)
     auto_unlock_protection = BooleanField(null = True)
-    shutdown_PNS_a_time_delay_up_5s_after_turning = CharField(null = True)
-    bitmask_protection_group_membership = CharField(null = True)
-    stop_type_NA = CharField(null = True)
-    pump_station_stop_type = CharField(null = True)
+    shutdown_PNS_a_time_delay_up_5s_after_turning = BooleanField(null = True)
+    bitmask_protection_group_membership = BooleanField(null = True)
+    stop_type_NA = IntegerField(null = True)
+    pump_station_stop_type = IntegerField(null = True)
     
-    closing_gate_valves_at_the_inlet_NPS = CharField(null = True)
-    closing_gate_valves_at_the_outlet_NPS = CharField(null = True)
-    closing_gate_valves_between_PNS_and_MNS = CharField(null = True)
-    closing_gate_valves_between_RP_and_PNS = CharField(null = True)
-    closing_valves_inlet_and_outlet_MNS = CharField(null = True)
-    closing_valves_inlet_and_outlet_PNS = CharField(null = True)
-    closing_valves_inlet_and_outlet_MNA = CharField(null = True)
-    closing_valves_inlet_and_outlet_PNA = CharField(null = True)
-    closing_valves_inlet_RD = CharField(null = True)
-    closing_valves_outlet_RD = CharField(null = True)
-    closing_valves_inlet_SSVD = CharField(null = True)
-    closing_valves_inlet_FGU = CharField(null = True)
-    closing_secant_valve_connection_unit__oil_production_oil = CharField(null = True)
-    closing_valves_inlet_RP = CharField(null = True)
-    reserve_protect_14 = CharField(null = True)
-    reserve_protect_15 = CharField(null = True)
+    closing_gate_valves_at_the_inlet_NPS = BooleanField(null = True)
+    closing_gate_valves_at_the_outlet_NPS = BooleanField(null = True)
+    closing_gate_valves_between_PNS_and_MNS = BooleanField(null = True)
+    closing_gate_valves_between_RP_and_PNS = BooleanField(null = True)
+    closing_valves_inlet_and_outlet_MNS = BooleanField(null = True)
+    closing_valves_inlet_and_outlet_PNS = BooleanField(null = True)
+    closing_valves_inlet_and_outlet_MNA = BooleanField(null = True)
+    closing_valves_inlet_and_outlet_PNA = BooleanField(null = True)
+    closing_valves_inlet_RD = BooleanField(null = True)
+    closing_valves_outlet_RD = BooleanField(null = True)
+    closing_valves_inlet_SSVD = BooleanField(null = True)
+    closing_valves_inlet_FGU = BooleanField(null = True)
+    closing_secant_valve_connection_unit__oil_production_oil = BooleanField(null = True)
+    closing_valves_inlet_RP = BooleanField(null = True)
+    reserve_protect_14 = BooleanField(null = True)
+    reserve_protect_15 = BooleanField(null = True)
 
-    shutdown_oil_pumps = CharField(null = True)
-    shutdown_oil_pumps_after_signal_stopped_NA = CharField(null = True)
-    shutdown_circulating_water_pumps = CharField(null = True)
-    shutdown_pumps_pumping_out_from_tanks_collection_of_leaks_MNS = CharField(null = True)
-    shutdown_pumps_pumping_out_from_tanks_collection_of_leaks_PNS = CharField(null = True)
-    shutdown_pumps_pumping_out_from_tanks_SSVD = CharField(null = True)
-    switching_off_the_electric_room_fans = CharField(null = True)
-    shutdown_of_booster_fans_ED = CharField(null = True)
-    shutdown_of_retaining_fans_of_the_electrical_room = CharField(null = True)
-    shutdown_of_ED_air_compressors = CharField(null = True)
-    shutdown_pumps_providing_oil = CharField(null = True)
-    disabling_pumps_for_pumping_oil_oil_products_through_BIC = CharField(null = True)
-    shutdown_domestic_and_drinking_water_pumps = CharField(null = True)
-    shutdown_of_art_well_pumps = CharField(null = True)
-    AVO_shutdown = CharField(null = True)
-    shutdown_of_water_cooling_fans_circulating_water_supply_system = CharField(null = True)
+    shutdown_oil_pumps = BooleanField(null = True)
+    shutdown_oil_pumps_after_signal_stopped_NA = BooleanField(null = True)
+    shutdown_circulating_water_pumps = BooleanField(null = True)
+    shutdown_pumps_pumping_out_from_tanks_collection_of_leaks_MNS = BooleanField(null = True)
+    shutdown_pumps_pumping_out_from_tanks_collection_of_leaks_PNS = BooleanField(null = True)
+    shutdown_pumps_pumping_out_from_tanks_SSVD = BooleanField(null = True)
+    switching_off_the_electric_room_fans = BooleanField(null = True)
+    shutdown_of_booster_fans_ED = BooleanField(null = True)
+    shutdown_of_retaining_fans_of_the_electrical_room = BooleanField(null = True)
+    shutdown_of_ED_air_compressors = BooleanField(null = True)
+    shutdown_pumps_providing_oil = BooleanField(null = True)
+    disabling_pumps_for_pumping_oil_oil_products_through_BIC = BooleanField(null = True)
+    shutdown_domestic_and_drinking_water_pumps = BooleanField(null = True)
+    shutdown_of_art_well_pumps = BooleanField(null = True)
+    AVO_shutdown = BooleanField(null = True)
+    shutdown_of_water_cooling_fans_circulating_water_supply_system = BooleanField(null = True)
 
-    shutdown_exhaust_fans_of_the_pumping_room_of_the_MNS = CharField(null = True)
-    shutdown_of_exhaust_fans_of_the_pumping_room_PNS = CharField(null = True)
-    shutdown_of_exhaust_fans_in_the_centralized_oil_system_room = CharField(null = True)
-    shutdown_of_exhaust_fans_oil_pit_in_the_electrical_room = CharField(null = True)
-    shutdown_of_exhaust_fans_in_the_RD_room = CharField(null = True)
-    shutdown_of_exhaust_fans_in_the_SSVD_room = CharField(null = True)
-    shutdown_of_the_roof_fans_of_the_MNS_pump_room = CharField(null = True)
-    shutdown_of_the_roof_fans_of_the_PNS_pump_room = CharField(null = True)
-    switching_off_the_supply_fans_pumping_room_of_the_MNS = CharField(null = True)
-    switching_off_the_supply_fans_pumping_room_of_the_PNS = CharField(null = True)
-    switch_off_the_supply_fans_in_the_centralized_oil = CharField(null = True)
-    switching_off_the_supply_fan_of_the_RD_room = CharField(null = True)
-    switching_off_the_supply_fan_of_the_SSVD_room = CharField(null = True)
-    switching_off_the_supply_fans_of_the_ED_air_compressor = CharField(null = True)
-    switching_off_the_supply_fan_of_the_BIK_room = CharField(null = True)
-    switching_off_the_supply_fan_of_the_SIKN_room = CharField(null = True)
+    shutdown_exhaust_fans_of_the_pumping_room_of_the_MNS = BooleanField(null = True)
+    shutdown_of_exhaust_fans_of_the_pumping_room_PNS = BooleanField(null = True)
+    shutdown_of_exhaust_fans_in_the_centralized_oil_system_room = BooleanField(null = True)
+    shutdown_of_exhaust_fans_oil_pit_in_the_electrical_room = BooleanField(null = True)
+    shutdown_of_exhaust_fans_in_the_RD_room = BooleanField(null = True)
+    shutdown_of_exhaust_fans_in_the_SSVD_room = BooleanField(null = True)
+    shutdown_of_the_roof_fans_of_the_MNS_pump_room = BooleanField(null = True)
+    shutdown_of_the_roof_fans_of_the_PNS_pump_room = BooleanField(null = True)
+    switching_off_the_supply_fans_pumping_room_of_the_MNS = BooleanField(null = True)
+    switching_off_the_supply_fans_pumping_room_of_the_PNS = BooleanField(null = True)
+    switch_off_the_supply_fans_in_the_centralized_oil = BooleanField(null = True)
+    switching_off_the_supply_fan_of_the_RD_room = BooleanField(null = True)
+    switching_off_the_supply_fan_of_the_SSVD_room = BooleanField(null = True)
+    switching_off_the_supply_fans_of_the_ED_air_compressor = BooleanField(null = True)
+    switching_off_the_supply_fan_of_the_BIK_room = BooleanField(null = True)
+    switching_off_the_supply_fan_of_the_SIKN_room = BooleanField(null = True)
     
-    closing_the_air_valves_louvered_grilles_of_the_pump_room = CharField(null = True)
-    closing_of_air_valves_louvered_grilles_of_the_compressor_room = CharField(null = True)
-    shutdown_of_electric_oil_heaters = CharField(null = True)
-    shutdown_of_the_electric_heaters_of_the_leakage_collection_MNS = CharField(null = True)
-    shutdown_of_the_electric_heaters_of_the_leakage_collection_PNS = CharField(null = True)
-    shutdown_of_electric_heaters_of_the_SIKN_leak_collection_tank = CharField(null = True)
-    shutdown_of_air_coolers_of_the_locking_system_MNA = CharField(null = True)
-    shutdown_of_air_coolers_of_the_locking_system_disc_NA = CharField(null = True)
-    shutdown_of_the_external_cooling_circuit_ChRP_MNA = CharField(null = True)
-    shutdown_of_the_external_cooling_circuit_ChRP_PNA = CharField(null = True)
-    shutdown_of_locking_system_pumps = CharField(null = True)
-    shutdown_of_pumps_for_pumping_oil_oil_products_through = CharField(null = True)
-    shutdown_of_pumping_pumps_from_leakage_collection_tanks = CharField(null = True)
-    shutdown_of_anticondensation_electric_heaters_ED = CharField(null = True)
-    fire_protection = CharField(null = True)
-    reserve_aux_15 = CharField(null = True)
+    closing_the_air_valves_louvered_grilles_of_the_pump_room = BooleanField(null = True)
+    closing_of_air_valves_louvered_grilles_of_the_compressor_room = BooleanField(null = True)
+    shutdown_of_electric_oil_heaters = BooleanField(null = True)
+    shutdown_of_the_electric_heaters_of_the_leakage_collection_MNS = BooleanField(null = True)
+    shutdown_of_the_electric_heaters_of_the_leakage_collection_PNS = BooleanField(null = True)
+    shutdown_of_electric_heaters_of_the_SIKN_leak_collection_tank = BooleanField(null = True)
+    shutdown_of_air_coolers_of_the_locking_system_MNA = BooleanField(null = True)
+    shutdown_of_air_coolers_of_the_locking_system_disc_NA = BooleanField(null = True)
+    shutdown_of_the_external_cooling_circuit_ChRP_MNA = BooleanField(null = True)
+    shutdown_of_the_external_cooling_circuit_ChRP_PNA = BooleanField(null = True)
+    shutdown_of_locking_system_pumps = BooleanField(null = True)
+    shutdown_of_pumps_for_pumping_oil_oil_products_through = BooleanField(null = True)
+    shutdown_of_pumping_pumps_from_leakage_collection_tanks = BooleanField(null = True)
+    shutdown_of_anticondensation_electric_heaters_ED = BooleanField(null = True)
+    fire_protection = BooleanField(null = True)
+    reserve_aux_15 = BooleanField(null = True)
 
-    time_ust = CharField(null = True)
+    time_ust = IntegerField(null = True)
     Pic = CharField(null = True)
     group_ust = CharField(null = True)
     rule_map_ust = CharField(null = True)
@@ -820,9 +843,9 @@ class KTPRS(BaseModel):
     name = CharField(null = True)
     drawdown = CharField(null = True)
     reference_to_value = CharField(null = True)
-    priority_msg_0 = CharField(null = True)
-    priority_msg_1 = CharField(null = True)
-    prohibition_issuing_msg = CharField(null = True)
+    priority_msg_0 = IntegerField(null = True)
+    priority_msg_1 = IntegerField(null = True)
+    prohibition_issuing_msg = IntegerField(null = True)
     Pic = CharField(null = True)
     
     class Meta:
@@ -1067,9 +1090,10 @@ class VSGRP(BaseModel):
     variable = CharField(null = True)
     tag = CharField(null = True)
     name = CharField(null = True)
-    fire_or_watering = CharField(null = True)
-    Number_of_auxsystem_in_group = IntegerField(null = True)
-    WarnOff_flag_if_one_auxsystem_in_the_group_is_running = IntegerField(null = True)
+    fire_or_watering = BooleanField(null = True)
+    count_auxsys_in_group = IntegerField(null = True)
+    Number_of_auxsystem_in_group = BooleanField(null = True)
+    WarnOff_flag_if_one_auxsystem_in_the_group_is_running = BooleanField(null = True)
 
     class Meta:
         table_name = 'vsgrp'
@@ -1218,5 +1242,77 @@ class TM_DP(BaseModel):
 
     class Meta:
         table_name = 'tm_dp'
+class TM_TS(BaseModel):
+    variable = CharField(null = True)
+    tag = CharField(null = True)
+    name = CharField(null = True)
+    function_ASDU = CharField(null = True)
+    addr_object = IntegerField(null = True)
+    link_value = CharField(null = True)
+
+    class Meta:
+        table_name = 'tm_ts'
+class TM_TI4(BaseModel):
+    variable = CharField(null = True)
+    tag = CharField(null = True)
+    name = CharField(null = True)
+    function_ASDU = CharField(null = True)
+    addr_object = IntegerField(null = True)
+    variable_value = CharField(null = True)
+    variable_status = CharField(null = True)
+    variable_Aiparam = CharField(null = True)
+    class Meta:
+        table_name = 'tm_ti4'
+class TM_TI2(BaseModel):
+    variable = CharField(null = True)
+    tag = CharField(null = True)
+    name = CharField(null = True)
+    function_ASDU = CharField(null = True)
+    addr_object = IntegerField(null = True)
+    variable_value = CharField(null = True)
+    variable_status = CharField(null = True)
+    class Meta:
+        table_name = 'tm_ti2'
+class TM_TII(BaseModel):
+    variable = CharField(null = True)
+    tag = CharField(null = True)
+    name = CharField(null = True)
+    function_ASDU = CharField(null = True)
+    addr_object = IntegerField(null = True)
+    variable_value = CharField(null = True)
+    variable_status = CharField(null = True)
+    class Meta:
+        table_name = 'tm_tii'
+class TM_TU(BaseModel):
+    variable = CharField(null = True)
+    tag = CharField(null = True)
+    name = CharField(null = True)
+    function_ASDU = CharField(null = True)
+    addr_object = IntegerField(null = True)
+    variable_change = CharField(null = True)
+    change_bit = IntegerField(null = True)
+    descriptionTU = CharField(null = True)
+    class Meta:
+        table_name = 'tm_tu'
+class TM_TR4(BaseModel):
+    variable = CharField(null = True)
+    tag = CharField(null = True)
+    name = CharField(null = True)
+    function_ASDU = CharField(null = True)
+    addr_object = IntegerField(null = True)
+    variable_change = CharField(null = True)
+    descriptionTR4 = CharField(null = True)
+    class Meta:
+        table_name = 'tm_tr4'
+class TM_TR2(BaseModel):
+    variable = CharField(null = True)
+    tag = CharField(null = True)
+    name = CharField(null = True)
+    function_ASDU = CharField(null = True)
+    addr_object = IntegerField(null = True)
+    variable_change = CharField(null = True)
+    descriptionTR4 = CharField(null = True)
+    class Meta:
+        table_name = 'tm_tr2'
 
 

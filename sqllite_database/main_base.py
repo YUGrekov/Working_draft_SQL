@@ -610,9 +610,9 @@ class Filling_USO():
                     list_diag['variable'] = f'USO[{count_USO}]'
                     list_diag['name']     = f'{uso[0]}'
 
-                    self.cursor.execute(f"""SELECT variable, "Name"
+                    self.cursor.execute(f"""SELECT variable, "name"
                                             FROM ai
-                                            WHERE "Name" LIKE '%{uso[0]}%'""")
+                                            WHERE "name" LIKE '%{uso[0]}%'""")
                     current_ai = self.cursor.fetchall()
                     try:
                         if len(current_ai) == 0: raise
@@ -762,7 +762,7 @@ class Filling_AI():
                                                             channel={channel_s}''')
         
                             if not bool(exist_name):
-                                self.cursor.execute(f'''SELECT id, "Name" 
+                                self.cursor.execute(f'''SELECT id, "name" 
                                                         FROM ai
                                                         WHERE uso='{uso_s}' AND 
                                                               basket={basket_s} AND 
@@ -892,7 +892,7 @@ class Filling_AI():
                         list_AI.append(dict(id = count_AI,
                                             variable = f'AI[{count_AI}]',
                                             tag = tag_translate,
-                                            Name = description,
+                                            name = description,
                                             pValue = f'mAI8[{isdigit_num}, {module_s}]',
                                             pHealth = f'mAI8_HEALTH[{isdigit_num}]',
                                             AnalogGroupId = group_analog,
@@ -937,7 +937,7 @@ class Filling_AI():
         return(msg)
     # Заполняем таблицу AI
     def column_check(self):
-        list_default = ['variable', 'tag', 'Name', 'pValue', 'pHealth', 'AnalogGroupId',
+        list_default = ['variable', 'tag', 'name', 'pValue', 'pHealth', 'AnalogGroupId',
                         'SetpointGroupId',  'Egu',  'sign_VU',  'IsOilPressure',  'number_NA_or_aux',  
                         'IsPumpVibration',  'vibration_motor',  'current_motor',  'aux_outlet_pressure', 
                         'number_ust_min_avar',  'number_ust_min_pred',  'number_ust_max_pred',  'number_ust_max_avar', 
@@ -1603,9 +1603,6 @@ class Filling_KTPRS():
                                        name = 'Резерв',
                                        drawdown = '',
                                        reference_to_value = '',
-                                       priority_msg_0 = '',
-                                       priority_msg_1 = '',
-                                       prohibition_issuing_msg = '',
                                        Pic = ''))
 
             # Checking for the existence of a database
@@ -2342,9 +2339,9 @@ class Filling_VS():
                     new_name = str(new_name).replace('Прит', 'прит')
                     new_name = str(new_name).replace('Вытяж', 'вытяж')
 
-                    self.cursor.execute(f"""SELECT id, "Name" 
+                    self.cursor.execute(f"""SELECT id, "name" 
                                             FROM ai
-                                            WHERE "Name" LIKE '%{new_name}%'""")
+                                            WHERE "name" LIKE '%{new_name}%'""")
                     try: 
                         number_id = self.cursor.fetchall()[0][0]
                         pressure_norm = f'AI[{number_id}].Norm'
@@ -2478,9 +2475,10 @@ class Filling_VSGRP():
         self.dop_function = General_functions()
     # Заполняем таблицу VSGRP
     def column_check(self):
-        list_default = ['variable', 'tag', 'name', 'fire_or_watering', 'Number_of_auxsystem_in_group',
+        list_default = ['variable', 'tag', 'name', 'fire_or_watering', 'count_auxsys_in_group', 'Number_of_auxsystem_in_group',
                         'WarnOff_flag_if_one_auxsystem_in_the_group_is_running']
         msg = self.dop_function.column_check(VSGRP, 'vsgrp', list_default)
+        msg[f'{today} - Таблица: vs_grp подготовлена'] = 1
         return msg 
 # Work with filling in the table 'VSGRP_tm'
 class Filling_VSGRP_tm():
@@ -2842,11 +2840,11 @@ class Filling_PI():
                     return msg
                 
                 # Новый список из таблицы DI
-                self.cursor.execute(f"""SELECT id, "tag", "Name"
+                self.cursor.execute(f"""SELECT id, "tag", "name"
                                         FROM ai
-                                        WHERE ("Name" LIKE '%адрес%' AND "Name" LIKE '%пусков%') OR
-                                              ("Name" LIKE '%пожар%' AND "Name" LIKE '%дымов%')  OR
-                                              ("Name" LIKE '%теплов%') 
+                                        WHERE ("name" LIKE '%адрес%' AND "name" LIKE '%пусков%') OR
+                                              ("name" LIKE '%пожар%' AND "name" LIKE '%дымов%')  OR
+                                              ("name" LIKE '%теплов%') 
                                         ORDER BY "tag" """)
                 list_pi_ai = self.cursor.fetchall()
 
@@ -3010,7 +3008,7 @@ class Filling_PZ_tm():
         msg = self.dop_function.column_check(PZ_tm, 'pz_tm', list_default)
         return msg 
 
-# Work with filling in the table 
+# Work with filling in the table TM
 class Filling_DPS():
     def __init__(self):
         self.cursor   = db.cursor()
@@ -3029,6 +3027,205 @@ class Filling_TM_DP():
     def column_check(self):
         list_default = ['variable', 'tag', 'name', 'link_to_link_signal', 'link_to_timeout', 'Pic']
         msg = self.dop_function.column_check(TM_DP, 'tm_dp', list_default)
+        return msg 
+class Filling_TM_TS():
+    def __init__(self):
+        self.cursor   = db.cursor()
+        self.dop_function = General_functions()
+    def getting_modul(self):
+        msg = {}
+        list_tmts = []
+        with db:
+            try:
+                for i in range(1, 2544):
+                    list_tmts.append(dict(id = i,
+                                          variable = f'TM_TS[{i}]',
+                                          tag = '',
+                                          name  = '',
+                                          function_ASDU = 'M_SP_TB_1 (30)',
+                                          addr_object = 4095 + i,
+                                          link_value = ''))
+                    
+                # Checking for the existence of a database
+                TM_TS.insert_many(list_tmts).execute()
+            except Exception:
+                msg[f'{today} - Таблица: tm_ts, ошибка при заполнении: {traceback.format_exc()}'] = 2
+                return msg
+        msg[f'{today} - Таблица: tm_ts подготовлена'] = 1
+        return(msg)
+    # Заполняем таблицу TM_TS
+    def column_check(self):
+        list_default = ['variable', 'tag', 'name', 'function_ASDU', 'addr_object', 'link_value']
+        msg = self.dop_function.column_check(TM_TS, 'tm_ts', list_default)
+        return msg 
+class Filling_TM_TI4():
+    def __init__(self):
+        self.cursor   = db.cursor()
+        self.dop_function = General_functions()
+    def getting_modul(self):
+        msg = {}
+        list_tmti4 = []
+        with db:
+            try:
+                for i in range(1, 108):
+                    list_tmti4.append(dict(id = i,
+                                          variable = f'TM_TI4[{i}]',
+                                          tag = '',
+                                          name  = '',
+                                          function_ASDU = 'M_ME_TF_1 (36)',
+                                          addr_object = 16433 + i))
+                    
+                # Checking for the existence of a database
+                TM_TI4.insert_many(list_tmti4).execute()
+            except Exception:
+                msg[f'{today} - Таблица: tm_ti4, ошибка при заполнении: {traceback.format_exc()}'] = 2
+                return msg
+        msg[f'{today} - Таблица: tm_ti4 подготовлена'] = 1
+        return(msg)
+    # Заполняем таблицу TM_TI4
+    def column_check(self):
+        list_default = ['variable', 'tag', 'name', 'function_ASDU', 'addr_object', 'variable_value', 'variable_status', 'variable_Aiparam']
+        msg = self.dop_function.column_check(TM_TI4, 'tm_ti4', list_default)
+        return msg 
+class Filling_TM_TI2():
+    def __init__(self):
+        self.cursor   = db.cursor()
+        self.dop_function = General_functions()
+    def getting_modul(self):
+        msg = {}
+        list_tmti2 = []
+        with db:
+            try:
+                for i in range(1, 50):
+                    list_tmti2.append(dict(id = i,
+                                          variable = f'TM_TI2[{i}]',
+                                          tag = '',
+                                          name  = '',
+                                          function_ASDU = 'M_ME_TE_1 (35)',
+                                          addr_object = 16383 + i))
+                    
+                # Checking for the existence of a database
+                TM_TI2.insert_many(list_tmti2).execute()
+            except Exception:
+                msg[f'{today} - Таблица: tm_ti2, ошибка при заполнении: {traceback.format_exc()}'] = 2
+                return msg
+        msg[f'{today} - Таблица: tm_ti2 подготовлена'] = 1
+        return(msg)
+    def column_check(self):
+        list_default = ['variable', 'tag', 'name', 'function_ASDU', 'addr_object', 'variable_value', 'variable_status']
+        msg = self.dop_function.column_check(TM_TI2, 'tm_ti2', list_default)
+        return msg 
+class Filling_TM_TII():
+    def __init__(self):
+        self.cursor   = db.cursor()
+        self.dop_function = General_functions()
+    def getting_modul(self):
+        msg = {}
+        list_tmtii = []
+        with db:
+            try:
+                for i in range(1, 54):
+                    list_tmtii.append(dict(id = i,
+                                          variable = f'TM_TII[{i}]',
+                                          tag = '',
+                                          name  = '',
+                                          function_ASDU = 'M_BO_TB_1 (33)',
+                                          addr_object = 40959 + i))
+                    
+                # Checking for the existence of a database
+                TM_TII.insert_many(list_tmtii).execute()
+            except Exception:
+                msg[f'{today} - Таблица: tm_tii, ошибка при заполнении: {traceback.format_exc()}'] = 2
+                return msg
+        msg[f'{today} - Таблица: tm_tii подготовлена'] = 1
+        return(msg)
+    def column_check(self):
+        list_default = ['variable', 'tag', 'name', 'function_ASDU', 'addr_object', 'variable_value', 'variable_status']
+        msg = self.dop_function.column_check(TM_TII, 'tm_tii', list_default)
+        return msg 
+class Filling_TM_TU():
+    def __init__(self):
+        self.cursor   = db.cursor()
+        self.dop_function = General_functions()
+    def getting_modul(self):
+        msg = {}
+        list_tmtu = []
+        with db:
+            try:
+                for i in range(1, 240):
+                    list_tmtu.append(dict(id = i,
+                                          variable = f'TM_TU[{i}]',
+                                          tag = '',
+                                          name  = '',
+                                          function_ASDU = 'C_SC_NA_1 (45)',
+                                          addr_object = 24797 + i))
+                    
+                # Checking for the existence of a database
+                TM_TU.insert_many(list_tmtu).execute()
+            except Exception:
+                msg[f'{today} - Таблица: tm_tu, ошибка при заполнении: {traceback.format_exc()}'] = 2
+                return msg
+        msg[f'{today} - Таблица: tm_tu подготовлена'] = 1
+        return(msg)
+    def column_check(self):
+        list_default = ['variable', 'tag', 'name', 'function_ASDU', 'addr_object', 'variable_change', 'change_bit', 'descriptionTU']
+        msg = self.dop_function.column_check(TM_TU, 'tm_tu', list_default)
+        return msg 
+class Filling_TM_TR4():
+    def __init__(self):
+        self.cursor   = db.cursor()
+        self.dop_function = General_functions()
+    def getting_modul(self):
+        msg = {}
+        list_tmtr4 = []
+        with db:
+            try:
+                for i in range(1, 10):
+                    list_tmtr4.append(dict(id = i,
+                                          variable = f'TM_TR4[{i}]',
+                                          tag = '',
+                                          name  = '',
+                                          function_ASDU = 'C_SE_NC_1 (50)',
+                                          addr_object = 32767 + i))
+                    
+                # Checking for the existence of a database
+                TM_TR4.insert_many(list_tmtr4).execute()
+            except Exception:
+                msg[f'{today} - Таблица: tm_tr4, ошибка при заполнении: {traceback.format_exc()}'] = 2
+                return msg
+        msg[f'{today} - Таблица: tm_tr4 подготовлена'] = 1
+        return(msg)
+    def column_check(self):
+        list_default = ['variable', 'tag', 'name', 'function_ASDU', 'addr_object', 'variable_change', 'descriptionTR4']
+        msg = self.dop_function.column_check(TM_TR4, 'tm_tr4', list_default)
+        return msg 
+class Filling_TM_TR2():
+    def __init__(self):
+        self.cursor   = db.cursor()
+        self.dop_function = General_functions()
+    def getting_modul(self):
+        msg = {}
+        list_tmtr2 = []
+        with db:
+            try:
+                for i in range(1, 10):
+                    list_tmtr2.append(dict(id = i,
+                                          variable = f'TM_TR2[{i}]',
+                                          tag = '',
+                                          name  = '',
+                                          function_ASDU = 'C_SE_NB_1 (49)',
+                                          addr_object = 32787 + i))
+                    
+                # Checking for the existence of a database
+                TM_TR2.insert_many(list_tmtr2).execute()
+            except Exception:
+                msg[f'{today} - Таблица: tm_tr2, ошибка при заполнении: {traceback.format_exc()}'] = 2
+                return msg
+        msg[f'{today} - Таблица: tm_tr2 подготовлена'] = 1
+        return(msg)
+    def column_check(self):
+        list_default = ['variable', 'tag', 'name', 'function_ASDU', 'addr_object', 'variable_change', 'descriptionTR4']
+        msg = self.dop_function.column_check(TM_TR2, 'tm_tr2', list_default)
         return msg 
 
 # Changing tables SQL
@@ -3201,6 +3398,20 @@ class Editing_table_SQL():
             msg[f'{today} - Окно тип данных: ошибка: {traceback.format_exc()}'] = 2
 
         return type_list, msg
+    def dop_window_signal(self, table_used):
+            type_list = []
+            try:
+                self.cursor.execute(f"""SELECT id, tag, name FROM "{table_used}" """)
+                for i in self.cursor.fetchall():
+                    id_  = i[0]
+                    tag  = i[1]
+                    name = i[2]
+
+                    list_a = [id_, tag, name]
+                    type_list.append(list_a)
+            except Exception:
+                print(traceback.format_exc())
+            return type_list
 
 # Generate data SQL
 class Generate_database_SQL():
@@ -3403,7 +3614,7 @@ class Generate_database_SQL():
             if addr_offset == 0 or kod_msg is None or addr_offset is None: 
                 msg[f'{today} - Сообщения ai: ошибка. Адреса из таблицы msg не определены'] = 2
                 return msg
-            cursor.execute(f"""SELECT id, "Name", "AnalogGroupId" FROM ai""")
+            cursor.execute(f"""SELECT id, "name", "AnalogGroupId" FROM ai""")
             list_ai = cursor.fetchall()
             for analog in list_ai:
                 id_ai    = analog[0]
@@ -3412,7 +3623,7 @@ class Generate_database_SQL():
 
                 start_addr = kod_msg + ((id_ai - 1) * int(addr_offset))
                 try:
-                    cursor.execute(f"""SELECT "Table_msg" 
+                    cursor.execute(f"""SELECT "table_msg" 
                                        FROM ai_grp
                                        WHERE name_group='{group_ai}'""")
                     list_group = cursor.fetchall()[0][0]
