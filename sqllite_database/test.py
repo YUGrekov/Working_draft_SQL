@@ -1770,7 +1770,6 @@ class Widget(QWidget):
             elif number_color == 3: self.logTextBox.append(warningFormat.format(f'{today} - {logs}'))
             elif number_color == 0: self.logTextBox.append(newFormat.format(f'{today} - {logs}'))
 
-
 # Тип таблицы
 class Window_type_tabl_sql(QWidget):
     def __init__(self, table_list):
@@ -1808,41 +1807,127 @@ class Window_type_tabl_sql(QWidget):
 
         self.setLayout(innerOutLayout)
 # Дополнительное окно контекстного меню
-class Window_contexmenu_sql(QWidget):
-    def __init__(self, table_list):
+class Window_contexmenu_sql(QMainWindow):
+    def __init__(self):
         super(Window_contexmenu_sql, self).__init__()
-        self.setWindowTitle('Дополнительное окно выбора сигнала')
+        self.setWindowTitle('Ссылки')
         self.setStyleSheet("background-color: #e1e5e5;")
         self.setWindowFlags(Qt.WindowCloseButtonHint)
-        self.resize(500, 600)
+        self.resize(800, 675)
+
+        self.edit_SQL = Editing_table_SQL()
+        
+        # Выбор таблицы
+        self.combo = QComboBox(self)
+        self.combo.resize(120,25)
+        self.combo.move(5, 5)
+        self.combo.setFont(QFont('Arial', 10))
+        list_tabl = ['ktpr', 'ai', 'di', 'do']
+        for tabl in list_tabl:
+           self.combo.addItem(str(tabl))
+        # Кнопка открыть таблицу
+        open_Button = QPushButton('Открыть таблицу', self)
+        open_Button.setStyleSheet("background: #faf5cd")
+        open_Button.move(130, 5)
+        open_Button.resize(120,25)
+        open_Button.clicked.connect(self.open_tabl)
+        # Тип
+        self.combo_type = QComboBox(self)
+        self.combo_type.resize(200,25)
+        self.combo_type.move(270, 5)
+        self.combo_type.setFont(QFont('Arial', 10))
+        # Строка ввода сигнала для поиска
+        self.req_base = QLineEdit(self, placeholderText='Поиск сигнала', clearButtonEnabled=True)
+        self.req_base.move(500, 5)
+        self.req_base.resize(292,25)
+        self.req_base.textChanged.connect(self.request)
+        # Подтвердить выбранный сигнал
+        confirm_Button = QPushButton('Добавить', self)
+        confirm_Button.setStyleSheet("background: #bfd6bf")
+        confirm_Button.move(672, 645)
+        confirm_Button.resize(120,25)
+        confirm_Button.clicked.connect(self.new_text_cell)
 
         self.TableWidget = QTableWidget(self)
-        self.TableWidget.move(500,600)
+        self.TableWidget.setGeometry(5,40,790,600)
         self.TableWidget.verticalHeader().setVisible(False)
-        self.TableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
-
-        innerOutLayout = QVBoxLayout()
-        innerOutLayout.addWidget(self.TableWidget)
-
+        self.TableWidget.horizontalHeader().setStretchLastSection(True) 
         self.TableWidget.setColumnCount(3)
-        self.TableWidget.setRowCount(len(table_list))
         tabl = ['№', 'Тэг', 'Название']
         self.TableWidget.setHorizontalHeaderLabels(tabl)
         # Color header
         style = "::section {""background-color: #bbbabf; }"
         self.TableWidget.horizontalHeader().setStyleSheet(style)
+        self.TableWidget.cellClicked.connect(self.click_position)
+    # Стройка таблицы
+    def shift(self, table_list):
+        self.list_signal = table_list
+        # self.table_used = tabl_used
+        # self.obj_tabl = obj_tabl
+        # self.row_tabl = row_tabl
+        # self.column_tabl = column_tabl
 
+        self.launch_windows(self.list_signal)
+    def launch_windows(self, table_list):
+        self.TableWidget.setRowCount(len(table_list))
         for row_t in range(len(table_list)):
             for column_t in range(3):
                 if column_t == 0: value = table_list[row_t][column_t]
                 if column_t == 1: value = table_list[row_t][column_t]
                 if column_t == 2: value = table_list[row_t][column_t]
 
-                item = QTableWidgetItem(value)
+                item = QTableWidgetItem(str(value))
                 item.setFlags(Qt.ItemIsEnabled)
                 self.TableWidget.setItem(row_t, column_t, item)
+    # Фильтр поиска
+    def request(self):
+        request = self.req_base.text()
+        if request == '': return
+        # Clear
+        rowcount = self.TableWidget.rowCount()
+        if rowcount != 0: 
+            while rowcount >= 0:
+                self.TableWidget.removeRow(rowcount)
+                rowcount -= 1
 
-        self.setLayout(innerOutLayout)
+        list_filter = self.edit_SQL.filter_text(request, self.list_signal)
+        self.launch_windows(list_filter) 
+    # Цвет строки
+    def setColortoRow(self, rowIndex):
+        for j in range(self.TableWidget.columnCount()):
+            self.TableWidget.item(rowIndex, j).setBackground(QColor(107, 219, 132))
+    # Выполнение действий
+    def new_text_cell(self):
+        self.cell_value
+        self.obj_tabl.setItem(self.row_tabl, self.column_tabl, QTableWidgetItem(f'AI[{self.cell_value}].Value'))
+    # Открытие таблицы
+    def open_tabl(self):
+        name_table = self.combo.currentText()
+        # Clear
+        rowcount = self.TableWidget.rowCount()
+        if rowcount != 0: 
+            while rowcount >= 0:
+                self.TableWidget.removeRow(rowcount)
+                rowcount -= 1
+        list_signal = self.edit_SQL.dop_window_signal(name_table)
+        self.shift(list_signal)
+
+        list_type = {'ai':['Norm','Warn','Avar','Ndv','LTMin','MTMax','Min6','Min5','Min4','Min3_IsMT10Perc','Min2_IsNdv2ndParam','Min1_IsHighVibStat',
+                           'Max1_IsHighVibStatNMNWR', 'Max2_IsHighVibNoStat', 'Max3_IsAvarVibStat', 'Max4_IsAvarVibStatNMNWR', 'Max5_IsAvarVibNoStat', 
+                           'Max6_IsAvar2Vib', 'Status'],
+                     'di':['Value', 'Break', 'KZ', 'NC'],}
+        
+        self.combo_type.clear()
+        for key, value in list_type.items():
+            if key == name_table:
+                for i in value:
+                    self.combo_type.addItem(str(i))
+
+    def click_position(self):
+        row = self.TableWidget.currentRow()
+        self.setColortoRow(row)
+        self.cell_value = self.TableWidget.item(row, 0).text()
+
 # Основное окно просмотра и редактирования таблиц
 class Window_update_sql(QWidget):
     def __init__(self, table_used):
@@ -1911,6 +1996,12 @@ class Window_update_sql(QWidget):
         droptab_Button.move(470, 40) 
         droptab_Button.clicked.connect(self.drop_tabl)
 
+        link_Button = QPushButton('Ссылки', self)
+        link_Button.setStyleSheet("background: #bbbabf; border-radius: 4px; border: 1px solid")
+        link_Button.resize(120,25)
+        link_Button.move(610, 40) 
+        link_Button.clicked.connect(self.link_tabl)
+
         self.req_base = QLineEdit(self, placeholderText='Введите запрос к текущей таблице', clearButtonEnabled=True)
         self.req_base.setStyleSheet('border: 1px solid #6f7370; border-radius: 4px; border: 1px solid')
         self.req_base.setToolTip('Значения типа "string" обязательно брать в "ковычки"')
@@ -1949,6 +2040,10 @@ class Window_update_sql(QWidget):
         self.type_tabl = Window_type_tabl_sql(type_list)
         self.type_tabl.show()
         self.logs_msg('default', 1, msg, True)
+    # Ссылки
+    def link_tabl(self):
+        self.link_tabl = Window_contexmenu_sql()
+        self.link_tabl.show()
     # Сompletely clear the table
     def clear_tabl(self):
         rowcount = self.TableWidget.rowCount()
@@ -2057,7 +2152,7 @@ class Window_update_sql(QWidget):
                 self.TableWidget.removeRow(rowcount)
                 rowcount -= 1
         # Filling
-        try   : self.tablew(column, row, hat_name, value, rus_list[self.table_used])
+        try   : self.tablew(column, row, hat_name, value)
         except: self.tablew(column, row, hat_name, value)
         #SELECT * FROM ai WHERE uso='МНС-2.КЦ' AND basket=3 AND module=3 AND channel=1
     # Reset a table query
@@ -2075,7 +2170,7 @@ class Window_update_sql(QWidget):
         except: self.tablew(column, row, self.hat_name, value)
 
     # Building the selected table
-    def tablew(self, column, row, hat_name, value, column_tooltip=None):
+    def tablew(self, column, row, hat_name, value):
         # TableW
         self.TableWidget.setColumnCount(column)
         self.TableWidget.setRowCount(row)
@@ -2176,41 +2271,36 @@ class Window_update_sql(QWidget):
             elif number_color == 0: self.logTextBox.append(newFormat.format(f'{today} - {logs}'))
     # ContexMenu
     def generateMenu(self, pos):
-        # # Get index
-        # for i in self.TableWidget.selectionModel().selection().indexes(): rowNum = i.row()
-        # # If the selected row index is less than 1, the context menu will pop up
-        # #if columnNum > 3:
-        # menu = QMenu()
-        # item1 = menu.addAction('AI')
-        # item2 = menu.addAction('DI')
-        # item3 = menu.addAction('DO')
-        # # Make the menu display in the normal position
-        # screenPos = self.TableWidget.mapToGlobal(pos)
-
-        # # Click on a menu item to return, making it blocked
-        # action = menu.exec(screenPos)
-        # if action == item1:
-        #     self.test()
-        #     #print('Select Menu 1', self.TableWidget.item(rowNum, 0).text())
-        # if action == item2:
-        #     list_di = self.edit_SQL.dop_window_signal('di')
-        #     di_tabl = Window_contexmenu_sql(list_di)
-        #     di_tabl.show()
-        #     #print('Select menu 2', self.TableWidget.item(rowNum, 0).text())
-        # if action == item3:
-        #     list_do = self.edit_SQL.dop_window_signal('do')
-        #     do_tabl = Window_contexmenu_sql(list_do)
-        #     do_tabl.show()
-        #     #print('Select menu 3', self.TableWidget.item(rowNum, 0).text())
-        # else: return
+        row    = self.TableWidget.currentRow()
+        column = self.TableWidget.currentColumn()
+        # Get index
+        for i in self.TableWidget.selectionModel().selection().indexes(): rowNum = i.row()
+        # If the selected row index is less than 1, the context menu will pop up
+        #if columnNum > 3:
         menu = QMenu()
-        menu.addAction("Foo Action TW")
-        menu.exec_(self.TableWidget.mapToGlobal(pos))
-        self.test()
-    def test(self):
+        item1 = menu.addAction('AI')
+        item2 = menu.addAction('DI')
+        item3 = menu.addAction('DO')
+        # Make the menu display in the normal position
+        screenPos = self.TableWidget.mapToGlobal(pos)
+
+        # Click on a menu item to return, making it blocked
+        action = menu.exec(screenPos)
+        if action == item1:
             list_ai = self.edit_SQL.dop_window_signal('ai')
-            ai_tabl = Window_contexmenu_sql(list_ai)
-            ai_tabl.show()
+            self.start_contextmenu.shift(list_ai, 'ai', self.TableWidget, row, column)
+            self.start_contextmenu.show()
+        if action == item2:
+            list_di = self.edit_SQL.dop_window_signal('di')
+            self.start_contextmenu.launch_windows(list_di, 'di')
+            self.start_contextmenu.show()
+            #print('Select menu 2', self.TableWidget.item(rowNum, 0).text())
+        if action == item3:
+            list_do = self.edit_SQL.dop_window_signal('do')
+            self.start_contextmenu.launch_windows(list_do, 'do')
+            self.start_contextmenu.show()
+            #print('Select menu 3', self.TableWidget.item(rowNum, 0).text())
+        else: return
 
 
  

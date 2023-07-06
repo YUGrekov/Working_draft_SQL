@@ -3232,6 +3232,7 @@ class Filling_TM_TR2():
 class Editing_table_SQL():
     def __init__(self):
         self.cursor = db.cursor()
+        self.dop_function = General_functions()
     def editing_sql(self, table_sql):
         unpacking_  = []
         msg = {}
@@ -3269,7 +3270,6 @@ class Editing_table_SQL():
     def func_chunks_generators(self, lst, n):
         for i in range(0, len(lst), n):
             yield lst[i : i + n]
-
     # Поиск названия сигнала для подписи
     def search_name(self, tabl, value):
         try:
@@ -3401,7 +3401,7 @@ class Editing_table_SQL():
     def dop_window_signal(self, table_used):
             type_list = []
             try:
-                self.cursor.execute(f"""SELECT id, tag, name FROM "{table_used}" """)
+                self.cursor.execute(f"""SELECT id, tag, name FROM "{table_used}" ORDER BY id""")
                 for i in self.cursor.fetchall():
                     id_  = i[0]
                     tag  = i[1]
@@ -3412,6 +3412,17 @@ class Editing_table_SQL():
             except Exception:
                 print(traceback.format_exc())
             return type_list
+    def filter_text(self, text, list_signal):
+        list_request = []
+        for i in list_signal:
+            id_  = i[0]
+            tag  = i[1]
+            name = i[2]
+
+            if self.dop_function.str_find(str(name).lower(), {text}):
+                list_temp = [id_, tag, name]
+                list_request.append(list_temp)
+        return list_request
 
 # Generate data SQL
 class Generate_database_SQL():

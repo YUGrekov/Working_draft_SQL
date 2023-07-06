@@ -6,7 +6,7 @@
 
 
 
-# # Главное окно программы
+# Главное окно программы
 # class Window(QMainWindow):
 #     def __init__(self):
 #         super(Window, self).__init__()
@@ -14,7 +14,7 @@
 #         self.setFixedSize(250, 180)
 #         self.setStyleSheet("background-color: #e1e5e5;")
 #         self.setWindowFlags(Qt.WindowCloseButtonHint)
-#         # Create menu bar
+        # Create menu bar
 #         self.create_menu_bars()
 #         # Сreating an import button exel
 #         butt_import_exel = QPushButton('Импорт данных КД из Exel', self)
