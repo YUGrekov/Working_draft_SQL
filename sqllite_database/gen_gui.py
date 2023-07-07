@@ -403,7 +403,20 @@ class Widget(QWidget):
         b_clear_upts.resize(80,23)
         b_clear_upts.move(b_width_two, b_height + 180) 
         b_clear_upts.clicked.connect(self.clear_upts_tabl)
-       
+        # RS
+        l_rs = QLabel('RS:', tab_3)
+        l_rs.move(b_width_one + 2, l_height + 220)
+        b_rs_basket = QPushButton('Заполнить', tab_3)
+        b_rs_basket.setStyleSheet("background: #bfd6bf; border: 1px solid; border-radius: 3px;")
+        b_rs_basket.resize(80,23)
+        b_rs_basket.move(b_width_one, b_height + 215) 
+        b_rs_basket.clicked.connect(self.filling_rs)
+        b_clear_rs = QPushButton('Очистить', tab_3)
+        b_clear_rs.setStyleSheet("background: #bbbabf; border: 1px solid; border-radius: 3px;")
+        b_clear_rs.setToolTip("Очистить таблицу Интерфейсные каналы")
+        b_clear_rs.resize(80,23)
+        b_clear_rs.move(b_width_two, b_height + 215) 
+        b_clear_rs.clicked.connect(self.clear_rs_tabl)
         # VV
         l_vv = QLabel('VV:', tab_3)
         l_vv.move(b_width_one + 910, l_height + 135)
@@ -1224,6 +1237,16 @@ class Widget(QWidget):
     def clear_di_tabl(self):
         msg = self.dop_function.clear_tabl('di', 'DI', self.list_tabl)
         self.logs_msg('default', 1, msg, True)
+    # RS
+    def filling_rs(self):
+        rs_table = Filling_RS()
+        msg = rs_table.column_check()
+        self.logs_msg('default', 1, msg, True)
+        msg = rs_table.getting_modul()
+        self.logs_msg('default', 1, msg, True)
+    def clear_rs_tabl(self):
+        msg = self.dop_function.clear_tabl('rs', 'RS', self.list_tabl)
+        self.logs_msg('default', 1, msg, True)
     # DO
     def filling_do(self):
         do_table = Filling_DO()
@@ -1816,37 +1839,53 @@ class Window_contexmenu_sql(QMainWindow):
         self.resize(800, 675)
 
         self.edit_SQL = Editing_table_SQL()
+        self.write_text_cell = ''
         
         # Выбор таблицы
         self.combo = QComboBox(self)
+        self.combo.setStyleSheet("border-radius: 4px; border: 1px solid")
         self.combo.resize(120,25)
         self.combo.move(5, 5)
         self.combo.setFont(QFont('Arial', 10))
-        list_tabl = ['ktpr', 'ai', 'di', 'do']
-        for tabl in list_tabl:
-           self.combo.addItem(str(tabl))
+        self.tuple_tabl = {'AI':'ai', 'AO':'ao', 'DI':'di', 'DO':'do', 'ctrlDO':'do', 'NA':'umpna', 'ZD':'zd', 'VS':'vs', 'VSGRP':'vsgrp',
+                     'BUF':'buf', 'RSreq':'rsreq', 'KTPR':'ktpr', 'KTPRA':'ktpra', 'KTPRS':'ktprs', 'NPS':'nps', 'AIVisualValue':'ai', 
+                     'ctrlAO':'ao', 'Facility':'', 'BUFr':'bufr'}
+        for key, tabl in self.tuple_tabl.items():
+           self.combo.addItem(str(key))
         # Кнопка открыть таблицу
         open_Button = QPushButton('Открыть таблицу', self)
-        open_Button.setStyleSheet("background: #faf5cd")
+        open_Button.setStyleSheet("background: #faf5cd;border-radius: 4px; border: 1px solid")
         open_Button.move(130, 5)
         open_Button.resize(120,25)
         open_Button.clicked.connect(self.open_tabl)
         # Тип
         self.combo_type = QComboBox(self)
+        self.combo_type.setStyleSheet("border-radius: 4px; border: 1px solid")
         self.combo_type.resize(200,25)
         self.combo_type.move(270, 5)
         self.combo_type.setFont(QFont('Arial', 10))
+        self.combo_type.activated.connect(self.do_something)
         # Строка ввода сигнала для поиска
         self.req_base = QLineEdit(self, placeholderText='Поиск сигнала', clearButtonEnabled=True)
+        self.req_base.setStyleSheet("border-radius: 4px; border: 1px solid")
         self.req_base.move(500, 5)
         self.req_base.resize(292,25)
         self.req_base.textChanged.connect(self.request)
         # Подтвердить выбранный сигнал
         confirm_Button = QPushButton('Добавить', self)
-        confirm_Button.setStyleSheet("background: #bfd6bf")
+        confirm_Button.setStyleSheet("background: #bfd6bf;border-radius: 4px; border: 1px solid")
         confirm_Button.move(672, 645)
         confirm_Button.resize(120,25)
         confirm_Button.clicked.connect(self.new_text_cell)
+        # Значение ссылки
+        self.link_value = QLineEdit(self, placeholderText='Значение ссылки', clearButtonEnabled=True)
+        self.link_value.setStyleSheet("border-radius: 4px; border: 1px solid")
+        self.link_value.move(315, 645)
+        self.link_value.resize(350,25)
+        # Результат загрузки таблицы
+        self.load = QLabel('', self)
+        self.load.move(10, 643)
+        self.load.resize(200,25)
 
         self.TableWidget = QTableWidget(self)
         self.TableWidget.setGeometry(5,40,790,600)
@@ -1860,13 +1899,12 @@ class Window_contexmenu_sql(QMainWindow):
         self.TableWidget.horizontalHeader().setStyleSheet(style)
         self.TableWidget.cellClicked.connect(self.click_position)
     # Стройка таблицы
-    def shift(self, table_list):
+    def parent_click(self, row, column, qtablew):
+        self.row_parent = row
+        self.column_parent = column
+        self.tablew_parent = qtablew
+    def build(self, table_list):
         self.list_signal = table_list
-        # self.table_used = tabl_used
-        # self.obj_tabl = obj_tabl
-        # self.row_tabl = row_tabl
-        # self.column_tabl = column_tabl
-
         self.launch_windows(self.list_signal)
     def launch_windows(self, table_list):
         self.TableWidget.setRowCount(len(table_list))
@@ -1876,7 +1914,10 @@ class Window_contexmenu_sql(QMainWindow):
                 if column_t == 1: value = table_list[row_t][column_t]
                 if column_t == 2: value = table_list[row_t][column_t]
 
-                item = QTableWidgetItem(str(value))
+                if value is None:
+                    item = QTableWidgetItem('')
+                else:
+                    item = QTableWidgetItem(str(value))
                 item.setFlags(Qt.ItemIsEnabled)
                 self.TableWidget.setItem(row_t, column_t, item)
     # Фильтр поиска
@@ -1894,39 +1935,106 @@ class Window_contexmenu_sql(QMainWindow):
         self.launch_windows(list_filter) 
     # Цвет строки
     def setColortoRow(self, rowIndex):
+        for i in range(self.TableWidget.rowCount()):
+            for j in range(self.TableWidget.columnCount()):
+                self.TableWidget.item(i, j).setBackground(QColor(229, 229, 229))
+
         for j in range(self.TableWidget.columnCount()):
             self.TableWidget.item(rowIndex, j).setBackground(QColor(107, 219, 132))
     # Выполнение действий
     def new_text_cell(self):
-        self.cell_value
-        self.obj_tabl.setItem(self.row_tabl, self.column_tabl, QTableWidgetItem(f'AI[{self.cell_value}].Value'))
+        try:
+            self.cell_value
+            self.tablew_parent.setItem(self.row_parent, self.column_parent, QTableWidgetItem(self.write_text_cell))
+        except: return
     # Открытие таблицы
     def open_tabl(self):
         name_table = self.combo.currentText()
+        for key, tab_value in self.tuple_tabl.items():
+            if key == name_table:
+                need_open = tab_value
         # Clear
         rowcount = self.TableWidget.rowCount()
         if rowcount != 0: 
             while rowcount >= 0:
                 self.TableWidget.removeRow(rowcount)
                 rowcount -= 1
-        list_signal = self.edit_SQL.dop_window_signal(name_table)
-        self.shift(list_signal)
+        list_signal, msg, color = self.edit_SQL.dop_window_signal(need_open)
+        self.load.setText(msg)
+        self.load.setStyleSheet(f"background-color: {color}")
+        self.build(list_signal)
 
-        list_type = {'ai':['Norm','Warn','Avar','Ndv','LTMin','MTMax','Min6','Min5','Min4','Min3_IsMT10Perc','Min2_IsNdv2ndParam','Min1_IsHighVibStat',
+        list_type = {'AI':['Norm','Warn','Avar','Ndv','LTMin','MTMax','Min6','Min5','Min4','Min3_IsMT10Perc','Min2_IsNdv2ndParam','Min1_IsHighVibStat',
                            'Max1_IsHighVibStatNMNWR', 'Max2_IsHighVibNoStat', 'Max3_IsAvarVibStat', 'Max4_IsAvarVibStatNMNWR', 'Max5_IsAvarVibNoStat', 
                            'Max6_IsAvar2Vib', 'Status'],
-                     'di':['Value', 'Break', 'KZ', 'NC'],}
+                     'DI':['Value', 'Break', 'KZ', 'NC'],
+                     'BUF':['0','1','2','3','4','5','6','7','8','9','10','11','12','13','14','15'],
+                     'RSreq':['ok'],
+                     'ZD':['State_1_Opening','State_2_Opened','State_3_Middle','State_4_Closing','State_5_Closed','Dist','Imit','NOT_EC','Open','Close','Stop',
+                           'StopClose','KVO','KVZ','MPO','MPZ','CorrCO','CorrCZ','VMMO','VMMZ','NOT_ZD_EC_KTP','Local','Mufta','Avar_BUR','CorrCOCorrCZ','ErrMPO',
+                           'ErrMPZ','EC','RS_OK','Blink','Neisprav','NeispravVU','Close_Fail','Open_Fail','Stop_Fail','Unpromted_Open',
+                           'Unpromted_Close','Avar','Diff','WarnClose','ECsign'],
+                     'VSGRP':['REZ_EXIST','REM','OTKL'],
+                     'VS':['State_1_VKL','State_2_OTKL','State_3_ZAPUSK','State_4_OSTANOV','Mode_1_OSN','Mode_2_REZ','Mode_3_RUCH','Mode_4_REM','NEISPRAV','SEC_EC',
+                           'EC','MP','Imit','BLOCK_WORK_IS_ACTIVE','BLOCK_STOP_IS_ACTIVE','WAITING_FOR_FUTURE_PUSK','WAITING_FOR_APV','STARTED_AS_DOP','REORDER_REZ',
+                           'PC','WarnOff','PC_FALL','PC_NOT_UP','MPC_CONTROL','PC_CONTROL','MPC_CEPI_OTKL','MPC_CEPI_VKL','EC_CONTROL','EC_FALL','MPC_FALL','MPC_NOT_FALL',
+                           'MPC_CONTROL_RUCH','PC_CONTROL_RUCH','EC_CONTROL_RUCH','MPC_NOT_UP','EXTERNAL'],
+                     'NA':['MainState_1_VKL','MainState_2_OTKL','MainState_3_PUSK','MainState_4_OSTANOV','SubState_1_GP','SubState_2_GORREZ','SubState_3_PP','SubState_4_PO',
+                              'Mode_1_OSN','Mode_2_TU','Mode_3_REZ','Mode_4_REM','KTPRA_P','SimAgr','Prog_1','Prog_2','HIGHVIB','HIGHVIBNas','QF3A','QF1A','BBon','BBoff',
+                              'KTPRA_FNM','KTPRA_M','GMPNA_M','BBErrOtkl_All','BBErrOtkl','BBErrOtkl1','BBErrVkl','SAR_Ramp','StartWork','StopWork','StopNoCmd_1','StopNoCmd_2',
+                              'StartNoCmd','StateAlarm','StateAlarm_ChRP','StateAlarm_All','ChRPRegError','LogicalChRPCrash','StateAlarm_VV','StopErr','StopErr2','StopErr_All',
+                              'StartErr','StartErr2','StartErr3','StartErr_All','KKCAlarm1','KKCAlarm2','KKCAlarm3','KKCAlarm4','InputPath','OutputPath','OIPVib','GMPNA_F',
+                              'GMPNA_P','KTPR_ACHR','KTPR_SAON','ZD_Unprompted_Close','needRez','needOverhaul','ED_IsMT10Perc','ED_IsNdv2ndParam','ED_IsHighVibStat',
+                              'ED_IsHighVibNoStat','ED_IsAvarVibStat','ED_IsAvarVibNoStat','ED_IsAvar2Vib','Pump_IsMT10Perc','Pump_IsNdv2ndParam','Pump_IsHighVibStat',
+                              'Pump_IsHighVibStatNMNWR','Pump_IsHighVibNoStat','Pump_IsAvarVibStat','Pump_IsAvarVibStatNMNWR','Pump_IsAvarVibNoStat','Pump_IsAvar2Vib'],
+                     'KTPR':['P','F','M','NP'],
+                     'KTPRA':['P','F','M','NP'],
+                     'KTPRS':['P','F','M','NP'],
+                     'NPS':['ModeNPSDst','MNSInWork','IsMNSOff','IsNPSModePsl','IsPressureReady','NeNomFeedInterval','OIPHighPressure','KTPR_P','KTPR_M','CSPAWorkDeny',
+                            'TSstopped','stopDisp','stopCSPA','stopARM','CSPAlinkOK'],
+                     'Facility':['ndv2Gas','gasKTPR','activeGas','startExcessHeat','stopExcessHeat','warnGasPoint1','warnGasPoint2','warnGasPoint3','warnGasPoint4',
+                                 'warnGasPoint5','warnGasPoint6','warnGasPoint7','warnGasPoint8','longGasPoint1','longGasPoint2','longGasPoint3','longGasPoint4',
+                                 'longGasPoint5','longGasPoint6','longGasPoint7','longGasPoint8'],
+                     'DO':['Value'],
+                     'ctrlDO':[''],
+                     'ctrlAO':[''],
+                     'AO':[''],
+                     'BUFr':[''],
+                     'AIVisualValue':['']}
         
         self.combo_type.clear()
         for key, value in list_type.items():
             if key == name_table:
                 for i in value:
                     self.combo_type.addItem(str(i))
-
+    # Событие по типу
+    def do_something(self):
+        self.update_str()
+    # Событие по клику при выборе сигнала
     def click_position(self):
         row = self.TableWidget.currentRow()
         self.setColortoRow(row)
         self.cell_value = self.TableWidget.item(row, 0).text()
+        self.cell_value_ktpra = self.TableWidget.item(row, 1).text()
+        self.update_str() 
+    # Значение в строке
+    def update_str(self):
+        try:
+            if self.combo.currentText() in  ['ctrlDO', 'AO', 'AIVisualValue', 'ctrlAO', 'BUFr']: 
+                self.link_value.setText(f'{self.combo.currentText()}[{self.cell_value}]')
+                self.write_text_cell = f'{self.combo.currentText()}[{self.cell_value}]'
+            elif self.combo.currentText() == 'Facility': 
+                self.link_value.setText(f'{self.combo.currentText()}[].{self.combo_type.currentText()}')
+                self.load.setText('Добавь индекс вручную!')
+                self.load.setStyleSheet("background-color: red")
+                self.write_text_cell = f'{self.combo.currentText()}[].{self.combo_type.currentText()}'
+            elif self.combo.currentText() == 'KTPRA': 
+                self.link_value.setText(f'{self.cell_value_ktpra}.{self.combo_type.currentText()}')
+                self.write_text_cell = f'{self.cell_value_ktpra}.{self.combo_type.currentText()}'
+            else:
+                self.link_value.setText(f'{self.combo.currentText()}[{self.cell_value}].{self.combo_type.currentText()}')
+                self.write_text_cell = f'{self.combo.currentText()}[{self.cell_value}].{self.combo_type.currentText()}'
+        except: return
 
 # Основное окно просмотра и редактирования таблиц
 class Window_update_sql(QWidget):
@@ -1997,7 +2105,7 @@ class Window_update_sql(QWidget):
         droptab_Button.clicked.connect(self.drop_tabl)
 
         link_Button = QPushButton('Ссылки', self)
-        link_Button.setStyleSheet("background: #bbbabf; border-radius: 4px; border: 1px solid")
+        link_Button.setStyleSheet("background: #faf5cd; border-radius: 4px; border: 1px solid")
         link_Button.resize(120,25)
         link_Button.move(610, 40) 
         link_Button.clicked.connect(self.link_tabl)
@@ -2168,7 +2276,6 @@ class Window_update_sql(QWidget):
 
         try   : self.tablew(column, row, self.hat_name, value, rus_list[self.table_used])
         except: self.tablew(column, row, self.hat_name, value)
-
     # Building the selected table
     def tablew(self, column, row, hat_name, value):
         # TableW
@@ -2223,6 +2330,13 @@ class Window_update_sql(QWidget):
         self.TableWidget.resizeRowsToContents()
         # Events
         self.TableWidget.itemChanged.connect(self.click_position)
+        self.TableWidget.cellClicked.connect(self.click_transfer)
+    
+    def click_transfer(self):
+        row    = self.TableWidget.currentRow()
+        column = self.TableWidget.currentColumn()
+        try   :  self.link_tabl.parent_click(row, column, self.TableWidget)
+        except: return
     # Cell change on click
     def click_position(self):
         row    = self.TableWidget.currentRow()

@@ -1376,6 +1376,117 @@ class Filling_DO():
                         'AlphaHMI_PIC4', 'AlphaHMI_PIC4_Number_kont']
         msg = self.dop_function.column_check(DO, 'do', list_default)
         return msg 
+# Work with filling in the table 'RS'
+class Filling_RS():
+    def __init__(self):
+        self.cursor   = db.cursor()
+        self.dop_function = General_functions()
+    # Получаем данные с таблицы Signals 
+    def getting_modul(self):
+        msg = {}
+        list_RS = []
+        count_RS = 0
+        with db:
+            try:
+                if self.dop_function.empty_table('signals') or self.dop_function.empty_table('hardware'): 
+                    msg[f'{today} - Таблицы: signals или hardware пустые! Заполни таблицу!'] = 2
+                    return msg
+                
+                for row_sql in Signals.select().dicts():
+                    id_s       = row_sql['id'] 
+                    uso_s       = row_sql['uso']    
+                    tag         = row_sql['tag']
+                    description = str(row_sql['description']).replace('"', '').replace("'", '')
+                    type_signal = row_sql['type_signal']
+                    scheme      = row_sql['schema']
+                    basket_s    = row_sql['basket']
+                    module_s    = row_sql['module']
+                    channel_s   = row_sql['channel']
+
+                    tag_translate = self.dop_function.translate(str(tag))
+                    if tag_translate == 'None': tag_translate = ''
+
+                    if self.dop_function.str_find(type_signal, {'RS'}) or self.dop_function.str_find(scheme, {'RS'}):
+                        count_RS += 1
+                        # Выбор между полным заполнением или обновлением
+                        if self.dop_function.empty_table("rs"):
+                            msg[f'{today} - Таблица: rs пуста, идет заполнение'] = 1
+                        else:
+                            msg[f'{today} - Таблица: rs не пуста, идет обновление'] = 1
+
+                        coincidence = RS.select().where(RS.uso    == uso_s,
+                                                        RS.basket == basket_s,
+                                                        RS.module == module_s,
+                                                        RS.channel== channel_s)
+                        if bool(coincidence):
+                            exist_name = RS.select().where(RS.name == description)
+        
+                            if not bool(exist_name):
+                                self.cursor.execute(f'''SELECT id, name 
+                                                        FROM "rs"
+                                                        WHERE uso='{uso_s}' AND 
+                                                              basket={basket_s} AND 
+                                                              module={module_s} AND 
+                                                              channel={channel_s}''')
+                                for id_, name_ in self.cursor.fetchall():
+                                    msg[f'{today} - Таблица: rs, у сигнала обновлено name: id = {id_}, ({name_}) {description}'] = 2
+                                self.cursor.execute(f'''UPDATE "rs"
+                                                        SET name='{description}' 
+                                                        WHERE uso='{uso_s}' AND 
+                                                              basket={basket_s} AND 
+                                                              module={module_s} AND 
+                                                              channel={channel_s}''')
+                            continue
+
+                        # Сквозной номер модуля
+                        try:
+                            for through_module_number in HardWare.select().dicts():
+                                tag_h    = through_module_number['tag']
+                                uso_h    = through_module_number['uso']
+                                basket_h = through_module_number['basket']
+
+                                isdigit_num = ''
+                                if uso_s == uso_h and basket_s == basket_h:
+                                    type_mod = through_module_number[f'variable_{module_s}']
+                                    isdigit_num  = re.findall('\d+', str(type_mod))
+
+                                    try   : isdigit_num = isdigit_num[0]
+                                    except: 
+                                        msg[f'{today} - В таблице hardware не найден модуль сигнала: {id_s}, {tag}, {description}, {uso_s}_A{basket_s}_{module_s}_{channel_s}, "pValue" не заполнен'] = 2
+                                    break
+
+                            if module_s < 10: prefix = f'0{module_s}' 
+                            else            : prefix = f'{module_s}'
+                        except Exception:
+                            msg[f'{today} - Таблица: do, ошибка при заполнении. Заполнение продолжится: {traceback.format_exc()}'] = 2
+                            msg[f'{today} - Таблица: signals, ошибка в строке. Строка пропусается: {row_sql}'] = 2
+                            continue
+
+                        if isdigit_num == '':
+                            msg[f'{today} - В таблице hardware не найден модуль сигнала: {id_s}, {tag}, {description}, {uso_s}_A{basket_s}_{module_s}_{channel_s}, "pValue" не заполнен'] = 2
+                        
+                        msg[f'{today} - Таблица: rs, добавлен новый сигнал: {row_sql}'] = 1
+
+                        list_RS.append(dict(id = count_RS,
+                                            variable = f'RS[{count_RS}]',
+                                            tag = tag_translate,
+                                            name = description,
+                                            pValue = f'{tag_h}_{prefix}.COM_CH[{channel_s}]',
+                                            pHealth = f'mDO_HEALTH[{str(isdigit_num)}]',
+                                            Pic = '',
+                                            uso = uso_s, basket = basket_s, module = module_s, channel = channel_s))
+
+                # Checking for the existence of a database
+                RS.insert_many(list_RS).execute()
+            except Exception:
+                msg[f'{today} - Таблица: rs, ошибка при заполнении: {traceback.format_exc()}'] = 2
+            msg[f'{today} - Таблица: rs, выполнение кода завершено!'] = 1
+        return(msg)
+    # Заполняем таблицу RS
+    def column_check(self):
+        list_default = ['variable', 'tag', 'name', 'pValue', 'pHealth', 'Pic', 'uso', 'basket', 'module', 'channel']
+        msg = self.dop_function.column_check(RS, 'rs', list_default)
+        return msg 
     
 # Work with filling in the table 'KTPRP'
 class Filling_KTPRP():
@@ -1708,6 +1819,7 @@ class Filling_UMPNA():
                         list_UMPNA.append(dict(
                             id = i,
                             variable = f'NA[{i}]',
+                            tag = '',
                             name ='',
                             vv_included = vv_included,
                             vv_double_included = vv_double_included,
@@ -1819,7 +1931,7 @@ class Filling_UMPNA():
         return(msg)
     # Заполняем таблицу UMPNA
     def column_check(self):
-        list_default = ['variable', 'name', 'vv_included', 'vv_double_included', 'vv_disabled', 
+        list_default = ['variable', 'tag', 'name', 'vv_included', 'vv_double_included', 'vv_disabled', 
                         'vv_double_disabled', 'current_greater_than_noload_setting', 'serviceability_of_circuits_of_inclusion_of_VV',
                         'serviceability_of_circuits_of_shutdown_of_VV', 'serviceability_of_circuits_of_shutdown_of_VV_double',
                         'stop_1', 'stop_2', 'stop_3', 'stop_4',
@@ -2090,6 +2202,7 @@ class Filling_ZD():
                         msg[f'{today} - Таблица: zd, добавлена новая задвижка: ZD[{count_row}], {name}'] = 1
                         list_zd.append(dict(id = count_row,
                                             variable = f'ZD[{count_row}]',
+                                            tag = '',
                                             name = name,
                                             short_name = '',
                                             exists_interface = '',
@@ -2151,7 +2264,7 @@ class Filling_ZD():
         return(msg)
     # Заполняем таблицу ZD
     def column_check(self):
-        list_default = ['variable', 'name', 'short_name', 'exists_interface', 'KVO', 'KVZ', 'MPO', 'MPZ', 'Dist',
+        list_default = ['variable', 'tag', 'name', 'short_name', 'exists_interface', 'KVO', 'KVZ', 'MPO', 'MPZ', 'Dist',
                         'Mufta', 'Drive_failure', 'Open', 'Close', 'Stop', 'Opening_stop', 'Closeing_stop', 'KVO_i', 'KVZ_i',
                         'MPO_i', 'MPZ_i', 'Dist_i', 'Mufta_i', 'Drive_failure_i', 'Open_i', 'Close_i', 'Stop_i', 'Opening_stop_i',
                         'Closeing_stop_i', 'No_connection', 'Close_BRU', 'Stop_BRU', 'Voltage', 'Voltage_CHSU', 
@@ -2368,6 +2481,7 @@ class Filling_VS():
                         msg[f'{today} - Таблица: vs, добавлена новая вспомсистема: VS[{count_row}], {name}'] = 1
                         list_vs.append(dict(id = count_row, 
                                             variable = f'ZD[{count_row}]',
+                                            tag = '',
                                             name = name,
                                             short_name = '',
                                             group = '',
@@ -2404,7 +2518,7 @@ class Filling_VS():
         return(msg)
     # Заполняем таблицу VS
     def column_check(self):
-        list_default = ['variable', 'name', 'short_name', 'group', 'number_in_group', 'MP', 'Pressure_is_True', 'Voltage', 'Voltage_Sch', 
+        list_default = ['variable', 'tag', 'name', 'short_name', 'group', 'number_in_group', 'MP', 'Pressure_is_True', 'Voltage', 'Voltage_Sch', 
                         'Serviceability_of_circuits_of_inclusion', 'External_alarm', 'Pressure_sensor_defective', 'VKL', 'OTKL', 'Not_APV',
                         'Pic', 'tabl_msg', 'Is_klapana_interface_auxsystem',
                         'AlphaHMI', 'AlphaHMI_PIC1', 'AlphaHMI_PIC1_Number_kont', 'AlphaHMI_PIC2',
@@ -3401,7 +3515,10 @@ class Editing_table_SQL():
     def dop_window_signal(self, table_used):
             type_list = []
             try:
-                self.cursor.execute(f"""SELECT id, tag, name FROM "{table_used}" ORDER BY id""")
+                if table_used == 'ktpra':
+                    self.cursor.execute(f"""SELECT id, variable, name FROM "{table_used}" ORDER BY id""")
+                else:
+                    self.cursor.execute(f"""SELECT id, tag, name FROM "{table_used}" ORDER BY id""")
                 for i in self.cursor.fetchall():
                     id_  = i[0]
                     tag  = i[1]
@@ -3409,9 +3526,13 @@ class Editing_table_SQL():
 
                     list_a = [id_, tag, name]
                     type_list.append(list_a)
+                msg = 'Таблица открыта'
+                color = '#6bdb84'
             except Exception:
-                print(traceback.format_exc())
-            return type_list
+                msg = 'Для типа сигнала нет таблицы'
+                color = 'yellow'
+
+            return type_list, msg, color
     def filter_text(self, text, list_signal):
         list_request = []
         for i in list_signal:

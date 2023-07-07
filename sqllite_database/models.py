@@ -102,6 +102,10 @@ rus_list = {'signals': {'id':'№', 'type_signal':'Тип сигнала', 'uso'
             'do': {'id':'№','variable':'Переменная', 'tag':'Идентификатор', 'name':'Название', 'pValue':'Ссылка на входное\nзначение сигнала', 
                    'pHealth':'Ссылка на исправность\nканала', 'short_title':'Короткое название', 'tabl_msg':'Таблица сообщений',
                    'uso':'Шкаф', 'basket':'Корзина', 'module':'Модуль', 'channel':'Канал'},
+
+            'rs': {'id':'№','variable':'Переменная', 'tag':'Идентификатор', 'name':'Название', 'pValue':'Ссылка на входное\nзначение сигнала', 
+                   'pHealth':'Ссылка на исправность\nканала', 'Pic':'Pic',
+                   'uso':'Шкаф', 'basket':'Корзина', 'module':'Модуль', 'channel':'Канал'},
             
             'hardware': {'id':'№', 'tag':'Идентификатор\n(не генерится!)', 'uso':'Шкаф', 'basket':'Корзина',
                          'type_0':'Тип модуля 0',   'variable_0':'Переменная модуля 0',   'type_1':'Тип модуля 1',   'variable_1':'Переменная модуля 1',  
@@ -260,7 +264,7 @@ rus_list = {'signals': {'id':'№', 'type_signal':'Тип сигнала', 'uso'
                       'time_ust':'Уставка', 'group_ust':'Группа уставок', 'rule_map_ust':'Правило для карты уставок', 
                       'number_list_VU':'Номер листа (для ВУ)', 'number_protect_VU':'Номер защиты (для ВУ)', 'number_pump_VU':'Номер агрегата (для ВУ)'},
             
-            'umpna':{'id':'№','variable':'Переменная', 'name':'Название', 'vv_included':'ВВ Включен', 'vv_double_included':'ВВ Включен дубль', 'vv_disabled':'ВВ отключен', 'vv_double_disabled':'ВВ отключен дубль', 
+            'umpna':{'id':'№','variable':'Переменная', 'tag':'Идентификатор', 'name':'Название', 'vv_included':'ВВ Включен', 'vv_double_included':'ВВ Включен дубль', 'vv_disabled':'ВВ отключен', 'vv_double_disabled':'ВВ отключен дубль', 
                      'current_greater_than_noload_setting':'Сила тока > уставки\nхолостого хода', 'serviceability_of_circuits_of_inclusion_of_VV':'Исправность цепей\nвключения ВВ',
                      'serviceability_of_circuits_of_shutdown_of_VV':'Исправность цепей\nотключения ВВ', 'serviceability_of_circuits_of_shutdown_of_VV_double':'Исправность цепей\nотключения ВВ дубль', 'stop_1':'Стоп 1', 
                      'stop_2':'Стоп 2', 'stop_3':'Стоп 3', 'stop_4':'Стоп 4', 
@@ -298,7 +302,7 @@ rus_list = {'signals': {'id':'№', 'type_signal':'Тип сигнала', 'uso'
             'umpna_narab_tm': {'id':'№','variable':'Переменная', 'tag':'Идентификатор', 'name':'Название', 'unit':'Единица измерения', 'used':'Используется', 'value_ust':'Значение уставки', 'minimum':'Минимум', 
                        'maximum':'Максимум', 'group_ust':'Группа уставок', 'rule_map_ust':'Правило для карты уставок'},
                        
-            'zd': {'id':'№','variable':'Переменная', 'name':'Название', 'short_name':'Короткое название', 'exists_interface':'Наличие ИНТЕРФЕЙСА', 'KVO':'КВО', 'KVZ':'КВЗ', 'MPO':'МПО', 
+            'zd': {'id':'№','variable':'Переменная', 'tag':'Идентификатор', 'name':'Название', 'short_name':'Короткое название', 'exists_interface':'Наличие ИНТЕРФЕЙСА', 'KVO':'КВО', 'KVZ':'КВЗ', 'MPO':'МПО', 
                    'MPZ':'МПЗ', 'Dist':'Дист_ф', 'Mufta':'Муфта', 'Drive_failure':'Авария привода', 'Open':'Открыть', 'Close':'Закрыть', 'Stop':'Остановить', 'Opening_stop':'Открытие остановить', 
                    'Closeing_stop':'Закрытие остановить', 'KVO_i':'КВО_и', 'KVZ_i':'КВЗ_и', 'MPO_i':'МПО_и', 'MPZ_i':'МПЗ_и', 'Dist_i':'Дист_и', 'Mufta_i':'Муфта_и','Drive_failure_i':'Авария привода_и', 
                    'Open_i':'Открыть_и', 'Close_i':'Закрыть_и', 'Stop_i':'Остановить_и', 'Opening_stop_i':'Открытие остановить_и','Closeing_stop_i':'Закрытие остановить_и', 'No_connection':'Отсутствие связи', 
@@ -312,7 +316,23 @@ rus_list = {'signals': {'id':'№', 'type_signal':'Тип сигнала', 'uso'
             'zd_tm': {'id':'№','variable':'Переменная', 'tag':'Идентификатор', 'name':'Название', 'unit':'Единица измерения', 'used':'Используется', 'value_ust':'Значение уставки', 'minimum':'Минимум', 
                        'maximum':'Максимум', 'group_ust':'Группа уставок', 'rule_map_ust':'Правило для карты уставок'},
 
-            'vs': {'id':'№','variable':'Переменная', 'name':'Название', 'short_name':'Короткое\nназвание', 'group':'Группа', 'number_in_group':'Номер в группе', 'MP':'МП', 'Pressure_is_True':'Давление норма', 
+            'zd_type': {'id':'№', 'type_bur':'Тип БУР','manufacturer':'Производитель','heating_on':'Включен подогрев','operating_mode_stop':'Режим работы "Стоп"',
+                        'ready_for_technological_operations':'Готова к технологическим операциям','operation_time_current_protect':'Срабатывание время токовой защиты',
+                        'protect_kz':'Защита от тока КЗ','engine_overheating':'Перегрев двигателя','undervoltage_input_network':'Пониженое напряжение входной сети',
+                        'interruption_phase_connection_ED':'Обрыв фазы подключения к ЭД','loss_phases_input_mains':'Обрыв фаз входной питающей сети',
+                        'lack_of_movement':'Отсутствие движения','power_input_overvoltage':'Перенапряжение на силовом входе',
+                        'critical_supply_voltage_drop':'Критическое снижение напряжения питания',
+                        'wrong_phase_sequence_network_power_input_unit':'Неправильное чередование фаз сети на силовом входе блока',
+                        'wrong_direction_travel':'Неправильное направление движения','position_sensor_setting_defect':'Дефект настройки датчика положения',
+                        'device_defect':'Дефект устройства','battery_discharge':'Разряд элемента питания',
+                        'overheating_power_converter_module':'Перегрев модуля силового преобразователя','hypothermia':'Переохлаждение',
+                        'current_load_moment':'Текущий момент нагрузки','service_phase_defect':'Дефект служебной фазы',
+                        'digital_input_overvoltage':'Перенапряжение на дискретном входе','insulation_resistance_05_om':'Сопротивление изоляции < 0,5 МОм',
+                        'insulation_resistance_1_om':'Сопротивление изоляции < 1 МОм','no_connection_motor':'Отсутствие подключения к электродвигателю',
+                        'dc_bus_undervoltage':'Пониженное напряжение на шине постоянного тока','defect_parameters_groups_b_d':'Дефект параметров групп B,D',
+                        'defect_parameters_groups_g':'Дефект параметров группы G'},
+
+            'vs': {'id':'№','variable':'Переменная', 'tag':'Идентификатор', 'name':'Название', 'short_name':'Короткое\nназвание', 'group':'Группа', 'number_in_group':'Номер в группе', 'MP':'МП', 'Pressure_is_True':'Давление норма', 
                    'Voltage':'Напряжение', 'Voltage_Sch':'Напряжение на СШ', 'Serviceability_of_circuits_of_inclusion':'Исправность цепей\nвключения', 'External_alarm':'Внешняя авария', 'Pressure_sensor_defective':'Датчик давления неисправен', 
                    'VKL':'Включить', 'OTKL':'Отключить', 'Not_APV':'АПВ не требуется', 'Pic':'Pic', 'tabl_msg':'Таблица сообщений', 'Is_klapana_interface_auxsystem':'Это клапан/интерфейсная вспомсистема',
                    'AlphaHMI':'AlphaHMI', 'AlphaHMI_PIC1':'AlphaHMI_PIC1', 'AlphaHMI_PIC1_Number_kont':'AlphaHMI_PIC1_Number_kont', 'AlphaHMI_PIC2':'AlphaHMI_PIC2',
@@ -425,7 +445,13 @@ rus_list = {'signals': {'id':'№', 'type_signal':'Тип сигнала', 'uso'
                 "cancellation_launch_OTV_AGT":'Отмена пуска ОТВ (АГТ)', "OTV_output_control_AGP":'Контроль выхода ОТВ (АГП)',
                 "start_OTV_AGT" :'Пуск ОТВ (АГТ)', "shutdown_ventilation_and_air_conditioning_by_fire_AGT" :'Отключение вентиляции и\n кондиционирования по пожару (АГТ)',
                 "serviceability_connecting_lines_signal_Start_OTV_AGT":'Исправность соединительных линий\n сигнала Пуск ОТВ (АГТ)',
-                "the_presence_pressure_cylinders_OTV_AGT":'Наличие давления в\nбаллонах ОТВ (АГТ)','short_name': 'Подпись на мнемокадре' },}
+                "the_presence_pressure_cylinders_OTV_AGT":'Наличие давления в\nбаллонах ОТВ (АГТ)','short_name': 'Подпись на мнемокадре' },
+        
+            'ai_fuse':{'id':'№','tag':'Идентификатор','name_group_fuse':'Имя группы предохранителя','control_result':'Контрольное значение','reliability_control':'Значение проверочное'},
+        
+            'ai_grp':{'id':'№', 'name':'Название','Min6':'Мин.6', 'Min5':'Мин.5', 'Min4':'Мин.4', 'Min3':'Мин.3', 'Min2':'Мин.2', 'Min1':'Мин.', 
+                    'Max1':'Макс.', 'Max2':'Макс.2', 'Max3':'Макс.3', 'Max4':'Макс.4', 'Max5':'Макс.5', 'Max6':'Макс.6','tabl_msg':'Таблица сообщений'}}
+
 class Signals(BaseModel):
     type_signal = CharField(null = True)
     uso         = CharField(null = True)
@@ -670,6 +696,21 @@ class DO(BaseModel):
     
     class Meta:
         table_name = 'do'
+class RS(BaseModel):
+    variable = CharField(null = True)
+    tag  = CharField(null = True)
+    name = CharField(null = True)
+    pValue  = CharField(null = True)
+    pHealth = CharField(null = True)
+    Pic = CharField(null = True)
+
+    uso = CharField(null = True)
+    basket = IntegerField(null = True)
+    module = IntegerField(null = True)
+    channel = IntegerField(null = True)
+    
+    class Meta:
+        table_name = 'rs'
 class USO(BaseModel):
     variable = CharField(null = True)
     name = CharField(null = True)
@@ -899,6 +940,7 @@ class tmNA_UMPNA_narab(BaseModel):
 class UMPNA(BaseModel):
     variable = CharField(null = True)
     name = CharField(null = True)
+    tag = CharField(null = True)
 
     vv_included = CharField(null = True)
     vv_double_included = CharField(null = True)
@@ -967,6 +1009,7 @@ class UMPNA(BaseModel):
         table_name = 'umpna'
 class ZD(BaseModel):
     variable = CharField(null = True)
+    tag = CharField(null = True)
     name = CharField(null = True)
     short_name = CharField(null = True)
     exists_interface = CharField(null = True)
@@ -1042,6 +1085,7 @@ class ZD_tm(BaseModel):
         table_name = 'zd_tm'
 class VS(BaseModel):
     variable = CharField(null = True)
+    tag = CharField(null = True)
     name = CharField(null = True)
     short_name = CharField(null = True)
     group = CharField(null = True)
