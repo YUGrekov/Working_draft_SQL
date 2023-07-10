@@ -1,23 +1,24 @@
 from peewee import *
 from playhouse.migrate import *
 
-#from graphic_part import Window
+# from gen_gui import MainWin
 # from PyQt5.QtWidgets import QApplication
 # app = QApplication([])
 
-# win_ = Window()
-# path_prj = win_.file_prj()
+# win_ = MainWin()
+# path_prj = win_.launch()
 
 
-#path_to_exel = f'D:\\Development\\New_SQL_generator\\Working_draft_SQL\\sqllite_database\\П3 - КЗФКП Аксинино-2_MK500_20230405.xlsx'
-#path_to_base = f'D:\\Development\\New_SQL_generator\\Working_draft_SQL\\sqllite_database\\asutp.db'
+
+path_to_exel = f'D:\\Development\\New_SQL_generator\\Working_draft_SQL\\sqllite_database\\П3 - КЗФКП Аксинино-2_MK500_20230405.xlsx'
+path_to_base = f'D:\\Development\\New_SQL_generator\\Working_draft_SQL\\sqllite_database\\asutp.db'
 
 path_to_exel = 'D:\\Development\\New_SQL_generator\\Working_draft_SQL\\sqllite_database\\П3 - КЗФКП Аксинино-2_MK500_20230405.xlsx'
 path_sample  = 'D:\Development\Generation_msg\Sample\\'
 path_location_file = 'D:\Development\Generation_msg\Script\\'
 name_project = 'Тест'
 prefix_system = ''
-path_to_devstudio = 'D:\Development\Generation_msg\Script\\'
+path_to_devstudio = 'D:\Проекты\НПС-Бисер\project\\typical_prj\\'
 
 
 database_msg = 'asutp_temp'
@@ -32,7 +33,6 @@ password_prj = 'postgres'
 host_prj = 'localhost'
 port_prj = '5432'
 
-#db = PostgresqlDatabase('mydatabase', user='postgress', password='postgres', host='localhost', port=5432)
 
 # with open(path_prj) as paths:
 #     for string in paths:
@@ -49,6 +49,8 @@ port_prj = '5432'
 #             name_project = split_str[1]
 #         if split_str[0] == 'prefix_system':
 #             prefix_system = split_str[1]
+#         if split_str[0] == 'path_to_devstudio':
+#             path_to_devstudio = split_str[1]
 
 
 #         if split_str[0] == 'database_msg':
@@ -76,7 +78,7 @@ port_prj = '5432'
 
 db = PostgresqlDatabase(database_msg, user=user_msg, password=password_msg, host=host_msg, port=port_msg)
 db_prj = PostgresqlDatabase(database_prj, user=user_prj, password=password_prj, host=host_prj, port=port_prj)
-#db = SqliteDatabase(path_to_base)
+
 migrator = SqliteMigrator(db)
 
 
@@ -353,8 +355,8 @@ rus_list = {'signals': {'id':'№', 'type_signal':'Тип сигнала', 'uso'
                     'Pic':'Pic', 'number_list_VU':'Номер листа для ВУ', 'order_number_for_VU':'Номер порядка для ВУ', 
                     'uso':'Шкаф', 'basket':'Корзина', 'module':'Модуль', 'channel':'Канал'},
             
-            'upts': {'id':'№','variable':'Переменная', 'tag':'Идентификатор', 'name':'Название', 'location':'Место установки', 'VKL':'Включить', 'Serviceability_of_circuits_of_inclusion':'Исправность цепей\nвключения', 'siren':'Сирена', 
-                    'Does_not_require_autoshutdown':'Не требует\nавтоотключения', 'Examination':'Проверка', 'Kvit':'Квитирование', 
+            'upts': {'id':'№','variable':'Переменная', 'tag':'Идентификатор', 'name':'Название', 'short_name':'Короткое\nназвание', 'location':'Место установки', 'VKL':'Включить', 'Serviceability_of_circuits_of_inclusion':'Исправность цепей\nвключения', 
+                     'siren':'Сирена', 'Does_not_require_autoshutdown':'Не требует\nавтоотключения', 'Examination':'Проверка', 'Kvit':'Квитирование', 
                     'Pic':'Pic', 'number_list_VU':'Номер листа для ВУ', 'order_number_for_VU':'Номер порядка для ВУ', 
                     'uso':'Шкаф', 'basket':'Корзина', 'module':'Модуль', 'channel':'Канал'},
 
@@ -635,11 +637,11 @@ class DI(BaseModel):
     pValue  = CharField(null = True)
     pHealth = CharField(null = True)
 
-    Inv = CharField(null = True)
-    ErrValue = CharField(null = True)
-    priority_0 = CharField(null = True)
-    priority_1 = CharField(null = True)
-    Msg = CharField(null = True)
+    Inv = BooleanField(null = True)
+    ErrValue = BooleanField(null = True)
+    priority_0 = IntegerField(null = True)
+    priority_1 = IntegerField(null = True)
+    Msg = BooleanField(null = True)
     isDI_NC = CharField(null = True)
     isAI_Warn = CharField(null = True)
     isAI_Avar = CharField(null = True)
@@ -1012,7 +1014,7 @@ class ZD(BaseModel):
     tag = CharField(null = True)
     name = CharField(null = True)
     short_name = CharField(null = True)
-    exists_interface = CharField(null = True)
+    exists_interface = BooleanField(null = True)
 
     KVO = CharField(null = True)
     KVZ = CharField(null = True)
@@ -1159,10 +1161,11 @@ class UTS(BaseModel):
     variable = CharField(null = True)
     tag = CharField(null = True)
     name = CharField(null = True)
+    short_name = CharField(null = True)
     location = CharField(null = True)
     VKL = CharField(null = True)
     Serviceability_of_circuits_of_inclusion = CharField(null = True)
-    siren = CharField(null = True)
+    siren = BooleanField(null = True)
     Does_not_require_autoshutdown = CharField(null = True)
     Examination = CharField(null = True)
     Kvit = CharField(null = True)
@@ -1180,10 +1183,11 @@ class UPTS(BaseModel):
     variable = CharField(null = True)
     tag = CharField(null = True)
     name = CharField(null = True)
+    short_name = CharField(null = True)
     location = CharField(null = True)
     VKL = CharField(null = True)
     Serviceability_of_circuits_of_inclusion = CharField(null = True)
-    siren = CharField(null = True)
+    siren = BooleanField(null = True)
     Does_not_require_autoshutdown = CharField(null = True)
     Examination = CharField(null = True)
     Kvit = CharField(null = True)

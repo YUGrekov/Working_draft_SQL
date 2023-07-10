@@ -118,3 +118,4 @@ db_postgres/log/postgresql-2023-07-05_205122.log
 db_postgres/log/postgresql-2023-07-06_000000.log
 db_postgres/pg_wal/000000010000000000000021
 db_postgres/pg_xact/0000
+output/gen_prj_v0.1.exe
