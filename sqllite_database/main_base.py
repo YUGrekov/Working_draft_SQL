@@ -2,7 +2,7 @@ from models import *
 import openpyxl as wb
 from lxml import etree
 from datetime import datetime
-import re, traceback, os, codecs, uuid
+import re, traceback, os, codecs, uuid, math
 import psycopg2
 today = datetime.now()
 
@@ -228,6 +228,39 @@ class General_functions():
             list_tabl.append(name[0])
         return list_tabl
     # ВУ
+    # Подключение к SQL
+    def connect_by_sql(self, table_used, column):
+        try:
+            cursor = db.cursor()
+            cursor.execute(f'''SELECT {column}
+                               FROM "{table_used}"
+                               ORDER BY id''')
+        except Exception:
+            return 
+        return cursor.fetchall()
+    # Создание атрибутов
+    def new_attr(self, obj, type, value):
+         atrb = etree.Element("attribute")
+         atrb.attrib['type'] = type
+         atrb.attrib['value'] = str(value)
+         obj.append(atrb)
+    # Создание строки карты адресов
+    def new_map_str(self, obj, element, value):
+        elem = etree.Element(element)
+        elem.text = str(value)
+        obj.append(elem)
+    # Чистка атрибутов
+    def clear_objects(self, directory):
+        # Чистка объектов
+        msg = {}
+        msg_bool, el1, tree = self.parser_omx(directory)
+        tree.write(f'{path_to_devstudio}\\typical_prj.omx', pretty_print=True)
+
+        if msg_bool == 1: 
+            msg[f'{today} - Файл omx: ошибка при чистке атрибутов {directory}'] = 2
+            return msg
+        msg[f'{today} - Файл omx: атрибуты {directory} удалены'] = 1
+        return msg
     def parser_omx(self, directory):
         parser = etree.XMLParser(remove_blank_text=True)
         tree = etree.parse(f'{path_to_devstudio}\\typical_prj.omx', parser)
@@ -246,10 +279,20 @@ class General_functions():
 
                             for el1 in item.iter('{automation.control}object'):
                                 if el1.attrib['name'] == directory:
-                                    return el1, tree
+                                    return 0, el1, tree
         except:
-            print(f'Корень Root: отсутствует! Работа прекращена')
-
+            return 1, 0, 0
+    def parser_map(self):
+        parser = etree.XMLParser(remove_blank_text=True)
+        tree = etree.parse(f'{path_to_devstudio}\\OUA.xml', parser)
+        root = tree.getroot()
+        return root, tree
+    def cleaner_map(self, directory, root):
+        for item in root.iter('node-path'):
+            signal = f'Root{prefix_system}{directory}'
+            if self.str_find(item.text, {signal}):
+                parent = item.getparent()
+                root.remove(parent)
 # Work with filling in the table 'Signals'
 class Import_in_SQL():
     def __init__(self, exel):
@@ -1960,44 +2003,161 @@ class Filling_attribute_DevStudio():
         self.dop_function = General_functions()
     def write_in_omx(self, list_tabl):
         msg = {}
-        if len(list_tabl) == 0: return
+        if len(list_tabl) == 0:             
+            msg[f'{today} - Файл omx: не выбраны атрибуты'] = 2
+            return msg
         for tabl in list_tabl: 
-            if tabl == 'AI_omx': 
+            if tabl == 'AI': 
                 msg.update(self.analogs_omx())
                 continue
-            if tabl == 'DI_omx': 
+            if tabl == 'DI': 
                 msg.update(self.diskret_in_omx())
                 continue
-            if tabl == 'VS_omx': 
+            if tabl == 'VS': 
                 msg.update(self.auxsystem_omx())
                 continue
-            if tabl == 'ZD_omx': 
+            if tabl == 'ZD': 
                 msg.update(self.valves_omx())
                 continue
-            if tabl == 'NA_omx': 
+            if tabl == 'NA': 
                 msg.update(self.pumps_omx())
                 continue
-            if tabl == 'PIC_omx': 
+            if tabl == 'PIC': 
                 msg.update(self.picture_omx())
                 continue
+            if tabl == 'SS': 
+                msg.update(self.relayted_system_omx())
+                continue
+            if tabl == 'UTS': 
+                msg.update(self.uts_omx())
+                continue
+            if tabl == 'UPTS': 
+                msg.update(self.upts_omx())
+                continue
+            if tabl == 'KTPR': 
+                msg.update(self.ktpr_omx())
+                continue
+            if tabl == 'KTPRP': 
+                msg.update(self.ktprp_omx())
+                continue
+            if tabl == 'KTPRA': 
+                msg.update(self.ktpra_omx())
+                continue
+            if tabl == 'GMPNA': 
+                msg.update(self.gmpna_omx())
+                continue
+            if tabl == 'PI': 
+                msg.update(self.pi_omx())
+                continue
+            if tabl == 'PZ': 
+                msg.update(self.pz_omx())
+                continue
         return msg
-    # Подключение к SQL
-    def connect_by_sql(self, table_used, column):
-        try:
-            cursor = db.cursor()
-            cursor.execute(f'''SELECT {column}
-                               FROM "{table_used}"
-                               ORDER BY id''')
-        except Exception:
-            return 
-        return cursor.fetchall()
-    # Создание атрибутов
-    def new_attr(self, obj, type, value):
-         atrb = etree.Element("attribute")
-         atrb.attrib['type'] = type
-         atrb.attrib['value'] = str(value)
-         obj.append(atrb)
-    # Заполнение
+    def write_in_map(self, list_tabl):
+            msg = {}
+            if len(list_tabl) == 0:             
+                msg[f'{today} - Файл omx: не выбраны атрибуты'] = 2
+                return msg
+            for tabl in list_tabl: 
+                if tabl == 'AI': 
+                    msg.update(self.analogs_maps())
+                    continue
+                if tabl == 'DI': 
+                    msg.update(self.diskret_in_omx())
+                    continue
+                if tabl == 'VS': 
+                    msg.update(self.auxsystem_omx())
+                    continue
+                if tabl == 'ZD': 
+                    msg.update(self.valves_omx())
+                    continue
+                if tabl == 'NA': 
+                    msg.update(self.pumps_omx())
+                    continue
+                if tabl == 'PIC': 
+                    msg.update(self.picture_omx())
+                    continue
+                if tabl == 'SS': 
+                    msg.update(self.relayted_system_omx())
+                    continue
+                if tabl == 'UTS': 
+                    msg.update(self.uts_omx())
+                    continue
+                if tabl == 'UPTS': 
+                    msg.update(self.upts_omx())
+                    continue
+                if tabl == 'KTPR': 
+                    msg.update(self.ktpr_omx())
+                    continue
+                if tabl == 'KTPRP': 
+                    msg.update(self.ktprp_omx())
+                    continue
+                if tabl == 'KTPRA': 
+                    msg.update(self.ktpra_omx())
+                    continue
+                if tabl == 'GMPNA': 
+                    msg.update(self.gmpna_omx())
+                    continue
+                if tabl == 'PI': 
+                    msg.update(self.pi_omx())
+                    continue
+                if tabl == 'PZ': 
+                    msg.update(self.pz_omx())
+                    continue
+            return msg
+    def clear_omx(self, list_tabl):
+        msg = {}
+        if len(list_tabl) == 0: 
+            msg[f'{today} - Файл omx: не выбраны атрибуты'] = 2
+            return msg
+        for tabl in list_tabl: 
+            if tabl == 'AI': 
+                msg.update(self.dop_function.clear_objects('Analogs'))
+                continue
+            if tabl == 'DI': 
+                msg.update(self.dop_function.clear_objects('Diskrets'))
+                continue
+            if tabl == 'VS': 
+                msg.update(self.dop_function.clear_objects('AuxSystems'))
+                continue
+            if tabl == 'ZD': 
+                msg.update(self.dop_function.clear_objects('Valves'))
+                continue
+            if tabl == 'NA': 
+                msg.update(self.dop_function.clear_objects('NAs'))
+                continue
+            if tabl == 'PIC': 
+                msg.update(self.dop_function.clear_objects('Pictures'))
+                continue
+            if tabl == 'SS': 
+                msg.update(self.dop_function.clear_objects('SSs'))
+                continue
+            if tabl == 'UTS': 
+                msg.update(self.dop_function.clear_objects('UTSs'))
+                continue
+            if tabl == 'UPTS': 
+                msg.update(self.dop_function.clear_objects('UPTSs'))
+                continue
+            if tabl == 'KTPR': 
+                msg.update(self.dop_function.clear_objects('KTPRs'))
+                continue
+            if tabl == 'KTPRP': 
+                msg.update(self.dop_function.clear_objects('KTPRs'))
+                continue
+            if tabl == 'KTPRA': 
+                msg.update(self.dop_function.clear_objects('KTPRAs'))
+                continue
+            if tabl == 'GMPNA': 
+                msg.update(self.dop_function.clear_objects('GMPNAs'))
+                continue
+            if tabl == 'PI': 
+                msg.update(self.dop_function.clear_objects('PIs'))
+                continue
+            if tabl == 'PZ': 
+                msg.update(self.dop_function.clear_objects('PZs'))
+                continue
+        return msg
+    # Заполнение omx
     def analogs_omx(self):
             msg = {}
             dop_analog = {'объем'         : 'V',
@@ -2022,8 +2182,11 @@ class Filling_attribute_DevStudio():
                           'заслон'        : 'Q',
                         }
             try:
-                data_value = self.connect_by_sql('ai', f'"id", "tag", "name", "PhysicEgu", "Egu", "IsOilPressure", "AnalogGroupId"')
-                el1, tree = self.dop_function.parser_omx('Analogs')
+                data_value = self.dop_function.connect_by_sql('ai', f'"id", "tag", "name", "PhysicEgu", "Egu", "IsOilPressure", "AnalogGroupId"')
+                msg_bool, el1, tree = self.dop_function.parser_omx('Analogs')
+                if msg_bool == 1: 
+                    msg[f'{today} - Файл omx: ошибка при очистке атрибутов Analogs'] = 2
+                    return msg
                 for value in data_value:
                     number      = value[0]
                     tag         = value[1]
@@ -2046,7 +2209,7 @@ class Filling_attribute_DevStudio():
                     else:
                         type = 'unit.Library.PLC_Types.Analog_PLC'
 
-                    tag_new = self.dop_function.translate(str(tag))
+                    tag_translate = self.dop_function.translate(str(tag))
                     unit_switch = True if unit_switch == 1 else False
                     # Находим совпадение из словаря с названием сигнала и заполняем подпись на кадре
                     sign = ' '
@@ -2056,19 +2219,19 @@ class Filling_attribute_DevStudio():
                             break
 
                     object = etree.Element("{automation.control}object")
-                    object.attrib['name'] = tag_new
+                    object.attrib['name'] = tag_translate
                     object.attrib['uuid'] = str(uuid.uuid1())
                     object.attrib['base-type'] = type
                     object.attrib['aspect'] = "unit.Library.PLC_Types.PLC"
 
-                    self.new_attr(object, "unit.Library.Attributes.Index", number)
-                    self.new_attr(object, "unit.Library.Attributes.Sign", sign)
-                    self.new_attr(object, "unit.Library.Attributes.EGU_Desc", equ)
-                    self.new_attr(object, "unit.Library.Attributes.EGU_Desc_phys", equ_fiz)
-                    self.new_attr(object, "unit.System.Attributes.Description", name)
-                    self.new_attr(object, "unit.Library.Attributes.EGU_Desc_Alt", unit_alt)
-                    self.new_attr(object, "unit.Library.Attributes.EGUsChange", unit_switch)
-                    self.new_attr(object, "unit.Library.Attributes.AI_Ref_KZFKP", tag)
+                    self.dop_function.new_attr(object, "unit.Library.Attributes.Index", number)
+                    self.dop_function.new_attr(object, "unit.Library.Attributes.Sign", sign)
+                    self.dop_function.new_attr(object, "unit.Library.Attributes.EGU_Desc", equ)
+                    self.dop_function.new_attr(object, "unit.Library.Attributes.EGU_Desc_phys", equ_fiz)
+                    self.dop_function.new_attr(object, "unit.System.Attributes.Description", name)
+                    self.dop_function.new_attr(object, "unit.Library.Attributes.EGU_Desc_Alt", unit_alt)
+                    self.dop_function.new_attr(object, "unit.Library.Attributes.EGUsChange", unit_switch)
+                    self.dop_function.new_attr(object, "unit.Library.Attributes.AI_Ref_KZFKP", tag)
 
                     el1.append(object)
                 tree.write(f'{path_to_devstudio}\\typical_prj.omx', pretty_print=True)
@@ -2087,10 +2250,12 @@ class Filling_attribute_DevStudio():
                        'питание'       : 'U',
                        'питание шкафа' : 'U'}
         try:
-            data_di = self.connect_by_sql('di', f'"id", "tag", "name", "pNC_AI"')
-            data_ai = self.connect_by_sql('ai', f'"id", "tag"')
-            el1, tree = self.dop_function.parser_omx('Diskrets')
-
+            data_di = self.dop_function.connect_by_sql('di', f'"id", "tag", "name", "pNC_AI"')
+            data_ai = self.dop_function.connect_by_sql('ai', f'"id", "tag"')
+            msg_bool, el1, tree = self.dop_function.parser_omx('Diskrets')
+            if msg_bool == 1: 
+                msg[f'{today} - Файл omx: ошибка при очистке атрибутов Diskrets'] = 2
+                return msg
             for value in data_di:
                 number_di = value[0]
                 tag_di    = value[1]
@@ -2100,19 +2265,22 @@ class Filling_attribute_DevStudio():
                 if name == '' or name is None: continue
                 if tag_di  == '' or tag_di is None: continue
 
-                tag_ai   = ' '
-
+                tag_di     = self.dop_function.translate(str(tag_di))
+                tag_ai     = ' '
+                tag_ai_ref = ' '
                 if not pNC_AI == '': 
                     isdigit = re.findall('\d+', str(pNC_AI))
                     for number in data_ai:
                         number_ai = number[0]
                         tag_ai    = number[1]
-                        
                         if str(number_ai) == str(isdigit[0]):
-                            if tag_ai == '':
+                            if tag_ai == '' or tag_ai is None:
                                 msg[f'{today} - Файл omx: атрибуты Diskrets. Тэг AI сигнала пуст: {number_ai}'] = 1
                                 break
-                            else: break
+                            else: 
+                                tag_ai_ref = tag_ai
+                                tag_ai     = self.dop_function.translate(tag_ai)
+                                break
                 sign = ' '
                 for key, value in dop_discret.items():
                     if self.dop_function.str_find(str(name).lower(), {key}):
@@ -2125,11 +2293,11 @@ class Filling_attribute_DevStudio():
                 object.attrib['base-type'] = "unit.Library.PLC_Types.Diskret_PLC"
                 object.attrib['aspect'] = "unit.Library.PLC_Types.PLC"
                 
-                self.new_attr(object, "unit.Library.Attributes.Index", number_di)
-                self.new_attr(object, "unit.Library.Attributes.Sign", sign)
-                self.new_attr(object, "unit.System.Attributes.Description", name)
-                self.new_attr(object, "unit.Library.Attributes.AI_Ref", tag_ai)
-                self.new_attr(object, "unit.Library.Attributes.AI_Ref_KZFKP", tag_ai)
+                self.dop_function.new_attr(object, "unit.Library.Attributes.Index", number_di)
+                self.dop_function.new_attr(object, "unit.Library.Attributes.Sign", sign)
+                self.dop_function.new_attr(object, "unit.System.Attributes.Description", name)
+                self.dop_function.new_attr(object, "unit.Library.Attributes.AI_Ref", tag_ai)
+                self.dop_function.new_attr(object, "unit.Library.Attributes.AI_Ref_KZFKP", tag_ai_ref)
 
                 el1.append(object)
             tree.write(f'{path_to_devstudio}\\typical_prj.omx', pretty_print=True)
@@ -2141,8 +2309,11 @@ class Filling_attribute_DevStudio():
     def picture_omx(self):
             msg = {}
             try:
-                data = self.connect_by_sql('pic', f'"id", "name", "frame"')
-                el1, tree = self.dop_function.parser_omx('Pictures')
+                data = self.dop_function.connect_by_sql('pic', f'"id", "name", "frame"')
+                msg_bool, el1, tree = self.dop_function.parser_omx('Pictures')
+                if msg_bool == 1: 
+                    msg[f'{today} - Файл omx: ошибка при очистке атрибутов Pictures'] = 2
+                    return msg
                 for value in data:
                     number   = value[0]
                     name_pic = value[1]
@@ -2156,9 +2327,9 @@ class Filling_attribute_DevStudio():
                     object.attrib['base-type'] = "unit.Library.PLC_Types.Picture_PLC"
                     object.attrib['aspect'] = "unit.Library.PLC_Types.PLC"
 
-                    self.new_attr(object, "unit.Library.Attributes.Index", number)
-                    self.new_attr(object, "unit.Library.Attributes.Sign", name_pic)
-                    self.new_attr(object, "unit.Library.Attributes.Description", name_pic)
+                    self.dop_function.new_attr(object, "unit.Library.Attributes.Index", number)
+                    self.dop_function.new_attr(object, "unit.Library.Attributes.Sign", name_pic)
+                    self.dop_function.new_attr(object, "unit.Library.Attributes.Description", name_pic)
                     
                     el1.append(object)
                 tree.write(f'{path_to_devstudio}\\typical_prj.omx', pretty_print=True)
@@ -2170,11 +2341,14 @@ class Filling_attribute_DevStudio():
     def auxsystem_omx(self):
         msg = {}
         try:
-            data_vs = self.connect_by_sql('vs', f'"id", "name", "short_name", "Pressure_is_True", "Voltage", "OTKL"')
-            data_ai = self.connect_by_sql('ai', f'"id", "tag"')
-            data_di = self.connect_by_sql('di', f'"id", "tag"')
-            data_do = self.connect_by_sql('do', f'"id", "tag"')
-            el1, tree = self.dop_function.parser_omx('AuxSystems')
+            data_vs = self.dop_function.connect_by_sql('vs', f'"id", "name", "short_name", "Pressure_is_True", "Voltage", "OTKL"')
+            data_ai = self.dop_function.connect_by_sql('ai', f'"id", "tag"')
+            data_di = self.dop_function.connect_by_sql('di', f'"id", "tag"')
+            data_do = self.dop_function.connect_by_sql('do', f'"id", "tag"')
+            msg_bool, el1, tree = self.dop_function.parser_omx('AuxSystems')
+            if msg_bool == 1: 
+                msg[f'{today} - Файл omx: ошибка при очистке атрибутов AuxSystems'] = 2
+                return msg
 
             for value_vs in data_vs:
                 number_vs = value_vs[0]
@@ -2190,6 +2364,7 @@ class Filling_attribute_DevStudio():
                 tag = 'VS_' + str(number_vs)
                 isdigit = re.findall('\d+', sensor)
                 # Ищем давление на выходе из таблицы AI и DI
+                tag_sensor = ' '
                 if self.dop_function.str_find(sensor.lower(), {'di'}):
                     for value_di in data_di:
                         number_di = value_di[0]
@@ -2208,24 +2383,25 @@ class Filling_attribute_DevStudio():
                     pc_use = str('2')
                 else:
                     pc_use = str('0')
-                    tag_sensor = ' '
                 # Ищем напряжение из таблицы DI
+                tag_voltage = ' '
                 isdigitVoltage = re.findall('\d+', voltage)
                 if self.dop_function.str_find(voltage.lower(), {'di'}):
                     for value_di in data_di:
-                        number_di = value_di['№']
-                        tag_di_for_diagno = value_di['Идентификатор']
+                        number_di = value_di[0]
+                        tag_di_for_diagno = value_di[1]
                         if self.dop_function.str_find(number_di, isdigitVoltage):
                             tag_voltage  = tag_di_for_diagno
                             break
                 # Ищем команду закрыть из таблицы DO
+                tag_close = ' '
                 isdigitCLOSE= re.findall('\d+', close)
                 if self.dop_function.str_find(close.lower(), {'do'}):
                     for value_do in data_do:
                         number_do = value_do[0]
                         tag_do    = value_do[1]
                         if self.dop_function.str_find(number_do, isdigitCLOSE):
-                            tag_close  = tag_do
+                            tag_close = tag_do
                             break
 
                 object = etree.Element("{automation.control}object")
@@ -2234,13 +2410,13 @@ class Filling_attribute_DevStudio():
                 object.attrib['base-type'] = "unit.Library.PLC_Types.AuxSystem_PLC"
                 object.attrib['aspect'] = "unit.Library.PLC_Types.PLC"
 
-                self.new_attr(object, "unit.Library.Attributes.Index", number_vs)
-                self.new_attr(object, "unit.Library.Attributes.Sign", shortdesc)
-                self.new_attr(object, "unit.System.Attributes.Description", name)
-                self.new_attr(object, "unit.Library.Attributes.PC_Use", pc_use)
-                self.new_attr(object, "unit.Library.Attributes.PC_Ref", tag_sensor)
-                self.new_attr(object, "unit.Library.Attributes.DI_ref", tag_voltage)
-                self.new_attr(object, "unit.Library.Attributes.DO_ref", tag_close)
+                self.dop_function.new_attr(object, "unit.Library.Attributes.Index", number_vs)
+                self.dop_function.new_attr(object, "unit.Library.Attributes.Sign", shortdesc)
+                self.dop_function.new_attr(object, "unit.System.Attributes.Description", name)
+                self.dop_function.new_attr(object, "unit.Library.Attributes.PC_Use", pc_use)
+                self.dop_function.new_attr(object, "unit.Library.Attributes.PC_Ref", tag_sensor)
+                self.dop_function.new_attr(object, "unit.Library.Attributes.DI_ref", tag_voltage)
+                self.dop_function.new_attr(object, "unit.Library.Attributes.DO_ref", tag_close)
 
                 el1.append(object)
             tree.write(f'{path_to_devstudio}\\typical_prj.omx', pretty_print=True)
@@ -2252,10 +2428,13 @@ class Filling_attribute_DevStudio():
     def valves_omx(self):
         msg = {}
         try:
-            data_zd = self.connect_by_sql('zd', f'"id", "name", "short_name", "VMMO", "VMMZ", "exists_interface", "Dist", "Dist_i", "KVO", "Open"')
-            data_di = self.connect_by_sql('di', f'"id", "tag"')
-            data_do = self.connect_by_sql('do', f'"id", "tag"')
-            el1, tree = self.dop_function.parser_omx('Valves')
+            data_zd = self.dop_function.connect_by_sql('zd', f'"id", "name", "short_name", "VMMO", "VMMZ", "exists_interface", "Dist", "Dist_i", "KVO", "Open"')
+            data_di = self.dop_function.connect_by_sql('di', f'"id", "tag"')
+            data_do = self.dop_function.connect_by_sql('do', f'"id", "tag"')
+            msg_bool, el1, tree = self.dop_function.parser_omx('Valves')
+            if msg_bool == 1: 
+                msg[f'{today} - Файл omx: ошибка при очистке атрибутов Valves'] = 2
+                return msg
 
             for value in data_zd:
                 number    = value[0]
@@ -2295,19 +2474,18 @@ class Filling_attribute_DevStudio():
                 object = etree.Element("{automation.control}object")
                 object.attrib['name'] = tag
                 object.attrib['uuid'] = str(uuid.uuid1())
-                
                 if isRS != True: object.attrib['base-type'] = "unit.Library.PLC_Types.Valve_PLC"
                 else           : object.attrib['base-type'] = "unit.Library.PLC_Types.ex_Valve_PLC"
                 object.attrib['aspect'] = "unit.Library.PLC_Types.PLC"
 
-                self.new_attr(object, "unit.Library.Attributes.Index", number)
-                self.new_attr(object, "unit.Library.Attributes.Sign", shortdesc)
-                self.new_attr(object, "unit.System.Attributes.Description", name)
-                self.new_attr(object, "unit.Library.Attributes.BUR", isBUR)
-                self.new_attr(object, "unit.Library.Attributes.RS485", isRS)
-                self.new_attr(object, "unit.Library.Attributes.Dist_key", isDist)
-                self.new_attr(object, "unit.Library.Attributes.DI_ref", tag_di)
-                self.new_attr(object, "unit.Library.Attributes.DO_ref", tag_do)
+                self.dop_function.new_attr(object, "unit.Library.Attributes.Index", number)
+                self.dop_function.new_attr(object, "unit.Library.Attributes.Sign", shortdesc)
+                self.dop_function.new_attr(object, "unit.System.Attributes.Description", name)
+                self.dop_function.new_attr(object, "unit.Library.Attributes.BUR", isBUR)
+                self.dop_function.new_attr(object, "unit.Library.Attributes.RS485", isRS)
+                self.dop_function.new_attr(object, "unit.Library.Attributes.Dist_key", isDist)
+                self.dop_function.new_attr(object, "unit.Library.Attributes.DI_ref", tag_di)
+                self.dop_function.new_attr(object, "unit.Library.Attributes.DO_ref", tag_do)
 
                 el1.append(object)
             tree.write(f'{path_to_devstudio}\\typical_prj.omx', pretty_print=True)
@@ -2319,9 +2497,12 @@ class Filling_attribute_DevStudio():
     def pumps_omx(self):
         msg = {}
         try:
-            data = self.connect_by_sql('umpna', f'"id", "name"')
-            el1, tree = self.dop_function.parser_omx('NAs')
-
+            data = self.dop_function.connect_by_sql('umpna', f'"id", "name"')
+            msg_bool, el1, tree = self.dop_function.parser_omx('NAs')
+            if msg_bool == 1: 
+                msg[f'{today} - Файл omx: ошибка при очистке атрибутов NAs'] = 2
+                return msg
+            
             for value in data:
                 number    = value[0]
                 name      = value[1]
@@ -2335,9 +2516,9 @@ class Filling_attribute_DevStudio():
                 object.attrib['base-type'] = "unit.Library.PLC_Types.NA_PLC"
                 object.attrib['aspect'] = "unit.Library.PLC_Types.PLC"
                 
-                self.new_attr(object, "unit.Library.Attributes.Index", number)
-                self.new_attr(object, "unit.Library.Attributes.Sign", name)
-                self.new_attr(object, "unit.System.Attributes.Description", name)
+                self.dop_function.new_attr(object, "unit.Library.Attributes.Index", number)
+                self.dop_function.new_attr(object, "unit.Library.Attributes.Sign", name)
+                self.dop_function.new_attr(object, "unit.System.Attributes.Description", name)
                 
                 el1.append(object)
             tree.write(f'{path_to_devstudio}\\typical_prj.omx', pretty_print=True)
@@ -2349,8 +2530,11 @@ class Filling_attribute_DevStudio():
     def relayted_system_omx(self):
         msg = {}
         try:
-            data = self.connect_by_sql('umpna', f'"id", "name"')
-            el1, tree = self.dop_function.parser_omx('SSs')
+            data = self.dop_function.connect_by_sql('ss', f'"id", "name"')
+            msg_bool, el1, tree = self.dop_function.parser_omx('SSs')
+            if msg_bool == 1: 
+                msg[f'{today} - Файл omx: ошибка при очистке атрибутов SSs'] = 2
+                return msg
 
             for value in data:
                 number = value[0]
@@ -2365,9 +2549,9 @@ class Filling_attribute_DevStudio():
                 object.attrib['base-type'] = "unit.Library.PLC_Types.SS_PLC"
                 object.attrib['aspect'] = "unit.Library.PLC_Types.PLC"
 
-                self.new_attr(object, "unit.Library.Attributes.Index", number)
-                self.new_attr(object, "unit.Library.Attributes.Sign", name)
-                self.new_attr(object, "unit.System.Attributes.Description", name)
+                self.dop_function.new_attr(object, "unit.Library.Attributes.Index", number)
+                self.dop_function.new_attr(object, "unit.Library.Attributes.Sign", name)
+                self.dop_function.new_attr(object, "unit.System.Attributes.Description", name)
 
                 el1.append(object)
             tree.write(f'{path_to_devstudio}\\typical_prj.omx', pretty_print=True)
@@ -2379,8 +2563,11 @@ class Filling_attribute_DevStudio():
     def uts_omx(self):
         msg = {}
         try:
-            data = self.connect_by_sql('umpna', f'"id", "tag", "name", "siren"')
-            el1, tree = self.dop_function.parser_omx('UTSs')
+            data = self.dop_function.connect_by_sql('uts', f'"id", "tag", "name", "siren"')
+            msg_bool, el1, tree = self.dop_function.parser_omx('UTSs')
+            if msg_bool == 1: 
+                msg[f'{today} - Файл omx: ошибка при очистке атрибутов UTSs'] = 2
+                return msg
 
             for value in data:
                 number = value[0]
@@ -2405,9 +2592,9 @@ class Filling_attribute_DevStudio():
                 object.attrib['base-type'] = "unit.Library.PLC_Types.UTS_PLC"
                 object.attrib['aspect'] = "unit.Library.PLC_Types.PLC"
 
-                self.new_attr(object, "unit.Library.Attributes.Index", number)
-                self.new_attr(object, "unit.Library.Attributes.Sign", sign)
-                self.new_attr(object, "unit.System.Attributes.Description", name)
+                self.dop_function.new_attr(object, "unit.Library.Attributes.Index", number)
+                self.dop_function.new_attr(object, "unit.Library.Attributes.Sign", sign)
+                self.dop_function.new_attr(object, "unit.System.Attributes.Description", name)
                 
                 el1.append(object)
             tree.write(f'{path_to_devstudio}\\typical_prj.omx', pretty_print=True)
@@ -2419,43 +2606,34 @@ class Filling_attribute_DevStudio():
     def upts_omx(self):
         msg = {}
         try:
-            data = self.connect_by_sql('umpna', f'"id", "tag", "name", "location"')
-            el1, tree = self.dop_function.parser_omx('UPTSs')
+            data = self.dop_function.connect_by_sql('upts', f'"id", "tag", "name", "location", "short_name"')
+            msg_bool, el1, tree = self.dop_function.parser_omx('UPTSs')
+            if msg_bool == 1: 
+                msg[f'{today} - Файл omx: ошибка при очистке атрибутов UPTSs'] = 2
+                return msg
 
             for value in data:
-                number      = value['№']
-                name        = value['Идентификатор']
-                place       = value['Место установки']
-                description = value['Название']
-                shortdesc   = value['Короткое название']
+                number      = value[0]
+                tag         = value[1]
+                description = value[2]
+                place       = value[3]
+                shortdesc   = value[4]
 
-                if number      is None: continue
-                if name        is None: continue
-                if description is None: continue
-
-                name = self.translate(str(name))
+                if number == '' or number is None: continue
+                if tag == '' or tag is None: continue
+                if description == '' or description is None: continue
 
                 object = etree.Element("{automation.control}object")
-                object.attrib['name'] = str(name)
+                object.attrib['name'] = str(tag)
                 object.attrib['uuid'] = str(uuid.uuid1())
                 object.attrib['base-type'] = "unit.Library.PLC_Types.UPTS_PLC"
                 object.attrib['aspect'] = "unit.Library.PLC_Types.PLC"
-                atrb1 = etree.Element("attribute")
-                atrb1.attrib['type'] = "unit.Library.Attributes.Sign"
-                atrb1.attrib['value'] = str(shortdesc)
-                object.append(atrb1)
-                atrb2 = etree.Element("attribute")
-                atrb2.attrib['type'] = "unit.System.Attributes.Description"
-                atrb2.attrib['value'] = str(description)
-                object.append(atrb2)
-                atrb3 = etree.Element("attribute")
-                atrb3.attrib['type'] = "unit.Library.Attributes.Index"
-                atrb3.attrib['value'] = str(number)
-                object.append(atrb3)
-                atrb4 = etree.Element("attribute")
-                atrb4.attrib['type'] = "unit.Library.Attributes.Place"
-                atrb4.attrib['value'] = str(place)
-                object.append(atrb4)
+
+                self.dop_function.new_attr(object, "unit.Library.Attributes.Sign", shortdesc)
+                self.dop_function.new_attr(object, "unit.System.Attributes.Description", description)
+                self.dop_function.new_attr(object, "unit.Library.Attributes.Index", number)
+                self.dop_function.new_attr(object, "unit.Library.Attributes.Place", place)
+                
                 el1.append(object)
             tree.write(f'{path_to_devstudio}\\typical_prj.omx', pretty_print=True)
             msg[f'{today} - Файл omx: атрибуты UPTSs добавлены'] = 1
@@ -2463,211 +2641,1014 @@ class Filling_attribute_DevStudio():
         except Exception:
             msg[f'{today} - Файл omx: ошибка при добавлении атрибута UPTSs: {traceback.format_exc()}'] = 2
             return msg
-    # def ktpr_omx(self):
-    #     data = self.data['KTPR']
-    #     el1, tree = self.parser_omx('KTPRs')
-    #     number_group = 0
-    #     try:
-    #         for value in data:
-    #             number_defence = value['№']
-    #             if number_defence is None: continue
-    #             number_group += 1
-    #         count_group = math.ceil(number_group / 4)
+    def ktpr_omx(self):
+        msg = {}
+        try:
+            data = self.dop_function.connect_by_sql('ktpr', f'"id"')
+            msg_bool, el1, tree = self.dop_function.parser_omx('KTPRs')
+            if msg_bool == 1: 
+                msg[f'{today} - Файл omx: ошибка при очистке атрибутов KTPRs'] = 2
+                return msg
+            number_group = 0
 
-    #         for count in range(count_group):
-    #             object = etree.Element("{automation.control}object")
-    #             object.attrib['name'] = f'Group_{count + 1}'
-    #             object.attrib['uuid'] = str(uuid.uuid1())
-    #             object.attrib['base-type'] = "unit.Library.PLC_Types.KTPRx_PLC"
-    #             object.attrib['aspect'] = "unit.Library.PLC_Types.PLC"
-    #             el1.append(object)
-    #         tree.write(self.omx, pretty_print=True)
-    #         logger.info(f'KTPRs: файл omx OK')
-    #         return (f'KTPRs: файл omx OK')
-    #     except:
-    #         logger.error(f'KTPRs: файл omx FAILED')
-    #         return (f'KTPRs: файл omx FAILED')
-    # def ktprp_omx(self):
-    #     data = self.data['KTPRP']
-    #     el1, tree = self.parser_omx('KTPRs')
-    #     number_group = 0
-    #     try:
-    #         for value in data:
-    #             number_defence = value['№']
-    #             if number_defence is None: continue
-    #             number_group += 1
-    #         count_group = math.ceil(number_group/4)
+            for value in data:
+                number_defence = value[0]
+                if number_defence == '' or number_defence is None: continue
+                number_group += 1
+            count_group = math.ceil(number_group / 4)
 
-    #         for count in range(count_group):
-    #                 object = etree.Element("{automation.control}object")
-    #                 object.attrib['name'] = f'Group_{count + 1}'
-    #                 object.attrib['uuid'] = str(uuid.uuid1())
-    #                 object.attrib['base-type'] = "unit.Library.PLC_Types.KTPRx_PLC"
-    #                 object.attrib['aspect'] = "unit.Library.PLC_Types.PLC"
-    #                 el1.append(object)
-    #         tree.write(self.omx, pretty_print=True)
-    #         logger.info(f'KTPRPs: файл omx OK')
-    #         return     (f'KTPRPs: файл omx OK')
-    #     except:
-    #         logger.error(f'KTPRPs: файл omx FAILED')
-    #         return      (f'KTPRPs: файл omx FAILED')
-    # def ktpra_omx(self):
-    #     data = self.data['KTPRA']
-    #     el1, tree = self.parser_omx('KTPRAs')
-    #     number_pumps_old = ''
-    #     count_pumps      = 0
-    #     number = 0
-    #     try:
-    #         for value in data:
-    #             number_defence   = value['№']
-    #             number_pumps_int = value['НА']
+            for count in range(count_group):
+                object = etree.Element("{automation.control}object")
+                object.attrib['name'] = f'Group_{count + 1}'
+                object.attrib['uuid'] = str(uuid.uuid1())
+                object.attrib['base-type'] = "unit.Library.PLC_Types.KTPRx_PLC"
+                object.attrib['aspect'] = "unit.Library.PLC_Types.PLC"
+                el1.append(object)
+            tree.write(f'{path_to_devstudio}\\typical_prj.omx', pretty_print=True)
+            msg[f'{today} - Файл omx: атрибуты KTPRs добавлены'] = 1
+            return msg
+        except Exception:
+            msg[f'{today} - Файл omx: ошибка при добавлении атрибута KTPRs: {traceback.format_exc()}'] = 2
+            return msg
+    def ktprp_omx(self):
+        msg = {}
+        try:
+            data = self.dop_function.connect_by_sql('ktprp', f'"id"')
+            msg_bool, el1, tree = self.dop_function.parser_omx('KTPRs')
+            if msg_bool == 1: 
+                msg[f'{today} - Файл omx: ошибка при очистке атрибутов KTPRs'] = 2
+                return msg
+            number_group = 0
 
-    #             if number_defence   is None: continue
-    #             if number_pumps_int is None: continue
+            for value in data:
+                number_defence = value[0]
+                if number_defence == '' or number_defence is None: continue
+                number_group += 1
+            count_group = math.ceil(number_group/4)
 
-    #             if number_pumps_int != number_pumps_old:
-    #                 number_pumps_old = number_pumps_int
-    #                 count_pumps += 1
-    #                 number_group = 0
-    #                 object = etree.Element("{automation.control}object")
-    #                 object.attrib['name'] = f'KTPRAs_{count_pumps}'
-    #                 object.attrib['uuid'] = str(uuid.uuid1())
+            for count in range(count_group):
+                    object = etree.Element("{automation.control}object")
+                    object.attrib['name'] = f'Group_{count + 1}'
+                    object.attrib['uuid'] = str(uuid.uuid1())
+                    object.attrib['base-type'] = "unit.Library.PLC_Types.KTPRx_PLC"
+                    object.attrib['aspect'] = "unit.Library.PLC_Types.PLC"
+                    el1.append(object)
+            tree.write(f'{path_to_devstudio}\\typical_prj.omx', pretty_print=True)
+            msg[f'{today} - Файл omx: атрибуты KTPRPs добавлены'] = 1
+            return msg
+        except Exception:
+            msg[f'{today} - Файл omx: ошибка при добавлении атрибута KTPRPs: {traceback.format_exc()}'] = 2
+            return msg
+    def ktpra_omx(self):
+        msg = {}
+        try:
+            data = self.dop_function.connect_by_sql('ktpra', f'"id", "NA"')
+            msg_bool, el1, tree = self.dop_function.parser_omx('KTPRAs')
+            if msg_bool == 1: 
+                msg[f'{today} - Файл omx: ошибка при очистке атрибутов KTPRAs'] = 2
+                return msg
 
-    #             if number_defence % 4 == 0:
-    #                 number_group += 1
-    #                 group = etree.Element("{automation.control}object")
-    #                 group.attrib['name'] = f'Group_{number_group}'
-    #                 group.attrib['uuid'] = str(uuid.uuid1())
-    #                 group.attrib['base-type'] = "unit.Library.PLC_Types.KTPRx_PLC"
-    #                 group.attrib['aspect'] = "unit.Library.PLC_Types.PLC"
-    #                 object.append(group)
-    #             el1.append(object)
-    #         tree.write(self.omx, pretty_print=True)
-    #         logger.info(f'KTPRAs: файл omx OK')
-    #         return (f'KTPRAs: файл omx OK')
-    #     except:
-    #         logger.error(f'KTPRAs: файл omx FAILED')
-    #         return (f'KTPRAs: файл omx FAILED')
-    # def gmpna_omx(self):
-    #     data = self.data['GMPNA']
-    #     el1, tree = self.parser_omx('GMPNAs')
-    #     number_pumps_old = ''
-    #     count_pumps = 0
-    #     try:
-    #         for value in data:
-    #             number_defence = value['№']
-    #             number_pumps_int = value['НА']
+            number_pumps_old = ''
+            count_pumps      = 0
 
-    #             if number_defence is None: continue
-    #             if number_pumps_int is None: continue
+            for value in data:
+                number_defence   = value[0]
+                number_pumps_int = value[1]
 
-    #             if number_pumps_int != number_pumps_old:
-    #                 number_pumps_old = number_pumps_int
-    #                 count_pumps += 1
-    #                 number_group = 0
-    #                 object = etree.Element("{automation.control}object")
-    #                 object.attrib['name'] = f'GMPNAs_{count_pumps}'
-    #                 object.attrib['uuid'] = str(uuid.uuid1())
+                if number_defence == '' or number_defence   is None: continue
+                if number_pumps_int == '' or number_pumps_int is None: continue
 
-    #             if number_defence % 4 == 0:
-    #                 number_group += 1
-    #                 group = etree.Element("{automation.control}object")
-    #                 group.attrib['name'] = f'Group_{number_group}'
-    #                 group.attrib['uuid'] = str(uuid.uuid1())
-    #                 group.attrib['base-type'] = "unit.Library.PLC_Types.GMPNA_PLC"
-    #                 group.attrib['aspect'] = "unit.Library.PLC_Types.PLC"
-    #                 object.append(group)
-    #             el1.append(object)
-    #         tree.write(self.omx, pretty_print=True)
-    #         logger.info(f'GMPNAs: файл omx OK')
-    #         return (f'GMPNAs: файл omx OK')
-    #     except:
-    #         logger.error(f'GMPNAs: файл omx FAILED')
-    #         return (f'GMPNAs: файл omx FAILED')
-    # def pi_omx(self):
-    #     data = self.data['PI']
-    #     el1, tree = self.parser_omx('PIs')
-    #     try:
-    #         for value in data:
-    #             number      = value['№']
-    #             tag         = value['Идентификатор']
-    #             place       = value['Место установки']
-    #             shortdesc   = value['Идентификатор']
-    #             description = value['Название']
+                if number_pumps_int != number_pumps_old:
+                    number_pumps_old = number_pumps_int
+                    count_pumps += 1
+                    number_group = 0
+                    object = etree.Element("{automation.control}object")
+                    object.attrib['name'] = f'KTPRAs_{count_pumps}'
+                    object.attrib['uuid'] = str(uuid.uuid1())
 
-    #             if number      is None: continue
-    #             if tag         is None: continue
-    #             if shortdesc   is None: continue
-    #             if description is None: continue
-    #             if place       is None: place = ''
+                if number_defence % 4 == 0:
+                    number_group += 1
+                    group = etree.Element("{automation.control}object")
+                    group.attrib['name'] = f'Group_{number_group}'
+                    group.attrib['uuid'] = str(uuid.uuid1())
+                    group.attrib['base-type'] = "unit.Library.PLC_Types.KTPRx_PLC"
+                    group.attrib['aspect'] = "unit.Library.PLC_Types.PLC"
+                    object.append(group)
+                el1.append(object)
+            tree.write(f'{path_to_devstudio}\\typical_prj.omx', pretty_print=True)
+            msg[f'{today} - Файл omx: атрибуты KTPRAs добавлены'] = 1
+            return msg
+        except Exception:
+            msg[f'{today} - Файл omx: ошибка при добавлении атрибута KTPRAs: {traceback.format_exc()}'] = 2
+            return msg
+    def gmpna_omx(self):
+        msg = {}
+        try:
+            data = self.dop_function.connect_by_sql('gmpna', f'"id", "NA"')
+            msg_bool, el1, tree = self.dop_function.parser_omx('GMPNAs')
+            if msg_bool == 1: 
+                msg[f'{today} - Файл omx: ошибка при очистке атрибутов GMPNAs'] = 2
+                return msg
 
-    #             tag = self.translate(str(tag))
+            number_pumps_old = ''
+            count_pumps = 0
 
-    #             object = etree.Element("{automation.control}object")
-    #             object.attrib['name'] = str(tag)
-    #             object.attrib['uuid'] = str(uuid.uuid1())
-    #             object.attrib['base-type'] = "unit.Library.PLC_Types.PI_PLC"
-    #             object.attrib['aspect'] = "unit.Library.PLC_Types.PLC"
-    #             atrb1 = etree.Element("attribute")
-    #             atrb1.attrib['type'] = "unit.Library.Attributes.Sign"
-    #             atrb1.attrib['value'] = str(shortdesc)
-    #             object.append(atrb1)
-    #             atrb2 = etree.Element("attribute")
-    #             atrb2.attrib['type'] = "unit.System.Attributes.Description"
-    #             atrb2.attrib['value'] = str(description)
-    #             object.append(atrb2)
-    #             atrb3 = etree.Element("attribute")
-    #             atrb3.attrib['type'] = "unit.Library.Attributes.Index"
-    #             atrb3.attrib['value'] = str(number)
-    #             object.append(atrb3)
-    #             atrb4 = etree.Element("attribute")
-    #             atrb4.attrib['type'] = "unit.Library.Attributes.Place"
-    #             atrb4.attrib['value'] = str(place)
-    #             object.append(atrb4)
-    #             el1.append(object)
-    #         tree.write(self.omx, pretty_print=True)
-    #         logger.info(f'PIs: файл omx OK')
-    #         return     (f'PIs: файл omx OK')
-    #     except:
-    #         logger.error(f'PIs: файл omx FAILED')
-    #         return      (f'PIs: файл omx FAILED')
-    # def pz_omx(self):
-    #     data = self.data['PZ']
-    #     el1, tree = self.parser_omx('PZs')
-    #     try:
-    #         for value in data:
-    #             number      = value['№']
-    #             shortdesc   = value['Подпись на мнемокадре']
-    #             description = value['Название']
+            for value in data:
+                number_defence = value[0]
+                number_pumps_int = value[1]
 
-    #             if number      is None: continue
-    #             if description is None: continue
-    #             if shortdesc   is None: shortdesc = ''
+                if number_defence == '' or number_defence is None: continue
+                if number_pumps_int == '' or number_pumps_int is None: continue
 
-    #             object = etree.Element("{automation.control}object")
-    #             object.attrib['name'] = f'PZ_{number}'
-    #             object.attrib['uuid'] = str(uuid.uuid1())
-    #             object.attrib['base-type'] = "unit.Library.PLC_Types.PZ_PLC"
-    #             object.attrib['aspect'] = "unit.Library.PLC_Types.PLC"
-    #             atrb1 = etree.Element("attribute")
-    #             atrb1.attrib['type'] = "unit.Library.Attributes.Sign"
-    #             atrb1.attrib['value'] = str(shortdesc)
-    #             object.append(atrb1)
-    #             atrb2 = etree.Element("attribute")
-    #             atrb2.attrib['type'] = "unit.System.Attributes.Description"
-    #             atrb2.attrib['value'] = str(description)
-    #             object.append(atrb2)
-    #             atrb3 = etree.Element("attribute")
-    #             atrb3.attrib['type'] = "unit.Library.Attributes.Index"
-    #             atrb3.attrib['value'] = str(number)
-    #             object.append(atrb3)
-    #             el1.append(object)
-    #         tree.write(self.omx, pretty_print=True)
-    #         logger.info(f'PZs: файл omx OK')
-    #         return     (f'PZs: файл omx OK')
-    #     except:
-    #         logger.error(f'PZs: файл omx FAILED')
-    #         return      (f'PZs: файл omx FAILED')
+                if number_pumps_int != number_pumps_old:
+                    number_pumps_old = number_pumps_int
+                    count_pumps += 1
+                    number_group = 0
+                    object = etree.Element("{automation.control}object")
+                    object.attrib['name'] = f'GMPNAs_{count_pumps}'
+                    object.attrib['uuid'] = str(uuid.uuid1())
+
+                if number_defence % 4 == 0:
+                    number_group += 1
+                    group = etree.Element("{automation.control}object")
+                    group.attrib['name'] = f'Group_{number_group}'
+                    group.attrib['uuid'] = str(uuid.uuid1())
+                    group.attrib['base-type'] = "unit.Library.PLC_Types.GMPNA_PLC"
+                    group.attrib['aspect'] = "unit.Library.PLC_Types.PLC"
+                    object.append(group)
+                el1.append(object)
+            tree.write(f'{path_to_devstudio}\\typical_prj.omx', pretty_print=True)
+            msg[f'{today} - Файл omx: атрибуты GMPNAs добавлены'] = 1
+            return msg
+        except Exception:
+            msg[f'{today} - Файл omx: ошибка при добавлении атрибута GMPNAs: {traceback.format_exc()}'] = 2
+            return msg
+    def pi_omx(self):
+        msg = {}
+        try:
+            data = self.dop_function.connect_by_sql('pi', f'"id", "tag", "location", "name"')
+            msg_bool, el1, tree = self.dop_function.parser_omx('PIs')
+            if msg_bool == 1: 
+                msg[f'{today} - Файл omx: ошибка при очистке атрибутов PIs'] = 2
+                return msg
+
+            for value in data:
+                number      = value[0]
+                tag         = value[1]
+                shortdesc   = value[1]
+                place       = value[2]
+                description = value[3]
+
+                if number == '' or number is None: continue
+                if tag == '' or tag is None: continue
+                if shortdesc == '' or shortdesc is None: continue
+                if description == '' or description is None: continue
+                if place == '' or place is None: place = ''
+
+                object = etree.Element("{automation.control}object")
+                object.attrib['name'] = str(tag)
+                object.attrib['uuid'] = str(uuid.uuid1())
+                object.attrib['base-type'] = "unit.Library.PLC_Types.PI_PLC"
+                object.attrib['aspect'] = "unit.Library.PLC_Types.PLC"
+                
+                self.dop_function.new_attr(object, "unit.Library.Attributes.Sign", shortdesc)
+                self.dop_function.new_attr(object, "unit.System.Attributes.Description", description)
+                self.dop_function.new_attr(object, "unit.Library.Attributes.Index", number)
+                self.dop_function.new_attr(object, "unit.Library.Attributes.Place", place)
+
+                el1.append(object)
+            tree.write(f'{path_to_devstudio}\\typical_prj.omx', pretty_print=True)
+            msg[f'{today} - Файл omx: атрибуты PIs добавлены'] = 1
+            return msg
+        except Exception:
+            msg[f'{today} - Файл omx: ошибка при добавлении атрибута PIs: {traceback.format_exc()}'] = 2
+            return msg
+    def pz_omx(self):
+        msg = {}
+        try:
+            data = self.dop_function.connect_by_sql('pz', f'"id", "name", "short_name"')
+            msg_bool, el1, tree = self.dop_function.parser_omx('PZs')
+            if msg_bool == 1: 
+                msg[f'{today} - Файл omx: ошибка при очистке атрибутов PZs'] = 2
+                return msg
+
+            for value in data:
+                number      = value[0]
+                description = value[1]
+                shortdesc   = value[2]
+
+                if number == '' or number is None: continue
+                if description == '' or description is None: continue
+                if shortdesc == '' or shortdesc is None: shortdesc = ''
+
+                object = etree.Element("{automation.control}object")
+                object.attrib['name'] = f'PZ_{number}'
+                object.attrib['uuid'] = str(uuid.uuid1())
+                object.attrib['base-type'] = "unit.Library.PLC_Types.PZ_PLC"
+                object.attrib['aspect'] = "unit.Library.PLC_Types.PLC"
+                
+                self.dop_function.new_attr(object, "unit.Library.Attributes.Sign", shortdesc)
+                self.dop_function.new_attr(object, "unit.System.Attributes.Description", description)
+                self.dop_function.new_attr(object, "unit.Library.Attributes.Index", number)
+                
+                el1.append(object)
+            tree.write(f'{path_to_devstudio}\\typical_prj.omx', pretty_print=True)
+            msg[f'{today} - Файл omx: атрибуты PZs добавлены'] = 1
+            return msg
+        except Exception:
+            msg[f'{today} - Файл omx: ошибка при добавлении атрибута PZs: {traceback.format_exc()}'] = 2
+            return msg
+    # Заполнение карты адресов
+    def analogs_maps(self):
+        dop_analog    = {'AIVisualValue', 'AIElValue', 'AIValue', 'AIRealValue', 'StateAI'}
+        dop_analog_lv = {'AIVisualValue', 'AIElValue', 'AIValue', 'AIRealValue', 'StateAI', 'Range_Bottom', 'Range_Top'}
+
+        msg = {}
+        data = self.dop_function.connect_by_sql('ai', f'"id", "tag", "name", "AnalogGroupId"')
+        root, tree  = self.dop_function.parser_map()
+        # Чистка тэгов
+        self.dop_function.cleaner_map('.Analogs.', root)
+        try:
+            for value in data:
+                number     = value[0]
+                tag        = value[1]
+                name       = value[2]
+                grp_analog = value[3]
+
+                if tag == '' or tag is None: continue
+                if name == '' or name is None: continue
+
+                # У уровней особый набор параметров
+                if grp_analog == 'Уровни': list_analog = dop_analog_lv
+                else:                      list_analog = dop_analog
+
+                tag = self.dop_function.translate(str(tag))
+
+                for key in list_analog:
+                    signal = f'Root{prefix_system}.Analogs.{tag}.{key}'
+
+                    object = etree.Element('item')
+                    object.attrib['Binding'] = 'Introduced'
+
+                    self.dop_function.new_map_str(object, 'node-path', signal)
+                    self.dop_function.new_map_str(object, 'table-path', f'Holding Registers')
+                    self.dop_function.new_map_str(object, 'address', 2 * (number - 1))
+                    
+                    root.append(object)
+                tree.write(f'{path_to_devstudio}\\OUA.xml', pretty_print=True)
+            msg[f'{today} - Карта адресов: адреса Analogs заполнены'] = 1
+            return msg
+        except Exception:
+            msg[f'{today} - Карта адресов: ошибка при заполнении ка.рты адресов Analogs: {traceback.format_exc()}'] = 2
+            return msg
+    def diskret_in_map_modbus(self):
+        data    = self.data['DI']
+        data_mb = self.data['ModBus']
+        root, tree = self.parser_map_modbus()
+        # Чистка тэгов
+        self.cleaner_map('.Diskrets.', root)
+        try:
+            for numeric in data_mb:
+                variable      = numeric['Переменная Excel']
+                start_address = numeric['Начальный адрес']
+                end_adress    = numeric['Конечный адрес']
+
+                if variable == 'StateDI': start_StateDI = start_address
+
+            for value in data:
+                number = value['№']
+                tag    = value['Идентификатор']
+                name   = value['Название']
+
+                if tag  is None: continue
+                if name is None: continue
+                tag = self.translate(str(tag))
+                signal = f'Root{self.name_prefix}.Diskrets.{tag}.StateDI'
+
+                object = etree.Element('item')
+                object.attrib['Binding'] = 'Introduced'
+                node_p = etree.Element('node-path')
+                node_p.text = str(signal)
+                object.append(node_p)
+
+                segment = etree.Element('table')
+                segment.text = f'Holding Registers'
+                object.append(segment)
+
+                address = etree.Element('address')
+                address.text = str(start_StateDI + (number - 1))
+                object.append(address)
+                root.append(object)
+
+            tree.write(self.map_mb, pretty_print=True)
+            logger.info(f'Diskrets: Карта адресов OK')
+            return (f'Diskrets: Карта адресов OK')
+        except:
+            logger.error(f'Diskrets: Карта адресов FAILED')
+            return (f'Diskrets: Карта адресов FAILED')   
+    def picture_map_modbus(self):
+        data    = self.data['Pic']
+        data_mb = self.data['ModBus']
+        root, tree = self.parser_map_modbus()
+        # Чистка тэгов
+        self.cleaner_map('.Pictures.', root)
+        try:
+            for numeric in data_mb:
+                variable      = numeric['Переменная Excel']
+                start_address = numeric['Начальный адрес']
+                end_adress    = numeric['Конечный адрес']
+
+                if variable == 'StatePicture': start_StatePicture = start_address
+
+            for value in data:
+                number = value['№']
+                name   = value['Название']
+                frame  = value['Кадр IFix(*.grf)']
+
+                if frame is None: continue
+
+                object = etree.Element('item')
+                object.attrib['Binding'] = 'Introduced'
+                node_p = etree.Element('node-path')
+                node_p.text = f'Root{self.name_prefix}.Pictures.{frame}.StatePicture'
+                object.append(node_p)
+
+                segment = etree.Element('table')
+                segment.text = f'Holding Registers'
+                object.append(segment)
+
+                address = etree.Element('address')
+                address.text = str(start_StatePicture + (number - 1))
+                object.append(address)
+                root.append(object)
+
+            tree.write(self.map_mb, pretty_print=True)
+            logger.info(f'Pictures: Карта адресов OK')
+            return (f'Pictures: Карта адресов OK')
+        except:
+            logger.error(f'Pictures: Карта адресов FAILED')
+            return (f'Pictures: Карта адресов FAILED')   
+    def auxsystem_map_modbus(self):
+        dop_vs = {'StateAuxSystem',
+                  'numOfStart',
+                  'operatingTimeCurrentMonth',
+                  'operatingTimeLastMonth',
+                  'operatingTime'}
+
+        data    = self.data['VS']
+        data_mb = self.data['ModBus']
+        root, tree = self.parser_map_modbus()
+        # Чистка тэгов
+        self.cleaner_map('.AuxSystems.', root)
+        try:
+            for numeric in data_mb:
+                variable      = numeric['Переменная Excel']
+                start_address = numeric['Начальный адрес']
+                end_adress    = numeric['Конечный адрес']
+
+                if variable == 'StateAuxSystem'              : start_StateAuxSystem            = start_address
+                if variable == 'vs_numOfStart'               : start_numOfStart                = start_address
+                if variable == 'vs_operatingTimeCurrentMonth': start_operatingTimeCurrentMonth = start_address
+                if variable == 'vs_operatingTimeLastMonth'   : start_operatingTimeLastMonth    = start_address
+                if variable == 'vs_operatingTime'            : start_operatingTime             = start_address
+
+            for value in data:
+                number = value['№']
+
+                if number is None: continue
+
+                for key in dop_vs:
+                    tag = f'VS_{number}'
+                    signal = f'Root{self.name_prefix}.AuxSystems.{tag}.{key}'
+
+                    object = etree.Element('item')
+                    object.attrib['Binding'] = 'Introduced'
+                    node_p = etree.Element('node-path')
+                    node_p.text = str(signal)
+                    object.append(node_p)
+
+                    segment = etree.Element('table')
+                    segment.text = f'Holding Registers'
+                    object.append(segment)
+
+                    address = etree.Element('address')
+                    if key == 'StateAuxSystem'           : address.text = str(start_StateAuxSystem            + 3 * (number - 1))
+                    if key == 'numOfStart'               : address.text = str(start_numOfStart                + 2 * (number - 1))
+                    if key == 'operatingTimeCurrentMonth': address.text = str(start_operatingTimeCurrentMonth + 2 * (number - 1))
+                    if key == 'operatingTimeLastMonth'   : address.text = str(start_operatingTimeLastMonth    + 2 * (number - 1))
+                    if key == 'operatingTime'            : address.text = str(start_operatingTime             + 2 * (number - 1))
+
+                    object.append(address)
+                    root.append(object)
+            tree.write(self.map_mb, pretty_print=True)
+            logger.info(f'AuxSystems: Карта адресов OK')
+            return     (f'AuxSystems: Карта адресов OK')
+        except:
+            logger.error(f'AuxSystems: Карта адресов FAILED')
+            return      (f'AuxSystems: Карта адресов FAILED')    
+    def valves_map_modbus(self):
+        dop_zd = {'StateValve1',
+                  'StateValve2',
+                  'StateValve3',
+                  'Tm.tmZD',
+                  'NumOfOpenings',
+                  'NumOfClosings'}
+
+        data    = self.data['ZD']
+        data_mb = self.data['ModBus']
+        root, tree = self.parser_map_modbus()
+        # Чистка тэгов
+        self.cleaner_map('.Valves.', root)
+        try:
+            for numeric in data_mb:
+                variable      = numeric['Переменная Excel']
+                start_address = numeric['Начальный адрес']
+                end_adress    = numeric['Конечный адрес']
+
+                if variable == 'StateZD'      : start_StateZD       = start_address
+                if variable == 'numOfOpenings': start_NumOfOpenings = start_address
+                if variable == 'numOfClosings': start_NumOfClosings = start_address
+
+            for value in data:
+                number = value['№']
+
+                if number is None: continue
+
+                for key in dop_zd:
+                    tag = f'ZD_{number}'
+                    signal = f'Root{self.name_prefix}.Valves.{tag}.{key}'
+
+                    object = etree.Element('item')
+                    object.attrib['Binding'] = 'Introduced'
+                    node_p = etree.Element('node-path')
+                    node_p.text = str(signal)
+                    object.append(node_p)
+
+                    segment = etree.Element('table')
+                    segment.text = f'Holding Registers'
+                    object.append(segment)
+
+                    address = etree.Element('address')
+                    if key == 'StateValve1'  : address.text = str(start_StateZD       + 5 * (number - 1))
+                    if key == 'StateValve2'  : address.text = str((start_StateZD      + 5 * (number - 1)) + 1)
+                    if key == 'StateValve3'  : address.text = str((start_StateZD      + 5 * (number - 1)) + 2)
+                    #if key == 'Percent'      : address.text = str(start_operatingTimeLastMonth    + 2 * (number - 1))
+                    if key == 'Tm.tmZD'      : address.text = str((start_StateZD      + 5 * (number - 1)) + 4)
+                    if key == 'NumOfOpenings': address.text = str(start_NumOfOpenings + 2 * (number - 1))
+                    if key == 'NumOfClosings': address.text = str(start_NumOfClosings + 2 * (number - 1))
+                    object.append(address)
+                    root.append(object)
+
+            tree.write(self.map_mb, pretty_print=True)
+            logger.info(f'Valves: Карта адресов OK')
+            return     (f'Valves: Карта адресов OK')
+        except:
+            logger.error(f'Valves: Карта адресов FAILED')
+            return      (f'Valves: Карта адресов FAILED')  
+    def pumps_map_modbus(self):
+        dop_na = {'StateNA',
+                  'StateNAEx',
+                  'StateNAStatistic',
+                  'operatingTimeSinceSwitchingOn',
+                  'operatingTimeSinceSwitchingOnSet',
+                  'operatingTimeBeforeOverhaul',
+                  'operatingTimeBeforeOverhaulSet',
+                  'numOfStart',
+                  'dateTimeOfStart',
+                  'dateTimeOfStop',
+                  'operatingTimeCurrentMonth',
+                  'operatingTimeLastMonth',
+                  'operatingTimeTO',
+                  'operatingTimeTO1',
+                  'operatingTimeTOSet',
+                  'operatingTimeMidTO',
+                  'operatingTimeMidTOSet',
+                  'operatingTimeThisKvart',
+                  'operatingTimeLastKvart',
+                  'operatingTimeFromBegin',
+                  'operatingTimeED',
+                  'operatingTimeEDSet',
+                  'numOfStartSet',
+                  'time24hStart',
+                  'timeFromHotStart',
+                  'numOfStarts24h',
+                  'OperatingTimeState',
+                  }
+
+        data    = self.data['UMPNA']
+        data_mb = self.data['ModBus']
+        root, tree = self.parser_map_modbus()
+        # Чистка тэгов
+        self.cleaner_map('.NAs.', root)
+        try:
+            for numeric in data_mb:
+                variable      = numeric['Переменная Excel']
+                start_address = numeric['Начальный адрес']
+                end_adress    = numeric['Конечный адрес']
+
+                if variable == 'StateNA'                         : start_StateNA                          = start_address
+                if variable == 'operatingTimeSinceSwitchingOn'   : start_operatingTimeSinceSwitchingOn    = start_address
+                if variable == 'operatingTimeSinceSwitchingOnSet': start_operatingTimeSinceSwitchingOnSet = start_address
+                if variable == 'operatingTimeBeforeOverhaul'     : start_operatingTimeBeforeOverhaul      = start_address
+                if variable == 'operatingTimeBeforeOverhaulSet'  : start_operatingTimeBeforeOverhaulSet   = start_address
+                if variable == 'numOfStarts'                     : start_numOfStarts                      = start_address
+                if variable == 'numOfStartsSet'                  : start_numOfStartsSet                   = start_address
+                if variable == 'dateTimeOfStart'                 : start_dateTimeOfStart                  = start_address
+                if variable == 'dateTimeOfStop'                  : start_dateTimeOfStop                   = start_address
+                if variable == 'operatingTimeCurrentMonth'       : start_operatingTimeCurrentMonth        = start_address
+                if variable == 'operatingTimeLastMonth'          : start_operatingTimeLastMonth           = start_address
+                if variable == 'operatingTimeTO'                 : start_operatingTimeTO                  = start_address
+                if variable == 'operatingTimeTO1'                : start_operatingTimeTO1                 = start_address
+                if variable == 'operatingTimeTOSet'              : start_operatingTimeTOSet               = start_address
+                if variable == 'operatingTimeMidTO'              : start_operatingTimeMidTO               = start_address
+                if variable == 'operatingTimeMidTOSet'           : start_operatingTimeMidTOSet            = start_address
+                if variable == 'operatingTimeThisKvart'          : start_operatingTimeThisKvart           = start_address
+                if variable == 'operatingTimeLastKvart'          : start_operatingTimeLastKvart           = start_address
+                if variable == 'operatingTimeFromBegin'          : start_operatingTimeFromBegin           = start_address
+                if variable == 'operatingTimeED'                 : start_operatingTimeED                  = start_address
+                if variable == 'operatingTimeEDSet'              : start_operatingTimeEDSet               = start_address
+                if variable == 'operatingTimeState'              : start_operatingTimeState               = start_address
+
+            for value in data:
+                number = value['№']
+
+                if number is None: continue
+
+                for key in dop_na:
+                    tag    = f'NA_{number}'
+                    signal = f'Root{self.name_prefix}.NAs.{tag}.{key}'
+
+                    object = etree.Element('item')
+                    object.attrib['Binding'] = 'Introduced'
+                    node_p = etree.Element('node-path')
+                    node_p.text = str(signal)
+                    object.append(node_p)
+
+                    segment = etree.Element('table')
+                    segment.text = f'Holding Registers'
+                    object.append(segment)
+
+                    address = etree.Element('address')
+
+                    if key == 'StateNA'                         : address.text = str(start_StateNA  + 11 * (number - 1))
+                    if key == 'StateNAEx'                       : address.text = str((start_StateNA + 11 * (number - 1)) + 1)
+                    if key == 'StateNAStatistic'                : address.text = str((start_StateNA + 11 * (number - 1)) + 2)
+                    if key == 'operatingTimeSinceSwitchingOn'   : address.text = str(start_operatingTimeSinceSwitchingOn    + 42 * (number - 1))
+                    if key == 'operatingTimeSinceSwitchingOnSet': address.text = str(start_operatingTimeSinceSwitchingOnSet + 42 * (number - 1))
+                    if key == 'operatingTimeBeforeOverhaul'     : address.text = str(start_operatingTimeBeforeOverhaul      + 42 * (number - 1))
+                    if key == 'operatingTimeBeforeOverhaulSet'  : address.text = str(start_operatingTimeBeforeOverhaulSet   + 42 * (number - 1))
+                    if key == 'numOfStart'                      : address.text = str(start_numOfStarts     + 42 * (number - 1))
+                    if key == 'dateTimeOfStart'                 : address.text = str(start_dateTimeOfStart + 42 * (number - 1))
+                    if key == 'dateTimeOfStop'                  : address.text = str(start_dateTimeOfStop  + 42 * (number - 1))
+                    if key == 'operatingTimeCurrentMonth'       : address.text = str(start_operatingTimeCurrentMonth + 42 * (number - 1))
+                    if key == 'operatingTimeLastMonth'          : address.text = str(start_operatingTimeLastMonth    + 42 * (number - 1))
+                    if key == 'operatingTimeTO'                 : address.text = str(start_operatingTimeTO    + 42 * (number - 1))
+                    if key == 'operatingTimeTO1'                : address.text = str(start_operatingTimeTO1   + 42 * (number - 1))
+                    if key == 'operatingTimeTOSet'              : address.text = str(start_operatingTimeTOSet + 42 * (number - 1))
+                    if key == 'operatingTimeMidTO'              : address.text = str(start_operatingTimeMidTO    + 42 * (number - 1))
+                    if key == 'operatingTimeMidTOSet'           : address.text = str(start_operatingTimeMidTOSet + 42 * (number - 1))
+                    if key == 'operatingTimeThisKvart'          : address.text = str(start_operatingTimeThisKvart + 42 * (number - 1))
+                    if key == 'operatingTimeLastKvart'          : address.text = str(start_operatingTimeLastKvart + 42 * (number - 1))
+                    if key == 'operatingTimeFromBegin'          : address.text = str(start_operatingTimeFromBegin + 42 * (number - 1))
+                    if key == 'operatingTimeED'                 : address.text = str(start_operatingTimeED    + 42 * (number - 1))
+                    if key == 'operatingTimeEDSet'              : address.text = str(start_operatingTimeEDSet + 42 * (number - 1))
+                    if key == 'numOfStartSet'                   : address.text = str(start_numOfStartsSet     + 42 * (number - 1))
+                    if key == 'OperatingTimeState'              : address.text = str(start_operatingTimeState + 42 * (number - 1))
+
+                    object.append(address)
+                    root.append(object)
+
+            tree.write(self.map_mb, pretty_print=True)
+            logger.info(f'NAs: Карта адресов OK')
+            return     (f'NAs: Карта адресов OK')
+        except:
+            logger.error(f'NAs: Карта адресов FAILED')
+            return      (f'NAs: Карта адресов FAILED')  
+    def relayted_system_map_modbus(self):
+        data       = self.data['SS']
+        data_mb    = self.data['ModBus']
+        root, tree = self.parser_map_modbus()
+        # Чистка тэгов
+        self.cleaner_map('.SSs.', root)
+        try:
+            for numeric in data_mb:
+                variable      = numeric['Переменная Excel']
+                start_address = numeric['Начальный адрес']
+                end_adress    = numeric['Конечный адрес']
+
+                if variable == 'SS': start_SS = start_address
+
+            for value in data:
+                number = value['№']
+                name   = value['Название']
+
+                if number is None: continue
+                if name   is None: continue
+
+                object = etree.Element('item')
+                object.attrib['Binding'] = 'Introduced'
+                node_p = etree.Element('node-path')
+                node_p.text = f'Root{self.name_prefix}.SSs.SS_{number}.StateSS'
+                object.append(node_p)
+
+                segment = etree.Element('table')
+                segment.text = f'Holding Registers'
+                object.append(segment)
+
+                address = etree.Element('address')
+                address.text = f'{start_SS + (number - 1)}'
+                object.append(address)
+                root.append(object)
+
+            tree.write(self.map_mb, pretty_print=True)
+            logger.info(f'SSs: Карта адресов OK')
+            return     (f'SSs: Карта адресов OK')
+        except:
+            logger.error(f'SSs: Карта адресов FAILED')
+            return      (f'SSs: Карта адресов FAILED') 
+    def uts_map_modbus(self):
+        data    = self.data['UTS']
+        data_mb = self.data['ModBus']
+        root, tree = self.parser_map_modbus()
+        # Чистка тэгов
+        self.cleaner_map('.UTSs.', root)
+        try:
+            for numeric in data_mb:
+                variable      = numeric['Переменная Excel']
+                start_address = numeric['Начальный адрес']
+                end_adress    = numeric['Конечный адрес']
+
+                if variable == 'StateUTS': start_StateUTS = start_address
+
+            for value in data:
+                number = value['№']
+                tag    = value['Идентификатор']
+                name   = value['Название']
+
+                if number is None: continue
+                if name   is None: continue
+                if tag    is None: continue
+
+                tag = self.translate(str(tag))
+
+                object = etree.Element('item')
+                object.attrib['Binding'] = 'Introduced'
+                node_p = etree.Element('node-path')
+                node_p.text = f'Root{self.name_prefix}.UTSs.{tag}.StateUTS'
+                object.append(node_p)
+
+                segment = etree.Element('table')
+                segment.text = f'Holding Registers'
+                object.append(segment)
+
+                address = etree.Element('address')
+                address.text = str(start_StateUTS + (number - 1))
+                object.append(address)
+                root.append(object)
+
+            tree.write(self.map_mb, pretty_print=True)
+            logger.info(f'UTSs: Карта адресов OK')
+            return     (f'UTSs: Карта адресов OK')
+        except:
+            logger.error(f'UTSs: Карта адресов FAILED')
+            return      (f'UTSs: Карта адресов FAILED') 
+    def upts_map_modbus(self):
+        data    = self.data['UPTS']
+        data_mb = self.data['ModBus']
+        root, tree = self.parser_map_modbus()
+        # Чистка тэгов
+        self.cleaner_map('.UPTSs.', root)
+        try:
+            for numeric in data_mb:
+                variable      = numeric['Переменная Excel']
+                start_address = numeric['Начальный адрес']
+                end_adress    = numeric['Конечный адрес']
+
+                if variable == 'StateUPTS': start_StateUPTS = start_address
+
+            for value in data:
+                number = value['№']
+                tag    = value['Идентификатор']
+                name   = value['Название']
+
+                if number is None: continue
+                if name   is None: continue
+                if tag    is None: continue
+
+                tag = self.translate(str(tag))
+
+                object = etree.Element('item')
+                object.attrib['Binding'] = 'Introduced'
+                node_p = etree.Element('node-path')
+                node_p.text = f'Root{self.name_prefix}.UPTSs.{tag}.StateUPTS'
+                object.append(node_p)
+
+                segment = etree.Element('table')
+                segment.text = f'Holding Registers'
+                object.append(segment)
+
+                address = etree.Element('address')
+                address.text = str(start_StateUPTS + (number - 1))
+                object.append(address)
+                root.append(object)
+
+            tree.write(self.map_mb, pretty_print=True)
+            logger.info(f'UPTSs: Карта адресов OK')
+            return     (f'UPTSs: Карта адресов OK')
+        except:
+            logger.error(f'UPTSs: Карта адресов FAILED')
+            return      (f'UPTSs: Карта адресов FAILED')
+    def ktpr_map_modbus(self):
+        data    = self.data['KTPR']
+        data_mb = self.data['ModBus']
+        root, tree = self.parser_map_modbus()
+        # Чистка тэгов
+        self.cleaner_map('.KTPRs.', root)
+        number_group = 0
+        try:
+            for numeric in data_mb:
+                variable      = numeric['Переменная Excel']
+                start_address = numeric['Начальный адрес']
+                end_adress    = numeric['Конечный адрес']
+
+                if variable == 'stateKTPRx': start_stateKTPRx = start_address
+
+            for value in data:
+                number_defence = value['№']
+                if number_defence is None: continue
+                number_group += 1
+            count_group = math.ceil(number_group/4)
+
+            for count in range(count_group):
+                object = etree.Element('item')
+                object.attrib['Binding'] = 'Introduced'
+                node_p = etree.Element('node-path')
+                node_p.text = f'Root{self.name_prefix}.KTPRs.Group_{count + 1}.StateKTPRx'
+                object.append(node_p)
+
+                segment = etree.Element('table')
+                segment.text = f'Holding Registers'
+                object.append(segment)
+
+                address = etree.Element('address')
+                address.text = str(start_stateKTPRx + (count - 1))
+                object.append(address)
+                root.append(object)
+
+            tree.write(self.map_mb, pretty_print=True)
+            logger.info(f'KTPRs: Карта адресов OK')
+            return     (f'KTPRs: Карта адресов OK')
+        except:
+            logger.error(f'KTPRs: Карта адресов FAILED')
+            return      (f'KTPRs: Карта адресов FAILED')  
+    def ktprp_map_modbus(self):
+        data    = self.data['KTPRP']
+        data_mb = self.data['ModBus']
+        root, tree = self.parser_map_modbus()
+        # Чистка тэгов
+        self.cleaner_map('.KTPRs.', root)
+        number_group = 0
+        try:
+            for numeric in data_mb:
+                variable      = numeric['Переменная Excel']
+                start_address = numeric['Начальный адрес']
+                end_adress    = numeric['Конечный адрес']
+
+                if variable == 'stateKTPRx': start_stateKTPRx = start_address
+
+            for value in data:
+                number_defence = value['№']
+                if number_defence is None: continue
+                number_group += 1
+            count_group = math.ceil(number_group / 4)
+
+            for count in range(count_group):
+                object = etree.Element('item')
+                object.attrib['Binding'] = 'Introduced'
+                node_p = etree.Element('node-path')
+                node_p.text = f'Root{self.name_prefix}.KTPRs.Group_{count + 1}.StateKTPRx'
+                object.append(node_p)
+
+                segment = etree.Element('table')
+                segment.text = f'Holding Registers'
+                object.append(segment)
+
+                address = etree.Element('address')
+                address.text = str(start_stateKTPRx + (count - 1))
+                object.append(address)
+                root.append(object)
+
+            tree.write(self.map_mb, pretty_print=True)
+            logger.info(f'KTPRs: Карта адресов OK')
+            return     (f'KTPRs: Карта адресов OK')
+        except:
+            logger.error(f'KTPRs: Карта адресов FAILED')
+            return      (f'KTPRs: Карта адресов FAILED')  
+    def ktpra_map_modbus(self):
+        data    = self.data['KTPRA']
+        data_mb = self.data['ModBus']
+        root, tree = self.parser_map_modbus()
+        # Чистка тэгов
+        self.cleaner_map('.KTPRAs.', root)
+        number_pumps_old = ''
+        count_pumps      = 0
+        count            = 0
+        try:
+            for numeric in data_mb:
+                variable      = numeric['Переменная Excel']
+                start_address = numeric['Начальный адрес']
+                end_adress    = numeric['Конечный адрес']
+
+                if variable == 'stateKTPRA': start_stateKTPRA = start_address
+
+            for value in data:
+                number_defence   = value['№']
+                number_pumps_int = value['НА']
+
+                if number_defence   is None: continue
+                if number_pumps_int is None: continue
+
+                if number_pumps_int != number_pumps_old:
+                    number_pumps_old = number_pumps_int
+                    count_pumps  += 1
+                    number_group  = 0
+
+                if number_defence % 4 == 0:
+                    number_group += 1
+                    count += 1
+
+                    object = etree.Element('item')
+                    object.attrib['Binding'] = 'Introduced'
+                    node_p = etree.Element('node-path')
+                    node_p.text = f'Root{self.name_prefix}.KTPRAs.KTPRAs_{count_pumps}.Group_{number_group}.StateKTPRx'
+                    object.append(node_p)
+
+                    segment = etree.Element('table')
+                    segment.text = f'Holding Registers'
+                    object.append(segment)
+
+                    address = etree.Element('address')
+                    address.text = str(start_stateKTPRA + (number_group - 1) + (count_pumps - 1) * 48)
+                    object.append(address)
+                    root.append(object)
+
+            tree.write(self.map_mb, pretty_print=True)
+            logger.info(f'KTPRAs: Карта адресов OK')
+            return      (f'KTPRAs: Карта адресов OK')
+        except:
+            logger.error(f'KTPRAs: Карта адресов FAILED')
+            return      (f'KTPRAs: Карта адресов FAILED')   
+    def gmpna_map_modbus(self):
+        data    = self.data['GMPNA']
+        data_mb = self.data['ModBus']
+        root, tree = self.parser_map_modbus()
+        # Чистка тэгов
+        self.cleaner_map('.GMPNAs.', root)
+        number_pumps_old = ''
+        count_pumps = 0
+        count       = 0
+        try:
+            for numeric in data_mb:
+                variable      = numeric['Переменная Excel']
+                start_address = numeric['Начальный адрес']
+                end_adress    = numeric['Конечный адрес']
+
+                if variable == 'stateGMPNA': start_stateGMPNA = start_address
+
+            for value in data:
+                number_defence   = value['№']
+                number_pumps_int = value['НА']
+
+                if number_defence   is None: continue
+                if number_pumps_int is None: continue
+
+                if number_pumps_int != number_pumps_old:
+                    number_pumps_old = number_pumps_int
+                    count_pumps += 1
+                    number_group = 0
+
+                if number_defence % 4 == 0:
+                    number_group += 1
+                    count        += 1
+
+                    object = etree.Element('item')
+                    object.attrib['Binding'] = 'Introduced'
+                    node_p = etree.Element('node-path')
+                    node_p.text = f'Root{self.name_prefix}.GMPNAs.GMPNAs_{count_pumps}.Group_{number_group}.StateGMPNA'
+                    object.append(node_p)
+
+                    segment = etree.Element('table')
+                    segment.text = f'Holding Registers'
+                    object.append(segment)
+
+                    address = etree.Element('address')
+                    address.text = str(start_stateGMPNA + (count - 1))
+                    object.append(address)
+                    root.append(object)
+
+            tree.write(self.map_mb, pretty_print=True)
+            logger.info(f'GMPNAs: Карта адресов OK')
+            return     (f'GMPNAs: Карта адресов OK')
+        except:
+            logger.error(f'GMPNAs: Карта адресов FAILED')
+            return      (f'GMPNAs: Карта адресов FAILED') 
+    def pi_map_modbus(self):
+        data    = self.data['PI']
+        data_mb = self.data['ModBus']
+        root, tree = self.parser_map_modbus()
+        # Чистка тэгов
+        self.cleaner_map('.PIs.', root)
+        try:
+            for numeric in data_mb:
+                variable      = numeric['Переменная Excel']
+                start_address = numeric['Начальный адрес']
+                end_adress    = numeric['Конечный адрес']
+
+                if variable == 'StatePI': start_StatePI = start_address
+
+            for value in data:
+                number = value['№']
+                tag    = value['Идентификатор']
+
+                if number is None: continue
+                if tag    is None: continue
+
+                tag = self.translate(str(tag))
+
+                object = etree.Element('item')
+                object.attrib['Binding'] = 'Introduced'
+                node_p = etree.Element('node-path')
+                node_p.text = f'Root{self.name_prefix}.PIs.{tag}.StatePI'
+                object.append(node_p)
+
+                segment = etree.Element('table')
+                segment.text = f'Holding Registers'
+                object.append(segment)
+
+                address = etree.Element('address')
+                address.text = str(start_StatePI + (number - 1))
+                object.append(address)
+                root.append(object)
+
+            tree.write(self.map_mb, pretty_print=True)
+            logger.info(f'PIs: Карта адресов OK')
+            return     (f'PIs: Карта адресов OK')
+        except:
+            logger.error(f'PIs: Карта адресов FAILED')
+            return      (f'PIs: Карта адресов FAILED')   
+    def pz_map_modbus(self):
+        # Зоны с тушением
+        dop_pz_ptush = ['StatePZ', 'exStatePZ', 'ReadyFlags', 'TimetoNextAttack', 'AttackCounter', 'TimetoEvacuation']
+        # Зоны без тушения
+        #dop_pz = ['StatePZ', 'exStatePZ', 'ReadyFlags']
+
+        data    = self.data['PZ']
+        data_mb = self.data['ModBus']
+        root, tree = self.parser_map_modbus()
+        # Чистка тэгов
+        self.cleaner_map('.PZs.', root)
+        count = 0
+        try:
+            for numeric in data_mb:
+                variable      = numeric['Переменная Excel']
+                start_address = numeric['Начальный адрес']
+                end_adress    = numeric['Конечный адрес']
+
+                if variable == 'StatePZ': start_StatePZ = start_address
+
+            for value in data:
+                number    = value['№']
+                zone_type = value['Тип']
+
+                if number    is None: continue
+                if zone_type is None: continue
+                # Выбираем от типа
+                #set_words = dop_pz if zone_type == 0 else dop_pz_ptush
+
+                for key in dop_pz_ptush:
+                    object = etree.Element('item')
+                    object.attrib['Binding'] = 'Introduced'
+                    node_p = etree.Element('node-path')
+                    node_p.text = f'Root{self.name_prefix}.PZs.PZ_{number}.{key}'
+                    object.append(node_p)
+
+                    segment = etree.Element('table')
+                    segment.text = f'Holding Registers'
+                    object.append(segment)
+
+                    address = etree.Element('address')
+                    address.text = str(start_StatePZ + count)
+                    object.append(address)
+                    root.append(object)
+                    count += 1
+            tree.write(self.map_mb, pretty_print=True)
+            logger.info(f'PZs: Карта адресов OK')
+            return     (f'PZs: Карта адресов OK')
+        except:
+            logger.error(f'PZs: Карта адресов FAILED')
+            return      (f'PZs: Карта адресов FAILED')
+
+
 # Work with filling in the table 
 class Filling_HardWare():
     def __init__(self):
@@ -2975,9 +3956,7 @@ class Filling_AI():
                     module_s    = row_sql['module']
                     channel_s   = row_sql['channel']
 
-                    tag_translate = self.dop_function.translate(str(tag))
-                    if tag_translate == 'None': tag_translate = ''
-
+                    if tag == 'None': tag = ''
                     if self.dop_function.str_find(type_signal, {'AI'}) or self.dop_function.str_find(scheme, {'AI'}):
                         count_AI += 1
                         # Выбор между полным заполнением или обновлением
@@ -2991,7 +3970,7 @@ class Filling_AI():
                                                         AI.module  == module_s,
                                                         AI.channel == channel_s)
                         if bool(coincidence):
-                            exist_tag  = AI.select().where(AI.tag  == tag_translate)
+                            exist_tag  = AI.select().where(AI.tag  == tag)
                             exist_name = AI.select().where(AI.name == description)
 
                             if not bool(exist_tag):
@@ -3002,9 +3981,9 @@ class Filling_AI():
                                                               module={module_s} AND 
                                                               channel={channel_s}""")
                                 for id_, tag_ in self.cursor.fetchall():
-                                    msg[f'{today} - Таблица: ai, у сигнала обновлен tag: id = {id_}, ({tag_}) {tag_translate}'] = 2
+                                    msg[f'{today} - Таблица: ai, у сигнала обновлен tag: id = {id_}, ({tag_}) {tag}'] = 2
                                 self.cursor.execute(f'''UPDATE ai
-                                                        SET Tag='{tag_translate}' 
+                                                        SET Tag='{tag}' 
                                                         WHERE uso='{uso_s}' AND 
                                                             basket={basket_s} AND 
                                                             module={module_s} AND 
@@ -3026,7 +4005,6 @@ class Filling_AI():
                                                               module={module_s} AND 
                                                               channel={channel_s}''')
                             continue
-
                         # Сквозной номер модуля
                         try:
                             for through_module_number in HardWare.select().dicts():
@@ -3140,7 +4118,7 @@ class Filling_AI():
                         msg[f'{today} - Таблица: ai, добавлен новый сигнал: {row_sql}'] = 1
                         list_AI.append(dict(id = count_AI,
                                             variable = f'AI[{count_AI}]',
-                                            tag = tag_translate,
+                                            tag = tag,
                                             name = description,
                                             pValue = f'mAI8[{isdigit_num}, {module_s}]',
                                             pHealth = f'mAI8_HEALTH[{isdigit_num}]',
@@ -3353,8 +4331,7 @@ class Filling_DI():
                     module_s    = row_sql['module']
                     channel_s   = row_sql['channel']
 
-                    tag_translate = self.dop_function.translate(str(tag))
-                    if tag_translate == 'None': tag_translate = ''
+                    if tag == 'None': tag = ''
 
                     if self.dop_function.str_find(type_signal, {'DI'}) or self.dop_function.str_find(scheme, {'DI'}):
                         count_DI += 1
@@ -3369,7 +4346,7 @@ class Filling_DI():
                                                         DI.module  == module_s,
                                                         DI.channel == channel_s)
                         if bool(coincidence):
-                            exist_tag  = DI.select().where(DI.tag  == tag_translate)
+                            exist_tag  = DI.select().where(DI.tag  == tag)
                             exist_name = DI.select().where(DI.name == description)
 
                             if not bool(exist_tag):
@@ -3380,9 +4357,9 @@ class Filling_DI():
                                                               module={module_s} AND 
                                                               channel={channel_s}''')
                                 for id_, tag_ in self.cursor.fetchall():
-                                    msg[f'{today} - Таблица: di, у сигнала обновлен tag: id = {id_}, ({tag_}) {tag_translate}'] = 2
+                                    msg[f'{today} - Таблица: di, у сигнала обновлен tag: id = {id_}, ({tag_}) {tag}'] = 2
                                 self.cursor.execute(f'''UPDATE di
-                                                        SET tag='{tag_translate}' 
+                                                        SET tag='{tag}' 
                                                         WHERE uso='{uso_s}' AND 
                                                               basket={basket_s} AND 
                                                               module={module_s} AND 
@@ -3442,7 +4419,7 @@ class Filling_DI():
 
                         list_DI.append(dict(id = count_DI,
                                             variable = f'DI[{count_DI}]',
-                                            tag = tag_translate,
+                                            tag = tag,
                                             name = description,
                                             pValue = f'{tag_h}_{prefix}_DI[{channel_s}]',
                                             pHealth = f'mDI_HEALTH[{str(isdigit_num)}]',
@@ -3512,8 +4489,7 @@ class Filling_DO():
                     module_s    = row_sql['module']
                     channel_s   = row_sql['channel']
 
-                    tag_translate = self.dop_function.translate(str(tag))
-                    if tag_translate == 'None': tag_translate = ''
+                    if tag == 'None': tag = ''
 
                     if self.dop_function.str_find(type_signal, {'DO'}) or self.dop_function.str_find(scheme, {'DO'}):
                         count_DO += 1
@@ -3528,7 +4504,7 @@ class Filling_DO():
                                                         DO.module == module_s,
                                                         DO.channel== channel_s)
                         if bool(coincidence):
-                            exist_tag  = DO.select().where(DO.tag == tag_translate)
+                            exist_tag  = DO.select().where(DO.tag == tag)
                             exist_name = DO.select().where(DO.name == description)
 
                             if not bool(exist_tag):
@@ -3539,9 +4515,9 @@ class Filling_DO():
                                                               module={module_s} AND 
                                                               channel={channel_s}''')
                                 for id_, tag_ in self.cursor.fetchall():
-                                    msg[f'{today} - Таблица: do, у сигнала обновлен tag: id = {id_}, ({tag_}) {tag_translate}'] = 2
+                                    msg[f'{today} - Таблица: do, у сигнала обновлен tag: id = {id_}, ({tag_}) {tag}'] = 2
                                 self.cursor.execute(f'''UPDATE "do"
-                                                        SET tag='{tag_translate}' 
+                                                        SET tag='{tag}' 
                                                         WHERE uso='{uso_s}' AND 
                                                               basket={basket_s} AND 
                                                               module={module_s} AND 
@@ -3563,7 +4539,6 @@ class Filling_DO():
                                                               module={module_s} AND 
                                                               channel={channel_s}''')
                             continue
-
                         # Сквозной номер модуля
                         try:
                             for through_module_number in HardWare.select().dicts():
@@ -3595,7 +4570,7 @@ class Filling_DO():
 
                         list_DO.append(dict(id = count_DO,
                                             variable = f'DO[{count_DO}]',
-                                            tag = tag_translate,
+                                            tag = tag,
                                             name = description,
                                             pValue = f'{tag_h}_{prefix}_DO[{channel_s}]',
                                             pHealth = f'mDO_HEALTH[{str(isdigit_num)}]',
@@ -3726,7 +4701,7 @@ class Filling_RS():
         return(msg)
     # Заполняем таблицу RS
     def column_check(self):
-        list_default = ['variable', 'tag', 'name', 'pValue', 'pHealth', 'Pic', 'uso', 'basket', 'module', 'channel']
+        list_default = ['variable', 'tag', 'name', 'array_number_modul', 'pValue', 'pHealth', 'Pic', 'uso', 'basket', 'module', 'channel']
         msg = self.dop_function.column_check(RS, 'rs', list_default)
         return msg 
 class Filling_KTPRP():

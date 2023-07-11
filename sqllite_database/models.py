@@ -105,8 +105,8 @@ rus_list = {'signals': {'id':'№', 'type_signal':'Тип сигнала', 'uso'
                    'pHealth':'Ссылка на исправность\nканала', 'short_title':'Короткое название', 'tabl_msg':'Таблица сообщений',
                    'uso':'Шкаф', 'basket':'Корзина', 'module':'Модуль', 'channel':'Канал'},
 
-            'rs': {'id':'№','variable':'Переменная', 'tag':'Идентификатор', 'name':'Название', 'pValue':'Ссылка на входное\nзначение сигнала', 
-                   'pHealth':'Ссылка на исправность\nканала', 'Pic':'Pic',
+            'rs': {'id':'№','variable':'Переменная', 'tag':'Идентификатор', 'name':'Название', 'array_number_modul':'№ модуля в\nмассиве mRS', 
+                   'pValue':'Ссылка на входное\nзначение сигнала', 'pHealth':'Ссылка на исправность\nканала', 'Pic':'Pic',
                    'uso':'Шкаф', 'basket':'Корзина', 'module':'Модуль', 'channel':'Канал'},
             
             'hardware': {'id':'№', 'tag':'Идентификатор\n(не генерится!)', 'uso':'Шкаф', 'basket':'Корзина',
@@ -702,6 +702,7 @@ class RS(BaseModel):
     variable = CharField(null = True)
     tag  = CharField(null = True)
     name = CharField(null = True)
+    array_number_modul  = IntegerField(null = True)
     pValue  = CharField(null = True)
     pHealth = CharField(null = True)
     Pic = CharField(null = True)

@@ -1449,6 +1449,7 @@ class Equipment(Initialisation_path):
 
                 object = etree.Element('item')
                 object.attrib['Binding'] = 'Introduced'
+                
                 node_p = etree.Element('node-path')
                 node_p.text = str(signal)
                 object.append(node_p)
@@ -1460,6 +1461,7 @@ class Equipment(Initialisation_path):
                 array_pos = etree.Element('arrayposition')
                 array_pos.text = str(arrayposition)
                 object.append(array_pos)
+
                 root.append(object)
             tree.write(self.map, pretty_print=True)
             logger.info(f'Diskrets: Карта адресов OK')
