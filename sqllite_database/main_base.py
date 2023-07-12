@@ -238,6 +238,16 @@ class General_functions():
         except Exception:
             return 
         return cursor.fetchall()
+    def connect_by_sql_condition(self, table_used, column, condition):
+        try:
+            cursor = db.cursor()
+            cursor.execute(f'''SELECT {column}
+                               FROM "{table_used}"
+                               WHERE {condition}
+                               ORDER BY id''')
+        except Exception:
+            return 
+        return cursor.fetchall()
     # Создание атрибутов
     def new_attr(self, obj, type, value):
          atrb = etree.Element("attribute")
@@ -282,6 +292,27 @@ class General_functions():
                                     return 0, el1, tree
         except:
             return 1, 0, 0
+    def parser_diag_omx(self, directory):
+        parser = etree.XMLParser(remove_blank_text=True)
+        tree = etree.parse(f'{path_to_devstudio}\\typical_prj.omx', parser)
+        root = tree.getroot()
+        try:
+            for el in root.iter('{automation.deployment}application-object'):
+                if el.attrib['name'] == "Application_PLC":
+                    for item in el.iter('{automation.control}object'):
+                        if item.attrib['name'] == "Diag":
+                            for el1 in item.iter('{automation.control}object'):
+                                if el1.attrib['name'] == directory:
+                                    item.remove(el1)
+                            object = etree.Element("{automation.control}object")
+                            object.attrib['name'] = directory
+                            item.append(object)
+
+                            for el1 in item.iter('{automation.control}object'):
+                                if el1.attrib['name'] == directory:
+                                    return 0, el1, tree
+        except:
+            return 1, 0, 0
     def parser_map(self):
         parser = etree.XMLParser(remove_blank_text=True)
         tree = etree.parse(f'{path_to_devstudio}\\OUA.xml', parser)
@@ -293,6 +324,16 @@ class General_functions():
             if self.str_find(item.text, {signal}):
                 parent = item.getparent()
                 root.remove(parent)
+    def cleaner_diag_map(self, directory, root):
+        for item in root.iter('item'):
+            signal = f'Root{prefix_system}{directory}'
+            if self.str_find(item.attrib['id'], {signal}):
+                root.remove(item)
+    def parser_diag_map(self, path_map):
+        parser = etree.XMLParser(remove_blank_text=True)
+        tree = etree.parse(path_map, parser)
+        root = tree.getroot()
+        return root, tree
 # Work with filling in the table 'Signals'
 class Import_in_SQL():
     def __init__(self, exel):
@@ -2052,6 +2093,13 @@ class Filling_attribute_DevStudio():
             if tabl == 'PZ': 
                 msg.update(self.pz_omx())
                 continue
+            if tabl == 'AI_diag': 
+                msg.update(self.pz_omx())
+                continue
+            if tabl == 'AO_diag': 
+                msg.update(self.mklogic_AO_omx())
+                msg.update(self.mklogic_AO_atrib())
+                continue
         return msg
     def write_in_map(self, list_tabl):
             msg = {}
@@ -2063,47 +2111,50 @@ class Filling_attribute_DevStudio():
                     msg.update(self.analogs_maps())
                     continue
                 if tabl == 'DI': 
-                    msg.update(self.diskret_in_omx())
+                    msg.update(self.diskret_maps())
                     continue
                 if tabl == 'VS': 
-                    msg.update(self.auxsystem_omx())
+                    msg.update(self.auxsystem_maps())
                     continue
                 if tabl == 'ZD': 
-                    msg.update(self.valves_omx())
+                    msg.update(self.valves_maps())
                     continue
                 if tabl == 'NA': 
-                    msg.update(self.pumps_omx())
+                    msg.update(self.na_maps())
                     continue
                 if tabl == 'PIC': 
-                    msg.update(self.picture_omx())
+                    msg.update(self.picturs_maps())
                     continue
                 if tabl == 'SS': 
-                    msg.update(self.relayted_system_omx())
+                    msg.update(self.ss_maps())
                     continue
                 if tabl == 'UTS': 
-                    msg.update(self.uts_omx())
+                    msg.update(self.uts_maps())
                     continue
                 if tabl == 'UPTS': 
-                    msg.update(self.upts_omx())
+                    msg.update(self.upts_maps())
                     continue
                 if tabl == 'KTPR': 
-                    msg.update(self.ktpr_omx())
+                    msg.update(self.ktpr_maps())
                     continue
                 if tabl == 'KTPRP': 
-                    msg.update(self.ktprp_omx())
+                    msg.update(self.ktprp_maps())
                     continue
                 if tabl == 'KTPRA': 
-                    msg.update(self.ktpra_omx())
+                    msg.update(self.ktpra_maps())
                     continue
                 if tabl == 'GMPNA': 
-                    msg.update(self.gmpna_omx())
+                    msg.update(self.gmpna_maps())
                     continue
                 if tabl == 'PI': 
-                    msg.update(self.pi_omx())
+                    msg.update(self.pi_maps())
                     continue
                 if tabl == 'PZ': 
-                    msg.update(self.pz_omx())
+                    msg.update(self.pz_maps())
                     continue
+                if tabl == 'AO_diag': 
+                    msg.update(self.mklogic_AO_maps())
+                continue
             return msg
     def clear_omx(self, list_tabl):
         msg = {}
@@ -2157,7 +2208,7 @@ class Filling_attribute_DevStudio():
                 msg.update(self.dop_function.clear_objects('PZs'))
                 continue
         return msg
-    # Заполнение omx
+    # Заполнение omx и атрибутов
     def analogs_omx(self):
             msg = {}
             dop_analog = {'объем'         : 'V',
@@ -2268,6 +2319,7 @@ class Filling_attribute_DevStudio():
                 tag_di     = self.dop_function.translate(str(tag_di))
                 tag_ai     = ' '
                 tag_ai_ref = ' '
+                
                 if not pNC_AI == '': 
                     isdigit = re.findall('\d+', str(pNC_AI))
                     for number in data_ai:
@@ -2275,7 +2327,7 @@ class Filling_attribute_DevStudio():
                         tag_ai    = number[1]
                         if str(number_ai) == str(isdigit[0]):
                             if tag_ai == '' or tag_ai is None:
-                                msg[f'{today} - Файл omx: атрибуты Diskrets. Тэг AI сигнала пуст: {number_ai}'] = 1
+                                msg[f'{today} - Файл omx: атрибуты Diskrets. Тэг AI сигнала {number_ai} пуст. Поля AI_Ref_KZFKP и AI_Ref не заполнены'] = 3
                                 break
                             else: 
                                 tag_ai_ref = tag_ai
@@ -2329,7 +2381,7 @@ class Filling_attribute_DevStudio():
 
                     self.dop_function.new_attr(object, "unit.Library.Attributes.Index", number)
                     self.dop_function.new_attr(object, "unit.Library.Attributes.Sign", name_pic)
-                    self.dop_function.new_attr(object, "unit.Library.Attributes.Description", name_pic)
+                    self.dop_function.new_attr(object, "unit.System.Attributes.Description", name_pic)
                     
                     el1.append(object)
                 tree.write(f'{path_to_devstudio}\\typical_prj.omx', pretty_print=True)
@@ -2579,12 +2631,11 @@ class Filling_attribute_DevStudio():
                 if number is None or number == '': continue
                 if name   is None or name == '': continue
 
-                if int(siren):                                  
-                    sign = 'Сирена'
-                elif self.dop_function.str_find(str(name).lower(), {'газ'}): 
-                    sign = 'Газ'
-                else:                                           
-                    sign = ''
+                if int(siren)                                              : sign = 'Сирена'
+                elif self.dop_function.str_find(str(name).lower(), {'газ'}): sign = 'Газ'
+                else                                                       : sign = ''
+
+                tag = self.dop_function.translate(str(tag))
 
                 object = etree.Element("{automation.control}object")
                 object.attrib['name'] = str(tag)
@@ -2622,6 +2673,8 @@ class Filling_attribute_DevStudio():
                 if number == '' or number is None: continue
                 if tag == '' or tag is None: continue
                 if description == '' or description is None: continue
+
+                tag = self.dop_function.translate(str(tag))
 
                 object = etree.Element("{automation.control}object")
                 object.attrib['name'] = str(tag)
@@ -2805,6 +2858,8 @@ class Filling_attribute_DevStudio():
                 if description == '' or description is None: continue
                 if place == '' or place is None: place = ''
 
+                tag = self.dop_function.translate(str(tag))
+
                 object = etree.Element("{automation.control}object")
                 object.attrib['name'] = str(tag)
                 object.attrib['uuid'] = str(uuid.uuid1())
@@ -2858,17 +2913,297 @@ class Filling_attribute_DevStudio():
         except Exception:
             msg[f'{today} - Файл omx: ошибка при добавлении атрибута PZs: {traceback.format_exc()}'] = 2
             return msg
+    
+    def mklogic_AO_omx(self):
+        msg = {}
+        try:
+            msg_bool, el1, tree = self.dop_function.parser_diag_omx('AOs')
+            if msg_bool == 1: 
+                msg[f'{today} - Файл omx: ошибка при очистке атрибутов Diag.AOs'] = 2
+                return msg
+            with db:
+                for basket in HardWare.select().dicts():
+                    id_        = basket['id']
+                    tag        = basket['tag']
+                    uso        = basket['uso']
+                    num_basket = basket['basket']
+                    for key, value in basket.items():
+                        if value == 'MK-514-008':
+                            number_modul = str(key).split("_")[1]
+                            if int(number_modul) < 10: 
+                                string_name = f'{tag}_0{number_modul}'
+                                modPosition = f'A{num_basket}.0{number_modul}'
+                            else:
+                                string_name = f'{tag}_{number_modul}'
+                                modPosition = f'A{num_basket}.{number_modul}'
+
+                            object = etree.Element("{automation.control}object")
+                            object.attrib['name'] = string_name
+                            object.attrib['uuid'] = str(uuid.uuid1())
+                            object.attrib['base-type'] = "unit.Library.PLC_Types.modules.MK_Logic.mod_AO"
+                            object.attrib['aspect'] = "unit.Library.PLC_Types.PLC"
+
+                            self.dop_function.new_attr(object, "unit.Library.Attributes.ModNumber", number_modul)
+                            self.dop_function.new_attr(object, "unit.Library.Attributes.RackNumber", id_)
+                            self.dop_function.new_attr(object, "unit.Library.Attributes.ModPosition", modPosition)
+                            self.dop_function.new_attr(object, "unit.Library.Attributes.ModUSO", uso)
+                            self.dop_function.new_attr(object, "unit.System.Attributes.Description", 'MK-514-008')
+
+                            el1.append(object)
+                tree.write(f'{path_to_devstudio}\\typical_prj.omx', pretty_print=True)
+            msg[f'{today} - Файл omx: атрибуты Diag.AOs добавлены'] = 1
+            return msg
+        except Exception:
+            msg[f'{today} - Файл omx: ошибка при добавлении атрибута Diag.AOs: {traceback.format_exc()}'] = 2   
+            return msg   
+    def mklogic_AO_atrib(self):
+        link_path = [f'{path_to_devstudio}\\AttributesMapAI_Ref.xml', 
+                     f'{path_to_devstudio}\\AttributesMapKlk.xml', 
+                     f'{path_to_devstudio}\\AttributesMapKont.xml', 
+                     f'{path_to_devstudio}\\AttributesMapSignalName.xml',
+                     f'{path_to_devstudio}\\AttributesMapTagName.xml']
+        msg = {}
+        modul = []
+        try:
+            with db:
+                for basket in HardWare.select().dicts():
+                    tag        = basket['tag']
+                    uso        = basket['uso']
+                    num_basket = basket['basket']
+                    for key, value in basket.items():
+                        if value == 'MK-514-008':
+                            number_modul = str(key).split("_")[1]
+                            if int(number_modul) < 10: 
+                                string_name = f'{tag}_0{number_modul}'
+                            else:
+                                string_name = f'{tag}_{number_modul}'
+                            modul.append(dict(uso=uso,
+                                              string_name=string_name,
+                                              num_basket=num_basket,
+                                              number_modul=number_modul))
+            # Цикл по всем xml
+            for path in link_path:
+                root, tree = self.dop_function.parser_diag_map(path)
+                self.dop_function.cleaner_diag_map('.Diag.AOs.', root)
+                
+                for check in modul:
+                    uso          = check['uso']
+                    string_name  = check['string_name']
+                    num_basket   = check['num_basket']
+                    number_modul = check['number_modul']
+
+                    data_kd = self.dop_function.connect_by_sql_condition('signals', '*', f'''"uso"='{uso}' AND "basket"={int(num_basket)} AND "module"={int(number_modul)}''')
+                    for data in data_kd:
+                        uso     = data[2]
+                        tag     = data[3]
+                        name    = data[4]
+                        klk     = data[6]
+                        contact = data[7]
+                        basket  = data[8]
+                        channel = data[10]
+
+                        str_tag = self.dop_function.translate(str(tag))
+                        if klk == '' or klk is None: klk = ' '
+                        if contact == '' or contact is None: contact = ' '
+                        if tag == '' or tag is None: str_tag = ' '
+
+                        name_AO = f'Root{prefix_system}.Diag.AOs.{string_name}.ch_AO_0{str(channel)}'
+
+                        object = etree.Element('item')
+                        object.attrib['id'] = name_AO
+
+                        if path == f'{path_to_devstudio}\\AttributesMapAI_Ref.xml': 
+                            if not str_tag is None or str_tag == '': object.attrib['value'] = str(str_tag)
+                        if path == f'{path_to_devstudio}\\AttributesMapKlk.xml': 
+                            if not klk is None or klk == '': object.attrib['value'] = str(klk)
+                        if path == f'{path_to_devstudio}\\AttributesMapKont.xml': 
+                            if not contact is None or contact == '': object.attrib['value'] = str(contact)
+                        if path == f'{path_to_devstudio}\\AttributesMapSignalName.xml': 
+                            if not name is None or name == '': object.attrib['value'] = str(name)
+                        if path == f'{path_to_devstudio}\\AttributesMapTagName.xml': 
+                            if not tag is None or tag == '': object.attrib['value'] = str(tag)
+                        
+                        root.append(object)
+                tree.write(path, pretty_print=True)
+            msg[f'{today} - Значения атрибутов Diag.AOs добавлены'] = 1
+            return msg
+        except Exception:
+            msg[f'{today} - Ошибка при добавлении значений атрибутов Diag.AOs: {traceback.format_exc()}'] = 2
+            return msg
+
+    # def diag_mk_analogs_out(self, MapAI_Ref, MapKlk, MapKont, MapSignalName, MapTagName):
+    #     # Помещаем пути в одну переменную, чтобы на 2 этапе заполнить их в цикле
+    #     link_path = MapAI_Ref, MapKlk, MapKont, MapSignalName, MapTagName
+    #     # 1 этап
+    #     # Из табл: HW определим корзины и модули с AI
+    #     try:
+    #         for i in range(4, rows + 1):
+    #             for j in range(7, column + 1):
+    #                 cell_ai = sheet.cell(row=i, column=j).value
+    #                 if cell_ai == 'MK-514-008':
+    #                     # номер усо, номер модуля для имени, имя усо с корзиной англ,
+    #                     # имя усо с корзиной русс, корзина, тип модуля, имя модуля для редактирования
+    #                     number_uso = str(sheet.cell(row=i, column=1).value)
+    #                     number_modul = str(sheet.cell(row=2, column=j).value)
+    #                     name_uso_eng = str(sheet.cell(row=i, column=3).value)
+    #                     name_uso_rus = str(sheet.cell(row=i, column=4).value)
+    #                     rack      = str(sheet.cell(row=i, column=5).value)
+    #                     type_modul = str(sheet.cell(row=i, column=j).value)
+    #                     modul_dash = number_modul
+    #                     modul_point = number_modul
+
+    #                     if self.str_find(modul_dash, {'_0', '_'}):
+    #                         modul_dash = str(modul_dash).replace('_0', '').replace('_', '')
+    #                     if self.str_find(modul_point, {'_'}):
+    #                         modul_point = str(modul_point).replace('_', '.')
+    #                     uso_rack_modul = name_uso_eng + number_modul
+
+    #                     # Заполняем словарь с исходными данными
+    #                     a_dict = dict(name_uso_rus=name_uso_rus,
+    #                                   uso_rack_modul=uso_rack_modul,
+    #                                   rack=rack,
+    #                                   modul_dash=modul_dash)
+    #                     signals.append(a_dict)
+
+    #                     object = etree.Element("{automation.control}object")
+    #                     object.attrib['name'] = uso_rack_modul
+    #                     object.attrib['uuid'] = str(uuid.uuid1())
+    #                     object.attrib['base-type'] = "unit.Library.PLC_Types.modules.MK_Logic.mod_AO"
+    #                     object.attrib['aspect'] = "unit.Library.PLC_Types.PLC"
+
+    #                     atrb1 = etree.Element("attribute")
+    #                     atrb1.attrib['type'] = "unit.Library.Attributes.ModNumber"
+    #                     atrb1.attrib['value'] = modul_dash
+    #                     object.append(atrb1)
+
+    #                     atrb2 = etree.Element("attribute")
+    #                     atrb2.attrib['type'] = "unit.Library.Attributes.RackNumber"
+    #                     atrb2.attrib['value'] = number_uso
+    #                     object.append(atrb2)
+
+    #                     atrb3 = etree.Element("attribute")
+    #                     atrb3.attrib['type'] = "unit.Library.Attributes.ModPosition"
+    #                     atrb3.attrib['value'] = 'A' + rack + modul_point
+    #                     object.append(atrb3)
+
+    #                     atrb4 = etree.Element("attribute")
+    #                     atrb4.attrib['type'] = "unit.Library.Attributes.ModUSO"
+    #                     atrb4.attrib['value'] = name_uso_rus
+    #                     object.append(atrb4)
+
+    #                     atrb5 = etree.Element("attribute")
+    #                     atrb5.attrib['type'] = "unit.System.Attributes.Description"
+    #                     atrb5.attrib['value'] = type_modul
+    #                     object.append(atrb5)
+
+    #                     el1.append(object)
+    #         tree.write(self.omx, pretty_print=True)
+    #         logger.info(f'Diag.AOs: файл omx OK')
+    #     except:
+    #         logger.error(f'Diag.AOs: файл omx FAILED')
+    #     # 2 этап
+    #     # Заполняем значения атрибутов
+    #     #AttributesMapAI_Ref.xml, AttributesMapKlk.xml,
+    #     #AttributesMapKont.xml, AttributesMapSignalName.xml, AttributesMapTagName.xml
+    #     try:
+    #         # Цикл по всем xml
+    #         for path in link_path:
+    #             root, tree = self.parser_diag_map(path)
+    #             # Чистка тэгов
+    #             self.cleaner_diag_map('.Diag.AOs.', root)
+    #             # Цикл по всем добавленным модулям AI
+    #             for initial_data in signals:
+    #                 name_rus = initial_data['name_uso_rus']
+    #                 name_eng = initial_data['uso_rack_modul']
+    #                 basket = initial_data['rack']
+    #                 mod = initial_data['modul_dash']
+    #                 for value in data_kd:
+    #                     klk = value['КлК']
+    #                     kont = value['Конт']
+    #                     desc = value['Наименование']
+    #                     tag = value['Tэг']
+    #                     uso = value['Шкаф']
+    #                     basket_v = value['Корз']
+    #                     modul = value['Мод']
+    #                     channel = value['Кан']
+    #                     if (name_rus == str(uso)) and (basket == str(basket_v)) and (mod == str(modul)):
+    #                         str_tag = self.translate(str(tag))
+
+    #                         if klk is None: klk = ' '
+    #                         if kont is None: kont = ' '
+
+    #                         name_AO = 'Root' + self.name_prefix + '.Diag.AOs.' + name_eng + '.ch_AO_0' + str(channel)
+    #                         object = etree.Element('item')
+    #                         object.attrib['id'] = name_AO
+    #                         if path == MapAI_Ref:
+    #                             if not str_tag is None: object.attrib['value'] = str(str_tag)
+    #                         if path == MapKlk:
+    #                             if not klk is None: object.attrib['value'] = str(klk)
+    #                         if path == MapKont:
+    #                             if not kont is None: object.attrib['value'] = str(kont)
+    #                         if path == MapSignalName:
+    #                             if not desc is None: object.attrib['value'] = str(desc)
+    #                         if path == MapTagName:
+    #                             if not tag is None: object.attrib['value'] = str(tag)
+    #                         root.append(object)
+    #             logger.info(f'Diag.AOs: карта атрибутов: {path} - OK')
+    #             tree.write(path, pretty_print=True)
+    #     except:
+    #     #     logger.info(f'Diag.AOs: карта атрибутов: {path} - FAILED')
+        # 3 этап карта адресов
+        try:
+            list_param = ['mod_State', 'chHealth', 'ch_01', 'ch_02', 'ch_03', 'ch_04', 'ch_05', 'ch_06', 'ch_07', 'ch_08']
+            data_mb    = self.data['ModBus']
+            root, tree = self.parser_map_modbus()
+            # Чистка тэгов
+            self.cleaner_map('.Diag.AOs.', root)
+            for numeric in data_mb:
+                variable      = numeric['Переменная Excel']
+                start_address = numeric['Начальный адрес']
+                end_adress    = numeric['Конечный адрес']
+
+                if variable == 'diagAO': start_diagAO = start_address
+
+            # Счетчик позиции в массиве
+            count_adress = 0
+            # Цикл по всем добавленным модулям AO
+            for initial_data in signals:
+                name_eng = initial_data['uso_rack_modul']
+                for i in list_param:
+                    object = etree.Element('item')
+                    object.attrib['Binding'] = 'Introduced'
+                    node_p = etree.Element('node-path')
+                    node_p.text = f'Root{self.name_prefix}.Diag.AOs.{name_eng}.{i}'
+                    object.append(node_p)
+
+                    segment = etree.Element('table')
+                    segment.text = f'Holding Registers'
+                    object.append(segment)
+
+                    address = etree.Element('address')
+                    address.text = str(start_diagAO + count_adress)
+                    object.append(address)
+                    root.append(object)
+                    count_adress += 1
+
+            tree.write(self.map_mb, pretty_print=True)
+            logger.info(f'Diag.AOs: файл map OK')
+            return (f'Diag.AOs: файл map OK')
+        except:
+            logger.error(f'Diag.AOs: файл map FAILED')
+            return (f'Diag.AOs: файл map FAILED')
+    
     # Заполнение карты адресов
     def analogs_maps(self):
         dop_analog    = {'AIVisualValue', 'AIElValue', 'AIValue', 'AIRealValue', 'StateAI'}
         dop_analog_lv = {'AIVisualValue', 'AIElValue', 'AIValue', 'AIRealValue', 'StateAI', 'Range_Bottom', 'Range_Top'}
-
         msg = {}
-        data = self.dop_function.connect_by_sql('ai', f'"id", "tag", "name", "AnalogGroupId"')
-        root, tree  = self.dop_function.parser_map()
-        # Чистка тэгов
-        self.dop_function.cleaner_map('.Analogs.', root)
         try:
+            data = self.dop_function.connect_by_sql('ai', f'"id", "tag", "name", "AnalogGroupId"')
+            root, tree  = self.dop_function.parser_map()
+            # Чистка тэгов
+            self.dop_function.cleaner_map('.Analogs.', root)
+
             for value in data:
                 number     = value[0]
                 tag        = value[1]
@@ -2899,574 +3234,352 @@ class Filling_attribute_DevStudio():
             msg[f'{today} - Карта адресов: адреса Analogs заполнены'] = 1
             return msg
         except Exception:
-            msg[f'{today} - Карта адресов: ошибка при заполнении ка.рты адресов Analogs: {traceback.format_exc()}'] = 2
+            msg[f'{today} - Карта адресов: ошибка при заполнении карты адресов Analogs: {traceback.format_exc()}'] = 2
             return msg
-    def diskret_in_map_modbus(self):
-        data    = self.data['DI']
-        data_mb = self.data['ModBus']
-        root, tree = self.parser_map_modbus()
-        # Чистка тэгов
-        self.cleaner_map('.Diskrets.', root)
+    def diskret_maps(self):
+        msg = {}
         try:
-            for numeric in data_mb:
-                variable      = numeric['Переменная Excel']
-                start_address = numeric['Начальный адрес']
-                end_adress    = numeric['Конечный адрес']
-
-                if variable == 'StateDI': start_StateDI = start_address
+            data = self.dop_function.connect_by_sql('di', f'"id", "tag", "name"')
+            root, tree  = self.dop_function.parser_map()
+            # Чистка тэгов
+            self.dop_function.cleaner_map('.Diskrets.', root)
 
             for value in data:
-                number = value['№']
-                tag    = value['Идентификатор']
-                name   = value['Название']
+                number = value[0]
+                tag    = value[1]
+                name   = value[2]
 
-                if tag  is None: continue
-                if name is None: continue
-                tag = self.translate(str(tag))
-                signal = f'Root{self.name_prefix}.Diskrets.{tag}.StateDI'
+                if tag == '' or tag  is None: continue
+                if name == '' or name is None: continue
+
+                tag = self.dop_function.translate(str(tag))
+                signal = f'Root{prefix_system}.Diskrets.{tag}.StateDI'
 
                 object = etree.Element('item')
                 object.attrib['Binding'] = 'Introduced'
-                node_p = etree.Element('node-path')
-                node_p.text = str(signal)
-                object.append(node_p)
 
-                segment = etree.Element('table')
-                segment.text = f'Holding Registers'
-                object.append(segment)
-
-                address = etree.Element('address')
-                address.text = str(start_StateDI + (number - 1))
-                object.append(address)
+                self.dop_function.new_map_str(object, 'node-path', signal)
+                self.dop_function.new_map_str(object, 'table', f'Holding Registers')
+                self.dop_function.new_map_str(object, 'address', 2 * (number - 1))
+                    
                 root.append(object)
-
-            tree.write(self.map_mb, pretty_print=True)
-            logger.info(f'Diskrets: Карта адресов OK')
-            return (f'Diskrets: Карта адресов OK')
-        except:
-            logger.error(f'Diskrets: Карта адресов FAILED')
-            return (f'Diskrets: Карта адресов FAILED')   
-    def picture_map_modbus(self):
-        data    = self.data['Pic']
-        data_mb = self.data['ModBus']
-        root, tree = self.parser_map_modbus()
-        # Чистка тэгов
-        self.cleaner_map('.Pictures.', root)
+            tree.write(f'{path_to_devstudio}\\OUA.xml', pretty_print=True)
+            msg[f'{today} - Карта адресов: адреса Diskrets заполнены'] = 1
+            return msg
+        except Exception:
+            msg[f'{today} - Карта адресов: ошибка при заполнении карты адресов Diskrets: {traceback.format_exc()}'] = 2
+            return msg
+    def picturs_maps(self):
+        msg = {}
         try:
-            for numeric in data_mb:
-                variable      = numeric['Переменная Excel']
-                start_address = numeric['Начальный адрес']
-                end_adress    = numeric['Конечный адрес']
-
-                if variable == 'StatePicture': start_StatePicture = start_address
+            data = self.dop_function.connect_by_sql('pic', f'"id", "frame"')
+            root, tree  = self.dop_function.parser_map()
+            # Чистка тэгов
+            self.dop_function.cleaner_map('.Pictures.', root)
 
             for value in data:
-                number = value['№']
-                name   = value['Название']
-                frame  = value['Кадр IFix(*.grf)']
+                number = value[0]
+                frame  = value[1]
 
-                if frame is None: continue
+                if frame == '' or frame is None: continue
+                signal = f'Root{prefix_system}.Pictures.{frame}.StatePicture'
 
                 object = etree.Element('item')
                 object.attrib['Binding'] = 'Introduced'
-                node_p = etree.Element('node-path')
-                node_p.text = f'Root{self.name_prefix}.Pictures.{frame}.StatePicture'
-                object.append(node_p)
-
-                segment = etree.Element('table')
-                segment.text = f'Holding Registers'
-                object.append(segment)
-
-                address = etree.Element('address')
-                address.text = str(start_StatePicture + (number - 1))
-                object.append(address)
+        
+                self.dop_function.new_map_str(object, 'node-path', signal)
+                self.dop_function.new_map_str(object, 'table', f'Holding Registers')
+                self.dop_function.new_map_str(object, 'address', 2 * (number - 1))
+                    
                 root.append(object)
-
-            tree.write(self.map_mb, pretty_print=True)
-            logger.info(f'Pictures: Карта адресов OK')
-            return (f'Pictures: Карта адресов OK')
-        except:
-            logger.error(f'Pictures: Карта адресов FAILED')
-            return (f'Pictures: Карта адресов FAILED')   
-    def auxsystem_map_modbus(self):
-        dop_vs = {'StateAuxSystem',
-                  'numOfStart',
-                  'operatingTimeCurrentMonth',
-                  'operatingTimeLastMonth',
-                  'operatingTime'}
-
-        data    = self.data['VS']
-        data_mb = self.data['ModBus']
-        root, tree = self.parser_map_modbus()
-        # Чистка тэгов
-        self.cleaner_map('.AuxSystems.', root)
+            tree.write(f'{path_to_devstudio}\\OUA.xml', pretty_print=True)
+            msg[f'{today} - Карта адресов: адреса Pictures заполнены'] = 1
+            return msg
+        except Exception:
+            msg[f'{today} - Карта адресов: ошибка при заполнении карты адресов Pictures: {traceback.format_exc()}'] = 2
+            return msg
+    def auxsystem_maps(self):
+        dop_vs = {'StateAuxSystem', 'numOfStart', 'operatingTimeCurrentMonth', 'operatingTimeLastMonth', 'operatingTime'}
+        msg = {}
         try:
-            for numeric in data_mb:
-                variable      = numeric['Переменная Excel']
-                start_address = numeric['Начальный адрес']
-                end_adress    = numeric['Конечный адрес']
-
-                if variable == 'StateAuxSystem'              : start_StateAuxSystem            = start_address
-                if variable == 'vs_numOfStart'               : start_numOfStart                = start_address
-                if variable == 'vs_operatingTimeCurrentMonth': start_operatingTimeCurrentMonth = start_address
-                if variable == 'vs_operatingTimeLastMonth'   : start_operatingTimeLastMonth    = start_address
-                if variable == 'vs_operatingTime'            : start_operatingTime             = start_address
+            data = self.dop_function.connect_by_sql('vs', f'"id"')
+            root, tree  = self.dop_function.parser_map()
+            # Чистка тэгов
+            self.dop_function.cleaner_map('.AuxSystems.', root)
 
             for value in data:
-                number = value['№']
+                number = value[0]
 
-                if number is None: continue
-
+                if number == '' or number is None: continue
                 for key in dop_vs:
                     tag = f'VS_{number}'
-                    signal = f'Root{self.name_prefix}.AuxSystems.{tag}.{key}'
+                    signal = f'Root{prefix_system}.AuxSystems.{tag}.{key}'
 
                     object = etree.Element('item')
                     object.attrib['Binding'] = 'Introduced'
-                    node_p = etree.Element('node-path')
-                    node_p.text = str(signal)
-                    object.append(node_p)
 
-                    segment = etree.Element('table')
-                    segment.text = f'Holding Registers'
-                    object.append(segment)
+                    self.dop_function.new_map_str(object, 'node-path', signal)
+                    self.dop_function.new_map_str(object, 'table', f'Holding Registers')
+                    self.dop_function.new_map_str(object, 'address', 2 * (number - 1))
 
-                    address = etree.Element('address')
-                    if key == 'StateAuxSystem'           : address.text = str(start_StateAuxSystem            + 3 * (number - 1))
-                    if key == 'numOfStart'               : address.text = str(start_numOfStart                + 2 * (number - 1))
-                    if key == 'operatingTimeCurrentMonth': address.text = str(start_operatingTimeCurrentMonth + 2 * (number - 1))
-                    if key == 'operatingTimeLastMonth'   : address.text = str(start_operatingTimeLastMonth    + 2 * (number - 1))
-                    if key == 'operatingTime'            : address.text = str(start_operatingTime             + 2 * (number - 1))
-
-                    object.append(address)
                     root.append(object)
-            tree.write(self.map_mb, pretty_print=True)
-            logger.info(f'AuxSystems: Карта адресов OK')
-            return     (f'AuxSystems: Карта адресов OK')
-        except:
-            logger.error(f'AuxSystems: Карта адресов FAILED')
-            return      (f'AuxSystems: Карта адресов FAILED')    
-    def valves_map_modbus(self):
-        dop_zd = {'StateValve1',
-                  'StateValve2',
-                  'StateValve3',
-                  'Tm.tmZD',
-                  'NumOfOpenings',
-                  'NumOfClosings'}
-
-        data    = self.data['ZD']
-        data_mb = self.data['ModBus']
-        root, tree = self.parser_map_modbus()
-        # Чистка тэгов
-        self.cleaner_map('.Valves.', root)
+                tree.write(f'{path_to_devstudio}\\OUA.xml', pretty_print=True)
+            msg[f'{today} - Карта адресов: адреса AuxSystems заполнены'] = 1
+            return msg
+        except Exception:
+            msg[f'{today} - Карта адресов: ошибка при заполнении карты адресов AuxSystems: {traceback.format_exc()}'] = 2
+            return msg
+    def valves_maps(self):
+        dop_zd = {'StateValve1', 'StateValve2', 'StateValve3', 'Tm.tmZD', 'NumOfOpenings', 'NumOfClosings'}
+        msg = {}
         try:
-            for numeric in data_mb:
-                variable      = numeric['Переменная Excel']
-                start_address = numeric['Начальный адрес']
-                end_adress    = numeric['Конечный адрес']
-
-                if variable == 'StateZD'      : start_StateZD       = start_address
-                if variable == 'numOfOpenings': start_NumOfOpenings = start_address
-                if variable == 'numOfClosings': start_NumOfClosings = start_address
+            data = self.dop_function.connect_by_sql('zd', f'"id"')
+            root, tree  = self.dop_function.parser_map()
+            # Чистка тэгов
+            self.dop_function.cleaner_map('.Valves.', root)
 
             for value in data:
-                number = value['№']
+                number = value[0]
 
-                if number is None: continue
+                if number == '' or number is None: continue
 
                 for key in dop_zd:
                     tag = f'ZD_{number}'
-                    signal = f'Root{self.name_prefix}.Valves.{tag}.{key}'
+                    signal = f'Root{prefix_system}.Valves.{tag}.{key}'
 
                     object = etree.Element('item')
                     object.attrib['Binding'] = 'Introduced'
-                    node_p = etree.Element('node-path')
-                    node_p.text = str(signal)
-                    object.append(node_p)
 
-                    segment = etree.Element('table')
-                    segment.text = f'Holding Registers'
-                    object.append(segment)
+                    self.dop_function.new_map_str(object, 'node-path', signal)
+                    self.dop_function.new_map_str(object, 'table', f'Holding Registers')
+                    self.dop_function.new_map_str(object, 'address', 2 * (number - 1))
 
-                    address = etree.Element('address')
-                    if key == 'StateValve1'  : address.text = str(start_StateZD       + 5 * (number - 1))
-                    if key == 'StateValve2'  : address.text = str((start_StateZD      + 5 * (number - 1)) + 1)
-                    if key == 'StateValve3'  : address.text = str((start_StateZD      + 5 * (number - 1)) + 2)
-                    #if key == 'Percent'      : address.text = str(start_operatingTimeLastMonth    + 2 * (number - 1))
-                    if key == 'Tm.tmZD'      : address.text = str((start_StateZD      + 5 * (number - 1)) + 4)
-                    if key == 'NumOfOpenings': address.text = str(start_NumOfOpenings + 2 * (number - 1))
-                    if key == 'NumOfClosings': address.text = str(start_NumOfClosings + 2 * (number - 1))
-                    object.append(address)
                     root.append(object)
-
-            tree.write(self.map_mb, pretty_print=True)
-            logger.info(f'Valves: Карта адресов OK')
-            return     (f'Valves: Карта адресов OK')
-        except:
-            logger.error(f'Valves: Карта адресов FAILED')
-            return      (f'Valves: Карта адресов FAILED')  
-    def pumps_map_modbus(self):
-        dop_na = {'StateNA',
-                  'StateNAEx',
-                  'StateNAStatistic',
-                  'operatingTimeSinceSwitchingOn',
-                  'operatingTimeSinceSwitchingOnSet',
-                  'operatingTimeBeforeOverhaul',
-                  'operatingTimeBeforeOverhaulSet',
-                  'numOfStart',
-                  'dateTimeOfStart',
-                  'dateTimeOfStop',
-                  'operatingTimeCurrentMonth',
-                  'operatingTimeLastMonth',
-                  'operatingTimeTO',
-                  'operatingTimeTO1',
-                  'operatingTimeTOSet',
-                  'operatingTimeMidTO',
-                  'operatingTimeMidTOSet',
-                  'operatingTimeThisKvart',
-                  'operatingTimeLastKvart',
-                  'operatingTimeFromBegin',
-                  'operatingTimeED',
-                  'operatingTimeEDSet',
-                  'numOfStartSet',
-                  'time24hStart',
-                  'timeFromHotStart',
-                  'numOfStarts24h',
-                  'OperatingTimeState',
-                  }
-
-        data    = self.data['UMPNA']
-        data_mb = self.data['ModBus']
-        root, tree = self.parser_map_modbus()
-        # Чистка тэгов
-        self.cleaner_map('.NAs.', root)
+                tree.write(f'{path_to_devstudio}\\OUA.xml', pretty_print=True)
+            msg[f'{today} - Карта адресов: адреса Valves заполнены'] = 1
+            return msg
+        except Exception:
+            msg[f'{today} - Карта адресов: ошибка при заполнении карты адресов Valves: {traceback.format_exc()}'] = 2
+            return msg
+    def na_maps(self):
+        dop_na = {'StateNA','StateNAEx','StateNAStatistic','operatingTimeSinceSwitchingOn','operatingTimeSinceSwitchingOnSet','operatingTimeBeforeOverhaul',
+                  'operatingTimeBeforeOverhaulSet','numOfStart','dateTimeOfStart','dateTimeOfStop','operatingTimeCurrentMonth','operatingTimeLastMonth',
+                  'operatingTimeTO','operatingTimeTO1','operatingTimeTOSet','operatingTimeMidTO','operatingTimeMidTOSet','operatingTimeThisKvart',
+                  'operatingTimeLastKvart','operatingTimeFromBegin','operatingTimeED','operatingTimeEDSet','numOfStartSet','time24hStart',
+                  'timeFromHotStart','numOfStarts24h','OperatingTimeState',}
+        msg = {}
         try:
-            for numeric in data_mb:
-                variable      = numeric['Переменная Excel']
-                start_address = numeric['Начальный адрес']
-                end_adress    = numeric['Конечный адрес']
-
-                if variable == 'StateNA'                         : start_StateNA                          = start_address
-                if variable == 'operatingTimeSinceSwitchingOn'   : start_operatingTimeSinceSwitchingOn    = start_address
-                if variable == 'operatingTimeSinceSwitchingOnSet': start_operatingTimeSinceSwitchingOnSet = start_address
-                if variable == 'operatingTimeBeforeOverhaul'     : start_operatingTimeBeforeOverhaul      = start_address
-                if variable == 'operatingTimeBeforeOverhaulSet'  : start_operatingTimeBeforeOverhaulSet   = start_address
-                if variable == 'numOfStarts'                     : start_numOfStarts                      = start_address
-                if variable == 'numOfStartsSet'                  : start_numOfStartsSet                   = start_address
-                if variable == 'dateTimeOfStart'                 : start_dateTimeOfStart                  = start_address
-                if variable == 'dateTimeOfStop'                  : start_dateTimeOfStop                   = start_address
-                if variable == 'operatingTimeCurrentMonth'       : start_operatingTimeCurrentMonth        = start_address
-                if variable == 'operatingTimeLastMonth'          : start_operatingTimeLastMonth           = start_address
-                if variable == 'operatingTimeTO'                 : start_operatingTimeTO                  = start_address
-                if variable == 'operatingTimeTO1'                : start_operatingTimeTO1                 = start_address
-                if variable == 'operatingTimeTOSet'              : start_operatingTimeTOSet               = start_address
-                if variable == 'operatingTimeMidTO'              : start_operatingTimeMidTO               = start_address
-                if variable == 'operatingTimeMidTOSet'           : start_operatingTimeMidTOSet            = start_address
-                if variable == 'operatingTimeThisKvart'          : start_operatingTimeThisKvart           = start_address
-                if variable == 'operatingTimeLastKvart'          : start_operatingTimeLastKvart           = start_address
-                if variable == 'operatingTimeFromBegin'          : start_operatingTimeFromBegin           = start_address
-                if variable == 'operatingTimeED'                 : start_operatingTimeED                  = start_address
-                if variable == 'operatingTimeEDSet'              : start_operatingTimeEDSet               = start_address
-                if variable == 'operatingTimeState'              : start_operatingTimeState               = start_address
+            data = self.dop_function.connect_by_sql('umpna', f'"id"')
+            root, tree  = self.dop_function.parser_map()
+            # Чистка тэгов
+            self.dop_function.cleaner_map('.NAs.', root)
 
             for value in data:
-                number = value['№']
+                number = value[0]
 
-                if number is None: continue
+                if number == '' or number is None: continue
 
                 for key in dop_na:
                     tag    = f'NA_{number}'
-                    signal = f'Root{self.name_prefix}.NAs.{tag}.{key}'
+                    signal = f'Root{prefix_system}.NAs.{tag}.{key}'
 
                     object = etree.Element('item')
                     object.attrib['Binding'] = 'Introduced'
-                    node_p = etree.Element('node-path')
-                    node_p.text = str(signal)
-                    object.append(node_p)
+                    
+                    self.dop_function.new_map_str(object, 'node-path', signal)
+                    self.dop_function.new_map_str(object, 'table', f'Holding Registers')
+                    self.dop_function.new_map_str(object, 'address', 2 * (number - 1))
 
-                    segment = etree.Element('table')
-                    segment.text = f'Holding Registers'
-                    object.append(segment)
-
-                    address = etree.Element('address')
-
-                    if key == 'StateNA'                         : address.text = str(start_StateNA  + 11 * (number - 1))
-                    if key == 'StateNAEx'                       : address.text = str((start_StateNA + 11 * (number - 1)) + 1)
-                    if key == 'StateNAStatistic'                : address.text = str((start_StateNA + 11 * (number - 1)) + 2)
-                    if key == 'operatingTimeSinceSwitchingOn'   : address.text = str(start_operatingTimeSinceSwitchingOn    + 42 * (number - 1))
-                    if key == 'operatingTimeSinceSwitchingOnSet': address.text = str(start_operatingTimeSinceSwitchingOnSet + 42 * (number - 1))
-                    if key == 'operatingTimeBeforeOverhaul'     : address.text = str(start_operatingTimeBeforeOverhaul      + 42 * (number - 1))
-                    if key == 'operatingTimeBeforeOverhaulSet'  : address.text = str(start_operatingTimeBeforeOverhaulSet   + 42 * (number - 1))
-                    if key == 'numOfStart'                      : address.text = str(start_numOfStarts     + 42 * (number - 1))
-                    if key == 'dateTimeOfStart'                 : address.text = str(start_dateTimeOfStart + 42 * (number - 1))
-                    if key == 'dateTimeOfStop'                  : address.text = str(start_dateTimeOfStop  + 42 * (number - 1))
-                    if key == 'operatingTimeCurrentMonth'       : address.text = str(start_operatingTimeCurrentMonth + 42 * (number - 1))
-                    if key == 'operatingTimeLastMonth'          : address.text = str(start_operatingTimeLastMonth    + 42 * (number - 1))
-                    if key == 'operatingTimeTO'                 : address.text = str(start_operatingTimeTO    + 42 * (number - 1))
-                    if key == 'operatingTimeTO1'                : address.text = str(start_operatingTimeTO1   + 42 * (number - 1))
-                    if key == 'operatingTimeTOSet'              : address.text = str(start_operatingTimeTOSet + 42 * (number - 1))
-                    if key == 'operatingTimeMidTO'              : address.text = str(start_operatingTimeMidTO    + 42 * (number - 1))
-                    if key == 'operatingTimeMidTOSet'           : address.text = str(start_operatingTimeMidTOSet + 42 * (number - 1))
-                    if key == 'operatingTimeThisKvart'          : address.text = str(start_operatingTimeThisKvart + 42 * (number - 1))
-                    if key == 'operatingTimeLastKvart'          : address.text = str(start_operatingTimeLastKvart + 42 * (number - 1))
-                    if key == 'operatingTimeFromBegin'          : address.text = str(start_operatingTimeFromBegin + 42 * (number - 1))
-                    if key == 'operatingTimeED'                 : address.text = str(start_operatingTimeED    + 42 * (number - 1))
-                    if key == 'operatingTimeEDSet'              : address.text = str(start_operatingTimeEDSet + 42 * (number - 1))
-                    if key == 'numOfStartSet'                   : address.text = str(start_numOfStartsSet     + 42 * (number - 1))
-                    if key == 'OperatingTimeState'              : address.text = str(start_operatingTimeState + 42 * (number - 1))
-
-                    object.append(address)
                     root.append(object)
-
-            tree.write(self.map_mb, pretty_print=True)
-            logger.info(f'NAs: Карта адресов OK')
-            return     (f'NAs: Карта адресов OK')
-        except:
-            logger.error(f'NAs: Карта адресов FAILED')
-            return      (f'NAs: Карта адресов FAILED')  
-    def relayted_system_map_modbus(self):
-        data       = self.data['SS']
-        data_mb    = self.data['ModBus']
-        root, tree = self.parser_map_modbus()
-        # Чистка тэгов
-        self.cleaner_map('.SSs.', root)
+                tree.write(f'{path_to_devstudio}\\OUA.xml', pretty_print=True)
+            msg[f'{today} - Карта адресов: адреса NAs заполнены'] = 1
+            return msg
+        except Exception:
+            msg[f'{today} - Карта адресов: ошибка при заполнении карты адресов NAs: {traceback.format_exc()}'] = 2
+            return msg
+    def ss_maps(self):
+        msg = {}
         try:
-            for numeric in data_mb:
-                variable      = numeric['Переменная Excel']
-                start_address = numeric['Начальный адрес']
-                end_adress    = numeric['Конечный адрес']
-
-                if variable == 'SS': start_SS = start_address
+            data = self.dop_function.connect_by_sql('ss', f'"id", "name"')
+            root, tree  = self.dop_function.parser_map()
+            # Чистка тэгов
+            self.dop_function.cleaner_map('.SSs.', root)
 
             for value in data:
-                number = value['№']
-                name   = value['Название']
+                number = value[0]
+                name   = value[1]
 
-                if number is None: continue
-                if name   is None: continue
+                if number == '' or number is None: continue
+                if name == '' or name   is None: continue
+
+                signal = f'Root{prefix_system}.SSs.SS_{number}.StateSS'
 
                 object = etree.Element('item')
                 object.attrib['Binding'] = 'Introduced'
-                node_p = etree.Element('node-path')
-                node_p.text = f'Root{self.name_prefix}.SSs.SS_{number}.StateSS'
-                object.append(node_p)
 
-                segment = etree.Element('table')
-                segment.text = f'Holding Registers'
-                object.append(segment)
+                self.dop_function.new_map_str(object, 'node-path', signal)
+                self.dop_function.new_map_str(object, 'table', f'Holding Registers')
+                self.dop_function.new_map_str(object, 'address', 2 * (number - 1))
 
-                address = etree.Element('address')
-                address.text = f'{start_SS + (number - 1)}'
-                object.append(address)
                 root.append(object)
-
-            tree.write(self.map_mb, pretty_print=True)
-            logger.info(f'SSs: Карта адресов OK')
-            return     (f'SSs: Карта адресов OK')
-        except:
-            logger.error(f'SSs: Карта адресов FAILED')
-            return      (f'SSs: Карта адресов FAILED') 
-    def uts_map_modbus(self):
-        data    = self.data['UTS']
-        data_mb = self.data['ModBus']
-        root, tree = self.parser_map_modbus()
-        # Чистка тэгов
-        self.cleaner_map('.UTSs.', root)
+                tree.write(f'{path_to_devstudio}\\OUA.xml', pretty_print=True)
+            msg[f'{today} - Карта адресов: адреса SSs заполнены'] = 1
+            return msg
+        except Exception:
+            msg[f'{today} - Карта адресов: ошибка при заполнении карты адресов SSs: {traceback.format_exc()}'] = 2
+            return msg
+    def uts_maps(self):
+        msg = {}
         try:
-            for numeric in data_mb:
-                variable      = numeric['Переменная Excel']
-                start_address = numeric['Начальный адрес']
-                end_adress    = numeric['Конечный адрес']
-
-                if variable == 'StateUTS': start_StateUTS = start_address
+            data = self.dop_function.connect_by_sql('uts', f'"id", "tag", "name"')
+            root, tree  = self.dop_function.parser_map()
+            # Чистка тэгов
+            self.dop_function.cleaner_map('.UTSs.', root)
 
             for value in data:
-                number = value['№']
-                tag    = value['Идентификатор']
-                name   = value['Название']
+                number = value[0]
+                tag    = value[1]
+                name   = value[2]
 
-                if number is None: continue
-                if name   is None: continue
-                if tag    is None: continue
+                if number == '' or number is None: continue
+                if name == '' or name is None: continue
+                if tag == '' or tag is None: continue
 
-                tag = self.translate(str(tag))
+                tag = self.dop_function.translate(str(tag))
+                signal = f'Root{prefix_system}.UTSs.{tag}.StateUTS'
 
                 object = etree.Element('item')
                 object.attrib['Binding'] = 'Introduced'
-                node_p = etree.Element('node-path')
-                node_p.text = f'Root{self.name_prefix}.UTSs.{tag}.StateUTS'
-                object.append(node_p)
+                
+                self.dop_function.new_map_str(object, 'node-path', signal)
+                self.dop_function.new_map_str(object, 'table', f'Holding Registers')
+                self.dop_function.new_map_str(object, 'address', 2 * (number - 1))
 
-                segment = etree.Element('table')
-                segment.text = f'Holding Registers'
-                object.append(segment)
-
-                address = etree.Element('address')
-                address.text = str(start_StateUTS + (number - 1))
-                object.append(address)
                 root.append(object)
-
-            tree.write(self.map_mb, pretty_print=True)
-            logger.info(f'UTSs: Карта адресов OK')
-            return     (f'UTSs: Карта адресов OK')
-        except:
-            logger.error(f'UTSs: Карта адресов FAILED')
-            return      (f'UTSs: Карта адресов FAILED') 
-    def upts_map_modbus(self):
-        data    = self.data['UPTS']
-        data_mb = self.data['ModBus']
-        root, tree = self.parser_map_modbus()
-        # Чистка тэгов
-        self.cleaner_map('.UPTSs.', root)
+            tree.write(f'{path_to_devstudio}\\OUA.xml', pretty_print=True)
+            msg[f'{today} - Карта адресов: адреса UTSs заполнены'] = 1
+            return msg
+        except Exception:
+            msg[f'{today} - Карта адресов: ошибка при заполнении карты адресов UTSs: {traceback.format_exc()}'] = 2
+            return msg
+    def upts_maps(self):
+        msg = {}
         try:
-            for numeric in data_mb:
-                variable      = numeric['Переменная Excel']
-                start_address = numeric['Начальный адрес']
-                end_adress    = numeric['Конечный адрес']
-
-                if variable == 'StateUPTS': start_StateUPTS = start_address
+            data = self.dop_function.connect_by_sql('upts', f'"id", "tag", "name"')
+            root, tree  = self.dop_function.parser_map()
+            # Чистка тэгов
+            self.dop_function.cleaner_map('.UPTSs.', root)
 
             for value in data:
-                number = value['№']
-                tag    = value['Идентификатор']
-                name   = value['Название']
+                number = value[0]
+                tag    = value[1]
+                name   = value[2]
 
-                if number is None: continue
-                if name   is None: continue
-                if tag    is None: continue
+                if number == '' or number is None: continue
+                if name == '' or name is None: continue
+                if tag == '' or tag is None: continue
 
-                tag = self.translate(str(tag))
+                tag = self.dop_function.translate(str(tag))
+                signal = f'Root{prefix_system}.UPTSs.{tag}.StateUPTS'
 
                 object = etree.Element('item')
                 object.attrib['Binding'] = 'Introduced'
-                node_p = etree.Element('node-path')
-                node_p.text = f'Root{self.name_prefix}.UPTSs.{tag}.StateUPTS'
-                object.append(node_p)
 
-                segment = etree.Element('table')
-                segment.text = f'Holding Registers'
-                object.append(segment)
+                self.dop_function.new_map_str(object, 'node-path', signal)
+                self.dop_function.new_map_str(object, 'table', f'Holding Registers')
+                self.dop_function.new_map_str(object, 'address', 2 * (number - 1))
 
-                address = etree.Element('address')
-                address.text = str(start_StateUPTS + (number - 1))
-                object.append(address)
                 root.append(object)
-
-            tree.write(self.map_mb, pretty_print=True)
-            logger.info(f'UPTSs: Карта адресов OK')
-            return     (f'UPTSs: Карта адресов OK')
-        except:
-            logger.error(f'UPTSs: Карта адресов FAILED')
-            return      (f'UPTSs: Карта адресов FAILED')
-    def ktpr_map_modbus(self):
-        data    = self.data['KTPR']
-        data_mb = self.data['ModBus']
-        root, tree = self.parser_map_modbus()
-        # Чистка тэгов
-        self.cleaner_map('.KTPRs.', root)
+            tree.write(f'{path_to_devstudio}\\OUA.xml', pretty_print=True)
+            msg[f'{today} - Карта адресов: адреса UPTSs заполнены'] = 1
+            return msg
+        except Exception:
+            msg[f'{today} - Карта адресов: ошибка при заполнении карты адресов UPTSs: {traceback.format_exc()}'] = 2
+            return msg
+    def ktpr_maps(self):
+        msg = {}
         number_group = 0
         try:
-            for numeric in data_mb:
-                variable      = numeric['Переменная Excel']
-                start_address = numeric['Начальный адрес']
-                end_adress    = numeric['Конечный адрес']
-
-                if variable == 'stateKTPRx': start_stateKTPRx = start_address
+            data = self.dop_function.connect_by_sql('ktpr', f'"id"')
+            root, tree  = self.dop_function.parser_map()
+            # Чистка тэгов
+            self.dop_function.cleaner_map('.KTPRs.', root)
 
             for value in data:
-                number_defence = value['№']
-                if number_defence is None: continue
+                number_defence = value[0]
+                if number_defence == '' or number_defence is None: continue
                 number_group += 1
+
             count_group = math.ceil(number_group/4)
 
             for count in range(count_group):
+                signal = f'Root{prefix_system}.KTPRs.Group_{count + 1}.StateKTPRx'
+
                 object = etree.Element('item')
                 object.attrib['Binding'] = 'Introduced'
-                node_p = etree.Element('node-path')
-                node_p.text = f'Root{self.name_prefix}.KTPRs.Group_{count + 1}.StateKTPRx'
-                object.append(node_p)
 
-                segment = etree.Element('table')
-                segment.text = f'Holding Registers'
-                object.append(segment)
+                self.dop_function.new_map_str(object, 'node-path', signal)
+                self.dop_function.new_map_str(object, 'table', f'Holding Registers')
+                self.dop_function.new_map_str(object, 'address', 2 * ((count - 1)))
 
-                address = etree.Element('address')
-                address.text = str(start_stateKTPRx + (count - 1))
-                object.append(address)
                 root.append(object)
-
-            tree.write(self.map_mb, pretty_print=True)
-            logger.info(f'KTPRs: Карта адресов OK')
-            return     (f'KTPRs: Карта адресов OK')
-        except:
-            logger.error(f'KTPRs: Карта адресов FAILED')
-            return      (f'KTPRs: Карта адресов FAILED')  
-    def ktprp_map_modbus(self):
-        data    = self.data['KTPRP']
-        data_mb = self.data['ModBus']
-        root, tree = self.parser_map_modbus()
-        # Чистка тэгов
-        self.cleaner_map('.KTPRs.', root)
+            tree.write(f'{path_to_devstudio}\\OUA.xml', pretty_print=True)
+            msg[f'{today} - Карта адресов: адреса KTPRs заполнены'] = 1
+            return msg
+        except Exception:
+            msg[f'{today} - Карта адресов: ошибка при заполнении карты адресов KTPRs: {traceback.format_exc()}'] = 2
+            return msg
+    def ktprp_maps(self):
+        msg = {}
         number_group = 0
         try:
-            for numeric in data_mb:
-                variable      = numeric['Переменная Excel']
-                start_address = numeric['Начальный адрес']
-                end_adress    = numeric['Конечный адрес']
-
-                if variable == 'stateKTPRx': start_stateKTPRx = start_address
+            data = self.dop_function.connect_by_sql('ktprp', f'"id"')
+            root, tree  = self.dop_function.parser_map()
+            # Чистка тэгов
+            self.dop_function.cleaner_map('.KTPRs.', root)
 
             for value in data:
-                number_defence = value['№']
-                if number_defence is None: continue
+                number_defence = value[0]
+                if number_defence == '' or number_defence is None: continue
                 number_group += 1
+
             count_group = math.ceil(number_group / 4)
 
             for count in range(count_group):
+                signal = f'Root{prefix_system}.KTPRs.Group_{count + 1}.StateKTPRx'
+
                 object = etree.Element('item')
                 object.attrib['Binding'] = 'Introduced'
-                node_p = etree.Element('node-path')
-                node_p.text = f'Root{self.name_prefix}.KTPRs.Group_{count + 1}.StateKTPRx'
-                object.append(node_p)
+                
+                self.dop_function.new_map_str(object, 'node-path', signal)
+                self.dop_function.new_map_str(object, 'table', f'Holding Registers')
+                self.dop_function.new_map_str(object, 'address', 2 * ((count - 1)))
 
-                segment = etree.Element('table')
-                segment.text = f'Holding Registers'
-                object.append(segment)
-
-                address = etree.Element('address')
-                address.text = str(start_stateKTPRx + (count - 1))
-                object.append(address)
                 root.append(object)
 
-            tree.write(self.map_mb, pretty_print=True)
-            logger.info(f'KTPRs: Карта адресов OK')
-            return     (f'KTPRs: Карта адресов OK')
-        except:
-            logger.error(f'KTPRs: Карта адресов FAILED')
-            return      (f'KTPRs: Карта адресов FAILED')  
-    def ktpra_map_modbus(self):
-        data    = self.data['KTPRA']
-        data_mb = self.data['ModBus']
-        root, tree = self.parser_map_modbus()
-        # Чистка тэгов
-        self.cleaner_map('.KTPRAs.', root)
+            tree.write(f'{path_to_devstudio}\\OUA.xml', pretty_print=True)
+            msg[f'{today} - Карта адресов: адреса KTPRPs заполнены'] = 1
+            return msg
+        except Exception:
+            msg[f'{today} - Карта адресов: ошибка при заполнении карты адресов KTPRPs: {traceback.format_exc()}'] = 2
+            return msg 
+    def ktpra_maps(self):
+        msg = {}
         number_pumps_old = ''
         count_pumps      = 0
         count            = 0
         try:
-            for numeric in data_mb:
-                variable      = numeric['Переменная Excel']
-                start_address = numeric['Начальный адрес']
-                end_adress    = numeric['Конечный адрес']
-
-                if variable == 'stateKTPRA': start_stateKTPRA = start_address
+            data = self.dop_function.connect_by_sql('ktpra', f'"id", "NA"')
+            root, tree  = self.dop_function.parser_map()
+            # Чистка тэгов
+            self.dop_function.cleaner_map('.KTPRAs.', root)
 
             for value in data:
-                number_defence   = value['№']
-                number_pumps_int = value['НА']
+                number_defence   = value[0]
+                number_pumps_int = value[1]
 
-                if number_defence   is None: continue
-                if number_pumps_int is None: continue
+                if number_defence == '' or  number_defence   is None: continue
+                if number_pumps_int == '' or number_pumps_int is None: continue
 
                 if number_pumps_int != number_pumps_old:
                     number_pumps_old = number_pumps_int
@@ -3476,51 +3589,39 @@ class Filling_attribute_DevStudio():
                 if number_defence % 4 == 0:
                     number_group += 1
                     count += 1
+                    signal = f'Root{prefix_system}.KTPRAs.KTPRAs_{count_pumps}.Group_{number_group}.StateKTPRx'
 
                     object = etree.Element('item')
                     object.attrib['Binding'] = 'Introduced'
-                    node_p = etree.Element('node-path')
-                    node_p.text = f'Root{self.name_prefix}.KTPRAs.KTPRAs_{count_pumps}.Group_{number_group}.StateKTPRx'
-                    object.append(node_p)
 
-                    segment = etree.Element('table')
-                    segment.text = f'Holding Registers'
-                    object.append(segment)
+                    self.dop_function.new_map_str(object, 'node-path', signal)
+                    self.dop_function.new_map_str(object, 'table', f'Holding Registers')
+                    self.dop_function.new_map_str(object, 'address', 2 * ((count - 1)))
 
-                    address = etree.Element('address')
-                    address.text = str(start_stateKTPRA + (number_group - 1) + (count_pumps - 1) * 48)
-                    object.append(address)
                     root.append(object)
-
-            tree.write(self.map_mb, pretty_print=True)
-            logger.info(f'KTPRAs: Карта адресов OK')
-            return      (f'KTPRAs: Карта адресов OK')
-        except:
-            logger.error(f'KTPRAs: Карта адресов FAILED')
-            return      (f'KTPRAs: Карта адресов FAILED')   
-    def gmpna_map_modbus(self):
-        data    = self.data['GMPNA']
-        data_mb = self.data['ModBus']
-        root, tree = self.parser_map_modbus()
-        # Чистка тэгов
-        self.cleaner_map('.GMPNAs.', root)
+            tree.write(f'{path_to_devstudio}\\OUA.xml', pretty_print=True)
+            msg[f'{today} - Карта адресов: адреса KTPRAs заполнены'] = 1
+            return msg
+        except Exception:
+            msg[f'{today} - Карта адресов: ошибка при заполнении карты адресов KTPRAs: {traceback.format_exc()}'] = 2
+            return msg  
+    def gmpna_maps(self):
+        msg = {}
         number_pumps_old = ''
-        count_pumps = 0
-        count       = 0
+        count_pumps      = 0
+        count            = 0
         try:
-            for numeric in data_mb:
-                variable      = numeric['Переменная Excel']
-                start_address = numeric['Начальный адрес']
-                end_adress    = numeric['Конечный адрес']
-
-                if variable == 'stateGMPNA': start_stateGMPNA = start_address
+            data = self.dop_function.connect_by_sql('gmpna', f'"id", "NA"')
+            root, tree  = self.dop_function.parser_map()
+            # Чистка тэгов
+            self.dop_function.cleaner_map('.GMPNAs.', root)
 
             for value in data:
-                number_defence   = value['№']
-                number_pumps_int = value['НА']
+                number_defence   = value[0]
+                number_pumps_int = value[1]
 
-                if number_defence   is None: continue
-                if number_pumps_int is None: continue
+                if number_defence == '' or  number_defence   is None: continue
+                if number_pumps_int == '' or number_pumps_int is None: continue
 
                 if number_pumps_int != number_pumps_old:
                     number_pumps_old = number_pumps_int
@@ -3530,124 +3631,138 @@ class Filling_attribute_DevStudio():
                 if number_defence % 4 == 0:
                     number_group += 1
                     count        += 1
+                    signal = f'Root{prefix_system}.GMPNAs.GMPNAs_{count_pumps}.Group_{number_group}.StateGMPNA'
 
                     object = etree.Element('item')
                     object.attrib['Binding'] = 'Introduced'
-                    node_p = etree.Element('node-path')
-                    node_p.text = f'Root{self.name_prefix}.GMPNAs.GMPNAs_{count_pumps}.Group_{number_group}.StateGMPNA'
-                    object.append(node_p)
 
-                    segment = etree.Element('table')
-                    segment.text = f'Holding Registers'
-                    object.append(segment)
+                    self.dop_function.new_map_str(object, 'node-path', signal)
+                    self.dop_function.new_map_str(object, 'table', f'Holding Registers')
+                    self.dop_function.new_map_str(object, 'address', 2 * ((count - 1)))
 
-                    address = etree.Element('address')
-                    address.text = str(start_stateGMPNA + (count - 1))
-                    object.append(address)
                     root.append(object)
-
-            tree.write(self.map_mb, pretty_print=True)
-            logger.info(f'GMPNAs: Карта адресов OK')
-            return     (f'GMPNAs: Карта адресов OK')
-        except:
-            logger.error(f'GMPNAs: Карта адресов FAILED')
-            return      (f'GMPNAs: Карта адресов FAILED') 
-    def pi_map_modbus(self):
-        data    = self.data['PI']
-        data_mb = self.data['ModBus']
-        root, tree = self.parser_map_modbus()
-        # Чистка тэгов
-        self.cleaner_map('.PIs.', root)
+            tree.write(f'{path_to_devstudio}\\OUA.xml', pretty_print=True)
+            msg[f'{today} - Карта адресов: адреса GMPNAs заполнены'] = 1
+            return msg
+        except Exception:
+            msg[f'{today} - Карта адресов: ошибка при заполнении карты адресов GMPNAs: {traceback.format_exc()}'] = 2
+            return msg  
+    def pi_maps(self):
+        msg = {}
         try:
-            for numeric in data_mb:
-                variable      = numeric['Переменная Excel']
-                start_address = numeric['Начальный адрес']
-                end_adress    = numeric['Конечный адрес']
-
-                if variable == 'StatePI': start_StatePI = start_address
+            data = self.dop_function.connect_by_sql('pi', f'"id", "tag"')
+            root, tree  = self.dop_function.parser_map()
+            # Чистка тэгов
+            self.dop_function.cleaner_map('.PIs.', root)
 
             for value in data:
-                number = value['№']
-                tag    = value['Идентификатор']
+                number = value[0]
+                tag    = value[1]
 
-                if number is None: continue
-                if tag    is None: continue
+                if number == '' or number is None: continue
+                if tag == '' or tag    is None: continue
 
                 tag = self.translate(str(tag))
+                signal = f'Root{prefix_system}.PIs.{tag}.StatePI'
 
                 object = etree.Element('item')
                 object.attrib['Binding'] = 'Introduced'
-                node_p = etree.Element('node-path')
-                node_p.text = f'Root{self.name_prefix}.PIs.{tag}.StatePI'
-                object.append(node_p)
 
-                segment = etree.Element('table')
-                segment.text = f'Holding Registers'
-                object.append(segment)
+                self.dop_function.new_map_str(object, 'node-path', signal)
+                self.dop_function.new_map_str(object, 'table', f'Holding Registers')
+                self.dop_function.new_map_str(object, 'address', 2 * ((number - 1)))
 
-                address = etree.Element('address')
-                address.text = str(start_StatePI + (number - 1))
-                object.append(address)
                 root.append(object)
-
-            tree.write(self.map_mb, pretty_print=True)
-            logger.info(f'PIs: Карта адресов OK')
-            return     (f'PIs: Карта адресов OK')
-        except:
-            logger.error(f'PIs: Карта адресов FAILED')
-            return      (f'PIs: Карта адресов FAILED')   
-    def pz_map_modbus(self):
+            tree.write(f'{path_to_devstudio}\\OUA.xml', pretty_print=True)
+            msg[f'{today} - Карта адресов: адреса PIs заполнены'] = 1
+            return msg
+        except Exception:
+            msg[f'{today} - Карта адресов: ошибка при заполнении карты адресов PIs: {traceback.format_exc()}'] = 2
+            return msg  
+    def pz_maps(self):
         # Зоны с тушением
         dop_pz_ptush = ['StatePZ', 'exStatePZ', 'ReadyFlags', 'TimetoNextAttack', 'AttackCounter', 'TimetoEvacuation']
         # Зоны без тушения
         #dop_pz = ['StatePZ', 'exStatePZ', 'ReadyFlags']
 
-        data    = self.data['PZ']
-        data_mb = self.data['ModBus']
-        root, tree = self.parser_map_modbus()
-        # Чистка тэгов
-        self.cleaner_map('.PZs.', root)
-        count = 0
+        msg = {}
         try:
-            for numeric in data_mb:
-                variable      = numeric['Переменная Excel']
-                start_address = numeric['Начальный адрес']
-                end_adress    = numeric['Конечный адрес']
-
-                if variable == 'StatePZ': start_StatePZ = start_address
+            data = self.dop_function.connect_by_sql('pz', f'"id", "type_zone"')
+            root, tree  = self.dop_function.parser_map()
+            # Чистка тэгов
+            self.dop_function.cleaner_map('.PZs.', root)
 
             for value in data:
-                number    = value['№']
-                zone_type = value['Тип']
+                number    = value[0]
+                zone_type = value[1]
 
-                if number    is None: continue
-                if zone_type is None: continue
+                if number == '' or number    is None: continue
+                if zone_type == '' or zone_type is None: continue
                 # Выбираем от типа
                 #set_words = dop_pz if zone_type == 0 else dop_pz_ptush
 
                 for key in dop_pz_ptush:
+                    signal = f'Root{prefix_system}.PZs.PZ_{number}.{key}'
+
                     object = etree.Element('item')
                     object.attrib['Binding'] = 'Introduced'
-                    node_p = etree.Element('node-path')
-                    node_p.text = f'Root{self.name_prefix}.PZs.PZ_{number}.{key}'
-                    object.append(node_p)
 
-                    segment = etree.Element('table')
-                    segment.text = f'Holding Registers'
-                    object.append(segment)
+                    self.dop_function.new_map_str(object, 'node-path', signal)
+                    self.dop_function.new_map_str(object, 'table', f'Holding Registers')
+                    self.dop_function.new_map_str(object, 'address', 2 * ((number - 1)))
 
-                    address = etree.Element('address')
-                    address.text = str(start_StatePZ + count)
-                    object.append(address)
                     root.append(object)
-                    count += 1
-            tree.write(self.map_mb, pretty_print=True)
-            logger.info(f'PZs: Карта адресов OK')
-            return     (f'PZs: Карта адресов OK')
-        except:
-            logger.error(f'PZs: Карта адресов FAILED')
-            return      (f'PZs: Карта адресов FAILED')
+            tree.write(f'{path_to_devstudio}\\OUA.xml', pretty_print=True)
+            msg[f'{today} - Карта адресов: адреса PZs заполнены'] = 1
+            return msg
+        except Exception:
+            msg[f'{today} - Карта адресов: ошибка при заполнении карты адресов PZs: {traceback.format_exc()}'] = 2
+            return msg  
+    
+    def mklogic_AO_maps(self):
+        msg = {}
+        count_array = 0
+        count_HEALT = 0
+        try:
+            root, tree  = self.dop_function.parser_map()
+            # Чистка тэгов
+            self.dop_function.cleaner_map('.Diag.AOs.', root)
 
+            with db:
+                for basket in HardWare.select().dicts():
+                    tag = basket['tag']
+                    for key, value in basket.items():
+                        if value == 'MK-514-008':
+                            number_modul = str(key).split("_")[1]
+                            if int(number_modul) < 10: string_name = f'{tag}_0{number_modul}'
+                            else                     : string_name = f'{tag}_{number_modul}'
+
+                            count_HEALT += 1
+                            for i in range(5):
+                                if i < 4: count_array += 1
+                                num_series = i + 1
+                                name_AO       = f'Root{prefix_system}.Diag.AOs.{string_name}.mAO[{num_series}]'
+                                name_AO_HEALT = f'Root{prefix_system}.Diag.AOs.{string_name}.mAI_CH_HEALTH'
+
+                                object = etree.Element('item')
+                                object.attrib['Binding'] = 'Introduced'
+
+                                if i > 3: 
+                                    self.dop_function.new_map_str(object, 'node-path', f'{name_AO_HEALT}')
+                                    self.dop_function.new_map_str(object, 'address', f'mAO_CH_HEALTH')
+                                    self.dop_function.new_map_str(object, 'arrayposition', f'{count_HEALT - 1}')
+                                else:
+                                    self.dop_function.new_map_str(object, 'node-path', f'{name_AO}')
+                                    self.dop_function.new_map_str(object, 'address', f'mAO')
+                                    self.dop_function.new_map_str(object, 'arrayposition', f'{count_array - 1}')
+
+                                root.append(object)
+                tree.write(f'{path_to_devstudio}\\OUA.xml', pretty_print=True)
+            msg[f'{today} - Карта адресов: адреса Diag.AIs заполнены'] = 1
+            return msg
+        except Exception:
+            msg[f'{today} - Карта адресов: ошибка при заполнении карты адресов Diag.AIs: {traceback.format_exc()}'] = 2
+            return msg  
 
 # Work with filling in the table 
 class Filling_HardWare():
@@ -3657,16 +3772,8 @@ class Filling_HardWare():
     # Получаем данные с таблицы Signals по количеству корзин и модулю
     def getting_modul(self, kk_is_True):
         msg = {}
-        list_type = {'CPU': 'MK-504-120', 
-                     'PSU': 'MK-550-024', 
-                     'CN' : 'MK-545-010', 
-                     'MN' : 'MK-546-010', 
-                     'AI' : 'MK-516-008A',
-                     'AO' : 'MK-514-008', 
-                     'DI' : 'MK-521-032', 
-                     'RS' : 'MK-541-002', 
-                     'DO' : 'MK-531-032',
-                     'EthEx' : 'MK-544-040'}
+        list_type = {'CPU': 'MK-504-120', 'PSU': 'MK-550-024', 'CN' : 'MK-545-010', 'MN' : 'MK-546-010', 'AI' : 'MK-516-008A',
+                     'AO' : 'MK-514-008', 'DI' : 'MK-521-032', 'RS' : 'MK-541-002', 'DO' : 'MK-531-032', 'EthEx' : 'MK-544-040'}
         with db:
             try:
                 if self.dop_function.empty_table('signals'): 
@@ -3694,26 +3801,26 @@ class Filling_HardWare():
                     if temp_flag is False:
                         for i in range(2):
                             uso_kk = uso[0]
-                            test_s.append(dict(id = i + 1, uso = uso[0], tag = '',
-                                            powerLink_ID ='',
-                                            basket  = i + 1,
-                                            type_0  = 'MK-550-024',  variable_0 = f'PSU', type_1 = f'MK-546-010', variable_1 = f'MN',
-                                            type_2  = f'MK-504-120', variable_2 = f'CPU', type_3 = f'',           variable_3 = f'',
-                                            type_4  = f'',           variable_4 = f'',    type_5 = f'',           variable_5 = f'',
-                                            type_6  = f'',           variable_6 = f'',    type_7 = f'',           variable_7 = f'',
-                                            type_8  = f'',           variable_8 = f'',    type_9 = f'',           variable_9 = f'',
-                                            type_10 = f'',           variable_10= f'',    type_11= f'',           variable_11= f'',
-                                            type_12 = f'',           variable_12= f'',    type_13= f'',           variable_13= f'',
-                                            type_14 = f'',           variable_14= f'',    type_15= f'',           variable_15= f'',
-                                            type_16 = f'',           variable_16= f'',    type_17= f'',           variable_17= f'',
-                                            type_18 = f'',           variable_18= f'',    type_19= f'',           variable_19= f'',
-                                            type_20 = f'',           variable_20= f'',    type_21= f'',           variable_21= f'',
-                                            type_22 = f'',           variable_22= f'',    type_23= f'',           variable_23= f'',
-                                            type_24 = f'',           variable_24= f'',    type_25= f'',           variable_25= f'',
-                                            type_26 = f'',           variable_26= f'',    type_27= f'',           variable_27= f'',
-                                            type_28 = f'',           variable_28= f'',    type_29= f'',           variable_29= f'',
-                                            type_30 = f'',           variable_30= f'',    type_31= f'',           variable_31= f'',
-                                            type_32 = f'',           variable_32= f''))
+                            test_s.append(dict(uso = uso[0], tag = '',
+                                                powerLink_ID ='',
+                                                basket  = i + 1,
+                                                type_0  = 'MK-550-024',  variable_0 = f'PSU', type_1 = f'MK-546-010', variable_1 = f'MN',
+                                                type_2  = f'MK-504-120', variable_2 = f'CPU', type_3 = f'',           variable_3 = f'',
+                                                type_4  = f'',           variable_4 = f'',    type_5 = f'',           variable_5 = f'',
+                                                type_6  = f'',           variable_6 = f'',    type_7 = f'',           variable_7 = f'',
+                                                type_8  = f'',           variable_8 = f'',    type_9 = f'',           variable_9 = f'',
+                                                type_10 = f'',           variable_10= f'',    type_11= f'',           variable_11= f'',
+                                                type_12 = f'',           variable_12= f'',    type_13= f'',           variable_13= f'',
+                                                type_14 = f'',           variable_14= f'',    type_15= f'',           variable_15= f'',
+                                                type_16 = f'',           variable_16= f'',    type_17= f'',           variable_17= f'',
+                                                type_18 = f'',           variable_18= f'',    type_19= f'',           variable_19= f'',
+                                                type_20 = f'',           variable_20= f'',    type_21= f'',           variable_21= f'',
+                                                type_22 = f'',           variable_22= f'',    type_23= f'',           variable_23= f'',
+                                                type_24 = f'',           variable_24= f'',    type_25= f'',           variable_25= f'',
+                                                type_26 = f'',           variable_26= f'',    type_27= f'',           variable_27= f'',
+                                                type_28 = f'',           variable_28= f'',    type_29= f'',           variable_29= f'',
+                                                type_30 = f'',           variable_30= f'',    type_31= f'',           variable_31= f'',
+                                                type_32 = f'',           variable_32= f''))
                         temp_flag = True
                     for basket in list_basket:
                         count_basket     += 1
@@ -3724,8 +3831,7 @@ class Filling_HardWare():
                         # Если в проекте есть КК
                         if kk_is_True and count_basket == 3:
                             for i in range(4, 6, 1):
-                                test_s.append(dict(id         = i + 1, 
-                                                   uso        = uso_kk,
+                                test_s.append(dict(uso        = uso_kk,
                                                    tag        = '',
                                                    basket     = i + 1,
                                                    type_0     = 'MK-550-024',

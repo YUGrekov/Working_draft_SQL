@@ -1121,6 +1121,13 @@ class Widget(QWidget):
         self.q_check_omx_pz = QCheckBox('PZs', tab_6)
         self.q_check_omx_pz.move(100, 110) 
         self.q_check_omx_pz.stateChanged.connect(self.check_omx_pz)
+
+        self.q_check_omx_diag_ai = QCheckBox('AI', tab_6)
+        self.q_check_omx_diag_ai.move(190, 20) 
+        self.q_check_omx_diag_ai.stateChanged.connect(self.check_omx_diag_ai)
+        self.q_check_omx_diag_ao = QCheckBox('AO', tab_6)
+        self.q_check_omx_diag_ao.move(190, 35) 
+        self.q_check_omx_diag_ao.stateChanged.connect(self.check_omx_diag_ao)
         # Установить все
         check_all_omx = QCheckBox('Установить/Снять', tab_6)
         check_all_omx.setToolTip('Установить или снять все флаги для заполнения атрибутов omx')
@@ -1949,6 +1956,12 @@ class Widget(QWidget):
     def check_omx_pz(self, checked):
         if checked: self.list_gen_vu.append('PZ')
         else      : self.list_gen_vu.remove('PZ')
+    def check_omx_diag_ai(self, checked):
+        if checked: self.list_gen_vu.append('AI_diag')
+        else      : self.list_gen_vu.remove('AI_diag')
+    def check_omx_diag_ao(self, checked):
+        if checked: self.list_gen_vu.append('AO_diag')
+        else      : self.list_gen_vu.remove('AO_diag')
     # Button confirm
     def omx_list(self):
         msg = self.filing_attrib.write_in_omx(self.list_gen_vu)
