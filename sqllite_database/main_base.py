@@ -259,8 +259,8 @@ class General_functions():
         elem = etree.Element(element)
         elem.text = str(value)
         obj.append(elem)
-    # Чистка атрибутов
-    def clear_objects(self, directory):
+    # Чистка и парсинг
+    def clear_objects_omx(self, directory):
         # Чистка объектов
         msg = {}
         msg_bool, el1, tree = self.parser_omx(directory)
@@ -271,6 +271,27 @@ class General_functions():
             return msg
         msg[f'{today} - Файл omx: атрибуты {directory} удалены'] = 1
         return msg
+    def clear_diag_objects_omx(self, directory):
+        # Чистка объектов
+        msg = {}
+        msg_bool, el1, tree = self.parser_diag_omx(directory)
+        tree.write(f'{path_to_devstudio}\\typical_prj.omx', pretty_print=True)
+
+        if msg_bool == 1: 
+            msg[f'{today} - Файл omx: ошибка при чистке атрибутов {directory}'] = 2
+            return msg
+        msg[f'{today} - Файл omx: атрибуты {directory} удалены'] = 1
+        return msg
+    def clear_objects_attrib(self, directory, map_attrib):
+        msg = {}
+        try:
+            for path in map_attrib:
+                self.parser_diag_map(directory, path)
+            msg[f'{today} - Очистка значений атрибутов {directory}. Успешно'] = 1
+        except Exception:
+            msg[f'{today} - Ошибка при очистке значений атрибутов: {path}, {traceback.format_exc()}'] = 2
+        return msg
+    
     def parser_omx(self, directory):
         parser = etree.XMLParser(remove_blank_text=True)
         tree = etree.parse(f'{path_to_devstudio}\\typical_prj.omx', parser)
@@ -313,26 +334,30 @@ class General_functions():
                                     return 0, el1, tree
         except:
             return 1, 0, 0
-    def parser_map(self):
+    
+    def parser_map(self, directory):
+        path_map = f'{path_to_devstudio}\\OUA.xml'
         parser = etree.XMLParser(remove_blank_text=True)
-        tree = etree.parse(f'{path_to_devstudio}\\OUA.xml', parser)
+        tree = etree.parse(path_map, parser)
         root = tree.getroot()
-        return root, tree
-    def cleaner_map(self, directory, root):
+
         for item in root.iter('node-path'):
             signal = f'Root{prefix_system}{directory}'
             if self.str_find(item.text, {signal}):
                 parent = item.getparent()
                 root.remove(parent)
-    def cleaner_diag_map(self, directory, root):
+        tree.write(path_map, pretty_print=True)
+        return root, tree
+    def parser_diag_map(self, directory, path_map):
+        parser = etree.XMLParser(remove_blank_text=True)
+        tree = etree.parse(path_map, parser)
+        root = tree.getroot()
+        
         for item in root.iter('item'):
             signal = f'Root{prefix_system}{directory}'
             if self.str_find(item.attrib['id'], {signal}):
                 root.remove(item)
-    def parser_diag_map(self, path_map):
-        parser = etree.XMLParser(remove_blank_text=True)
-        tree = etree.parse(path_map, parser)
-        root = tree.getroot()
+        tree.write(path_map, pretty_print=True)
         return root, tree
 # Work with filling in the table 'Signals'
 class Import_in_SQL():
@@ -2094,14 +2119,40 @@ class Filling_attribute_DevStudio():
                 msg.update(self.pz_omx())
                 continue
             if tabl == 'AI_diag': 
-                msg.update(self.pz_omx())
+                msg.update(self.mklogic_DIAG_omx('AIs', 'MK-516-008A', 'MK_Logic.mod_AI'))
+                msg.update(self.mklogic_AI_AO_atrib('AIs', 'MK-516-008A', 'ch_AI_0'))
                 continue
             if tabl == 'AO_diag': 
-                msg.update(self.mklogic_AO_omx())
-                msg.update(self.mklogic_AO_atrib())
+                msg.update(self.mklogic_DIAG_omx('AOs', 'MK-514-008', 'MK_Logic.mod_AO'))
+                msg.update(self.mklogic_AI_AO_atrib('AOs', 'MK-514-008', 'ch_AO_0'))
+                continue
+            if tabl == 'DI_diag': 
+                msg.update(self.mklogic_DIAG_omx('DIs', 'MK-521-032', 'MK_Logic.mod_DI'))
+                msg.update(self.mklogic_DI_DO_atrib('DIs', 'MK-521-032',))
+                continue
+            if tabl == 'DO_diag': 
+                msg.update(self.mklogic_DIAG_omx('DOs', 'MK-531-032', 'MK_Logic.mod_DI'))
+                msg.update(self.mklogic_DI_DO_atrib('DOs', 'MK-531-032'))
+                continue
+            if tabl == 'CPU_diag': 
+                msg.update(self.mklogic_DIAG_omx('CPUs', 'MK-504-120', 'MK_Logic.mod_CPU'))
+                continue
+            if tabl == 'CN_diag': 
+                msg.update(self.mklogic_DIAG_omx('CNs', 'MK-545-010', 'MK_Logic.mod_CN'))
+                continue
+            if tabl == 'MN_diag': 
+                msg.update(self.mklogic_DIAG_omx('MNs', 'MK-546-010', 'MK_Logic.mod_CN'))
+                continue
+            if tabl == 'PSU_diag': 
+                msg.update(self.mklogic_DIAG_omx('PSUs', 'MK-550-024', 'MK_Logic.mod_PSU'))
+                continue
+            if tabl == 'RS_diag': 
+                msg.update(self.mklogic_DIAG_omx('RSs', 'MK-541-002', 'MK_Logic.mod_RS'))
                 continue
         return msg
     def write_in_map(self, list_tabl):
+            list_param_AI_AO = ['mod_State', 'ch_01', 'ch_02', 'ch_03', 'ch_04', 'ch_05', 'ch_06', 'ch_07', 'ch_08' ]
+            list_param_DI_DO = ['mod_State', 'mDI']
             msg = {}
             if len(list_tabl) == 0:             
                 msg[f'{today} - Файл omx: не выбраны атрибуты'] = 2
@@ -2153,61 +2204,198 @@ class Filling_attribute_DevStudio():
                     msg.update(self.pz_maps())
                     continue
                 if tabl == 'AO_diag': 
-                    msg.update(self.mklogic_AO_maps())
-                continue
+                    msg.update(self.mklogic_DIAG_maps_param('AOs', 'MK-514-008', list_param_AI_AO))
+                    continue
+                if tabl == 'AI_diag': 
+                    msg.update(self.mklogic_DIAG_maps_param('AIs', 'MK-516-008A', list_param_AI_AO))
+                    continue
+                if tabl == 'DO_diag': 
+                    msg.update(self.mklogic_DIAG_maps_param('DOs', 'MK-531-032', list_param_DI_DO))
+                    continue
+                if tabl == 'DI_diag': 
+                    msg.update(self.mklogic_DIAG_maps_param('DIs', 'MK-521-032', list_param_DI_DO))
+                    continue
             return msg
     def clear_omx(self, list_tabl):
+        path_AI_AO = [f'{path_to_devstudio}\\AttributesMapAI_Ref.xml', f'{path_to_devstudio}\\AttributesMapKlk.xml', f'{path_to_devstudio}\\AttributesMapKont.xml', 
+                      f'{path_to_devstudio}\\AttributesMapSignalName.xml', f'{path_to_devstudio}\\AttributesMapTagName.xml']
+        path_DI_DO = [f'{path_to_devstudio}\\AttributesMapKlk.xml', f'{path_to_devstudio}\\AttributesMapKont.xml', 
+                      f'{path_to_devstudio}\\AttributesMapSignalName.xml', f'{path_to_devstudio}\\AttributesMapTagName.xml']
         msg = {}
         if len(list_tabl) == 0: 
             msg[f'{today} - Файл omx: не выбраны атрибуты'] = 2
             return msg
         for tabl in list_tabl: 
             if tabl == 'AI': 
-                msg.update(self.dop_function.clear_objects('Analogs'))
+                msg.update(self.dop_function.clear_objects_omx('Analogs'))
                 continue
             if tabl == 'DI': 
-                msg.update(self.dop_function.clear_objects('Diskrets'))
+                msg.update(self.dop_function.clear_objects_omx('Diskrets'))
                 continue
             if tabl == 'VS': 
-                msg.update(self.dop_function.clear_objects('AuxSystems'))
+                msg.update(self.dop_function.clear_objects_omx('AuxSystems'))
                 continue
             if tabl == 'ZD': 
-                msg.update(self.dop_function.clear_objects('Valves'))
+                msg.update(self.dop_function.clear_objects_omx('Valves'))
                 continue
             if tabl == 'NA': 
-                msg.update(self.dop_function.clear_objects('NAs'))
+                msg.update(self.dop_function.clear_objects_omx('NAs'))
                 continue
             if tabl == 'PIC': 
-                msg.update(self.dop_function.clear_objects('Pictures'))
+                msg.update(self.dop_function.clear_objects_omx('Pictures'))
                 continue
             if tabl == 'SS': 
-                msg.update(self.dop_function.clear_objects('SSs'))
+                msg.update(self.dop_function.clear_objects_omx('SSs'))
                 continue
             if tabl == 'UTS': 
-                msg.update(self.dop_function.clear_objects('UTSs'))
+                msg.update(self.dop_function.clear_objects_omx('UTSs'))
                 continue
             if tabl == 'UPTS': 
-                msg.update(self.dop_function.clear_objects('UPTSs'))
+                msg.update(self.dop_function.clear_objects_omx('UPTSs'))
                 continue
             if tabl == 'KTPR': 
-                msg.update(self.dop_function.clear_objects('KTPRs'))
+                msg.update(self.dop_function.clear_objects_omx('KTPRs'))
                 continue
             if tabl == 'KTPRP': 
-                msg.update(self.dop_function.clear_objects('KTPRs'))
+                msg.update(self.dop_function.clear_objects_omx('KTPRs'))
                 continue
             if tabl == 'KTPRA': 
-                msg.update(self.dop_function.clear_objects('KTPRAs'))
+                msg.update(self.dop_function.clear_objects_omx('KTPRAs'))
                 continue
             if tabl == 'GMPNA': 
-                msg.update(self.dop_function.clear_objects('GMPNAs'))
+                msg.update(self.dop_function.clear_objects_omx('GMPNAs'))
                 continue
             if tabl == 'PI': 
-                msg.update(self.dop_function.clear_objects('PIs'))
+                msg.update(self.dop_function.clear_objects_omx('PIs'))
                 continue
             if tabl == 'PZ': 
-                msg.update(self.dop_function.clear_objects('PZs'))
+                msg.update(self.dop_function.clear_objects_omx('PZs'))
+                continue
+            if tabl == 'AI_diag': 
+                msg.update(self.dop_function.clear_diag_objects_omx('AIs'))
+                msg.update(self.dop_function.clear_objects_attrib('.Diag.AIs', path_AI_AO))
+                continue
+            if tabl == 'AO_diag': 
+                msg.update(self.dop_function.clear_diag_objects_omx('AOs'))
+                msg.update(self.dop_function.clear_objects_attrib('.Diag.AOs', path_AI_AO))
+                continue
+            if tabl == 'DI_diag': 
+                msg.update(self.dop_function.clear_diag_objects_omx('DIs'))
+                msg.update(self.dop_function.clear_objects_attrib('.Diag.DIs', path_DI_DO))
+                continue
+            if tabl == 'DO_diag': 
+                msg.update(self.dop_function.clear_diag_objects_omx('DOs'))
+                msg.update(self.dop_function.clear_objects_attrib('.Diag.DOs', path_DI_DO))
                 continue
         return msg
+    def clear_map(self, list_tabl):
+        msg = {}
+        if len(list_tabl) == 0: 
+            msg[f'{today} - Карта адресов: не выбраны типы для очистки'] = 2
+            return msg
+        for tabl in list_tabl: 
+            if tabl == 'AI': 
+                self.dop_function.parser_map('.Analogs.')
+                msg[f'{today} - Карта адресов: адреса Analogs очищены'] = 1
+                continue
+            if tabl == 'DI': 
+                self.dop_function.parser_map('.Diskrets.')
+                msg[f'{today} - Карта адресов: адреса Diskrets очищены'] = 1
+                continue
+            if tabl == 'VS': 
+                self.dop_function.parser_map('.AuxSystems.')
+                msg[f'{today} - Карта адресов: адреса AuxSystems очищены'] = 1
+                continue
+            if tabl == 'ZD': 
+                self.dop_function.parser_map('.Valves.')
+                msg[f'{today} - Карта адресов: адреса Valves очищены'] = 1
+                continue
+            if tabl == 'NA': 
+                self.dop_function.parser_map('.NAs.')
+                msg[f'{today} - Карта адресов: адреса NAs очищены'] = 1
+                continue
+            if tabl == 'PIC': 
+                self.dop_function.parser_map('.Pictures.')
+                msg[f'{today} - Карта адресов: адреса Pictures очищены'] = 1
+                continue
+            if tabl == 'SS': 
+                self.dop_function.parser_map('.SSs.')
+                msg[f'{today} - Карта адресов: адреса SSs очищены'] = 1
+                continue
+            if tabl == 'UTS': 
+                self.dop_function.parser_map('.UTSs.')
+                msg[f'{today} - Карта адресов: адреса UTSs очищены'] = 1
+                continue
+            if tabl == 'UPTS': 
+                self.dop_function.parser_map('.UPTSs.')
+                msg[f'{today} - Карта адресов: адреса UPTSs очищены'] = 1
+                continue
+            if tabl == 'KTPR': 
+                self.dop_function.parser_map('.KTPRs.')
+                msg[f'{today} - Карта адресов: адреса KTPRs очищены'] = 1
+                continue
+            if tabl == 'KTPRP': 
+                self.dop_function.parser_map('.KTPRs.')
+                msg[f'{today} - Карта адресов: адреса KTPRs очищены'] = 1
+                continue
+            if tabl == 'KTPRA': 
+                self.dop_function.parser_map('.KTPRAs.')
+                msg[f'{today} - Карта адресов: адреса KTPRAs очищены'] = 1
+                continue
+            if tabl == 'GMPNA': 
+                self.dop_function.parser_map('.GMPNAs.')
+                msg[f'{today} - Карта адресов: адреса GMPNAs очищены'] = 1
+                continue
+            if tabl == 'PI': 
+                self.dop_function.parser_map('.PIs.')
+                msg[f'{today} - Карта адресов: адреса PIs очищены'] = 1
+                continue
+            if tabl == 'PZ': 
+                self.dop_function.parser_map('PZs.')
+                msg[f'{today} - Карта адресов: адреса PZs очищены'] = 1
+                continue
+            if tabl == 'AI_diag': 
+                self.dop_function.parser_map('.Diag.AIs.')
+                msg[f'{today} - Карта адресов: адреса Diag.AIs очищены'] = 1
+                continue
+            if tabl == 'AO_diag': 
+                self.dop_function.parser_map('.Diag.AOs.')
+                msg[f'{today} - Карта адресов: адреса Diag.AOs очищены'] = 1
+                continue
+            if tabl == 'DI_diag': 
+                self.dop_function.parser_map('.Diag.DIs.')
+                msg[f'{today} - Карта адресов: адреса Diag.DIs очищены'] = 1
+                continue
+            if tabl == 'DO_diag': 
+                self.dop_function.parser_map('.Diag.DOs.')
+                msg[f'{today} - Карта адресов: адреса Diag.DOs очищены'] = 1
+                continue
+        return msg
+    def hardware_data(self, type_modul):
+        modul = []
+        with db:
+            for basket in HardWare.select().dicts():
+                id_        = basket['id']
+                tag        = basket['tag']
+                uso        = basket['uso']
+                num_basket = basket['basket']
+                for key, value in basket.items():
+                    if value == type_modul:
+                        number_modul = str(key).split('_')[1]
+                        if int(number_modul) < 10: 
+                            string_name = f'{tag}_0{number_modul}'
+                            modPosition = f'A{num_basket}.0{number_modul}'
+                        else:
+                            string_name = f'{tag}_{number_modul}'
+                            modPosition = f'A{num_basket}.{number_modul}'
+
+                        modul.append(dict(id_=id_,
+                                          uso=uso,
+                                          string_name=string_name,
+                                          num_basket=num_basket,
+                                          number_modul=number_modul,
+                                          modPosition=modPosition))
+        return modul
     # Заполнение omx и атрибутов
     def analogs_omx(self):
             msg = {}
@@ -2914,83 +3102,24 @@ class Filling_attribute_DevStudio():
             msg[f'{today} - Файл omx: ошибка при добавлении атрибута PZs: {traceback.format_exc()}'] = 2
             return msg
     
-    def mklogic_AO_omx(self):
-        msg = {}
-        try:
-            msg_bool, el1, tree = self.dop_function.parser_diag_omx('AOs')
-            if msg_bool == 1: 
-                msg[f'{today} - Файл omx: ошибка при очистке атрибутов Diag.AOs'] = 2
-                return msg
-            with db:
-                for basket in HardWare.select().dicts():
-                    id_        = basket['id']
-                    tag        = basket['tag']
-                    uso        = basket['uso']
-                    num_basket = basket['basket']
-                    for key, value in basket.items():
-                        if value == 'MK-514-008':
-                            number_modul = str(key).split("_")[1]
-                            if int(number_modul) < 10: 
-                                string_name = f'{tag}_0{number_modul}'
-                                modPosition = f'A{num_basket}.0{number_modul}'
-                            else:
-                                string_name = f'{tag}_{number_modul}'
-                                modPosition = f'A{num_basket}.{number_modul}'
-
-                            object = etree.Element("{automation.control}object")
-                            object.attrib['name'] = string_name
-                            object.attrib['uuid'] = str(uuid.uuid1())
-                            object.attrib['base-type'] = "unit.Library.PLC_Types.modules.MK_Logic.mod_AO"
-                            object.attrib['aspect'] = "unit.Library.PLC_Types.PLC"
-
-                            self.dop_function.new_attr(object, "unit.Library.Attributes.ModNumber", number_modul)
-                            self.dop_function.new_attr(object, "unit.Library.Attributes.RackNumber", id_)
-                            self.dop_function.new_attr(object, "unit.Library.Attributes.ModPosition", modPosition)
-                            self.dop_function.new_attr(object, "unit.Library.Attributes.ModUSO", uso)
-                            self.dop_function.new_attr(object, "unit.System.Attributes.Description", 'MK-514-008')
-
-                            el1.append(object)
-                tree.write(f'{path_to_devstudio}\\typical_prj.omx', pretty_print=True)
-            msg[f'{today} - Файл omx: атрибуты Diag.AOs добавлены'] = 1
-            return msg
-        except Exception:
-            msg[f'{today} - Файл omx: ошибка при добавлении атрибута Diag.AOs: {traceback.format_exc()}'] = 2   
-            return msg   
-    def mklogic_AO_atrib(self):
+    def mklogic_AI_AO_atrib(self, variable_mod, type_mod, prefix):
         link_path = [f'{path_to_devstudio}\\AttributesMapAI_Ref.xml', 
                      f'{path_to_devstudio}\\AttributesMapKlk.xml', 
                      f'{path_to_devstudio}\\AttributesMapKont.xml', 
                      f'{path_to_devstudio}\\AttributesMapSignalName.xml',
                      f'{path_to_devstudio}\\AttributesMapTagName.xml']
         msg = {}
-        modul = []
         try:
-            with db:
-                for basket in HardWare.select().dicts():
-                    tag        = basket['tag']
-                    uso        = basket['uso']
-                    num_basket = basket['basket']
-                    for key, value in basket.items():
-                        if value == 'MK-514-008':
-                            number_modul = str(key).split("_")[1]
-                            if int(number_modul) < 10: 
-                                string_name = f'{tag}_0{number_modul}'
-                            else:
-                                string_name = f'{tag}_{number_modul}'
-                            modul.append(dict(uso=uso,
-                                              string_name=string_name,
-                                              num_basket=num_basket,
-                                              number_modul=number_modul))
-            # Цикл по всем xml
+            data_hw = self.hardware_data(type_mod)
+
             for path in link_path:
-                root, tree = self.dop_function.parser_diag_map(path)
-                self.dop_function.cleaner_diag_map('.Diag.AOs.', root)
-                
-                for check in modul:
-                    uso          = check['uso']
-                    string_name  = check['string_name']
-                    num_basket   = check['num_basket']
-                    number_modul = check['number_modul']
+                root, tree = self.dop_function.parser_diag_map(f'.Diag.{variable_mod}.', path)
+
+                for data in data_hw:
+                    uso          = data['uso']
+                    string_name  = data['string_name']
+                    num_basket   = data['num_basket']
+                    number_modul = data['number_modul']
 
                     data_kd = self.dop_function.connect_by_sql_condition('signals', '*', f'''"uso"='{uso}' AND "basket"={int(num_basket)} AND "module"={int(number_modul)}''')
                     for data in data_kd:
@@ -2999,7 +3128,6 @@ class Filling_attribute_DevStudio():
                         name    = data[4]
                         klk     = data[6]
                         contact = data[7]
-                        basket  = data[8]
                         channel = data[10]
 
                         str_tag = self.dop_function.translate(str(tag))
@@ -3007,7 +3135,7 @@ class Filling_attribute_DevStudio():
                         if contact == '' or contact is None: contact = ' '
                         if tag == '' or tag is None: str_tag = ' '
 
-                        name_AO = f'Root{prefix_system}.Diag.AOs.{string_name}.ch_AO_0{str(channel)}'
+                        name_AO = f'Root{prefix_system}.Diag.{variable_mod}.{string_name}.{prefix}{str(channel)}'
 
                         object = etree.Element('item')
                         object.attrib['id'] = name_AO
@@ -3025,174 +3153,108 @@ class Filling_attribute_DevStudio():
                         
                         root.append(object)
                 tree.write(path, pretty_print=True)
-            msg[f'{today} - Значения атрибутов Diag.AOs добавлены'] = 1
+            msg[f'{today} - Значения атрибутов Diag.{variable_mod} добавлены'] = 1
             return msg
         except Exception:
-            msg[f'{today} - Ошибка при добавлении значений атрибутов Diag.AOs: {traceback.format_exc()}'] = 2
+            msg[f'{today} - Ошибка при добавлении значений атрибутов Diag.{variable_mod}: {traceback.format_exc()}'] = 2
             return msg
-
-    # def diag_mk_analogs_out(self, MapAI_Ref, MapKlk, MapKont, MapSignalName, MapTagName):
-    #     # Помещаем пути в одну переменную, чтобы на 2 этапе заполнить их в цикле
-    #     link_path = MapAI_Ref, MapKlk, MapKont, MapSignalName, MapTagName
-    #     # 1 этап
-    #     # Из табл: HW определим корзины и модули с AI
-    #     try:
-    #         for i in range(4, rows + 1):
-    #             for j in range(7, column + 1):
-    #                 cell_ai = sheet.cell(row=i, column=j).value
-    #                 if cell_ai == 'MK-514-008':
-    #                     # номер усо, номер модуля для имени, имя усо с корзиной англ,
-    #                     # имя усо с корзиной русс, корзина, тип модуля, имя модуля для редактирования
-    #                     number_uso = str(sheet.cell(row=i, column=1).value)
-    #                     number_modul = str(sheet.cell(row=2, column=j).value)
-    #                     name_uso_eng = str(sheet.cell(row=i, column=3).value)
-    #                     name_uso_rus = str(sheet.cell(row=i, column=4).value)
-    #                     rack      = str(sheet.cell(row=i, column=5).value)
-    #                     type_modul = str(sheet.cell(row=i, column=j).value)
-    #                     modul_dash = number_modul
-    #                     modul_point = number_modul
-
-    #                     if self.str_find(modul_dash, {'_0', '_'}):
-    #                         modul_dash = str(modul_dash).replace('_0', '').replace('_', '')
-    #                     if self.str_find(modul_point, {'_'}):
-    #                         modul_point = str(modul_point).replace('_', '.')
-    #                     uso_rack_modul = name_uso_eng + number_modul
-
-    #                     # Заполняем словарь с исходными данными
-    #                     a_dict = dict(name_uso_rus=name_uso_rus,
-    #                                   uso_rack_modul=uso_rack_modul,
-    #                                   rack=rack,
-    #                                   modul_dash=modul_dash)
-    #                     signals.append(a_dict)
-
-    #                     object = etree.Element("{automation.control}object")
-    #                     object.attrib['name'] = uso_rack_modul
-    #                     object.attrib['uuid'] = str(uuid.uuid1())
-    #                     object.attrib['base-type'] = "unit.Library.PLC_Types.modules.MK_Logic.mod_AO"
-    #                     object.attrib['aspect'] = "unit.Library.PLC_Types.PLC"
-
-    #                     atrb1 = etree.Element("attribute")
-    #                     atrb1.attrib['type'] = "unit.Library.Attributes.ModNumber"
-    #                     atrb1.attrib['value'] = modul_dash
-    #                     object.append(atrb1)
-
-    #                     atrb2 = etree.Element("attribute")
-    #                     atrb2.attrib['type'] = "unit.Library.Attributes.RackNumber"
-    #                     atrb2.attrib['value'] = number_uso
-    #                     object.append(atrb2)
-
-    #                     atrb3 = etree.Element("attribute")
-    #                     atrb3.attrib['type'] = "unit.Library.Attributes.ModPosition"
-    #                     atrb3.attrib['value'] = 'A' + rack + modul_point
-    #                     object.append(atrb3)
-
-    #                     atrb4 = etree.Element("attribute")
-    #                     atrb4.attrib['type'] = "unit.Library.Attributes.ModUSO"
-    #                     atrb4.attrib['value'] = name_uso_rus
-    #                     object.append(atrb4)
-
-    #                     atrb5 = etree.Element("attribute")
-    #                     atrb5.attrib['type'] = "unit.System.Attributes.Description"
-    #                     atrb5.attrib['value'] = type_modul
-    #                     object.append(atrb5)
-
-    #                     el1.append(object)
-    #         tree.write(self.omx, pretty_print=True)
-    #         logger.info(f'Diag.AOs: файл omx OK')
-    #     except:
-    #         logger.error(f'Diag.AOs: файл omx FAILED')
-    #     # 2 этап
-    #     # Заполняем значения атрибутов
-    #     #AttributesMapAI_Ref.xml, AttributesMapKlk.xml,
-    #     #AttributesMapKont.xml, AttributesMapSignalName.xml, AttributesMapTagName.xml
-    #     try:
-    #         # Цикл по всем xml
-    #         for path in link_path:
-    #             root, tree = self.parser_diag_map(path)
-    #             # Чистка тэгов
-    #             self.cleaner_diag_map('.Diag.AOs.', root)
-    #             # Цикл по всем добавленным модулям AI
-    #             for initial_data in signals:
-    #                 name_rus = initial_data['name_uso_rus']
-    #                 name_eng = initial_data['uso_rack_modul']
-    #                 basket = initial_data['rack']
-    #                 mod = initial_data['modul_dash']
-    #                 for value in data_kd:
-    #                     klk = value['КлК']
-    #                     kont = value['Конт']
-    #                     desc = value['Наименование']
-    #                     tag = value['Tэг']
-    #                     uso = value['Шкаф']
-    #                     basket_v = value['Корз']
-    #                     modul = value['Мод']
-    #                     channel = value['Кан']
-    #                     if (name_rus == str(uso)) and (basket == str(basket_v)) and (mod == str(modul)):
-    #                         str_tag = self.translate(str(tag))
-
-    #                         if klk is None: klk = ' '
-    #                         if kont is None: kont = ' '
-
-    #                         name_AO = 'Root' + self.name_prefix + '.Diag.AOs.' + name_eng + '.ch_AO_0' + str(channel)
-    #                         object = etree.Element('item')
-    #                         object.attrib['id'] = name_AO
-    #                         if path == MapAI_Ref:
-    #                             if not str_tag is None: object.attrib['value'] = str(str_tag)
-    #                         if path == MapKlk:
-    #                             if not klk is None: object.attrib['value'] = str(klk)
-    #                         if path == MapKont:
-    #                             if not kont is None: object.attrib['value'] = str(kont)
-    #                         if path == MapSignalName:
-    #                             if not desc is None: object.attrib['value'] = str(desc)
-    #                         if path == MapTagName:
-    #                             if not tag is None: object.attrib['value'] = str(tag)
-    #                         root.append(object)
-    #             logger.info(f'Diag.AOs: карта атрибутов: {path} - OK')
-    #             tree.write(path, pretty_print=True)
-    #     except:
-    #     #     logger.info(f'Diag.AOs: карта атрибутов: {path} - FAILED')
-        # 3 этап карта адресов
+    def mklogic_DI_DO_atrib(self, variable_mod, type_mod):
+        link_path = [f'{path_to_devstudio}\\AttributesMapKlk.xml', 
+                     f'{path_to_devstudio}\\AttributesMapKont.xml', 
+                     f'{path_to_devstudio}\\AttributesMapSignalName.xml',
+                     f'{path_to_devstudio}\\AttributesMapTagName.xml']
+        msg = {}
         try:
-            list_param = ['mod_State', 'chHealth', 'ch_01', 'ch_02', 'ch_03', 'ch_04', 'ch_05', 'ch_06', 'ch_07', 'ch_08']
-            data_mb    = self.data['ModBus']
-            root, tree = self.parser_map_modbus()
-            # Чистка тэгов
-            self.cleaner_map('.Diag.AOs.', root)
-            for numeric in data_mb:
-                variable      = numeric['Переменная Excel']
-                start_address = numeric['Начальный адрес']
-                end_adress    = numeric['Конечный адрес']
+            data_hw = self.hardware_data(type_mod)
 
-                if variable == 'diagAO': start_diagAO = start_address
+            for path in link_path:
+                root, tree = self.dop_function.parser_diag_map('.Diag.{variable_mod}.', path)
 
-            # Счетчик позиции в массиве
-            count_adress = 0
-            # Цикл по всем добавленным модулям AO
-            for initial_data in signals:
-                name_eng = initial_data['uso_rack_modul']
-                for i in list_param:
-                    object = etree.Element('item')
-                    object.attrib['Binding'] = 'Introduced'
-                    node_p = etree.Element('node-path')
-                    node_p.text = f'Root{self.name_prefix}.Diag.AOs.{name_eng}.{i}'
-                    object.append(node_p)
+                for data in data_hw:
+                    uso          = data['uso']
+                    string_name  = data['string_name']
+                    num_basket   = data['num_basket']
+                    number_modul = data['number_modul']
 
-                    segment = etree.Element('table')
-                    segment.text = f'Holding Registers'
-                    object.append(segment)
+                    data_kd = self.dop_function.connect_by_sql_condition('signals', '*', f'''"uso"='{uso}' AND "basket"={int(num_basket)} AND "module"={int(number_modul)}''')
+                    for data in data_kd:
+                        uso     = data[2]
+                        tag     = data[3]
+                        name    = data[4]
+                        klk     = data[6]
+                        contact = data[7]
+                        channel = data[10]
 
-                    address = etree.Element('address')
-                    address.text = str(start_diagAO + count_adress)
-                    object.append(address)
-                    root.append(object)
-                    count_adress += 1
+                        if klk == '' or klk is None: klk = ' '
+                        if contact == '' or contact is None: contact = ' '
+                        if tag == '' or tag is None: tag = ' '
 
-            tree.write(self.map_mb, pretty_print=True)
-            logger.info(f'Diag.AOs: файл map OK')
-            return (f'Diag.AOs: файл map OK')
-        except:
-            logger.error(f'Diag.AOs: файл map FAILED')
-            return (f'Diag.AOs: файл map FAILED')
-    
+                        if channel < 10: name_DI = f'Root{prefix_system}.Diag.{variable_mod}.{string_name}.ch_DI_0{str(channel)}'
+                        else           : name_DI = f'Root{prefix_system}.Diag.{variable_mod}.{string_name}.ch_DI_{str(channel)}'
+
+                        object = etree.Element('item')
+                        object.attrib['id'] = name_DI
+
+                        if path == f'{path_to_devstudio}\\AttributesMapKlk.xml': 
+                            if not klk is None or klk == '': object.attrib['value'] = str(klk)
+                        if path == f'{path_to_devstudio}\\AttributesMapKont.xml': 
+                            if not contact is None or contact == '': object.attrib['value'] = str(contact)
+                        if path == f'{path_to_devstudio}\\AttributesMapSignalName.xml': 
+                            if not name is None or name == '': object.attrib['value'] = str(name)
+                        if path == f'{path_to_devstudio}\\AttributesMapTagName.xml': 
+                            if not tag is None or tag == '': object.attrib['value'] = str(tag)
+
+                        msg[f'{today} - Значения атрибутов Diag.{variable_mod} файл заполнен: {path}'] = 1
+                        root.append(object)
+                tree.write(path, pretty_print=True)
+            msg[f'{today} - Значения атрибутов Diag.{variable_mod} добавлены'] = 1
+            return msg
+        except Exception:
+            msg[f'{today} - Ошибка при добавлении значений атрибутов Diag.{variable_mod}: {traceback.format_exc()}'] = 2
+            return msg
+    def mklogic_DIAG_omx(self, variable_mod, type_mod, base_type):
+        msg = {}
+        try:
+            msg_bool, el1, tree = self.dop_function.parser_diag_omx(variable_mod)
+            if msg_bool == 1: 
+                msg[f'{today} - Файл omx: ошибка при очистке атрибутов Diag.{variable_mod}'] = 2
+                return msg
+            
+            data_hw = self.hardware_data(type_mod)
+            for data in data_hw:
+                id_          = data['id_']
+                uso          = data['uso']
+                string_name  = data['string_name']
+                number_modul = data['number_modul']
+                modPosition  = data['modPosition']
+                
+                if variable_mod == 'RSs': 
+                    rs_port1     = data['rs_port1']
+                    rs_port2     = data['rs_port2']
+
+                object = etree.Element("{automation.control}object")
+                object.attrib['name'] = string_name
+                object.attrib['uuid'] = str(uuid.uuid1())
+                object.attrib['base-type'] = f"unit.Library.PLC_Types.modules.{base_type}"
+                object.attrib['aspect'] = "unit.Library.PLC_Types.PLC"
+
+                self.dop_function.new_attr(object, "unit.Library.Attributes.ModNumber", number_modul)
+                self.dop_function.new_attr(object, "unit.Library.Attributes.RackNumber", id_)
+                self.dop_function.new_attr(object, "unit.Library.Attributes.ModPosition", modPosition)
+                self.dop_function.new_attr(object, "unit.Library.Attributes.ModUSO", uso)
+                self.dop_function.new_attr(object, "unit.System.Attributes.Description", type_mod)
+
+                if variable_mod == 'RSs':
+                    self.dop_function.new_attr(object, "unit.Library.Attributes.SignalName", rs_port1)
+                    self.dop_function.new_attr(object, "unit.System.Attributes.SignalName_2", rs_port2)
+
+                el1.append(object)
+            tree.write(f'{path_to_devstudio}\\typical_prj.omx', pretty_print=True)
+            msg[f'{today} - Файл omx: атрибуты Diag.{variable_mod} добавлены'] = 1
+            return msg
+        except Exception:
+            msg[f'{today} - Файл omx: ошибка при добавлении атрибута Diag.{variable_mod}: {traceback.format_exc()}'] = 2   
+            return msg     
     # Заполнение карты адресов
     def analogs_maps(self):
         dop_analog    = {'AIVisualValue', 'AIElValue', 'AIValue', 'AIRealValue', 'StateAI'}
@@ -3200,9 +3262,7 @@ class Filling_attribute_DevStudio():
         msg = {}
         try:
             data = self.dop_function.connect_by_sql('ai', f'"id", "tag", "name", "AnalogGroupId"')
-            root, tree  = self.dop_function.parser_map()
-            # Чистка тэгов
-            self.dop_function.cleaner_map('.Analogs.', root)
+            root, tree  = self.dop_function.parser_map('.Analogs.')
 
             for value in data:
                 number     = value[0]
@@ -3240,9 +3300,7 @@ class Filling_attribute_DevStudio():
         msg = {}
         try:
             data = self.dop_function.connect_by_sql('di', f'"id", "tag", "name"')
-            root, tree  = self.dop_function.parser_map()
-            # Чистка тэгов
-            self.dop_function.cleaner_map('.Diskrets.', root)
+            root, tree  = self.dop_function.parser_map('.Diskrets.')
 
             for value in data:
                 number = value[0]
@@ -3273,9 +3331,7 @@ class Filling_attribute_DevStudio():
         msg = {}
         try:
             data = self.dop_function.connect_by_sql('pic', f'"id", "frame"')
-            root, tree  = self.dop_function.parser_map()
-            # Чистка тэгов
-            self.dop_function.cleaner_map('.Pictures.', root)
+            root, tree  = self.dop_function.parser_map('.Pictures.')
 
             for value in data:
                 number = value[0]
@@ -3303,9 +3359,7 @@ class Filling_attribute_DevStudio():
         msg = {}
         try:
             data = self.dop_function.connect_by_sql('vs', f'"id"')
-            root, tree  = self.dop_function.parser_map()
-            # Чистка тэгов
-            self.dop_function.cleaner_map('.AuxSystems.', root)
+            root, tree  = self.dop_function.parser_map('.AuxSystems.')
 
             for value in data:
                 number = value[0]
@@ -3334,9 +3388,7 @@ class Filling_attribute_DevStudio():
         msg = {}
         try:
             data = self.dop_function.connect_by_sql('zd', f'"id"')
-            root, tree  = self.dop_function.parser_map()
-            # Чистка тэгов
-            self.dop_function.cleaner_map('.Valves.', root)
+            root, tree  = self.dop_function.parser_map('.Valves.')
 
             for value in data:
                 number = value[0]
@@ -3370,9 +3422,7 @@ class Filling_attribute_DevStudio():
         msg = {}
         try:
             data = self.dop_function.connect_by_sql('umpna', f'"id"')
-            root, tree  = self.dop_function.parser_map()
-            # Чистка тэгов
-            self.dop_function.cleaner_map('.NAs.', root)
+            root, tree  = self.dop_function.parser_map('.NAs.')
 
             for value in data:
                 number = value[0]
@@ -3401,9 +3451,7 @@ class Filling_attribute_DevStudio():
         msg = {}
         try:
             data = self.dop_function.connect_by_sql('ss', f'"id", "name"')
-            root, tree  = self.dop_function.parser_map()
-            # Чистка тэгов
-            self.dop_function.cleaner_map('.SSs.', root)
+            root, tree  = self.dop_function.parser_map('.SSs.')
 
             for value in data:
                 number = value[0]
@@ -3432,9 +3480,7 @@ class Filling_attribute_DevStudio():
         msg = {}
         try:
             data = self.dop_function.connect_by_sql('uts', f'"id", "tag", "name"')
-            root, tree  = self.dop_function.parser_map()
-            # Чистка тэгов
-            self.dop_function.cleaner_map('.UTSs.', root)
+            root, tree  = self.dop_function.parser_map('.UTSs.')
 
             for value in data:
                 number = value[0]
@@ -3466,9 +3512,7 @@ class Filling_attribute_DevStudio():
         msg = {}
         try:
             data = self.dop_function.connect_by_sql('upts', f'"id", "tag", "name"')
-            root, tree  = self.dop_function.parser_map()
-            # Чистка тэгов
-            self.dop_function.cleaner_map('.UPTSs.', root)
+            root, tree  = self.dop_function.parser_map('.UPTSs.')
 
             for value in data:
                 number = value[0]
@@ -3501,9 +3545,7 @@ class Filling_attribute_DevStudio():
         number_group = 0
         try:
             data = self.dop_function.connect_by_sql('ktpr', f'"id"')
-            root, tree  = self.dop_function.parser_map()
-            # Чистка тэгов
-            self.dop_function.cleaner_map('.KTPRs.', root)
+            root, tree  = self.dop_function.parser_map('.KTPRs.')
 
             for value in data:
                 number_defence = value[0]
@@ -3534,9 +3576,7 @@ class Filling_attribute_DevStudio():
         number_group = 0
         try:
             data = self.dop_function.connect_by_sql('ktprp', f'"id"')
-            root, tree  = self.dop_function.parser_map()
-            # Чистка тэгов
-            self.dop_function.cleaner_map('.KTPRs.', root)
+            root, tree  = self.dop_function.parser_map('.KTPRs.')
 
             for value in data:
                 number_defence = value[0]
@@ -3570,9 +3610,7 @@ class Filling_attribute_DevStudio():
         count            = 0
         try:
             data = self.dop_function.connect_by_sql('ktpra', f'"id", "NA"')
-            root, tree  = self.dop_function.parser_map()
-            # Чистка тэгов
-            self.dop_function.cleaner_map('.KTPRAs.', root)
+            root, tree  = self.dop_function.parser_map('.KTPRAs.')
 
             for value in data:
                 number_defence   = value[0]
@@ -3612,9 +3650,7 @@ class Filling_attribute_DevStudio():
         count            = 0
         try:
             data = self.dop_function.connect_by_sql('gmpna', f'"id", "NA"')
-            root, tree  = self.dop_function.parser_map()
-            # Чистка тэгов
-            self.dop_function.cleaner_map('.GMPNAs.', root)
+            root, tree  = self.dop_function.parser_map('.GMPNAs.')
 
             for value in data:
                 number_defence   = value[0]
@@ -3651,9 +3687,7 @@ class Filling_attribute_DevStudio():
         msg = {}
         try:
             data = self.dop_function.connect_by_sql('pi', f'"id", "tag"')
-            root, tree  = self.dop_function.parser_map()
-            # Чистка тэгов
-            self.dop_function.cleaner_map('.PIs.', root)
+            root, tree  = self.dop_function.parser_map('.PIs.')
 
             for value in data:
                 number = value[0]
@@ -3688,9 +3722,7 @@ class Filling_attribute_DevStudio():
         msg = {}
         try:
             data = self.dop_function.connect_by_sql('pz', f'"id", "type_zone"')
-            root, tree  = self.dop_function.parser_map()
-            # Чистка тэгов
-            self.dop_function.cleaner_map('.PZs.', root)
+            root, tree  = self.dop_function.parser_map('.PZs.')
 
             for value in data:
                 number    = value[0]
@@ -3719,50 +3751,32 @@ class Filling_attribute_DevStudio():
             msg[f'{today} - Карта адресов: ошибка при заполнении карты адресов PZs: {traceback.format_exc()}'] = 2
             return msg  
     
-    def mklogic_AO_maps(self):
+    def mklogic_DIAG_maps_param(self, variable_mod, type_mod, list_param):
         msg = {}
-        count_array = 0
-        count_HEALT = 0
         try:
-            root, tree  = self.dop_function.parser_map()
-            # Чистка тэгов
-            self.dop_function.cleaner_map('.Diag.AOs.', root)
+            root, tree  = self.dop_function.parser_map(f'.Diag.{variable_mod}.')
+            data_hw = self.hardware_data(type_mod)
 
-            with db:
-                for basket in HardWare.select().dicts():
-                    tag = basket['tag']
-                    for key, value in basket.items():
-                        if value == 'MK-514-008':
-                            number_modul = str(key).split("_")[1]
-                            if int(number_modul) < 10: string_name = f'{tag}_0{number_modul}'
-                            else                     : string_name = f'{tag}_{number_modul}'
+            for data in data_hw:
+                string_name  = data['string_name']
+                for i in list_param:
+                    name = f'Root{prefix_system}.Diag.{variable_mod}.{string_name}.{i}'
 
-                            count_HEALT += 1
-                            for i in range(5):
-                                if i < 4: count_array += 1
-                                num_series = i + 1
-                                name_AO       = f'Root{prefix_system}.Diag.AOs.{string_name}.mAO[{num_series}]'
-                                name_AO_HEALT = f'Root{prefix_system}.Diag.AOs.{string_name}.mAI_CH_HEALTH'
+                    object = etree.Element('item')
+                    object.attrib['Binding'] = 'Introduced'
 
-                                object = etree.Element('item')
-                                object.attrib['Binding'] = 'Introduced'
-
-                                if i > 3: 
-                                    self.dop_function.new_map_str(object, 'node-path', f'{name_AO_HEALT}')
-                                    self.dop_function.new_map_str(object, 'address', f'mAO_CH_HEALTH')
-                                    self.dop_function.new_map_str(object, 'arrayposition', f'{count_HEALT - 1}')
-                                else:
-                                    self.dop_function.new_map_str(object, 'node-path', f'{name_AO}')
-                                    self.dop_function.new_map_str(object, 'address', f'mAO')
-                                    self.dop_function.new_map_str(object, 'arrayposition', f'{count_array - 1}')
-
-                                root.append(object)
+                    self.dop_function.new_map_str(object, 'node-path', f'{name}')
+                    self.dop_function.new_map_str(object, 'table', f'Holding Registers')
+                    self.dop_function.new_map_str(object, 'address', f'{i}')
+                    
+                    root.append(object)
                 tree.write(f'{path_to_devstudio}\\OUA.xml', pretty_print=True)
-            msg[f'{today} - Карта адресов: адреса Diag.AIs заполнены'] = 1
+            msg[f'{today} - Карта адресов: адреса Diag.{variable_mod} заполнены'] = 1
             return msg
         except Exception:
-            msg[f'{today} - Карта адресов: ошибка при заполнении карты адресов Diag.AIs: {traceback.format_exc()}'] = 2
+            msg[f'{today} - Карта адресов: ошибка при заполнении карты адресов Diag.{variable_mod}: {traceback.format_exc()}'] = 2
             return msg  
+        
 
 # Work with filling in the table 
 class Filling_HardWare():
