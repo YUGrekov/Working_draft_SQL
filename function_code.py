@@ -438,7 +438,7 @@ class Equipment(Initialisation_path):
             # Цикл по всем xml
             for path in map_attrib:
                 root_2, tree_2 = self.parser_diag_map(path)
-                self.cleaner_diag_map(directory, root_2)
+                self.cleaner_diag_map(directory, root_2) 
                 tree_2.write(path, pretty_print=True)
         # Чистка карты адресов OPCDA
         if clear_opcda:

@@ -1072,7 +1072,7 @@ class Widget(QWidget):
         self.list_gen_vu = []
         self.filing_attrib = Filling_attribute_DevStudio()
         l_vu_desc = QLabel('DevStudio', tab_6)
-        l_vu_desc.move(150, 5)
+        l_vu_desc.move(100, 5)
         #l_diagn = QLabel('Диагностика: ', tab_4)
         #l_diagn.move(10, 20)
         self.q_check_omx_ai = QCheckBox('Analogs', tab_6)
@@ -1128,6 +1128,12 @@ class Widget(QWidget):
         self.q_check_omx_diag_ao = QCheckBox('AO', tab_6)
         self.q_check_omx_diag_ao.move(190, 35) 
         self.q_check_omx_diag_ao.stateChanged.connect(self.check_omx_diag_ao)
+        self.q_check_omx_diag_di = QCheckBox('DI', tab_6)
+        self.q_check_omx_diag_di.move(190, 50) 
+        self.q_check_omx_diag_di.stateChanged.connect(self.check_omx_diag_di)
+        self.q_check_omx_diag_do = QCheckBox('DO', tab_6)
+        self.q_check_omx_diag_do.move(190, 65) 
+        self.q_check_omx_diag_do.stateChanged.connect(self.check_omx_diag_do)
         # Установить все
         check_all_omx = QCheckBox('Установить/Снять', tab_6)
         check_all_omx.setToolTip('Установить или снять все флаги для заполнения атрибутов omx')
@@ -1138,26 +1144,26 @@ class Widget(QWidget):
         b_omx_list.setStyleSheet("border: 1px solid; border-radius: 3px;")
         #b_omx_list.setToolTip('''Создается отдельный файл таблиц для ручной генерации базы данных PostgreSQL''')
         b_omx_list.resize(90,30)
-        b_omx_list.move(10, 170) 
+        b_omx_list.move(15, 170) 
         b_omx_list.clicked.connect(self.omx_list)
         b_omx_clear = QPushButton('Очистить\nатрибуты', tab_6)
         b_omx_clear.setStyleSheet("border: 1px solid; border-radius: 3px;")
         #b_omx_clear.setToolTip('''Схема: messages\nТаблица: opmessages\nТаблица должна существовать. Повторяющиеся строки удаляются, и добавляются новые''')
         b_omx_clear.resize(90,30)
-        b_omx_clear.move(10, 205) 
+        b_omx_clear.move(15, 205) 
         b_omx_clear.clicked.connect(self.omx_clear)
 
         b_map_list = QPushButton('Заполнить\nкарту адресов', tab_6)
         b_map_list.setStyleSheet("border: 1px solid; border-radius: 3px;")
         #b_omx_list.setToolTip('''Создается отдельный файл таблиц для ручной генерации базы данных PostgreSQL''')
         b_map_list.resize(90,30)
-        b_map_list.move(110, 170) 
+        b_map_list.move(125, 170) 
         b_map_list.clicked.connect(self.map_list)
         b_map_clear = QPushButton('Очистить\nкарту адресов', tab_6)
         b_map_clear.setStyleSheet("border: 1px solid; border-radius: 3px;")
         #b_omx_clear.setToolTip('''Схема: messages\nТаблица: opmessages\nТаблица должна существовать. Повторяющиеся строки удаляются, и добавляются новые''')
         b_map_clear.resize(90,30)
-        b_map_clear.move(110, 205) 
+        b_map_clear.move(125, 205) 
         b_map_clear.clicked.connect(self.map_clear)
 
         # Logs
@@ -1962,6 +1968,12 @@ class Widget(QWidget):
     def check_omx_diag_ao(self, checked):
         if checked: self.list_gen_vu.append('AO_diag')
         else      : self.list_gen_vu.remove('AO_diag')
+    def check_omx_diag_di(self, checked):
+        if checked: self.list_gen_vu.append('DI_diag')
+        else      : self.list_gen_vu.remove('DI_diag')
+    def check_omx_diag_do(self, checked):
+        if checked: self.list_gen_vu.append('DO_diag')
+        else      : self.list_gen_vu.remove('DO_diag')
     # Button confirm
     def omx_list(self):
         msg = self.filing_attrib.write_in_omx(self.list_gen_vu)
@@ -1973,7 +1985,7 @@ class Widget(QWidget):
         msg = self.filing_attrib.write_in_map(self.list_gen_vu)
         self.logs_msg('default', 1, msg, True)
     def map_clear(self):
-        msg = self.filing_attrib.write_in_sql_tabl()
+        msg = self.filing_attrib.clear_map(self.list_gen_vu)
         self.logs_msg('default', 1, msg, True)
     # Logging messeges
     def logs_msg(self, logs=None, number_color=1, buffer_msg=None, msg=False):
