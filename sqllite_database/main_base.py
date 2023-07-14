@@ -248,6 +248,13 @@ class General_functions():
         except Exception:
             return 
         return cursor.fetchall()
+    def connect_count_row_sql(self, table_used):
+        try:
+            cursor = db.cursor()
+            cursor.execute(f'''SELECT COUNT (*) FROM "{table_used}"''')
+        except Exception:
+            return True
+        return cursor.fetchall()
     # Создание атрибутов
     def new_attr(self, obj, type, value):
          atrb = etree.Element("attribute")
@@ -2149,10 +2156,29 @@ class Filling_attribute_DevStudio():
             if tabl == 'RS_diag': 
                 msg.update(self.mklogic_DIAG_omx('RSs', 'MK-541-002', 'MK_Logic.mod_RS'))
                 continue
+            if tabl == 'RackStates_diag': 
+                msg.update(self.rackstate_omx())
+                continue
+            if tabl == 'ColorDI': 
+                msg.update(self.colorscheme_di())
+                continue
+            if tabl == 'formatAI': 
+                msg.update(self.analogformat_map())
+                continue
+            if tabl == 'mapEGU': 
+                msg.update(self.egu_map())
+                continue
         return msg
     def write_in_map(self, list_tabl):
             list_param_AI_AO = ['mod_State', 'ch_01', 'ch_02', 'ch_03', 'ch_04', 'ch_05', 'ch_06', 'ch_07', 'ch_08' ]
             list_param_DI_DO = ['mod_State', 'mDI']
+            list_param_CPU   = ['mod_State', 'mod_State_ext', 'mod_State_Err', 'CPUMemFree', 'CPULoad', 'ClcCurr', 'ClcMax', 'RsrCRC32', 'DiskFreeSpace']
+            list_param_CN    = ['mod_State', 'mod_State_ext', 'ports_State', 'pwl_ID']
+            list_param_MN    = ['mod_State_ext', 'ports_State']
+            list_param_PSU   = ['mod_State', 'mod_State_ext', 'SupplyVoltage', 'CanBusSpeed', 'Can1ErrorCounter', 'Can2ErrorCounter']
+            list_param_RS    = ['mod_State', 'mod_State_ext']
+            list_param_RackS = ['mBUS', 'mBUSandCh', 'mBUSblink']
+            
             msg = {}
             if len(list_tabl) == 0:             
                 msg[f'{today} - Файл omx: не выбраны атрибуты'] = 2
@@ -2215,12 +2241,33 @@ class Filling_attribute_DevStudio():
                 if tabl == 'DI_diag': 
                     msg.update(self.mklogic_DIAG_maps_param('DIs', 'MK-521-032', list_param_DI_DO))
                     continue
+                if tabl == 'CPU_diag': 
+                    msg.update(self.mklogic_DIAG_maps_param('CPUs', 'MK-504-120', list_param_CPU))
+                    continue
+                if tabl == 'CN_diag': 
+                    msg.update(self.mklogic_DIAG_maps_param('CNs', 'MK-545-010', list_param_CN))
+                    continue
+                if tabl == 'MN_diag': 
+                    msg.update(self.mklogic_DIAG_maps_param('MNs', 'MK-546-010', list_param_MN))
+                    continue
+                if tabl == 'PSU_diag': 
+                    msg.update(self.mklogic_DIAG_maps_param('PSUs', 'MK-550-024', list_param_PSU))
+                    continue
+                if tabl == 'RS_diag': 
+                    msg.update(self.mklogic_DIAG_maps_param('RSs', 'MK-541-002', list_param_RS))
+                    continue
+                if tabl == 'RackStates_diag': 
+                    msg.update(self.mklogic_rackstates_maps(list_param_RackS))
+                    continue
             return msg
     def clear_omx(self, list_tabl):
         path_AI_AO = [f'{path_to_devstudio}\\AttributesMapAI_Ref.xml', f'{path_to_devstudio}\\AttributesMapKlk.xml', f'{path_to_devstudio}\\AttributesMapKont.xml', 
                       f'{path_to_devstudio}\\AttributesMapSignalName.xml', f'{path_to_devstudio}\\AttributesMapTagName.xml']
         path_DI_DO = [f'{path_to_devstudio}\\AttributesMapKlk.xml', f'{path_to_devstudio}\\AttributesMapKont.xml', 
                       f'{path_to_devstudio}\\AttributesMapSignalName.xml', f'{path_to_devstudio}\\AttributesMapTagName.xml']
+        path_ColorDI = [f'{path_to_devstudio}\\AttributesMapColorScheme.xml']
+        path_formatAI = [f'{path_to_devstudio}\\AttributesAnalogsFormats.xml']
+        path_egu = [f'{path_to_devstudio}\\AttributesMapEGU.xml']
         msg = {}
         if len(list_tabl) == 0: 
             msg[f'{today} - Файл omx: не выбраны атрибуты'] = 2
@@ -2286,6 +2333,33 @@ class Filling_attribute_DevStudio():
             if tabl == 'DO_diag': 
                 msg.update(self.dop_function.clear_diag_objects_omx('DOs'))
                 msg.update(self.dop_function.clear_objects_attrib('.Diag.DOs', path_DI_DO))
+                continue
+            if tabl == 'CPU_diag': 
+                msg.update(self.dop_function.clear_diag_objects_omx('CPUs'))
+                continue
+            if tabl == 'CN_diag': 
+                msg.update(self.dop_function.clear_diag_objects_omx('CNs'))
+                continue
+            if tabl == 'MN_diag': 
+                msg.update(self.dop_function.clear_diag_objects_omx('MNs'))
+                continue
+            if tabl == 'PSU_diag': 
+                msg.update(self.dop_function.clear_diag_objects_omx('PSUs'))
+                continue
+            if tabl == 'RS_diag': 
+                msg.update(self.dop_function.clear_diag_objects_omx('RSs'))
+                continue
+            if tabl == 'RackStates_diag': 
+                msg.update(self.dop_function.clear_diag_objects_omx('RackStates'))
+                continue
+            if tabl == 'ColorDI': 
+                msg.update(self.dop_function.clear_objects_attrib('.Diskrets', path_ColorDI))
+                continue
+            if tabl == 'formatAI': 
+                msg.update(self.dop_function.clear_objects_attrib('.Analogs', path_formatAI))
+                continue
+            if tabl == 'mapEGU': 
+                msg.update(self.dop_function.clear_objects_attrib('.Analogs', path_egu))
                 continue
         return msg
     def clear_map(self, list_tabl):
@@ -2369,6 +2443,30 @@ class Filling_attribute_DevStudio():
             if tabl == 'DO_diag': 
                 self.dop_function.parser_map('.Diag.DOs.')
                 msg[f'{today} - Карта адресов: адреса Diag.DOs очищены'] = 1
+                continue
+            if tabl == 'CPU_diag': 
+                self.dop_function.parser_map('.Diag.CPUs.')
+                msg[f'{today} - Карта адресов: адреса Diag.CPUs очищены'] = 1
+                continue
+            if tabl == 'CN_diag': 
+                self.dop_function.parser_map('.Diag.CNs.')
+                msg[f'{today} - Карта адресов: адреса Diag.CNs очищены'] = 1
+                continue
+            if tabl == 'MN_diag': 
+                self.dop_function.parser_map('.Diag.MNs.')
+                msg[f'{today} - Карта адресов: адреса Diag.MNs очищены'] = 1
+                continue
+            if tabl == 'PSU_diag': 
+                self.dop_function.parser_map('.Diag.PSUs.')
+                msg[f'{today} - Карта адресов: адреса Diag.PSUs очищены'] = 1
+                continue
+            if tabl == 'RS_diag': 
+                self.dop_function.parser_map('.Diag.RSs.')
+                msg[f'{today} - Карта адресов: адреса Diag.RSs очищены'] = 1
+                continue
+            if tabl == 'RackStates_diag': 
+                self.dop_function.parser_map('.Diag.RackStates.')
+                msg[f'{today} - Карта адресов: адреса Diag.RackStates очищены'] = 1
                 continue
         return msg
     def hardware_data(self, type_modul):
@@ -3150,7 +3248,8 @@ class Filling_attribute_DevStudio():
                             if not name is None or name == '': object.attrib['value'] = str(name)
                         if path == f'{path_to_devstudio}\\AttributesMapTagName.xml': 
                             if not tag is None or tag == '': object.attrib['value'] = str(tag)
-                        
+
+                        msg[f'{today} - Значения атрибутов Diag.{variable_mod} файл заполнен: {path}'] = 1
                         root.append(object)
                 tree.write(path, pretty_print=True)
             msg[f'{today} - Значения атрибутов Diag.{variable_mod} добавлены'] = 1
@@ -3226,11 +3325,8 @@ class Filling_attribute_DevStudio():
                 uso          = data['uso']
                 string_name  = data['string_name']
                 number_modul = data['number_modul']
+                num_basket   = data['num_basket']
                 modPosition  = data['modPosition']
-                
-                if variable_mod == 'RSs': 
-                    rs_port1     = data['rs_port1']
-                    rs_port2     = data['rs_port2']
 
                 object = etree.Element("{automation.control}object")
                 object.attrib['name'] = string_name
@@ -3243,10 +3339,18 @@ class Filling_attribute_DevStudio():
                 self.dop_function.new_attr(object, "unit.Library.Attributes.ModPosition", modPosition)
                 self.dop_function.new_attr(object, "unit.Library.Attributes.ModUSO", uso)
                 self.dop_function.new_attr(object, "unit.System.Attributes.Description", type_mod)
-
-                if variable_mod == 'RSs':
+                # Только для RS
+                if variable_mod == 'RSs': 
+                    rs_port1 = 'Резерв'
+                    rs_port2 = 'Резерв'
+                    data_kd = self.dop_function.connect_by_sql_condition('signals', '*', f'''"uso"='{uso}' AND "basket"={int(num_basket)} AND "module"={int(number_modul)}''')
+                    for data in data_kd:
+                        channel = data[10]
+                        name_kd = data[4]
+                        if channel == 1: rs_port1 = name_kd
+                        if channel == 2: rs_port2 = name_kd
                     self.dop_function.new_attr(object, "unit.Library.Attributes.SignalName", rs_port1)
-                    self.dop_function.new_attr(object, "unit.System.Attributes.SignalName_2", rs_port2)
+                    self.dop_function.new_attr(object, "unit.Library.Attributes.SignalName_2", rs_port2)
 
                 el1.append(object)
             tree.write(f'{path_to_devstudio}\\typical_prj.omx', pretty_print=True)
@@ -3254,7 +3358,144 @@ class Filling_attribute_DevStudio():
             return msg
         except Exception:
             msg[f'{today} - Файл omx: ошибка при добавлении атрибута Diag.{variable_mod}: {traceback.format_exc()}'] = 2   
-            return msg     
+            return msg
+    def rackstate_omx(self):
+            msg = {}
+            try:
+                msg_bool, el1, tree = self.dop_function.parser_diag_omx('RackStates')
+                if msg_bool == 1: 
+                    msg[f'{today} - Файл omx: ошибка при очистке атрибутов Diag.RackStates'] = 2
+                    return msg
+                
+                cursor = db.cursor()
+                cursor.execute(f'''SELECT COUNT (*) FROM hardware''')
+                for i in cursor.fetchall():
+                    count = i[0]
+
+                for i in range(count):
+                    object = etree.Element("{automation.control}object")
+                    object.attrib['name'] = f'rack_{i + 1}'
+                    object.attrib['uuid'] = str(uuid.uuid1())
+                    object.attrib['base-type'] = f"unit.Library.PLC_Types.modules.MK_Logic.rack_State"
+                    object.attrib['aspect'] = "unit.Library.PLC_Types.PLC"
+                    
+                    el1.append(object)
+                tree.write(f'{path_to_devstudio}\\typical_prj.omx', pretty_print=True)
+                msg[f'{today} - Файл omx: атрибуты Diag.RackStates добавлены'] = 1
+                return msg
+            except Exception:
+                msg[f'{today} - Файл omx: ошибка при добавлении атрибута Diag.RackStates: {traceback.format_exc()}'] = 2   
+                return msg     
+    def colorscheme_di(self):
+        link_path = f'{path_to_devstudio}\\AttributesMapColorScheme.xml'
+        dop_color = {"01":"1",
+                     "02":"2",
+                     "03":"3",
+                     "10":"11",
+                     "20":"12",
+                     "30":"9",
+                     "12":"4",
+                     "13":"5",
+                     "21":"10",
+                     "31":"7",
+                     "23":"6",
+                     "32":"8",
+                     "00":"0",
+                     "11":"1"}
+        msg = {}
+        try:
+            data_di = self.dop_function.connect_by_sql('di', f'"tag", "name", "priority_0", "priority_1"')
+            root, tree = self.dop_function.parser_diag_map(f'.Diskrets.', link_path)
+
+            for data in data_di:
+                tag  = data[0]
+                name = data[1]
+                priority_0 = data[2]
+                priority_1 = data[3]
+
+                if priority_0 is None: priority_0 = '0'
+                else                 : priority_0 = str(priority_0)
+
+                if priority_1 is None: priority_1 = '0'
+                else                 : priority_1 = str(priority_1)
+
+                color_shema = str(dop_color[priority_0 + priority_1])
+
+                if name is None: continue
+                if tag  is None: continue
+                tag = self.dop_function.translate(str(tag))
+
+                object = etree.Element('item')
+                object.attrib['id'] = f'Root.Diskrets.{tag}.s_Config'
+                object.attrib['id'] = f'Root{prefix_system}.Diskrets.{tag}.s_Config'
+                object.attrib['value'] = color_shema
+                root.append(object)
+
+                tree.write(link_path, pretty_print=True)
+            msg[f'{today} - Карта атрибутов AttributesMapColorScheme заполнена'] = 1
+            return msg
+        except Exception:
+            msg[f'{today} - Ошибка при добавлении значений в карту атрибутов AttributesMapColorScheme: {traceback.format_exc()}'] = 2
+            return msg
+    def analogformat_map(self):
+        link_path = f'{path_to_devstudio}\\AttributesAnalogsFormats.xml'
+        msg = {}
+        try:
+            data_ai = self.dop_function.connect_by_sql('ai', f'"tag", "AnalogGroupId", "Precision"')
+            data_aigrp = self.dop_function.connect_by_sql('ai_grp', f'"name", "min6", "min5", "min4", "min3", "min2", "min1", "max1", "max2", "max3", "max4", "max5", "max6"')
+            root, tree = self.dop_function.parser_diag_map(f'.Analogs.', link_path)
+
+            for data in data_ai:
+                tag          = data[0]
+                group_analog = data[1]
+                formate      = data[2]
+
+                if tag == '' or tag is None: continue
+                tag = self.dop_function.translate(str(tag))
+
+                for grp in data_aigrp:
+                     if group_analog == grp[0]:
+                        grp_ai = {'Format': formate,
+                                  'UstName.UstMin1': grp[6], 'UstName.UstMin2': grp[5], 'UstName.UstMin3': grp[4],
+                                  'UstName.UstMin4': grp[3], 'UstName.UstMin5': grp[2], 'UstName.UstMin6': grp[1],
+                                  'UstName.UstMax1': grp[7], 'UstName.UstMax2': grp[8], 'UstName.UstMax3': grp[9],
+                                  'UstName.UstMax4': grp[10],'UstName.UstMax5': grp[11],'UstName.UstMax6': grp[12]}
+                        for grp, value in grp_ai.items():
+                            object = etree.Element('item')
+                            object.attrib['id']    = f'Root.{prefix_system}Analogs.{tag}.{grp}'
+                            object.attrib['value'] = str(value)
+                            root.append(object)
+                tree.write(link_path, pretty_print=True)
+            msg[f'{today} - Карта атрибутов AttributesAnalogsFormats заполнена'] = 1
+            return msg
+        except Exception:
+            msg[f'{today} - Ошибка при добавлении значений в карту атрибутов AttributesAnalogsFormats: {traceback.format_exc()}'] = 2
+            return msg
+    def egu_map(self):
+        link_path = f'{path_to_devstudio}\\AttributesMapEGU.xml'
+        msg = {}
+        try:
+            data_ai = self.dop_function.connect_by_sql('ai', f'"tag", "Egu"')
+            root, tree = self.dop_function.parser_diag_map(f'.Analogs.', link_path)
+
+            for data in data_ai:
+                tag = data[0]
+                egu = data[1]
+
+                if tag == '' or tag is None: continue
+                tag = self.dop_function.translate(str(tag))
+
+                object = etree.Element('item')
+                object.attrib['id'] = f'Root{prefix_system}.Analogs.{tag}.AIValue'
+                object.attrib['value'] = str(egu)
+                root.append(object)
+
+                tree.write(link_path, pretty_print=True)
+            msg[f'{today} - Карта атрибутов AttributesMapEGU заполнена'] = 1
+            return msg
+        except Exception:
+            msg[f'{today} - Ошибка при добавлении значений в карту атрибутов AttributesMapEGU: {traceback.format_exc()}'] = 2
+            return msg
     # Заполнение карты адресов
     def analogs_maps(self):
         dop_analog    = {'AIVisualValue', 'AIElValue', 'AIValue', 'AIRealValue', 'StateAI'}
@@ -3775,6 +4016,35 @@ class Filling_attribute_DevStudio():
             return msg
         except Exception:
             msg[f'{today} - Карта адресов: ошибка при заполнении карты адресов Diag.{variable_mod}: {traceback.format_exc()}'] = 2
+            return msg  
+    def mklogic_rackstates_maps(self, list_param):
+        msg = {}
+        try:
+            root, tree  = self.dop_function.parser_map(f'.Diag.RackStates.')
+            data_hw = self.dop_function.connect_count_row_sql('hardware')
+            if data_hw == True:
+                msg[f'{today} - Карта адресов: ошибка при заполнении карты адресов RackStates. Количество корзин не определено'] = 2
+                return msg
+            for i in data_hw:
+                count = i[0]
+
+            for i in range(count):
+                for j in list_param:
+                    name = f'Root{prefix_system}.Diag.RackStates.rack_{i + 1}.{j}'
+
+                    object = etree.Element('item')
+                    object.attrib['Binding'] = 'Introduced'
+
+                    self.dop_function.new_map_str(object, 'node-path', f'{name}')
+                    self.dop_function.new_map_str(object, 'table', f'Holding Registers')
+                    self.dop_function.new_map_str(object, 'address', f'{i}')
+                    
+                    root.append(object)
+                tree.write(f'{path_to_devstudio}\\OUA.xml', pretty_print=True)
+            msg[f'{today} - Карта адресов: адреса Diag.RackStates заполнены'] = 1
+            return msg
+        except Exception:
+            msg[f'{today} - Карта адресов: ошибка при заполнении карты адресов Diag.RackStates: {traceback.format_exc()}'] = 2
             return msg  
         
 
