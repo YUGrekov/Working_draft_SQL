@@ -4046,8 +4046,611 @@ class Filling_attribute_DevStudio():
         except Exception:
             msg[f'{today} - Карта адресов: ошибка при заполнении карты адресов Diag.RackStates: {traceback.format_exc()}'] = 2
             return msg  
-        
 
+# Filling attribute DevStudio
+class Filling_CodeSys():     
+    def __init__(self):
+        self.dop_function = General_functions()
+    def write_in_file(self, list_tabl):
+        msg = {}
+        if len(list_tabl) == 0:             
+            msg[f'{today} - Файл СУ: не выбраны атрибуты'] = 2
+            return msg
+        for tabl in list_tabl: 
+            if tabl == 'cfg_KTPRS': 
+                msg.update(self.cfg_ktprs())
+                continue
+            if tabl == 'cfg_VV': 
+                msg.update(self.cfg_vv())
+                continue 
+            if tabl == 'cfg_UTS': 
+                msg.update(self.cfg_uts())
+                continue 
+            if tabl == 'cfg_VSGRP': 
+                msg.update(self.cfg_vsgrp())
+                continue 
+            if tabl == 'cfg_NPS': 
+                msg.update(self.cfg_nps())
+                continue 
+        return msg
+    def file_check(self, name_file):
+        path_request = f'{path_su}\\{name_file}.txt'
+        if not os.path.exists(path_request):
+            file = codecs.open(path_request, 'w', 'utf-8')
+            file.write(f'(*{name_file}*)\n')
+        else:
+            os.remove(path_request)
+            file = codecs.open(path_request, 'w', 'utf-8')
+            file.write(f'(*{name_file}*)\n')
+        return file
+    def ret_inp_cfg(self, inp):
+        stateAI = {'Warn'  : 0,
+                   'Avar'  : 1,
+                   'LTMin' : 2,
+                   'MTMax' : 3,
+                   'AlgNdv': 4,
+                   'Imit'  : 5,
+                   'ExtNdv': 6,
+                   'Ndv'   : 7,
+                   'Init'  : 8}
+        stateAIzone = {'rez_0'                  : 0,
+                       'Min6'                   : 1,
+                       'Min5'                   : 2,
+                       'Min4'                   : 3,
+                       'Min3_IsMT10Perc'        : 4,
+                       'Min2_IsNdv2ndParam'     : 5,
+                       'Min1_IsHighVibStat'     : 6,
+                       'Norm'                   : 7,
+                       'Max1_IsHighVibStatNMNWR': 8,
+                       'Max2_IsHighVibNoStat'   : 9,
+                       'Max3_IsAvarVibStat'     : 10,
+                       'Max4_IsAvarVibStatNMNWR': 11,
+                       'Max5_IsAvarVibNoStat'   : 12,
+                       'Max6_IsAvar2Vib'        : 13,
+                       'rez_14'                 : 14,
+                       'rez_15'                 : 15}
+        stateDI = {'Value'    : 0,
+                   'ElInput'  : 1,
+                   'O'        : 2,
+                   'KZ'       : 3,
+                   'NC'       : 4,
+                   'Imit'     : 5,
+                   'ExtNdv'   : 6,
+                   'Ndv'      : 7,
+                   'priority1': 8,
+                   'priority2': 9,
+                   'priority3': 10,
+                   'rez_11'   : 11,
+                   'rez_12'   : 12,
+                   'Front_0_1': 13,
+                   'Front_1_0': 14,
+                   'CfgErr'   : 15}
+        stateNPS = {'ModeNPSDst'       : 0,
+                    'MNSInWork'        : 1,
+                    'IsMNSOff'         : 2,
+                    'IsNPSModePsl'     : 3,
+                    'IsPressureReady'  : 4,
+                    'NeNomFeedInterval': 5,
+                    'OIPHighPressure'  : 6,
+                    'KTPR_P'           : 7,
+                    'KTPR_M'           : 8,
+                    'CSPAlinkOK'       : 9,
+                    'CSPAWorkDeny'     : 10,
+                    'TSstopped'        : 11,
+                    'rez_12'           : 12,
+                    'stopDisp'         : 13,
+                    'stopCSPA'         : 14,
+                    'stopARM'          : 15}
+        stateFacility = {'longGasPoint1': 0,
+                         'longGasPoint2': 1,
+                         'longGasPoint3': 2,
+                         'longGasPoint4': 3,
+                         'longGasPoint5': 4,
+                         'longGasPoint6': 5,
+                         'longGasPoint7': 6,
+                         'longGasPoint8': 7,
+                         'rez_8'        : 8,
+                         'rez_9'        : 9,
+                         'rez_10'       : 10,
+                         'rez_11'       : 11,
+                         'rez_12'       : 12,
+                         'rez_13'       : 13,
+                         'rez_14'       : 14,
+                         'rez_15'       : 15}
+        warnFacility = {'warnGasPoint1': 0,
+                        'warnGasPoint2': 1,
+                        'warnGasPoint3': 2,
+                        'warnGasPoint4': 3,
+                        'warnGasPoint5': 4,
+                        'warnGasPoint6': 5,
+                        'warnGasPoint7': 6,
+                        'warnGasPoint8': 7,
+                        'rez_8'        : 8,
+                        'rez_9'        : 9,
+                        'rez_10'       : 10,
+                        'rez_11'       : 11,
+                        'rez_12'       : 12,
+                        'rez_13'       : 13,
+                        'rez_14'       : 14,
+                        'rez_15'       : 15}
+        Facility = {'ndv2Gas'   : 0,
+                    'GasLim'    : 1,
+                    'GasAv'     : 2,
+                    'GasKeep'   : 3,
+                    'GasNdvWait': 4,
+                    'GasLimWait': 5,
+                    'GasNdvProt': 6,
+                    'GasAvProt' : 7,
+                    'ColdOn'    : 8,
+                    'HotOn'     : 9,
+                    'rez_10'    : 10,
+                    'rez_11'    : 11,
+                    'ColdOff'   : 12,
+                    'HotOff'    : 13,
+                    'rez_14'    : 14,
+                    'rez_15'    : 15}
+        vsgrpstate = {'REZ_EXIST'           : 0,
+                      'REM'                 : 1,
+                      'OTKL'                : 2,
+                      'OTKL_BY_CMD'         : 3,
+                      'VKL_AS_DOP'          : 4,
+                      'PUSK_OSN'            : 5,
+                      'rez_6'               : 6,
+                      'rez_7'               : 7,
+                      'rez_8'               : 8,
+                      'rez_9'               : 9,
+                      'rez_10'              : 10,
+                      'rez_11'              : 11,
+                      'rez_12'              : 12,
+                      'rez_13'              : 13,
+                      'LAST_OFF_BY_CMD_ARM ': 14,
+                      'ALL_OFF_WITH_BLOCK ' : 15}
+        statektpr = {'P': 0,
+                     'F': 1,
+                     'M': 2}
+        state_na = {'MainState_1_VKL'     : 0,
+                    'MainState_2_OTKL'    : 1,
+                    'MainState_3_PUSK'    : 2,
+                    'MainState_4_OSTANOV' : 3,
+                    'SubState_1_GP'       : 4,
+                    'SubState_2_GORREZ'   : 5,
+                    'SubState_3_PP'       : 6,
+                    'SubState_4_PO'       : 7,
+                    'Mode_1_OSN'          : 8,
+                    'Mode_2_TU'           : 9,
+                    'Mode_3_REZ'          : 10,
+                    'Mode_4_REM'          : 11,
+                    'KTPRA_P'             : 12,
+                    'SimAgr'              : 13,
+                    'Prog_1'              : 14,
+                    'Prog_2'              : 15
+                    }
+        state_na2 = {'HIGHVIB'      : 0,
+                     'HIGHVIBNas'   : 1,
+                     'QF3A'         : 2,
+                     'QF1A'         : 3,
+                     'BBon'         : 4,
+                     'BBoff'        : 5,
+                     'KTPRA_FNM'    : 6,
+                     'KTPRA_M'      : 7,
+                     'GMPNA_M'      : 8,
+                     'BBErrOtkl_All': 9,
+                     'BBErrOtkl'    : 10,
+                     'BBErrOtkl1'   : 11,
+                     'BBErrVkl'     : 12,
+                     'GMPNA_P'      : 13,
+                     'GMPNA_F'      : 14,
+                     'StateAlarm_VV': 15}
+        state_na3 = {'KKCAlarm1'   : 0,
+                     'KKCAlarm2'   : 1,
+                     'KKCAlarm3'   : 2,
+                     'KKCAlarm4'   : 3,
+                     'InputPath'   : 4,
+                     'OutputPath'  : 5,
+                     'OIPVib'      : 6,
+                     'rez_7'       : 7,
+                     'KTPRA_NP'    : 8,
+                     'KTPR_ACHR'   : 9,
+                     'KTPR_SAON'   : 10,
+                     'StopWork'    : 11,
+                     'StartWork'   : 12,
+                     'SAR_Ramp'    : 13,
+                     'needRez'     : 14,
+                     'needOverhaul': 15
+                     }
+        state_na4 = {'StopNoCmd_1'        : 0,
+                     'StopNoCmd_2'        : 1,
+                     'StartNoCmd'         : 2,
+                     'StateAlarm'         : 3,
+                     'StateAlarm_ChRP'    : 4,
+                     'StateAlarm_All'     : 5,
+                     'ChRPRegError'       : 6,
+                     'LogicalChRPCrash'   : 7,
+                     'ZD_Unprompted_Close': 8,
+                     'StopErr'            : 9,
+                     'StopErr2'           : 10,
+                     'StopErr_All'        : 11,
+                     'StartErr'           : 12,
+                     'StartErr2'          : 13,
+                     'StartErr3'          : 14,
+                     'StartErr_All'       : 15,
+                     }
+        state_na5 = {'ED_IsMT10Perc'         : 0,
+                     'ED_IsNdv2ndParam'       : 1,
+                     'ED_IsHighVibStat'       : 2,
+                     'ED_IsHighVibNoStat'     : 3,
+                     'ED_IsAvarVibStat'       : 4,
+                     'ED_IsAvarVibNoStat'     : 5,
+                     'ED_IsAvar2Vib'          : 6,
+                     'Pump_IsMT10Perc'        : 7,
+                     'Pump_IsNdv2ndParam'     : 8,
+                     'Pump_IsHighVibStat'     : 9,
+                     'Pump_IsHighVibStatNMNWR': 10,
+                     'Pump_IsHighVibNoStat'   : 11,
+                     'Pump_IsAvarVibStat'     : 12,
+                     'Pump_IsAvarVibStatNMNWR': 13,
+                     'Pump_IsAvarVibNoStat'   : 14,
+                     'Pump_IsAvar2Vib'        : 15
+                     }
+        state_na6 = {'GMPNA_P_2_64': 0,
+                     'rez_1': 1,
+                     'rez_2': 2,
+                     'rez_3': 3,
+                     'rez_4': 4,
+                     'rez_5': 5,
+                     'rez_6': 6,
+                     'rez_7': 7,
+                     'rez_8': 8,
+                     'rez_9': 9,
+                     'rez_10': 10,
+                     'rez_11': 11,
+                     'RptVKL': 12,
+                     'UseCT': 13,
+                     'ZDin_Unprompted_Close': 14,
+                     'ZDout_Unprompted_Close': 15}
+        state_zd1  = {'State_1_Opening': 0,
+                     'State_2_Opened' : 1,
+                     'State_3_Middle' : 2,
+                     'State_4_Closing': 3,
+                     'State_5_Closed' : 4,
+                     'Dist'           : 5,
+                     'Imit'           : 6,
+                     'NOT_EC'         : 7,
+                     'Avar'           : 8,
+                     'Diff'           : 9,
+                     'WarnClose'      : 10,
+                     'Blink'          : 11,
+                     'KVO'            : 12,
+                     'KVZ'            : 13,
+                     'MPO'            : 14,
+                     'MPZ'            : 15}
+        state_zd2  = {'CorrCO'        : 0,
+                     'CorrCZ'        : 1,
+                     'VMMO'          : 2,
+                     'VMMZ'          : 3,
+                     'NOT_ZD_EC_KTP' : 4,
+                     'Local'         : 5,
+                     'Mufta'         : 6,
+                     'Avar_BUR'      : 7,
+                     'NeispravVU'    : 8,
+                     'ErrMPO'        : 9,
+                     'ErrMPZ'        : 10,
+                     'EC'            : 11,
+                     'RS_OK'         : 12,
+                     'Close_Fail'    : 13,
+                     'Open_Fail'     : 14,
+                     'Stop_Fail'     : 15}
+        state_zd3 = {'ECsign'          : 0,
+                     'rez_1'           : 1,
+                     'rez_2'           : 2,
+                     'Unprompted_Open' : 3,
+                     'Unprompted_Close': 4,
+                     'Neisprav'        : 5,
+                     'CorrCOCorrCZ'    : 6,
+                     'rez_7'           : 7,
+                     'Open'            : 8,
+                     'Close'           : 9,
+                     'Stop'            : 10,
+                     'StopClose'       : 11,
+                     'VMMO_save'       : 12,
+                     'VMMZ_save'       : 13,
+                     'Mufta_save'      : 14,
+                     'Avar_BUR_save'   : 15}
+
+        isNum = 0
+        isInv = 0
+        Inputvar = str(inp).split(".")
+        try:
+            if self.dop_function.str_find(Inputvar[0], {'NOT '}):
+                isInv = 1
+            Inpvr = str(Inputvar[0]).replace('NOT ', '')
+
+            if len(Inputvar) > 2:
+                if self.dop_function.str_find(Inpvr, {'stateSAR'}):
+                    pInputnum = str(inp).split('.state.')[1]
+                    isNum = 0
+                    pInputpInputVar = (str(inp).split('.state.')[0].replace('NOT ', '')) + '.state.reg'
+                    if self.dop_function.str_find(pInputpInputVar,{'stateQ'}):
+                        pInputpInputVar = (str(inp).split('.state.')[0].replace('NOT ', '')) + '.reg'
+                if self.dop_function.str_find(Inpvr, {'stateBUF'}):
+                    pInputnum = Inputvar[2]
+                    isNum = 0
+                    pInputpInputVar = Inputvar[0] + '.state.reg'
+                if self.dop_function.str_find(Inpvr, {'mRS'}):
+                    pInputnum = Inputvar[2]
+                    isNum = 0
+                    #pInputpInputVar = Inputvar[1]
+                    text = str(inp).replace('NOT ', '').split('.')
+                    pInputpInputVar = f'{text[0]}.{text[1]}.reg'
+                if self.dop_function.str_find(Inpvr, {'stateNA'}):
+                    pInputnum = Inputvar[2]
+                    isNum = 0
+                    pInputpInputVar = Inpvr + '.' + Inputvar[1] + '.reg'
+            elif len(Inputvar) > 1:
+                if (Inputvar[1] in stateAI.keys()) and (self.dop_function.str_find(Inpvr, {'AI'})):
+                    pInputnum = stateAI[Inputvar[1]]
+                    isNum = 0
+                    pInputpInputVar = str(Inpvr).replace('AI', 'StateAI') + '.state.reg'
+                    cfg = '00000000000000' + str(isNum) + str(isInv)
+                    return pInputpInputVar, pInputnum, str(hex(int(cfg, 2))).replace("0x", "16#")
+                if (Inputvar[1] in stateAIzone.keys()) and (self.dop_function.str_find(Inpvr, {'AI'})):
+                    pInputnum = stateAIzone[Inputvar[1]]
+                    isNum = 0
+                    pInputpInputVar = str(Inpvr).replace('AI', 'StateAI') + '.stateZone.reg'
+                if (Inputvar[1] in vsgrpstate.keys()) and (self.dop_function.str_find(Inpvr, {'VSGRP'})):
+                    pInputnum = vsgrpstate[Inputvar[1]]
+                    isNum = 0
+                    pInputpInputVar = str(Inpvr).replace('VSGRP', 'stateVSGRP') + '.state.reg'
+                if (Inputvar[1] in stateFacility.keys()) and (self.dop_function.str_find(Inpvr, {'Facility'})):
+                    pInputnum = stateFacility[Inputvar[1]]
+                    isNum = 0
+                    pInputpInputVar = str(Inpvr).replace('Facility', 'stateFacility') + '.longGas.reg'
+                if (Inputvar[1] in warnFacility.keys()) and (self.dop_function.str_find(Inpvr, {'Facility'})):
+                    pInputnum = warnFacility[Inputvar[1]]
+                    isNum = 0
+                    pInputpInputVar = str(Inpvr).replace('Facility', 'stateFacility') + '.warnGas.reg'
+                if (Inputvar[1] in Facility.keys()) and (self.dop_function.str_find(Inpvr, {'Facility'})):
+                    pInputnum = Facility[Inputvar[1]]
+                    isNum = 0
+                    pInputpInputVar = str(Inpvr).replace('Facility', 'stateFacility') + '.state.reg'
+                if (Inputvar[1] in stateDI.keys()) and (self.dop_function.str_find(Inpvr, {'DI'})):
+                    pInputnum = stateDI[Inputvar[1]]
+                    isNum = 0
+                    pInputpInputVar = str(Inpvr).replace('DI', 'StateDI') + '.state.reg'
+                if (Inputvar[1] in stateNPS.keys()) and (self.dop_function.str_find(Inpvr, {'NPS'})):
+                    pInputnum = stateNPS[Inputvar[1]]
+                    isNum = 0
+                    pInputpInputVar = str(Inpvr).replace('NPS', 'stateNPS') + '.state.reg'
+                if (Inputvar[1] in state_na5.keys()) and (self.dop_function.str_find(Inpvr, {'NA'})):
+                    pInputnum = state_na5[Inputvar[1]]
+                    isNum = 0
+                    pInputpInputVar = str(Inpvr).replace('NA', 'stateNA') + '.state5.reg'
+                if (Inputvar[1] in state_na.keys()) and (self.dop_function.str_find(Inpvr, {'NA'})):
+                    pInputnum = state_na[Inputvar[1]]
+                    isNum = 0
+                    pInputpInputVar = str(Inpvr).replace('NA', 'stateNA') + '.state1.reg'
+                if (Inputvar[1] in state_na3.keys()) and (self.dop_function.str_find(Inpvr, {'NA'})):
+                    pInputnum = state_na3[Inputvar[1]]
+                    isNum = 0
+                    pInputpInputVar = str(Inpvr).replace('NA', 'stateNA') + '.state3.reg'
+                if (Inputvar[1] in state_na6.keys()) and (self.dop_function.str_find(Inpvr, {'NA'})):
+                    pInputnum = state_na6[Inputvar[1]]
+                    isNum = 0
+                    pInputpInputVar = str(Inpvr).replace('NA', 'stateNA') + '.state6.reg'
+                if (Inputvar[1] in state_na4.keys()) and (self.dop_function.str_find(Inpvr, {'NA'})):
+                    pInputnum = state_na4[Inputvar[1]]
+                    isNum = 0
+                    pInputpInputVar = str(Inpvr).replace('NA', 'stateNA') + '.state4.reg'
+                if (Inputvar[1] in state_na2.keys()) and (self.dop_function.str_find(Inpvr, {'NA'})):
+                    pInputnum = state_na2[Inputvar[1]]
+                    isNum = 0
+                    pInputpInputVar = str(Inpvr).replace('NA', 'stateNA') + '.state2.reg'
+                if (Inputvar[1] in statektpr.keys()) and (self.dop_function.str_find(Inpvr, {'KTPR'})):
+                    pInputnum = statektpr[Inputvar[1]]
+                    isNum = 0
+                    isInv = 0
+                    pInputpInputVar = str(Inpvr).replace('KTPR', 'stateKTPR') + '.state.reg'
+                if (Inputvar[1] in state_zd1.keys()) and (self.dop_function.str_find(Inpvr, {'ZD'})):
+                    pInputnum = state_zd1[Inputvar[1]]
+                    isNum = 0
+                    pInputpInputVar = str(Inpvr).replace('ZD', 'stateZD') + '.state1.reg'
+                if (Inputvar[1] in state_zd2.keys()) and (self.dop_function.str_find(Inpvr, {'ZD'})):
+                    pInputnum = state_zd2[Inputvar[1]]
+                    isNum = 0
+                    pInputpInputVar = str(Inpvr).replace('ZD', 'stateZD') + '.state2.reg'
+                if (Inputvar[1] in state_zd3.keys()) and (self.dop_function.str_find(Inpvr, {'ZD'})):
+                    pInputnum = state_zd3[Inputvar[1]]
+                    isNum = 0
+                    pInputpInputVar = str(Inpvr).replace('ZD', 'stateZD') + '.state3.reg'
+
+            if Inputvar[0][:2] == 'AI':
+                if Inputvar[1] == 'Value':
+                    pInputpInputVar = Inputvar
+                    isNum = 1
+            cfg = '00000000000000' + str(isNum) + str(isInv)
+            return pInputpInputVar, pInputnum, str(hex(int(cfg, 2))).replace("0x", "16#")
+        except:
+            return 0, 0, 0
+
+    def cfg_ktprs(self):
+        msg = {}
+        try:
+            data_value = self.dop_function.connect_by_sql('ktprs', f'"id", "name", "drawdown", "prohibition_issuing_msg"')
+            # Проверяем файл на наличие в папке, если есть удаляем и создаем новый
+            write_file = self.file_check('cfg_KTPRS')
+
+            for value in data_value:
+                numbers  = value[0]
+                name     = value[1]
+                drawdown = value[2]
+                noMsg    = value[3] 
+                
+                noMsg = '1' if noMsg is None else '0'
+                if numbers is None: continue
+
+                pInputvar, num, cfg = self.ret_inp_cfg(drawdown)
+                cfg_txt = (f'(*{numbers} - {name}*)\n')
+                if pInputvar != 0:
+                    cfg_txt = cfg_txt + f'cfgKTPRS[{numbers}].pInputVar.pInputVar       REF={str(pInputvar)};\n' \
+                                        f'cfgKTPRS[{numbers}].pInputVar.num               :={str(num)};\n' \
+                                        f'cfgKTPRS[{numbers}].pInputVar.cfg.reg           :={str(cfg)};\n'
+                cfg = '000000000000000' + str(noMsg)
+                cfg_txt = cfg_txt + f"cfgKTPRS[{numbers}].cfg.reg                     :={str(hex(int(cfg, 2))).replace('0x', '16#')};\n"
+                write_file.write(cfg_txt)
+            write_file.close()
+            msg[f'{today} - Файл СУ: cfg_KTPRS заполнен'] = 1
+            return msg
+        except Exception:
+            msg[f'{today} - Файл СУ: ошибка при заполнении cfg_KTPRS: {traceback.format_exc()}'] = 2
+            return msg  
+    def cfg_vv(self):
+        msg = {}
+        try:
+            data_value = self.dop_function.connect_by_sql('vv', f'"id", "name", "VV_vkl", "VV_otkl"')
+            # Проверяем файл на наличие в папке, если есть удаляем и создаем новый
+            write_file = self.file_check('cfg_VV')
+
+            for value in data_value:
+                numbers = value[0]
+                name    = value[1]
+                VV_On   = value[2]
+                VV_Off  = value[3]
+                if numbers is None: continue
+
+                pVVOn, pVVOnnum, pVVOncfg    = self.ret_inp_cfg(VV_On)
+                pVVOff, pVVOffnum, pVVOffcfg = self.ret_inp_cfg(VV_Off)
+
+                cfg_txt = (f'(*{numbers} - {name}*)\n')
+                if pVVOn != 0:
+                    cfg_txt = cfg_txt + f'cfgVV[{numbers}].pBBB.pInputVar       REF={str(pVVOn)};\n' \
+                                        f'cfgVV[{numbers}].pBBB.num               :={str(pVVOnnum)};\n' \
+                                        f'cfgVV[{numbers}].pBBB.cfg.reg           :={str(pVVOncfg)};\n'
+                if pVVOff != 0:
+                    cfg_txt = cfg_txt + f'cfgVV[{numbers}].pBBO.pInputVar       REF={str(pVVOff)};\n' \
+                                        f'cfgVV[{numbers}].pBBO.num               :={str(pVVOffnum)};\n' \
+                                        f'cfgVV[{numbers}].pBBO.cfg.reg           :={str(pVVOffcfg)};\n'
+                write_file.write(cfg_txt)
+            write_file.close()
+
+            msg[f'{today} - Файл СУ: cfg_vv заполнен'] = 1
+            return msg
+        except Exception:
+            msg[f'{today} - Файл СУ: ошибка при заполнении cfg_vv: {traceback.format_exc()}'] = 2
+            return msg  
+    def cfg_uts(self):
+        msg = {}
+        try:
+            data_value = self.dop_function.connect_by_sql('uts', f'"id", "name", "VKL", "siren", "Does_not_require_autoshutdown", "Examination", "Kvit"')
+            # Проверяем файл на наличие в папке, если есть удаляем и создаем новый
+            write_file = self.file_check('cfg_UTS')
+
+            for value in data_value:
+                numbers      = value[0]
+                name         = value[1]
+                pVkl         = value[2]
+                isSiren      = value[3]
+                blockAutoOff = value[4]
+
+                if numbers is None: continue
+                if pVkl == '': continue
+
+                pCheckInput, cinum, cicfg = self.ret_inp_cfg(value[5])
+                pKvitInput, kvnum, kvcfg  = self.ret_inp_cfg(value[6])
+
+                cfg_txt = (f'(*{numbers} - {name}*)\n')
+                if pCheckInput != 0:
+                    cfg_txt = cfg_txt + f'cfgUTS[{numbers}].pCheckInput.pInputVar       REF={str(pCheckInput)};\n' \
+                                        f'cfgUTS[{numbers}].pCheckInput.num               :={str(cinum)};\n' \
+                                        f'cfgUTS[{numbers}].pCheckInput.cfg.reg           :={str(cicfg)};\n'
+                if pKvitInput != 0:
+                    cfg_txt = cfg_txt + f'cfgUTS[{numbers}].pKvitInput.pInputVar        REF={str(pKvitInput)};\n' \
+                                        f'cfgUTS[{numbers}].pKvitInput.num                :={str(kvnum)};\n' \
+                                        f'cfgUTS[{numbers}].pKvitInput.cfg.reg            :={str(kvcfg)};\n'
+                cfg_txt = cfg_txt + f'cfgUTS[{numbers}].pVkl                REF={str(pVkl)};\n'
+                cfg_txt = cfg_txt + f'cfgUTS[{numbers}].isSiren               :={str(isSiren)};\n'
+                cfg_txt = cfg_txt + f'cfgUTS[{numbers}].blockAutoOff          :={str(blockAutoOff)};\n'
+                write_file.write(cfg_txt)
+            write_file.close()
+
+            msg[f'{today} - Файл СУ: cfg_uts заполнен'] = 1
+            return msg
+        except Exception:
+            msg[f'{today} - Файл СУ: ошибка при заполнении cfg_uts: {traceback.format_exc()}'] = 2
+            return msg  
+    def cfg_vsgrp(self):
+        msg = {}
+        try:
+            data_value = self.dop_function.connect_by_sql('vsgrp', f'"id", "name", "fire_or_watering", "count_auxsys_in_group", "WarnOff_flag_if_one_auxsystem_in_the_group_is_running"')
+            # Проверяем файл на наличие в папке, если есть удаляем и создаем новый
+            write_file = self.file_check('cfg_VSGRP')
+
+            for value in data_value:
+                numbers = value[0]
+                name    = value[1]
+                isPoz   = value[2]
+                countVS = value[3]
+                WarnOff = value[4]
+
+                if name == '': continue
+
+                isPoz   = '1' if isPoz is not None else '0'
+                WarnOff = '1' if WarnOff is not None else '0'
+                
+                cfg = str(hex(int("000000" + str(WarnOff) + str(isPoz), 2))).replace('0x', '16#')
+                cfg_txt = f'(*{name}*)\n' \
+                          f'cfgVSGRP[{numbers}].countVS     :=  {countVS};\n' \
+                          f'cfgVSGRP[{numbers}].cfg.reg     :=  {cfg};\n'
+                
+                write_file.write(cfg_txt)
+            write_file.close()
+
+            msg[f'{today} - Файл СУ: cfg_vsgrp заполнен'] = 1
+            return msg
+        except Exception:
+            msg[f'{today} - Файл СУ: ошибка при заполнении cfg_vsgrp: {traceback.format_exc()}'] = 2
+            return msg  
+    def cfg_nps(self):
+        msg = {}
+        try:
+            data_value = self.dop_function.connect_by_sql('nps', f'"id", "variable", "name", "value"')
+            # Проверяем файл на наличие в папке, если есть удаляем и создаем новый
+            write_file = self.file_check('cfg_NPS')
+
+            for value in data_value:
+                s_name = {1: 'pInputVar REF=', 2: 'num:=', 3: 'cfg.reg:='}
+
+                numbers = value[0]
+                perem   = value[1]
+                name    = value[2]
+                pValue  = value[3]
+
+                if numbers is None:
+                    if name == '':
+                        cfg_txt = (f'(*{name}*)\n')
+                        write_file.write(cfg_txt)
+
+                if pValue == '': continue
+
+                cfg_txt = (f'(*{name}*)\n')
+                if str(pValue).isdigit()                          : cfg_txt = cfg_txt + f'{perem}:={pValue};\n'
+                elif self.dop_function.str_find(pValue, 'AIValue'): cfg_txt = cfg_txt + f'{perem}:={pValue};\n'
+                else:
+                    a = {}
+                    pInput, pnum, pcfg = self.ret_inp_cfg(pValue)
+                    a[1] = pInput
+                    a[2] = pnum
+                    a[3] = pcfg
+                    for el in range(1, 4):
+                        cfg_txt = cfg_txt + f'{perem}.{s_name[el]}{str(a[el])};\n'
+                
+                write_file.write(cfg_txt)
+            write_file.close()
+
+            msg[f'{today} - Файл СУ: cfg_nps заполнен'] = 1
+            return msg
+        except Exception:
+            msg[f'{today} - Файл СУ: ошибка при заполнении cfg_nps: {traceback.format_exc()}'] = 2
+            return msg  
 # Work with filling in the table 
 class Filling_HardWare():
     def __init__(self):

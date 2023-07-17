@@ -19,6 +19,8 @@ path_location_file = 'D:\Development\Generation_msg\Script\\'
 name_project = 'Тест'
 prefix_system = ''
 path_to_devstudio = 'D:\Проекты\НПС-Бисер\project\\typical_prj\\'
+path_su = 'D:\Development\Generation_msg\SU\\'
+path_rest = ''
 
 
 database_msg = 'asutp_temp'
@@ -51,7 +53,10 @@ port_prj = '5432'
 #             prefix_system = split_str[1]
 #         if split_str[0] == 'path_to_devstudio':
 #             path_to_devstudio = split_str[1]
-
+#         if split_str[0] == 'path_su':
+#             path_su = split_str[1]
+#         if split_str[0] == 'path_rest:':
+#             path_rest: = split_str[1]
 
 #         if split_str[0] == 'database_msg':
 #             database_msg = split_str[1]
@@ -350,7 +355,7 @@ rus_list = {'signals': {'id':'№', 'type_signal':'Тип сигнала', 'uso'
             'vsgrp_tm': {'id':'№','variable':'Переменная', 'tag':'Идентификатор', 'name':'Название', 'unit':'Единица измерения', 'used':'Используется', 'value_ust':'Значение уставки', 'minimum':'Минимум', 
                        'maximum':'Максимум', 'group_ust':'Группа уставок', 'rule_map_ust':'Правило для карты уставок'},
 
-            'uts': {'id':'№','variable':'Переменная', 'tag':'Идентификатор', 'name':'Название', 'location':'Место установки', 'VKL':'Включить', 'Serviceability_of_circuits_of_inclusion':'Исправность цепей\nвключения', 'siren':'Сирена', 
+            'uts': {'id':'№','variable':'Переменная', 'tag':'Идентификатор', 'name':'Название', 'short_name':'Короткое\nназвание', 'location':'Место установки', 'VKL':'Включить', 'Serviceability_of_circuits_of_inclusion':'Исправность цепей\nвключения', 'siren':'Сирена', 
                     'Does_not_require_autoshutdown':'Не требует\nавтоотключения', 'Examination':'Проверка', 'Kvit':'Квитирование', 
                     'Pic':'Pic', 'number_list_VU':'Номер листа для ВУ', 'order_number_for_VU':'Номер порядка для ВУ', 
                     'uso':'Шкаф', 'basket':'Корзина', 'module':'Модуль', 'channel':'Канал'},
@@ -889,7 +894,7 @@ class KTPRS(BaseModel):
     reference_to_value = CharField(null = True)
     priority_msg_0 = IntegerField(null = True)
     priority_msg_1 = IntegerField(null = True)
-    prohibition_issuing_msg = IntegerField(null = True)
+    prohibition_issuing_msg = BooleanField(null = True)
     Pic = CharField(null = True)
     
     class Meta:
@@ -1166,7 +1171,7 @@ class UTS(BaseModel):
     location = CharField(null = True)
     VKL = CharField(null = True)
     Serviceability_of_circuits_of_inclusion = CharField(null = True)
-    siren = BooleanField(null = True)
+    siren = IntegerField(null = True)
     Does_not_require_autoshutdown = CharField(null = True)
     Examination = CharField(null = True)
     Kvit = CharField(null = True)
