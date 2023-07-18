@@ -1193,12 +1193,15 @@ class Widget(QWidget):
         # ------------------СУ------------------
         self.list_gen_su = []
         self.filingCS = Filling_CodeSys()
+        self.q_check_cfg_na = QCheckBox('cfg_NA', tab_7)
+        self.q_check_cfg_na.move(10, 20) 
+        self.q_check_cfg_na.stateChanged.connect(self.check_cfg_NA)
+        self.q_check_cfg_ktpra = QCheckBox('cfg_KTPRA', tab_7)
+        self.q_check_cfg_ktpra.move(10, 35) 
+        self.q_check_cfg_ktpra.stateChanged.connect(self.check_cfg_KTPRA)
         self.q_check_cfg_ktprs = QCheckBox('cfg_KTPRS', tab_7)
-        self.q_check_cfg_ktprs.move(10, 20) 
+        self.q_check_cfg_ktprs.move(10, 50) 
         self.q_check_cfg_ktprs.stateChanged.connect(self.check_cfg_KTPRS)
-
-
-
 
         self.q_check_cfg_vv = QCheckBox('cfg_VV', tab_7)
         self.q_check_cfg_vv.move(90, 20) 
@@ -1212,15 +1215,13 @@ class Widget(QWidget):
         self.q_check_cfg_nps = QCheckBox('cfg_NPS', tab_7)
         self.q_check_cfg_nps.move(90, 65) 
         self.q_check_cfg_nps.stateChanged.connect(self.check_cfg_NPS)
-        # self.q_check_su_pic = QCheckBox('Pictures', tab_6)
-        # self.q_check_su_pic.move(10, 95) 
-        # self.q_check_su_pic.stateChanged.connect(self.check_su_pic)
-        # self.q_check_su_ss = QCheckBox('SSs', tab_6)
-        # self.q_check_su_ss.move(10, 110) 
-        # self.q_check_su_ss.stateChanged.connect(self.check_su_ss)
-        # self.q_check_su_uts = QCheckBox('UTSs', tab_6)
-        # self.q_check_su_uts.move(10, 125) 
-        # self.q_check_su_uts.stateChanged.connect(self.check_su_uts)
+        self.q_check_cfg_rsreq = QCheckBox('cfg_RSREQ', tab_7)
+        self.q_check_cfg_rsreq.move(90, 80) 
+        self.q_check_cfg_rsreq.stateChanged.connect(self.check_cfg_RSREQ)
+      
+        self.q_check_cfg_vs = QCheckBox('cfg_VS', tab_7)
+        self.q_check_cfg_vs.move(170, 20) 
+        self.q_check_cfg_vs.stateChanged.connect(self.check_cfg_VS)
 
         # self.q_check_omx_upts = QCheckBox('UPTSs', tab_6)
         # self.q_check_omx_upts.move(90, 20) 
@@ -2245,6 +2246,18 @@ class Widget(QWidget):
     def check_cfg_NPS(self, checked):
         if checked: self.list_gen_su.append('cfg_NPS')
         else      : self.list_gen_su.remove('cfg_NPS')
+    def check_cfg_RSREQ(self, checked):
+        if checked: self.list_gen_su.append('cfg_RSREQ')
+        else      : self.list_gen_su.remove('cfg_RSREQ')
+    def check_cfg_NA(self, checked):
+        if checked: self.list_gen_su.append('cfg_NA')
+        else      : self.list_gen_su.remove('cfg_NA')
+    def check_cfg_KTPRA(self, checked):
+        if checked: self.list_gen_su.append('cfg_KTPRA')
+        else      : self.list_gen_su.remove('cfg_KTPRA')
+    def check_cfg_VS(self, checked):
+        if checked: self.list_gen_su.append('cfg_VS')
+        else      : self.list_gen_su.remove('cfg_VS')
     # Button confirm
     def su_list(self):
         msg = self.filingCS.write_in_file(self.list_gen_su)

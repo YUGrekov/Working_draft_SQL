@@ -7929,6 +7929,7 @@ class Equipment(Initialisation_path):
                 numbers = value['№']
                 cfg_txt = f'(*{numbers} -- {name}*)\n'
                 fname = str(value['Route'][:-3])
+
                 for el in srsreq:
                     num = ""
                     if len(str(value[el])) > 4:
@@ -8060,7 +8061,7 @@ class Equipment(Initialisation_path):
             else:
                 os.remove(path_cfg)
                 text_file = open(path_cfg, 'w')
-                text_file.write('(*cfg_KTPRA*)\n')
+                text_file.write('(*cfg_KTPRA*)\n')   
 
             for value in data:
                 # '№','Переменная','Идентификатор','Название','Короткое название (для отображения на кадре)','Группа','Номер в группе',

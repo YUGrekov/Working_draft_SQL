@@ -232,9 +232,7 @@ class General_functions():
     def connect_by_sql(self, table_used, column):
         try:
             cursor = db.cursor()
-            cursor.execute(f'''SELECT {column}
-                               FROM "{table_used}"
-                               ORDER BY id''')
+            cursor.execute(f'''SELECT {column} FROM "{table_used}" ORDER BY id''')
         except Exception:
             return 
         return cursor.fetchall()
@@ -4062,16 +4060,28 @@ class Filling_CodeSys():
                 continue
             if tabl == 'cfg_VV': 
                 msg.update(self.cfg_vv())
-                continue 
+                continue
             if tabl == 'cfg_UTS': 
                 msg.update(self.cfg_uts())
-                continue 
+                continue
             if tabl == 'cfg_VSGRP': 
                 msg.update(self.cfg_vsgrp())
-                continue 
+                continue
             if tabl == 'cfg_NPS': 
                 msg.update(self.cfg_nps())
-                continue 
+                continue
+            if tabl == 'cfg_RSREQ': 
+                msg.update(self.cfg_rsreq())
+                continue
+            if tabl == 'cfg_NA': 
+                msg.update(self.cfg_na())
+                continue
+            if tabl == 'cfg_KTPRA': 
+                msg.update(self.cfg_ktpra())
+                continue
+            if tabl == 'cfg_VS': 
+                msg.update(self.cfg_vs())
+                continue
         return msg
     def file_check(self, name_file):
         path_request = f'{path_su}\\{name_file}.txt'
@@ -4629,7 +4639,7 @@ class Filling_CodeSys():
                         cfg_txt = (f'(*{name}*)\n')
                         write_file.write(cfg_txt)
 
-                if pValue == '': continue
+                if pValue == '' or pValue is None: continue
 
                 cfg_txt = (f'(*{name}*)\n')
                 if str(pValue).isdigit()                          : cfg_txt = cfg_txt + f'{perem}:={pValue};\n'
@@ -4651,6 +4661,276 @@ class Filling_CodeSys():
         except Exception:
             msg[f'{today} - Файл СУ: ошибка при заполнении cfg_nps: {traceback.format_exc()}'] = 2
             return msg  
+    def cfg_rsreq(self):
+        msg = {}
+        srsreq = ['SlaveId', 'ModbusFunction', 'Address', 'Count', 'ResultOffset',
+                  'SingleRequest', 'OnModifyRequest', 'RepeatOverScan', 'SkipRepeatsWhenBad', 'Enable']
+        try:
+            data_value = self.dop_function.connect_by_sql('rsreq', 
+                                                          f'''"id", "name", "Route", "Requests", "Port", "SlaveId", "ModbusFunction", "Address", "Count", "ResultOffset",
+                                                              "SingleRequest", "OnModifyRequest", "RepeatOverScan", "SkipRepeatsWhenBad", "Enable"''')
+            # Проверяем файл на наличие в папке, если есть удаляем и создаем новый
+            write_file = self.file_check('сfg_RSREQ')
+
+            for value in data_value:
+                numbers  = value[0]
+                name     = value[1]
+                route    = value[2]
+                requests = value[3]
+                port     = value[4]
+
+                if name is None: continue
+
+                cfg_txt = f'(*{numbers} - {name}*)\n'
+                count_column_rep = 4
+                for column in srsreq:
+                    count_column_rep += 1
+                    if column != 'Enable': cfg_txt = cfg_txt + f'{route}.Port[{port}].Requests[{requests}].{column}:={value[count_column_rep]};\n'
+                    else                 : cfg_txt = cfg_txt + f'{route}.Port[{port}].Commands[{requests}].{column}:={value[count_column_rep]};\n'          
+                write_file.write(cfg_txt)
+            write_file.close()
+
+            msg[f'{today} - Файл СУ: cfg_rsreq заполнен'] = 1
+            return msg
+        except Exception:
+            msg[f'{today} - Файл СУ: ошибка при заполнении cfg_rsreq: {traceback.format_exc()}'] = 2
+            return msg  
+    def cfg_na(self):
+        msg = {}
+        s_name = {1: 'pInputVar REF=', 2: 'num:=', 3: 'cfg.reg:='}
+        s_umpna = {'pBBB1': 'ВВ Включен',
+                   'pBBO1': 'ВВ Отключен',
+                   'pBBB2': 'ВВ Включен дубль',
+                   'pBBO2': 'ВВ Отключен дубль',
+                   'pTok': 'Сила тока >  уставки холостого хода',
+                   'pECx02': 'Исправность цепей включения ВВ',
+                   'pECx03': 'Исправность цепей отключения ВВ',
+                   'pECx03_1': 'Исправность цепей отключения ВВ дубль',
+                   'pKKC[1]': 'Стоп 1',
+                   'pKKC[2]': 'Стоп 2',
+                   'pKKC[3]': 'Стоп 3',
+                   'pKKC[4]': 'Стоп 4',
+                   'pEC1': 'Сигнал «Контроль наличия напряжения в цепях оперативного тока»',
+                   'pMotorCellVoltage': 'Флаг наличия напряжения в двигательной ячейке ЗРУ',
+                   'pECx04': 'Тележка ВВ выкачена',
+                   'pDCx01': 'Дистанционный режим управления контроллера РЗиА',
+                   'pRZiALink': 'Наличие связи с контроллером РЗиА',
+                   'pExcitReady': 'Состояние возбудителя ЭД',
+                   'pOPCx22': 'Флаг окончания предпусковой продувки двигателя',
+                   'pSafetyPressureMotor': 'Флаг наличия безопасного давления подпора воздуха в корпусе двигателя',
+                   'pSafetyPressureExcit': 'Флаг наличия безопасного давления подпора воздуха в корпусе возбудителя',
+                   'pBlowValveClosed': 'Флаг закрытого положения клапана продувки двигателя',
+                   'pOIPOilTemperatureFreezer': 'Флаг температуры масла маслосистемы выше 10гр.С на выходе охладителя (для индивидуальной маслосистемы)',
+                   'pOIPOilValueMin2': 'Флаг предельного минимального уровня масла в маслобаке (для индивидуальной маслосистемы)',
+                   'pOipClosingFluidMinLevel': 'Флаг наличия минимального уровня запирающей жидкости в баке системы запирания',
+                   'pOipClosingFluidPressure': 'Обобщенный флаг наличия давления запирающей жидкости к торцевому уплотнению',
+                   'pGMPNA[49]': 'GMPNA_[49]',
+                   'pGMPNA[50]': 'GMPNA_[50]',
+                   'pGMPNA[51]': 'GMPNA_[51]',
+                   'pGMPNA[52]': 'GMPNA_[52]',
+                   'pGMPNA[53]': 'GMPNA_[53]',
+                   'pGMPNA[54]': 'GMPNA_[54]',
+                   'pGMPNA[55]': 'GMPNA_[55]',
+                   'pGMPNA[56]': 'GMPNA_[56]',
+                   'pGMPNA[57]': 'GMPNA_[57]',
+                   'pGMPNA[58]': 'GMPNA_[58]',
+                   'pGMPNA[59]': 'GMPNA_[59]',
+                   'pGMPNA[60]': 'GMPNA_[60]',
+                   'pGMPNA[61]': 'GMPNA_[61]',
+                   'pGMPNA[62]': 'GMPNA_[62]',
+                   'pGMPNA[63]': 'GMPNA_[63]',
+                   'pGMPNA[64]': 'GMPNA_[64]',
+                    }
+        ds_umpna = {'iDelay': 'Количество сканов задержки анализа исправности цепей управления ВВ НА',
+                    'nVSprMN': 'Номер агрегата вспомсистемы "пуско-резервный маслонасос" (для индивидуальной маслосистемы)',
+                    'nNPS': 'Номер НПС (1 или 2), к которой относится НА',
+                    'nProtACHR': 'Номер защиты АЧР в массиве станционных защит',
+                    'nProtSAON': 'Номер защиты САОН в массиве станционных защит',
+                    'iCounterNdv': 'Параметр для KTPRAS_1',
+                    }
+        out_umpna = {'pStartWork': 'Команда на включение ВВ (только для UMPNA)',
+                     'pStopWork1': 'Команда на отключение ВВ (выход 1)',
+                     'pStopWork2': 'Команда на отключение ВВ (выход 2)'}
+        try:
+            data_value = self.dop_function.connect_by_sql('umpna', 
+                                                          f'''"variable", "name", "NA_Chrp", "type_NA_MNA", "pump_type_NM", 
+                                                          "vv_included", "vv_disabled", "vv_double_included", "vv_double_disabled", 
+                                                          "current_greater_than_noload_setting", "serviceability_of_circuits_of_inclusion_of_VV", 
+                                                          "serviceability_of_circuits_of_shutdown_of_VV", "serviceability_of_circuits_of_shutdown_of_VV_double", 
+                                                          "stop_1", "stop_2", "stop_3", "stop_4", "monitoring_the_presence_of_voltage_in_the_control_current", 
+                                                          "voltage_presence_flag_in_the_ZRU_motor_cell", "vv_trolley_rolled_out", "remote_control_mode_of_the_RZiA_controller", 
+                                                          "availability_of_communication_with_the_RZiA_controller", "the_state_of_the_causative_agent_of_ED", 
+                                                          "engine_prepurge_end_flag", "flag_for_the_presence_of_safe_air_boost_pressure_in_the_en", 
+                                                          "flag_for_the_presence_of_safe_air_boost_pressure_in_the_ex", "engine_purge_valve_closed_flag", 
+                                                          "oil_system_oil_temperature_flag_is_above_10_at_the_cooler_ou", "flag_for_the_minimum_oil_level_in_the_oil_tank_for_an_indiv",
+                                                          "flag_for_the_presence_of_the_minimum_level_of_the_barrier", "generalized_flag_for_the_presence_of_barrier_fluid_pressure", 
+                                                          "gmpna_49", "gmpna_50", "gmpna_51", "gmpna_52", "gmpna_53", "gmpna_54", "gmpna_55", "gmpna_56", "gmpna_57", "gmpna_58", 
+                                                          "gmpna_59", "gmpna_60", "gmpna_61", "gmpna_62", "gmpna_63", "gmpna_64", 
+                                                          
+                                                          "number_of_delay_scans_of_the_analysis_of_the_health_of_the", "unit_number_of_the_auxiliary_system_start_up_oil_pump", 
+                                                          "NPS_number_1_or_2_which_the_AT_belongs", "achr_protection_number_in_the_array_of_station_protections", 
+                                                          "saon_protection_number_in_the_array_of_station_protections", "parametr_KTPRAS_1", 
+
+                                                          "command_to_turn_on_the_vv_only_for_UMPNA", "command_to_turn_off_the_vv_output_1", "command_to_turn_off_the_vv_output_2"''')
+            # Проверяем файл на наличие в папке, если есть удаляем и создаем новый
+            write_file = self.file_check('сfg_NA')
+
+            for value in data_value:
+                tag       = value[0]
+                name      = value[1]
+                IsCMNA    = value[2] 
+                MPNA_Type = value[3]
+                IsNM      = value[4]
+                if name is None: continue
+
+                cfg_txt   = (f'(*{tag} - {name}*)\n')
+
+                count_s_umpna = 4
+                for perem in s_umpna:
+                    count_s_umpna += 1
+                    if value[count_s_umpna] is None: continue
+                    a = {}
+                    pInput, pnum, pcfg = self.ret_inp_cfg(value[count_s_umpna])
+                    a[1] = pInput
+                    a[2] = pnum
+                    a[3] = pcfg
+                    for el in range(1, 4):
+                        cfg_txt = cfg_txt + f'cfg{tag}.{perem}.{s_name[el]}{str(a[el])};\n'
+                
+                count_ds_umpna = 46
+                for perem in ds_umpna:
+                    count_ds_umpna += 1
+                    if value[count_ds_umpna] is None: continue
+                    cfg_txt = cfg_txt + f'cfg{tag}.{perem}:={str(value[count_ds_umpna])};\n'
+                cfg_txt = cfg_txt + f"cfg{tag}.cfg.reg:={str(hex(int('0000000000000' + str(IsNM) + str(MPNA_Type) + str(IsCMNA), 2))).replace('0x', '16#')};\n"
+                
+                count_out_umpna = 52
+                for perem in out_umpna:
+                    count_out_umpna += 1
+                    if value[count_out_umpna] is None: continue
+                    cfg_txt = cfg_txt + f'cfg{tag}.{perem} REF={str(value[count_out_umpna])};\n'  
+
+                write_file.write(cfg_txt)
+            write_file.close()
+            msg[f'{today} - Файл СУ: cfg_na заполнен'] = 1
+            return msg
+        except Exception:
+            msg[f'{today} - Файл СУ: ошибка при заполнении cfg_na: {traceback.format_exc()}'] = 2
+            return msg  
+    def cfg_ktpra(self):
+        msg = {}
+        try:
+            data_value = self.dop_function.connect_by_sql('ktpra',  f'"variable", "tag", "name", "avar_parameter", "stop_type", "AVR", "close_valves", "DisableMasking"')
+            # Проверяем файл на наличие в папке, если есть удаляем и создаем новый
+            write_file = self.file_check('сfg_KTPRA')
+
+            for value in data_value:
+                KTPRA   = value[0]
+                tag     = value[1]
+                name    = value[2]
+                a_param = value[3]
+
+                if name is None: continue
+                if tag is None : continue
+
+                stype       = value[4] if value[4] is not None else '0'
+                avr         = value[5] if value[5] is not None else '0'
+                CloseValves = value[6] if value[6] is not None else '0'
+                NotMasked   = value[7] if value[7] is not None else '0'
+
+                ktpra_cfg   = str(hex(int(str(CloseValves) + str(avr) + str(NotMasked), 2))).replace('0x', '16#')
+
+                pInput, pnum, pcfg = self.ret_inp_cfg(a_param)
+                cfg_txt = (f'(*{tag} - {name}*)\n')
+                if pInput != 0:
+                    cfg_txt = cfg_txt + f'cfg{KTPRA}.pInput.pInputVar       REF={str(pInput)};\n' \
+                                        f'cfg{KTPRA}.pInput.num               :={str(pnum)};\n' \
+                                        f'cfg{KTPRA}.pInput.cfg.reg           :={str(pcfg)};\n' \
+                                        f'cfg{KTPRA}.StopType                 :={str(stype)};\n' \
+                                        f'cfg{KTPRA}.cfg.reg                  :={str(ktpra_cfg)};\n'
+                write_file.write(cfg_txt)
+            write_file.close()
+            msg[f'{today} - Файл СУ: cfg_ktpra заполнен'] = 1
+            return msg
+        except Exception:
+            msg[f'{today} - Файл СУ: ошибка при заполнении cfg_ktpra: {traceback.format_exc()}'] = 2
+            return msg  
+    def cfg_vs(self):
+        msg = {}
+        try:
+            data_value = self.dop_function.connect_by_sql('vs',  f'''"id", "tag", "name", "group", "number_in_group", "VKL", "OTKL", "Pressure_is_True", "Not_APV",  "MP", 
+                                                          "Voltage", "Voltage_Sch", "Serviceability_of_circuits_of_inclusion", "External_alarm", "Pressure_sensor_defective"''')
+            # Проверяем файл на наличие в папке, если есть удаляем и создаем новый
+            write_file = self.file_check('сfg_VS')
+
+            for value in data_value:
+                numbers  = value[0]
+                tag      = value[1]
+                name     = value[2]
+                pVkl     = value[5]
+                pOtkl    = value[6]
+
+                grpNum   = value[3] if value[3] is not None else '0'
+                numInGrp = value[4] if value[4] is not None else '0'
+                PC_USE   = '1' if value[7] is not None else '0'
+                noAPV    = value[8] if value[8] is not None else '0'
+
+                if numbers is None: continue
+
+                pMPCpInputVar, pMPCnum, pMPCcfg                         = self.ret_inp_cfg(value[9])
+                pPCpInputVar, pPCnum, pPCcfg                            = self.ret_inp_cfg(value[7])
+                pECpInputVar, pECnum, pECcfg                            = self.ret_inp_cfg(value[10])
+                pSEC_ECpInputVar, pSEC_ECnum, pSEC_ECcfg                = self.ret_inp_cfg(value[11])
+                pOPCpInputVar, pOPCnum, pOPCcfg                         = self.ret_inp_cfg(value[12])
+                pDiAVARpInputVar, pDiAVARnum, pDiAVARcfg                = self.ret_inp_cfg(value[13])
+                pPC_NEISPRAVpInputVar, pPC_NEISPRAVnum, pPC_NEISPRAVcfg = self.ret_inp_cfg(value[14])
+
+                cfg_txt = (f'(*{tag} {name}*)\n')
+                if pMPCpInputVar != 0:
+                    cfg_txt = cfg_txt + f'cfgVS[{numbers}].pMPC.pInputVar               REF={str(pMPCpInputVar)};\n' \
+                                        f'cfgVS[{numbers}].pMPC.num                       :={str(pMPCnum)};\n' \
+                                        f'cfgVS[{numbers}].pMPC.cfg.reg                   :={str(pMPCcfg)};\n'
+                if pPCpInputVar != 0:
+                    cfg_txt = cfg_txt + f'cfgVS[{numbers}].pPC.pInputVar                REF={str(pPCpInputVar)};\n' \
+                                        f'cfgVS[{numbers}].pPC.num                        :={str(pPCnum)};\n' \
+                                        f'cfgVS[{numbers}].pPC.cfg.reg                    :={str(pPCcfg)};\n'
+                if pECpInputVar != 0:
+                    cfg_txt = cfg_txt + f'cfgVS[{numbers}].pEC.pInputVar                REF={str(pECpInputVar)};\n' \
+                                        f'cfgVS[{numbers}].pEC.num                        :={str(pECnum)};\n' \
+                                        f'cfgVS[{numbers}].pEC.cfg.reg                    :={str(pECcfg)};\n'
+                if pSEC_ECpInputVar != 0:
+                    cfg_txt = cfg_txt + f'cfgVS[{numbers}].pSEC_EC.pInputVar            REF={pSEC_ECpInputVar};\n' \
+                                        f'cfgVS[{numbers}].pSEC_EC.num                    :={pSEC_ECnum};\n' \
+                                        f'cfgVS[{numbers}].pSEC_EC.cfg.reg                :={pSEC_ECcfg};\n'
+                if pOPCpInputVar != 0:
+                    cfg_txt = cfg_txt + f'cfgVS[{numbers}].pOPC.pInputVar               REF={pOPCpInputVar};\n' \
+                                        f'cfgVS[{numbers}].pOPC.num                       :={pOPCnum};\n' \
+                                        f'cfgVS[{numbers}].pOPC.cfg.reg                   :={pOPCcfg};\n'
+                if pDiAVARpInputVar != 0:
+                    cfg_txt = cfg_txt + f'cfgVS[{numbers}].pDiAVAR.pInputVar            REF={pDiAVARpInputVar};\n' \
+                                        f'cfgVS[{numbers}].pDiAVAR.num                    :={pDiAVARnum};\n' \
+                                        f'cfgVS[{numbers}].pDiAVAR.cfg.reg                :={pDiAVARcfg};\n'
+                if pPC_NEISPRAVpInputVar != 0:
+                    cfg_txt = cfg_txt + f'cfgVS[{numbers}].pPC_NEISPRAV.pInputVar       REF={pPC_NEISPRAVpInputVar};\n' \
+                                        f'cfgVS[{numbers}].pPC_NEISPRAV.num               :={pPC_NEISPRAVnum};\n' \
+                                        f'cfgVS[{numbers}].pPC_NEISPRAV.cfg.reg           :={pPC_NEISPRAVcfg};\n'
+                    
+                cfgVS_unioncfgVS = str(hex(int('00000000000000' + str(noAPV) + str(PC_USE), 2))).replace('0x', '16#')
+
+                cfg_txt = cfg_txt + f'cfgVS[{numbers}].cfgVS.reg                      :={cfgVS_unioncfgVS};\n' \
+                                    f'cfgVS[{numbers}].grpNum                         :={grpNum};\n' \
+                                    f'cfgVS[{numbers}].numInGrp                       :={numInGrp};\n' \
+                                    f'cfgVS[{numbers}].pVkl                         REF={pVkl};\n' \
+                                    f'cfgVS[{numbers}].pOtkl                        REF={pOtkl};\n'
+                write_file.write(cfg_txt)
+            write_file.close()
+            msg[f'{today} - Файл СУ: cfg_vs заполнен'] = 1
+            return msg
+        except Exception:
+            msg[f'{today} - Файл СУ: ошибка при заполнении cfg_vs: {traceback.format_exc()}'] = 2
+            return msg  
+        
+
 # Work with filling in the table 
 class Filling_HardWare():
     def __init__(self):
@@ -6675,12 +6955,10 @@ class Filling_VS():
                         
                         msg[f'{today} - Таблица: vs, добавлена новая вспомсистема: VS[{count_row}], {name}'] = 1
                         list_vs.append(dict(id = count_row, 
-                                            variable = f'ZD[{count_row}]',
+                                            variable = f'VS[{count_row}]',
                                             tag = '',
                                             name = name,
                                             short_name = '',
-                                            group = '',
-                                            number_in_group = '',
                                             MP = mp,
                                             Pressure_is_True = pressure_norm,
                                             Voltage = voltage,
