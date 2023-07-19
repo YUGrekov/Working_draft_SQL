@@ -380,7 +380,7 @@ rus_list = {'signals': {'id':'№', 'type_signal':'Тип сигнала', 'uso'
             'pz_tm': {'id':'№','variable':'Переменная', 'tag':'Идентификатор', 'name':'Название', 'unit':'Единица измерения', 'used':'Используется', 'value_ust':'Значение уставки', 'minimum':'Минимум', 
                        'maximum':'Максимум', 'group_ust':'Группа уставок', 'rule_map_ust':'Правило для карты уставок'},
 
-            'dps': {'id':'№','variable':'Переменная', 'tag':'Идентификатор', 'name':'Название', 'control':'Контроль', 'relieve':'Деблокировка', 
+            'dps': {'id':'№','variable':'Переменная', 'tag':'Идентификатор', 'name':'Название', 'control':'Контроль', 'deblock':'Деблокировка', 
                       'actuation':'Срабатывание', 'actuation_transmitter':'Срабатывание\n(трансмиттер)', 'malfunction':'Неисправность', 'voltage':'Напряжение'},
             
             'tm_dp': {'id':'№','variable':'Переменная', 'tag':'Идентификатор', 'name':'Название', 
@@ -560,7 +560,7 @@ class AI(BaseModel):
     IsOilPressure  = BooleanField(null = True)
 
     number_NA_or_aux = IntegerField(null = True)
-    IsPumpVibration   = BooleanField(null = True)
+    IsPumpVibration  = IntegerField(null = True)
     vibration_motor  = IntegerField(null = True)
     current_motor    = IntegerField(null = True)
     aux_outlet_pressure = IntegerField(null = True)
@@ -642,11 +642,11 @@ class DI(BaseModel):
     pValue  = CharField(null = True)
     pHealth = CharField(null = True)
 
-    Inv = BooleanField(null = True)
-    ErrValue = BooleanField(null = True)
+    Inv = IntegerField(null = True)
+    ErrValue = IntegerField(null = True)
     priority_0 = IntegerField(null = True)
     priority_1 = IntegerField(null = True)
-    Msg = BooleanField(null = True)
+    Msg = IntegerField(null = True)
     isDI_NC = CharField(null = True)
     isAI_Warn = CharField(null = True)
     isAI_Avar = CharField(null = True)
@@ -1059,7 +1059,7 @@ class ZD(BaseModel):
     VMMO = CharField(null = True)
     VMMZ = CharField(null = True)
     Freeze_on_suspicious_change = CharField(null = True)
-    Is_klapan = CharField(null = True)
+    Is_klapan = IntegerField(null = True)
     Opening_percent = CharField(null = True)
     Pic = CharField(null = True)
     Type_BUR_ZD = CharField(null = True)
@@ -1278,7 +1278,7 @@ class DPS(BaseModel):
     tag = CharField(null = True)
     name = CharField(null = True)
     control = CharField(null = True)
-    relieve = CharField(null = True)
+    deblock = CharField(null = True)
     actuation = CharField(null = True)
     actuation_transmitter = CharField(null = True)
     malfunction = CharField(null = True)
