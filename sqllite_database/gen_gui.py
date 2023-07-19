@@ -470,6 +470,22 @@ class Widget(QWidget):
         b_clear_gmpna.resize(80,23)
         b_clear_gmpna.move(b_width_two + 210, b_height + 104) 
         b_clear_gmpna.clicked.connect(self.clear_gmpna_tabl)
+        # DPS
+        l_dps = QLabel('DPS:', tab_3)
+        l_dps.move(b_width_one + 170, l_height + 130)
+        b_dps_basket = QPushButton('Подготовить', tab_3)
+        b_dps_basket.setStyleSheet("background: #bfd6bf; border: 1px solid; border-radius: 3px;")
+        b_dps_basket.setToolTip('''Датчики прохождения поточных устройств. Таблица не заполняется!''')
+        b_dps_basket.resize(80,23)
+        b_dps_basket.move(b_width_one + 210, b_height + 130) 
+        b_dps_basket.clicked.connect(self.filling_dps)
+        b_clear_dps = QPushButton('Очистить', tab_3)
+        b_clear_dps.setStyleSheet("background: #bbbabf; border: 1px solid; border-radius: 3px;")
+        b_clear_dps.setToolTip("Очистить таблицу DPS")
+        b_clear_dps.resize(80,23)
+        b_clear_dps.move(b_width_two + 210, b_height + 130) 
+        b_clear_dps.clicked.connect(self.clear_dps_tabl)
+
 
         # UMPNA
         l_umpna = QLabel('UMPNA:', tab_3)
@@ -1196,11 +1212,14 @@ class Widget(QWidget):
         self.q_check_cfg_na = QCheckBox('cfg_NA', tab_7)
         self.q_check_cfg_na.move(10, 20) 
         self.q_check_cfg_na.stateChanged.connect(self.check_cfg_NA)
+        self.q_check_cfg_ktpr = QCheckBox('cfg_KTPR', tab_7)
+        self.q_check_cfg_ktpr.move(10, 35) 
+        self.q_check_cfg_ktpr.stateChanged.connect(self.check_cfg_KTPR)
         self.q_check_cfg_ktpra = QCheckBox('cfg_KTPRA', tab_7)
-        self.q_check_cfg_ktpra.move(10, 35) 
+        self.q_check_cfg_ktpra.move(10, 50) 
         self.q_check_cfg_ktpra.stateChanged.connect(self.check_cfg_KTPRA)
         self.q_check_cfg_ktprs = QCheckBox('cfg_KTPRS', tab_7)
-        self.q_check_cfg_ktprs.move(10, 50) 
+        self.q_check_cfg_ktprs.move(10, 65) 
         self.q_check_cfg_ktprs.stateChanged.connect(self.check_cfg_KTPRS)
 
         self.q_check_cfg_vv = QCheckBox('cfg_VV', tab_7)
@@ -1218,10 +1237,28 @@ class Widget(QWidget):
         self.q_check_cfg_rsreq = QCheckBox('cfg_RSREQ', tab_7)
         self.q_check_cfg_rsreq.move(90, 80) 
         self.q_check_cfg_rsreq.stateChanged.connect(self.check_cfg_RSREQ)
+        self.q_check_cfg_dps = QCheckBox('cfg_DPS', tab_7)
+        self.q_check_cfg_dps.move(90, 95) 
+        self.q_check_cfg_dps.stateChanged.connect(self.check_cfg_DPS)
       
         self.q_check_cfg_vs = QCheckBox('cfg_VS', tab_7)
         self.q_check_cfg_vs.move(170, 20) 
         self.q_check_cfg_vs.stateChanged.connect(self.check_cfg_VS)
+        self.q_check_cfg_zd = QCheckBox('cfg_ZD', tab_7)
+        self.q_check_cfg_zd.move(170, 35) 
+        self.q_check_cfg_zd.stateChanged.connect(self.check_cfg_ZD)
+        self.q_check_cfg_do = QCheckBox('cfg_DO', tab_7)
+        self.q_check_cfg_do.move(170, 50) 
+        self.q_check_cfg_do.stateChanged.connect(self.check_cfg_DO)
+        self.q_check_cfg_di = QCheckBox('cfg_DI', tab_7)
+        self.q_check_cfg_di.move(170, 65) 
+        self.q_check_cfg_di.stateChanged.connect(self.check_cfg_DI)
+        self.q_check_cfg_ao = QCheckBox('cfg_AO', tab_7)
+        self.q_check_cfg_ao.move(170, 80) 
+        self.q_check_cfg_ao.stateChanged.connect(self.check_cfg_AO)
+        self.q_check_cfg_ai = QCheckBox('cfg_AI', tab_7)
+        self.q_check_cfg_ai.move(170, 95) 
+        self.q_check_cfg_ai.stateChanged.connect(self.check_cfg_AI)
 
         # self.q_check_omx_upts = QCheckBox('UPTSs', tab_6)
         # self.q_check_omx_upts.move(90, 20) 
@@ -1550,6 +1587,14 @@ class Widget(QWidget):
         self.logs_msg('default', 1, msg, True)
     def clear_gmpna_tabl(self):
         msg = self.dop_function.clear_tabl('gmpna', 'GMPNA', self.list_tabl)
+        self.logs_msg('default', 1, msg, True)
+    # DPS
+    def filling_dps(self):
+        dps_table = Filling_DPS()
+        msg = dps_table.column_check()
+        self.logs_msg('default', 1, msg, True)
+    def clear_dps_tabl(self):
+        msg = self.dop_function.clear_tabl('dps', 'DPS', self.list_tabl)
         self.logs_msg('default', 1, msg, True)
     # UMPNA
     def filling_umpna(self):
@@ -2258,6 +2303,25 @@ class Widget(QWidget):
     def check_cfg_VS(self, checked):
         if checked: self.list_gen_su.append('cfg_VS')
         else      : self.list_gen_su.remove('cfg_VS')
+    def check_cfg_ZD(self, checked):
+        if checked: self.list_gen_su.append('cfg_ZD')
+        else      : self.list_gen_su.remove('cfg_ZD')
+    def check_cfg_DO(self, checked):
+        if checked: self.list_gen_su.append('cfg_DO')
+        else      : self.list_gen_su.remove('cfg_DO')
+    def check_cfg_DI(self, checked):
+        if checked: self.list_gen_su.append('cfg_DI')
+        else      : self.list_gen_su.remove('cfg_DI')
+    def check_cfg_AO(self, checked):
+        if checked: self.list_gen_su.append('cfg_AO')
+        else      : self.list_gen_su.remove('cfg_AO')
+    def check_cfg_AI(self, checked):
+        if checked: self.list_gen_su.append('cfg_AI')
+        else      : self.list_gen_su.remove('cfg_AI')
+    def check_cfg_DPS(self, checked):
+        if checked: self.list_gen_su.append('cfg_DPS')
+        else      : self.list_gen_su.remove('cfg_DPS')
+    
     # Button confirm
     def su_list(self):
         msg = self.filingCS.write_in_file(self.list_gen_su)

@@ -4076,11 +4076,32 @@ class Filling_CodeSys():
             if tabl == 'cfg_NA': 
                 msg.update(self.cfg_na())
                 continue
+            if tabl == 'cfg_KTPR': 
+                msg.update(self.cfg_ktpr())
+                continue
             if tabl == 'cfg_KTPRA': 
                 msg.update(self.cfg_ktpra())
                 continue
             if tabl == 'cfg_VS': 
                 msg.update(self.cfg_vs())
+                continue
+            if tabl == 'cfg_ZD': 
+                msg.update(self.cfg_zd())
+                continue
+            if tabl == 'cfg_DO': 
+                msg.update(self.cfg_do())
+                continue
+            if tabl == 'cfg_DI': 
+                msg.update(self.cfg_di())
+                continue
+            if tabl == 'cfg_AO': 
+                msg.update(self.cfg_ao())
+                continue
+            if tabl == 'cfg_AI': 
+                msg.update(self.cfg_ai())
+                continue
+            if tabl == 'cfg_DPS': 
+                msg.update(self.cfg_dps())
                 continue
         return msg
     def file_check(self, name_file):
@@ -4865,7 +4886,6 @@ class Filling_CodeSys():
 
             for value in data_value:
                 numbers  = value[0]
-                tag      = value[1]
                 name     = value[2]
                 pVkl     = value[5]
                 pOtkl    = value[6]
@@ -4885,7 +4905,7 @@ class Filling_CodeSys():
                 pDiAVARpInputVar, pDiAVARnum, pDiAVARcfg                = self.ret_inp_cfg(value[13])
                 pPC_NEISPRAVpInputVar, pPC_NEISPRAVnum, pPC_NEISPRAVcfg = self.ret_inp_cfg(value[14])
 
-                cfg_txt = (f'(*{tag} {name}*)\n')
+                cfg_txt = (f'(*{numbers} - {name}*)\n')
                 if pMPCpInputVar != 0:
                     cfg_txt = cfg_txt + f'cfgVS[{numbers}].pMPC.pInputVar               REF={str(pMPCpInputVar)};\n' \
                                         f'cfgVS[{numbers}].pMPC.num                       :={str(pMPCnum)};\n' \
@@ -4929,6 +4949,615 @@ class Filling_CodeSys():
         except Exception:
             msg[f'{today} - Файл СУ: ошибка при заполнении cfg_vs: {traceback.format_exc()}'] = 2
             return msg  
+    def cfg_zd(self):
+        def filling_text(notebook, number, prefix, part, val_1, val_2, val_3, bool_prefix):
+            if bool_prefix is True:
+                notebook = notebook + '' \
+                                    f"cfgZD[{number}].{prefix}.{part}.pInputVar REF={str(val_1)};\n" \
+                                    f'cfgZD[{number}].{prefix}.{part}.num:={str(val_2)};\n' \
+                                    f'cfgZD[{number}].{prefix}.{part}.cfg.reg:={str(val_3)};\n'
+            else:
+                notebook = notebook + '' \
+                                    f'cfgZD[{numbers}].{part}.pInputVar REF={str(val_1)};\n' \
+                                    f'cfgZD[{numbers}].{part}.num:={str(val_2)};\n' \
+                                    f'cfgZD[{numbers}].{part}.cfg.reg:={str(val_3)};\n'
+            return notebook
+    
+        msg = {}
+        try:
+            data_value = self.dop_function.connect_by_sql('zd',  f'''"id", "name", "exists_interface", "Open", "Close", "Stop", "Opening_stop", "Closeing_stop", "Type_BUR_ZD", 
+                                                          "Is_klapan", "KVO", "KVZ", "MPO", "MPZ", "Dist", "Mufta", "Drive_failure", "No_connection", "Close_BRU", "Stop_BRU", 
+                                                          "Voltage", "Voltage_in_signaling_circuits", "Voltage_CHSU", "Serviceability_opening_circuits", 
+                                                          "Serviceability_closening_circuits", "VMMO", "VMMZ", "KVO_i", "KVZ_i", "MPO_i", "MPZ_i", "Dist_i", "Mufta_i", 
+                                                          "Drive_failure_i", "Open_i", "Close_i", "Stop_i", "Opening_stop_i", "Closeing_stop_i"''')
+            # Проверяем файл на наличие в папке, если есть удаляем и создаем новый
+            write_file = self.file_check('сfg_ZD')
+
+            for value in data_value:
+                numbers        = value[0]
+                name           = value[1]
+                rs_ok          = value[2]
+                IOpOpen        = value[3]
+                IOpClose       = value[4]
+                IOpStop        = value[5]
+                IOpStopOpen    = value[6]
+                IOpStopClose   = value[7]
+                typeBURtypeBUR = value[8]
+
+                isClp          = value[9] if value[9] is not None else '0'
+                freeze         = '0'
+
+                IOpKVOpInputVar, IOpKVOnum, IOpKVOcfg_unioncfg_st                = self.ret_inp_cfg(value[10])
+                IOpKVZpInputVar, IOpKVZnum, IOpKVZcfg_unioncfg_st                = self.ret_inp_cfg(value[11])
+                IOpMPOpInputVar, IOpMPOnum, IOpMPOcfg_unioncfg_st                = self.ret_inp_cfg(value[12])
+                IOpMPZpInputVar, IOpMPZnum, IOpMPZcfg_unioncfg_st                = self.ret_inp_cfg(value[13])
+                IOpDIST_KEYpInputVar, IOpDIST_KEYnum, IOpDIST_KEYcfg_unioncfg_st = self.ret_inp_cfg(value[14])
+                IOpMuftapInputVar, IOpMuftanum, IOpMuftacfg_unioncfg_st          = self.ret_inp_cfg(value[15])
+                IOpAvar_BURpInputVar, IOpAvar_BURnum, IOpAvar_BURcfg_unioncfg_st = self.ret_inp_cfg(value[16])
+                pNoLinkpInputVar, pNoLinknum, pNoLinkcfg_unioncfg_st             = self.ret_inp_cfg(value[17])
+                pBRUClosepInputVar, pBRUClosenum, pBRUClosecfg_unioncfg_st       = self.ret_inp_cfg(value[18])
+                pBRUStoppInputVar, pBRUStopnum, pBRUStopcfg_unioncfg_st          = self.ret_inp_cfg(value[19])
+                pECpInputVar, pECnum, pECcfg_unioncfg_st                         = self.ret_inp_cfg(value[20])
+                pECsignpInputVar, pECsignnum, pECsigncfg_unioncfg_st             = self.ret_inp_cfg(value[21])
+                pZD_EC_KTPpInputVar, pZD_EC_KTPnum, pZD_EC_KTPcfg_unioncfg_st    = self.ret_inp_cfg(value[22])
+                pCorrCOpInputVar, pCorrCOnum, pCorrCOcfg_unioncfg_st             = self.ret_inp_cfg(value[23])
+                pCorrCZpInputVar, pCorrCZnum, pCorrCZcfg_unioncfg_st             = self.ret_inp_cfg(value[24])
+                pVMMOpInputVar, pVMMOnum, pVMMOcfg_unioncfg_st                   = self.ret_inp_cfg(value[25])
+                pVMMZpInputVar, pVMMZnum, pVMMZcfg_unioncfg_st                   = self.ret_inp_cfg(value[26])
+
+                if rs_ok is True:
+                    RSpKVOpInputVar, RSpKVOnum, RSpKVOcfg_unioncfg_st                = self.ret_inp_cfg(value[27])
+                    RSpKVZpInputVar, RSpKVZnum, RSpKVZcfg_unioncfg_st                = self.ret_inp_cfg(value[28])
+                    RSpMPOpInputVar, RSpMPOnum, RSpMPOcfg_unioncfg_st                = self.ret_inp_cfg(value[29])
+                    RSpMPZpInputVar, RSpMPZnum, RSpMPZcfg_unioncfg_st                = self.ret_inp_cfg(value[30])
+                    RSpDIST_KEYpInputVar, RSpDIST_KEYnum, RSpDIST_KEYcfg_unioncfg_st = self.ret_inp_cfg(value[31])
+                    RSpMuftapInputVar, RSpMuftanum, RSpMuftacfg_unioncfg_st          = self.ret_inp_cfg(value[32])
+                    RSpAvar_BURpInputVar, RSpAvar_BURnum, RSpAvar_BURcfg_unioncfg_st = self.ret_inp_cfg(value[33])
+
+                    RSpOpen      = value[34]
+                    RSpClose     = value[35]
+                    RSpStop      = value[36]
+                    RSpStopOpen  = value[37]
+                    RSpStopClose = value[38]
+
+                cfg_txt = (f'(*{numbers} - {name}*)\n')
+                if rs_ok is True:
+                    if RSpKVOpInputVar != 0: cfg_txt = filling_text(cfg_txt, numbers, 'RS', 'pKVO', RSpKVOpInputVar, RSpKVOnum, RSpKVOcfg_unioncfg_st, True)
+                    if RSpKVZpInputVar != 0: cfg_txt = filling_text(cfg_txt, numbers, 'RS', 'pKVZ', RSpKVZpInputVar, RSpKVZnum, RSpKVZcfg_unioncfg_st, True)
+                    if RSpMPOpInputVar != 0: cfg_txt = filling_text(cfg_txt, numbers, 'RS', 'pMPO', RSpMPOpInputVar, RSpMPOnum, RSpMPOcfg_unioncfg_st, True)
+                    if RSpMPZpInputVar != 0:cfg_txt = filling_text(cfg_txt, numbers, 'RS', 'pMPZ', RSpMPZpInputVar, RSpMPZnum, RSpMPZcfg_unioncfg_st, True)
+                    if RSpDIST_KEYpInputVar != 0: cfg_txt = filling_text(cfg_txt, numbers, 'RS', 'pDIST_KEY', RSpDIST_KEYpInputVar, RSpDIST_KEYnum, RSpDIST_KEYcfg_unioncfg_st, True)
+                    if RSpMuftapInputVar != 0: cfg_txt = filling_text(cfg_txt, numbers, 'RS', 'pMufta', RSpMuftapInputVar, RSpMuftanum, RSpMuftacfg_unioncfg_st, True)
+                    if RSpAvar_BURpInputVar != 0: cfg_txt = filling_text(cfg_txt, numbers, 'RS', 'pAvar_BUR', RSpAvar_BURpInputVar, RSpAvar_BURnum, RSpAvar_BURcfg_unioncfg_st, True)
+
+                    if RSpOpen != 0            : cfg_txt = cfg_txt + f'cfgZD[{numbers}].RS.pOpen REF={str(RSpOpen)};\n'
+                    if RSpClose is not None    : cfg_txt = cfg_txt + f'cfgZD[{numbers}].RS.pClose REF={str(RSpClose)};\n'
+                    if RSpStop is not None     : cfg_txt = cfg_txt + f'cfgZD[{numbers}].RS.pStop REF={str(RSpStop)};\n'
+                    if RSpStopOpen is not None : cfg_txt = cfg_txt + f'cfgZD[{numbers}].RS.pStopOpen REF={str(RSpStopOpen)};\n'
+                    if RSpStopClose is not None: cfg_txt = cfg_txt + f'cfgZD[{numbers}].RS.pStopClose REF={str(RSpStopClose)};\n'
+
+                if IOpKVOpInputVar != 0: cfg_txt = filling_text(cfg_txt, numbers, 'IO', 'pKVO', IOpKVOpInputVar, IOpKVOnum, IOpKVOcfg_unioncfg_st, True)
+                if IOpKVZpInputVar != 0: cfg_txt = filling_text(cfg_txt, numbers, 'IO', 'pKVZ', IOpKVZpInputVar, IOpKVZnum, IOpKVZcfg_unioncfg_st, True)
+                if IOpMPOpInputVar != 0: cfg_txt = filling_text(cfg_txt, numbers, 'IO', 'pMPO', IOpMPOpInputVar, IOpMPOnum, IOpMPOcfg_unioncfg_st, True)
+                if IOpMPZpInputVar != 0: cfg_txt = filling_text(cfg_txt, numbers, 'IO', 'pMPZ', IOpMPZpInputVar, IOpMPZnum, IOpMPZcfg_unioncfg_st, True)
+                if IOpDIST_KEYpInputVar != 0: cfg_txt = filling_text(cfg_txt, numbers, 'IO', 'pDIST_KEY', IOpDIST_KEYpInputVar, IOpDIST_KEYnum, IOpDIST_KEYcfg_unioncfg_st, True)
+                if IOpMuftapInputVar != 0: cfg_txt = filling_text(cfg_txt, numbers, 'IO', 'pMufta', IOpMuftapInputVar, IOpMuftanum, IOpMuftacfg_unioncfg_st, True)
+                if IOpAvar_BURpInputVar != 0: cfg_txt = filling_text(cfg_txt, numbers, 'IO', 'pAvar_BUR', IOpAvar_BURpInputVar, IOpAvar_BURnum, IOpAvar_BURcfg_unioncfg_st, True)
+
+                if IOpOpen != 0            : cfg_txt = cfg_txt + f'cfgZD[{numbers}].IO.pOpen REF={str(IOpOpen)};\n'
+                if IOpClose is not None    : cfg_txt = cfg_txt + f'cfgZD[{numbers}].IO.pClose REF={str(IOpClose)};\n'
+                if IOpStop is not None     : cfg_txt = cfg_txt + f'cfgZD[{numbers}].IO.pStop REF={str(IOpStop)};\n'
+                if IOpStopOpen is not None : cfg_txt = cfg_txt + f'cfgZD[{numbers}].IO.pStopOpen REF={str(IOpStopOpen)};\n'
+                if IOpStopClose is not None: cfg_txt = cfg_txt + f'cfgZD[{numbers}].IO.pStopClose REF={str(IOpStopClose)};\n'
+
+                if pNoLinkpInputVar != 0: cfg_txt = filling_text(cfg_txt, numbers, '', 'pNoLink', pNoLinkpInputVar, pNoLinknum, pNoLinkcfg_unioncfg_st, False)
+                if pBRUClosepInputVar != 0: cfg_txt = filling_text(cfg_txt, numbers, '', 'pBRUClose', pBRUClosepInputVar, pBRUClosenum, pBRUClosecfg_unioncfg_st, False)
+                if pBRUStoppInputVar != 0: cfg_txt = filling_text(cfg_txt, numbers, '', 'pBRUStop', pBRUStoppInputVar, pBRUStopnum, pBRUStopcfg_unioncfg_st, False)
+                if pECpInputVar != 0: cfg_txt = filling_text(cfg_txt, numbers, '', 'pEC', pECpInputVar, pECnum, pECcfg_unioncfg_st, False)
+                if pECsignpInputVar != 0: cfg_txt = filling_text(cfg_txt, numbers, '', 'pECsign', pECsignpInputVar, pECsignnum, pECsigncfg_unioncfg_st, False)
+                if pZD_EC_KTPpInputVar != 0: cfg_txt = filling_text(cfg_txt, numbers, '', 'pZD_EC_KTP', pZD_EC_KTPpInputVar, pZD_EC_KTPnum, pZD_EC_KTPcfg_unioncfg_st, False)
+                if pCorrCOpInputVar != 0: cfg_txt = filling_text(cfg_txt, numbers, '', 'pCorrCO', pCorrCOpInputVar, pCorrCOnum, pCorrCOcfg_unioncfg_st, False)
+                if pCorrCZpInputVar != 0: cfg_txt = filling_text(cfg_txt, numbers, '', 'pCorrCZ', pCorrCZpInputVar, pCorrCZnum, pCorrCZcfg_unioncfg_st, False)
+                if pVMMOpInputVar != 0: cfg_txt = filling_text(cfg_txt, numbers, '', 'pVMMO', pVMMOpInputVar, pVMMOnum, pVMMOcfg_unioncfg_st, False)
+                if pVMMZpInputVar != 0: cfg_txt = filling_text(cfg_txt, numbers, '', 'pVMMZ', pVMMZpInputVar, pVMMZnum, pVMMZcfg_unioncfg_st, False)
+
+                cfg = str(hex(int('00000000000000' + str(isClp) + str(freeze), 2))).replace('0x', '16#')
+                
+                cfg_txt = cfg_txt + f'cfgZD[{numbers}].cfg.reg:={str(cfg)};\n'
+
+                if typeBURtypeBUR is not None:
+                    cfg_txt = cfg_txt + f'cfgZD[{numbers}].typeBUR.reg:={str(typeBURtypeBUR)};\n'
+
+                write_file.write(cfg_txt)
+            write_file.close()
+            msg[f'{today} - Файл СУ: cfg_zd заполнен'] = 1
+            return msg
+        except Exception:
+            msg[f'{today} - Файл СУ: ошибка при заполнении cfg_zd: {traceback.format_exc()}'] = 2
+            return msg  
+    def cfg_do(self):
+        msg = {}
+        try:
+            data_value = self.dop_function.connect_by_sql('do', f'"id", "tag", "name", "pValue", "pHealth"' )
+            # Проверяем файл на наличие в папке, если есть удаляем и создаем новый
+            write_file = self.file_check('сfg_DO')
+
+            for value in data_value:
+                numbers = value[0]
+                tag     = value[1]
+                name    = value[2]
+                pValue  = value[3]
+                pHealth = value[4]
+
+                if pValue is None: continue
+                if tag is None: continue
+
+                cfg_txt = f'(*{tag} - {name}*)\n' \
+                          f'cfgDO[{numbers}].pValue         REF={pValue};\n' \
+                          f'cfgDO[{numbers}].pHealth        REF={pHealth};\n'
+
+                write_file.write(cfg_txt)
+            write_file.close()
+            msg[f'{today} - Файл СУ: cfg_do заполнен'] = 1
+            return msg
+        except Exception:
+            msg[f'{today} - Файл СУ: ошибка при заполнении cfg_do: {traceback.format_exc()}'] = 2
+            return msg  
+    def cfg_di(self):
+        msg = {}
+        try:
+            data_value = self.dop_function.connect_by_sql('di', f'''"id", "name", "pValue", "pHealth", "pNC_AI", "TS_ID", "priority_0", "priority_1", 
+                                                                    "isModuleNC", "Msg", "isAI_Avar", "isAI_Warn", "isDI_NC", "ErrValue", "Inv"''')
+            # Проверяем файл на наличие в папке, если есть удаляем и создаем новый
+            write_file = self.file_check('сfg_DI')
+
+            for value in data_value:
+                s = '000000000'
+                #['isModuleNC', 'Msg', 'isAI_Avar', 'isAI_Warn', 'isDI_NC', 'ErrValue', 'Inv']
+                for count in range(7):
+                    s = s + str(value[count + 8]) if value[count + 8] is not None else s + '0'
+
+                numbers = value[0]
+                name    = value[1]
+                pValue  = value[2]
+                pHealth = value[3]
+                
+                pNC_AI    = value[4] if value[4] is not None else '0'
+                TS_ID     = value[5] if value[5] is not None else '0'
+                priority0 = value[6] if value[6] is not None else '0'
+                priority1 = value[7] if value[7] is not None else '0'
+
+                cfg = str(hex(int(s, 2))).replace('0x', '16#')
+                
+                if pValue is not None:
+                    cfg_txt = f'(*{numbers} - {name}*)\n' \
+                              f'cfgDI[{numbers}].pValue             REF={pValue};\n' \
+                              f'cfgDI[{numbers}].pHealth            REF={pHealth};\n' \
+                              f'cfgDI[{numbers}].TS_ID                :={TS_ID};\n' \
+                              f'cfgDI[{numbers}].priority[0]          :={priority0};\n' \
+                              f'cfgDI[{numbers}].priority[1]          :={priority1};\n' \
+                              f'cfgDI[{numbers}].cfg.reg              :={cfg};\n'
+                    write_file.write(cfg_txt)
+
+                if value[4] is not None:
+                    cfg_txt = f'(*{numbers} - {name}*)\n' \
+                              f'cfgDI[{numbers}].pNC_AI             REF={str(pNC_AI).replace("_union.state", ".reg")};\n' \
+                              f'cfgDI[{numbers}].TS_ID                :={TS_ID};\n' \
+                              f'cfgDI[{numbers}].priority[0]          :={priority0};\n' \
+                              f'cfgDI[{numbers}].priority[1]          :={priority1};\n' \
+                              f'cfgDI[{numbers}].cfg.reg              :={cfg};\n'
+
+                write_file.write(cfg_txt)
+            write_file.close()
+            msg[f'{today} - Файл СУ: cfg_di заполнен'] = 1
+            return msg
+        except Exception:
+            msg[f'{today} - Файл СУ: ошибка при заполнении cfg_di: {traceback.format_exc()}'] = 2
+            return msg  
+    def cfg_ao(self):
+        msg = {}
+        try:
+            data_value = self.dop_function.connect_by_sql('ao', f'"id", "name", "pValue", "pHealth"')
+            # Проверяем файл на наличие в папке, если есть удаляем и создаем новый
+            write_file = self.file_check('сfg_AO')
+
+            for value in data_value:
+                numbers = value[0]
+                name    = value[1]
+                pValue  = value[2]
+                pHealth = value[3]
+
+                if pValue is None: continue
+                if self.dop_function.str_find(str(name).lower(), {'резерв'}): continue
+
+                cfg_txt = f'(*{numbers} - {name}*)\n' \
+                          f'cfgAO[{numbers}].pValue         REF={pValue};\n' \
+                          f'cfgAO[{numbers}].pHealth        REF={pHealth};\n'
+
+                write_file.write(cfg_txt)
+            write_file.close()
+            msg[f'{today} - Файл СУ: cfg_ao заполнен'] = 1
+            return msg
+        except Exception:
+            msg[f'{today} - Файл СУ: ошибка при заполнении cfg_ao: {traceback.format_exc()}'] = 2
+            return msg  
+    def cfg_ai(self):
+        msg = {}
+        try:
+            data_value = self.dop_function.connect_by_sql('ai', f'''"id", "name", "pValue", "pHealth", "number_ust_min_avar", "number_ust_min_pred", "number_ust_max_pred", 
+                                                                    "number_ust_max_avar", "IsPumpVibration", "vibration_motor", "current_motor", "number_NA_or_aux", "fuse"''')
+            # Проверяем файл на наличие в папке, если есть удаляем и создаем новый
+            write_file = self.file_check('сfg_AI')
+
+            for value in data_value:
+                numbers = value[0]
+                name    = value[1]
+                pValue  = value[2]
+                pHealth = value[3]
+                minAvar = value[4]
+                minWarn = value[5]
+                maxWarn = value[6]
+                maxAvar = value[7]
+
+                if self.dop_function.str_find(str(name).lower(), {'резерв'}): continue
+
+                isVibroPump  = value[8] if value[8] is not None else '0'
+                isVibroED    = value[9] if value[9] is not None else '0'
+                isCT         = value[10] if value[10] is not None else '0'
+                isPressureVS = '1' if value[11] is not None else '0'
+                nNA_VS       = value[11] if value[11] is not None else '0'
+                nFuse        = value[12] if value[12] is not None else '0'
+
+                cfgAI        = str(hex(int('000000000000'+str(isPressureVS)+str(isCT)+str(isVibroED)+str(isVibroPump),2))).replace('0x','16#')
+                cfgWarnAvar = '11'
+                cfgWarnAvar = 2**(int(minAvar)-1) + 2**(int(minWarn)+4-1)+2**(int(maxWarn)+8-1)+2**(int(maxAvar)+12-1)
+                cfgWarnAvar = '16#'+ (str(maxAvar)+str(maxWarn)+str(minWarn)+str(minAvar))
+
+                if pValue is None: continue
+                cfg_txt = f'(* {numbers} - {name} *)\n' \
+                          f'cfgAI[{numbers}].pValue                 REF={pValue};\n'
+                if pHealth is not None:
+                    cfg_txt = cfg_txt + \
+                              f'cfgAI[{numbers}].pHealth                REF={pHealth};\n' \
+                              f'cfgAI[{numbers}].pHealthExt             REF={pHealth};\n'
+                cfg_txt = cfg_txt + \
+                          f'cfgAI[{numbers}].cfgWarnAvar.reg          :={cfgWarnAvar};\n' \
+                          f'cfgAI[{numbers}].cfgAI.reg                :={str(cfgAI)};\n' \
+                          f'cfgAI[{numbers}].nNA_VS                   :={nNA_VS};\n' \
+                          f'cfgAI[{numbers}].nFuse                    :={nFuse};\n'
+
+                write_file.write(cfg_txt)
+            write_file.close()
+            msg[f'{today} - Файл СУ: cfg_ai заполнен'] = 1
+            return msg
+        except Exception:
+            msg[f'{today} - Файл СУ: ошибка при заполнении cfg_ai: {traceback.format_exc()}'] = 2
+            return msg  
+    def cfg_dps(self):
+        msg = {}
+        try:
+            data_value = self.dop_function.connect_by_sql('dps', f'''"id", "control", "deblock"''')
+            # Проверяем файл на наличие в папке, если есть удаляем и создаем новый
+            write_file = self.file_check('сfg_DPS')
+
+            for value in data_value:
+                numbers  = value[0]
+                pControl = value[1]
+                pDeblock = value[2]
+
+                if pControl is None: continue
+                cfg_txt = f'(*{numbers} - ДПС*)\n' \
+                          f'cfgDPS[{numbers}].pControl      REF={pControl};\n'
+                write_file.write(cfg_txt)
+                
+                if pDeblock is None: continue
+                cfg_txt = f'(*{numbers} ДПС*)\n' \
+                          f'cfgDPS[{numbers}].pDeblock      REF={pDeblock};\n'
+                write_file.write(cfg_txt)
+            write_file.close()
+            msg[f'{today} - Файл СУ: cfg_dps заполнен'] = 1
+            return msg
+        except Exception:
+            msg[f'{today} - Файл СУ: ошибка при заполнении cfg_dps: {traceback.format_exc()}'] = 2
+            return msg  
+    def cfg_ktpr(self):
+        msg = {}
+        stateAI = {'Warn':0,
+                    'Avar':1,
+                    'LTMin':2,
+                    'MTMax':3,
+                    'AlgNdv':4,
+                    'Imit':5,
+                    'ExtNdv':6,
+                    'Ndv':7,
+                    'Init':8}
+        stateAIzone = {'rez_0':0,
+                        'Min6':1,
+                        'Min5':2,
+                        'Min4':3,
+                        'Min3_IsMT10Perc':4,
+                        'Min2_IsNdv2ndParam':5,
+                        'Min1_IsHighVibStat':6,
+                        'Norm':7,
+                        'Max1_IsHighVibStatNMNWRBIT;':8,
+                        'Max2_IsHighVibNoStat':9,
+                        'Max3_IsAvarVibStat':10,
+                        'Max4_IsAvarVibStatNMNWRBIT;':11,
+                        'Max5_IsAvarVibNoStat':12,
+                        'Max6_IsAvar2Vib':13,
+                        'rez_14':14,
+                        'rez_15':15}
+        stateDI = {'Value':0,
+                    'ElInput':1,
+                    'O':2,
+                    'KZ':3,
+                    'NC':4,
+                    'Imit':5,
+                    'ExtNdv':6,
+                    'Ndv':7,
+                    'priority1':8,
+                    'priority2':9,
+                    'priority3':10,
+                    'rez_11':11,
+                    'rez_12':12,
+                    'Front_0_1':13,
+                    'Front_1_0':14,
+                    'CfgErr':15}
+        stateNPS = {'ModeNPSDst':0,
+                        'MNSInWork':1,
+                        'IsMNSOff':2,
+                        'IsNPSModePsl':3,
+                        'IsPressureReady':4,
+                        'NeNomFeedInterval':5,
+                        'OIPHighPressure':6,
+                        'KTPR_P':7,
+                        'KTPR_M':8,
+                        'CSPAlinkOK':9,
+                        'CSPAWorkDeny':10,
+                        'TSstopped':11,
+                        'rez_12':12,
+                        'stopDisp':13,
+                        'stopCSPA':14,
+                        'stopARM':15}
+        stateFacility = {'longGasPoint1':0,
+                        'longGasPoint2':1,
+                        'longGasPoint3':2,
+                        'longGasPoint4':3,
+                        'longGasPoint5':4,
+                        'longGasPoint6':5,
+                        'longGasPoint7':6,
+                        'longGasPoint8':7,
+                        'rez_8':8,
+                        'rez_9':9,
+                        'rez_10':10,
+                        'rez_11':11,
+                        'rez_12':12,
+                        'rez_13':13,
+                        'rez_14':14,
+                        'rez_15':15}
+        warnFacility = {'warnGasPoint1':0,
+                        'warnGasPoint2':1,
+                        'warnGasPoint3':2,
+                        'warnGasPoint4':3,
+                        'warnGasPoint5':4,
+                        'warnGasPoint6':5,
+                        'warnGasPoint7':6,
+                        'warnGasPoint8':7,
+                        'rez_8':8,
+                        'rez_9':9,
+                        'rez_10':10,
+                        'rez_11':11,
+                        'rez_12':12,
+                        'rez_13':13,
+                        'rez_14':14,
+                        'rez_15':15
+                        }
+        Facility = {'ndv2Gas':0,
+                    'GasLim':1,
+                    'GasAv':2,
+                    'GasKeep':3,
+                    'GasNdvWait':4,
+                    'GasLimWait':5,
+                    'GasNdvProt':6,
+                    'GasAvProt':7,
+                    'ColdOn':8,
+                    'HotOn':9,
+                    'rez_10':10,
+                    'rez_11':11,
+                    'ColdOff':12,
+                    'HotOff':13,
+                    'rez_14':14,
+                    'rez_15':15}
+        vsgrpstate = {'REZ_EXIST':0,
+                        'REM':1,
+                        'OTKL':2,
+                        'OTKL_BY_CMD':3,
+                        'VKL_AS_DOP':4,
+                        'PUSK_OSN':5,
+                        'rez_6':6,
+                        'rez_7':7,
+                        'rez_8':8,
+                        'rez_9':9,
+                        'rez_10':10,
+                        'rez_11':11,
+                        'rez_12':12,
+                        'rez_13':13,
+                        'LAST_OFF_BY_CMD_ARM ':14,
+                        'ALL_OFF_WITH_BLOCK ':15}
+
+        ktpr_cfg = ['Отключение ПНС с выдержкой времени до 5 с после отключения всех МНА','Автоматическая деблокировка защиты','Запрет маскирования']
+        ktpr_ctrl1 = ['Закрытие задвижек на входе РП',
+                      'Закрытие секущей задвижки узла подключения объекта нефтедобычи/ нефтепереработки',
+                      'Закрытие задвижек на входе ФГУ',
+                      'Закрытие задвижек на входе ССВД',
+                      'Закрытие задвижек на выходе узла РД',
+                      'Закрытие задвижек на входе узла РД',
+                      'Закрытие задвижек на входе и выходе ПНА',
+                      'Закрытие задвижек на входе и выходе МНА',
+                      'Закрытие задвижек на входе и выходе ПНС',
+                      'Закрытие задвижек на входе и выходе МНС',
+                      'Закрытие задвижек между РП и ПНС',
+                      'Закрытие задвижек между ПНС и МНС',
+                      'Закрытие задвижек на выходе НПС',
+                      'Закрытие задвижек на входе НПС']
+
+        ktpr_ctrl2 = ['Отключение вентиляторов водоохлаждения системы оборотного водоснабжения',
+                      'Отключение АВО',
+                      'Отключение насосов артскважин',
+                      'Отключение насосов хозяйственно-питьевого водоснабжения',
+                      'Отключение насосов прокачки нефти/нефтепродукта через БИК',
+                      'Отключение насосов, обеспечивающих подкачку нефти/нефтепродукта от объектов нефтедобычи/нефтепереработки',
+                      'Отключение компрессоров подпора воздуха ЭД',
+                      'Отключение подпорных вентиляторов электрозала',
+                      'Отключение подпорных вентиляторов ЭД',
+                      'Отключение беспромвальных вентиляторов электрозала',
+                      'Отключение насосов откачки из емкостей ССВД',
+                      'Отключение насосов откачки из емкостей сбора утечек ПНС',
+                      'Отключение насосов откачки из емкостей сбора утечек МНС',
+                      'Отключение насосов оборотного водоснабжения',
+                      'Отключение маслонасосов после сигнала "остановлен" НА',
+                      'Отключение маслонасосов']
+        ktpr_ctrl3 = ['Отключение приточного вентилятора помещения СИКН',
+                      'Отключение приточного вентилятора помещения БИК',
+                      'Отключение приточных вентиляторов помещения компрессорной подпора воздуха ЭД и закрытие огнезадерживающих клапанов',
+                      'Отключение приточного вентилятора помещения ССВД',
+                      'Отключение приточного вентилятора помещения РД',
+                      'Отключение приточных вентиляторов в помещении централизованной маслосистемы и закрытие огнезадерживающих клапанов',
+                      'Отключение приточных вентиляторов насосного зала ПНС и закрытие огнезадерживающих клапанов',
+                      'Отключение приточных вентиляторов насосного зала МНС и закрытие огнезадерживающих клапанов',
+                      'Отключение крышных вентиляторов насосного зала ПНС',
+                      'Отключение крышных вентиляторов насосного зала МНС',
+                      'Отключение вытяжных вентиляторов в помещении ССВД',
+                      'Отключение вытяжных вентиляторов в помещении РД',
+                      'Отключение вытяжных вентиляторов маслоприямка в электрозале',
+                      'Отключение вытяжных вентиляторов в помещении централизованной маслосистемы',
+                      'Отключение вытяжных вентиляторов насосного зала ПНС',
+                      'Отключение вытяжных вентиляторов насосного зала МНС']
+        ktpr_ctrl4 = ['Защита по пожару',
+                      'Отключение антиконденсационных электронагревателей ЭД',
+                      'Отключение насосов откачки из емкостей сбора утечек всех СИКН',
+                      'Отключение насосов прокачки нефти/нефтепродукта через оперативный БИК',
+                      'Отключение насосов системы запирания',
+                      'Отключение внешнего контура охлаждения ЧРП ПНА',
+                      'Отключение внешнего контура охлаждения ЧРП МНА',
+                      'Отключение воздушных охладителей системы запирания торцовых уплотнений отключенных НА',
+                      'Отключение воздушных охладителей системы запирания торцовых уплотнений всех МНА',
+                      'Отключение электронагревателей емкости сбора утечек СИКН',
+                      'Отключение электронагревателей емкости сбора утечек ПНС',
+                      'Отключение электронагревателей емкости сбора утечек МНС',
+                      'Отключение электронагревателей масла',
+                      'Закрытие воздушных клапанов (жалюзийных решёток) помещения компрессорной подпора воздуха ЭД',
+                      'Закрытие воздушных клапанов (жалюзийных решёток) насосного зала']
+        try:
+            data_value = self.dop_function.connect_by_sql('ktpr', f'''"id", "control", "deblock"''')
+            # Проверяем файл на наличие в папке, если есть удаляем и создаем новый
+            write_file = self.file_check('сfg_DPS')
+
+            for value in data_value:
+                numbers         = value['№']
+                tag             = value['Идентификатор']
+                name            = value['Название']
+                pInputpInputVar= value['Аварийный параметр']
+                pInputnum      = value['№']
+                cfg_unioncfg = '0000000000000'
+                ctrl1 = '00'
+                ctrl2=''
+                ctrl3=''
+                ctrl4=''
+                isNum=0
+                isInv=0
+                Inputvar = str(pInputpInputVar).split(".")
+
+                # if self.str_find(Inputvar[0],'NOT'):
+                #     isInv=1
+                #     b = str(Inputvar[0]).replace('NOT ','')
+                #     if self.str_find(Inputvar[0], 'NPS'):
+                #         isInv = 0
+                if self.str_find(Inputvar[0], {'NOT '}):
+                    isInv = 1
+                b = str(Inputvar[0]).replace('NOT ', '')
+                if len(Inputvar)>2:
+                    if self.str_find(Inputvar[0],'stateBUF'):
+                        pInputnum = Inputvar[2]
+                        isNum = 0
+                        pInputpInputVar = Inputvar[0] + '.state.reg'
+                if len(Inputvar)>1:
+                    if Inputvar[1] in vsgrpstate.keys():
+                        pInputnum = vsgrpstate[Inputvar[1]]
+                        isNum = 0
+                        pInputpInputVar = str(Inputvar[0]).replace('VSGRP','stateVSGRP') + '.state.reg'
+                    if Inputvar[1] in stateFacility.keys():
+                        pInputnum = stateFacility[Inputvar[1]]
+                        isNum = 0
+                        pInputpInputVar = str(Inputvar[0]).replace('Facility','stateFacility') + '.longGas.reg'
+                    if Inputvar[1] in warnFacility.keys():
+                        pInputnum = warnFacility[Inputvar[1]]
+                        isNum = 0
+                        pInputpInputVar = str(Inputvar[0]).replace('Facility','stateFacility') + '.warnGas.reg'
+                    if Inputvar[1] in stateAI.keys():
+                        pInputnum=stateAI[Inputvar[1]]
+                        isNum=0
+                        pInputpInputVar=str(Inputvar[0]).replace('AI','StateAI')+'.state.reg'
+                    if Inputvar[1] in Facility.keys():
+                        pInputnum=Facility[Inputvar[1]]
+                        isNum=0
+                        pInputpInputVar=str(Inputvar[0]).replace('Facility','stateFacility')+'.state.reg'
+                    if Inputvar[1] in stateAIzone.keys():
+                        pInputnum=stateAIzone[Inputvar[1]]
+                        isNum = 0
+                        pInputpInputVar=str(Inputvar[0]).replace('AI','StateAI')+'.stateZone.reg'
+                    if Inputvar[1] in stateDI.keys():
+                        pInputnum=stateDI[Inputvar[1]]
+                        isNum = 0
+                        pInputpInputVar=str(Inputvar[0]).replace('DI','StateDI')+'.state.reg'
+                    if Inputvar[1] in stateNPS.keys():
+                        pInputnum=stateNPS[Inputvar[1]]
+                        isNum = 0
+                        pInputpInputVar=str(b).replace('NPS','stateNPS')+'.state.reg'
+
+                i=0
+                for el in ktpr_cfg:
+                    i+=1
+
+                    cfg_unioncfg = cfg_unioncfg+str(value[el]) if value[el] is not None else cfg_unioncfg+'0'
+                    if i == 2:
+                        cfg_unioncfg = cfg_unioncfg + '0'
+                        #print(el, ' ', value[el])
+                for el in ktpr_ctrl1:
+                    ctrl1 = ctrl1+str(value[el]) if value[el] is not None else ctrl1+'0'
+                for el in ktpr_ctrl2:
+                    ctrl2 = ctrl2+str(value[el]) if value[el] is not None else ctrl2+'0'
+                for el in ktpr_ctrl3:
+                    ctrl3 = ctrl3+str(value[el]) if value[el] is not None else ctrl3+'0'
+                for el in ktpr_ctrl4:
+                    ctrl4 = ctrl4+str(value[el]) if value[el] is not None else ctrl4+'0'
+                Group           = value['Битовая маска принадлежности защиты группе'] if value['Битовая маска принадлежности защиты группе'] is not None else '0'
+                NA_StopType       = value['Тип остановки НА'] if value['Тип остановки НА'] is not None else '0'
+                NS_StopType       = value['Тип остановки насосной станции'] if value['Тип остановки насосной станции'] is not None else '0'
+                pInputcfg_unioncfg = '00000000000000'+str(isNum)+str(isInv)
+                if tag is None: continue
+                cfg_txt = f'(*{tag} {name}*)\n' \
+                          f'cfgKTPR[{numbers}].pInput.pInputVar REF={pInputpInputVar};\n' \
+                          f'cfgKTPR[{numbers}].pInput.num:={pInputnum};\n' \
+                          f"cfgKTPR[{numbers}].pInput.cfg.reg:={str(hex(int(pInputcfg_unioncfg,2))).replace('0x','16#')};\n" \
+                          f"cfgKTPR[{numbers}].cfg.reg:={str(hex(int(cfg_unioncfg,2))).replace('0x','16#')};\n" \
+                          f'cfgKTPR[{numbers}].Group:={Group};\n' \
+                          f'cfgKTPR[{numbers}].NA_StopType:={NA_StopType};\n' \
+                          f'cfgKTPR[{numbers}].NS_StopType:={NS_StopType};\n' \
+                          f"cfgKTPR[{numbers}].ctrl.ctrl1.reg:={str(hex(int(ctrl1,2))).replace('0x','16#')};\n" \
+                          f"cfgKTPR[{numbers}].ctrl.ctrl2.reg:={str(hex(int(ctrl2, 2))).replace('0x','16#')};\n" \
+                          f"cfgKTPR[{numbers}].ctrl.ctrl3.reg:={str(hex(int(ctrl3, 2))).replace('0x','16#')};\n" \
+                          f"cfgKTPR[{numbers}].ctrl.ctrl4.reg:={str(hex(int(ctrl4, 2))).replace('0x','16#')};\n"
+
+           
+                write_file.write(cfg_txt)
+            write_file.close()
+            msg[f'{today} - Файл СУ: cfg_dps заполнен'] = 1
+            return msg
+        except Exception:
+            msg[f'{today} - Файл СУ: ошибка при заполнении cfg_dps: {traceback.format_exc()}'] = 2
+            return msg  
+        
         
 
 # Work with filling in the table 
@@ -5701,22 +6330,10 @@ class Filling_DI():
                                             priority_0 = 1,
                                             priority_1 = 1,
                                             Msg = 1,
-                                            isDI_NC = '',
-                                            isAI_Warn = '',
-                                            isAI_Avar = '',
-                                            pNC_AI = '',
-                                            TS_ID = '',
-                                            isModuleNC = '',
-                                            Pic = '',
                                             tabl_msg = 'TblDiscretes',
                                             group_diskrets = group_diskrets,
-                                            msg_priority_0 = '',
-                                            msg_priority_1 = '',
                                             short_title = description,
-                                            uso = uso_s, basket = basket_s, module = module_s, channel = channel_s,
-                                            AlphaHMI = '', AlphaHMI_PIC1 = '', AlphaHMI_PIC1_Number_kont = '', AlphaHMI_PIC2 = '', 
-                                            AlphaHMI_PIC2_Number_kont = '', AlphaHMI_PIC3 = '', AlphaHMI_PIC3_Number_kont = '', 
-                                            AlphaHMI_PIC4 = '', AlphaHMI_PIC4_Number_kont = ''))
+                                            uso = uso_s, basket = basket_s, module = module_s, channel = channel_s))
 
                 # Checking for the existence of a database
                 DI.insert_many(list_DI).execute()
@@ -6646,10 +7263,8 @@ class Filling_ZD():
                     
                     if kvo == '' and kvz == '': continue
 
-                    if self.dop_function.str_find(str(name).lower, {'клапа'}) or self.dop_function.str_find(str(name).lower, {'клоп'}):
-                        klapan = '1'
-                    else: 
-                        klapan = '0'
+                    if self.dop_function.str_find(str(name).lower, {'клапа'}) or self.dop_function.str_find(str(name).lower, {'клоп'}): klapan = 1
+                    else: klapan = 0
 
                     if name in tabl_zd_name:
                         msg.update(self.dop_function.update_signal_dop(ZD, "zd", name, ZD.KVO, 'KVO', kvo))
@@ -6683,7 +7298,7 @@ class Filling_ZD():
                                             tag = '',
                                             name = name,
                                             short_name = '',
-                                            exists_interface = '',
+                                            exists_interface = 0,
                                             KVO = kvo,
                                             KVZ = kvz,
                                             MPO = mpo,
@@ -7587,9 +8202,8 @@ class Filling_DPS():
     def __init__(self):
         self.cursor   = db.cursor()
         self.dop_function = General_functions()
-    # Заполняем таблицу pz_tm
     def column_check(self):
-        list_default = ['variable', 'tag', 'name', 'control', 'relieve', 
+        list_default = ['variable', 'tag', 'name', 'control', 'deblock', 
                         'actuation', 'actuation_transmitter', 'malfunction', 'voltage']
         msg = self.dop_function.column_check(DPS, 'dps', list_default)
         return msg 
