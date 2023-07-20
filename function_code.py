@@ -9259,7 +9259,8 @@ class Equipment(Initialisation_path):
                                       abs_num=abs_num,
                                       type_modul=type_mk500[str(type_modul)])
                         signals.append(a_dict)
-
+            for i in signals:
+                print(i)
             # Смежные системы
             for i in range(4, rows_ss + 1):
                 number_ss  = sheet_ss.cell(row=i, column=1).value

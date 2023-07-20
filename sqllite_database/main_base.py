@@ -4103,6 +4103,9 @@ class Filling_CodeSys():
             if tabl == 'cfg_DPS': 
                 msg.update(self.cfg_dps())
                 continue
+            if tabl == 'cfg_DIAG': 
+                msg.update(self.cfg_diag())
+                continue
         return msg
     def file_check(self, name_file):
         path_request = f'{path_su}\\{name_file}.txt'
@@ -5262,79 +5265,79 @@ class Filling_CodeSys():
             return msg  
     def cfg_ktpr(self):
         msg = {}
-        stateAI = {'Warn':0,
-                    'Avar':1,
-                    'LTMin':2,
-                    'MTMax':3,
-                    'AlgNdv':4,
-                    'Imit':5,
-                    'ExtNdv':6,
-                    'Ndv':7,
-                    'Init':8}
-        stateAIzone = {'rez_0':0,
-                        'Min6':1,
-                        'Min5':2,
-                        'Min4':3,
-                        'Min3_IsMT10Perc':4,
-                        'Min2_IsNdv2ndParam':5,
-                        'Min1_IsHighVibStat':6,
-                        'Norm':7,
-                        'Max1_IsHighVibStatNMNWRBIT;':8,
-                        'Max2_IsHighVibNoStat':9,
-                        'Max3_IsAvarVibStat':10,
-                        'Max4_IsAvarVibStatNMNWRBIT;':11,
-                        'Max5_IsAvarVibNoStat':12,
-                        'Max6_IsAvar2Vib':13,
-                        'rez_14':14,
-                        'rez_15':15}
-        stateDI = {'Value':0,
-                    'ElInput':1,
-                    'O':2,
-                    'KZ':3,
-                    'NC':4,
-                    'Imit':5,
-                    'ExtNdv':6,
-                    'Ndv':7,
-                    'priority1':8,
-                    'priority2':9,
-                    'priority3':10,
-                    'rez_11':11,
-                    'rez_12':12,
-                    'Front_0_1':13,
-                    'Front_1_0':14,
-                    'CfgErr':15}
-        stateNPS = {'ModeNPSDst':0,
-                        'MNSInWork':1,
-                        'IsMNSOff':2,
-                        'IsNPSModePsl':3,
-                        'IsPressureReady':4,
-                        'NeNomFeedInterval':5,
-                        'OIPHighPressure':6,
-                        'KTPR_P':7,
-                        'KTPR_M':8,
-                        'CSPAlinkOK':9,
-                        'CSPAWorkDeny':10,
-                        'TSstopped':11,
-                        'rez_12':12,
-                        'stopDisp':13,
-                        'stopCSPA':14,
-                        'stopARM':15}
+        stateAI = {'Warn'  :0,
+                   'Avar'  :1,
+                   'LTMin' :2,
+                   'MTMax' :3,
+                   'AlgNdv':4,
+                   'Imit'  :5,
+                   'ExtNdv':6,
+                   'Ndv'   :7,
+                   'Init'  :8}
+        stateAIzone = {'rez_0'                      :0,
+                       'Min6'                       :1,
+                       'Min5'                       :2,
+                       'Min4'                       :3,
+                       'Min3_IsMT10Perc'            :4,
+                       'Min2_IsNdv2ndParam'         :5,
+                       'Min1_IsHighVibStat'         :6,
+                       'Norm'                       :7,
+                       'Max1_IsHighVibStatNMNWRBIT;':8,
+                       'Max2_IsHighVibNoStat'       :9,
+                       'Max3_IsAvarVibStat'         :10,
+                       'Max4_IsAvarVibStatNMNWRBIT;':11,
+                       'Max5_IsAvarVibNoStat'       :12,
+                       'Max6_IsAvar2Vib'            :13,
+                       'rez_14'                     :14,
+                       'rez_15'                     :15}
+        stateDI = {'Value'    :0,
+                   'ElInput'  :1,
+                   'O'        :2,
+                   'KZ'       :3,
+                   'NC'       :4,
+                   'Imit'     :5,
+                   'ExtNdv'   :6,
+                   'Ndv'      :7,
+                   'priority1':8,
+                   'priority2':9,
+                   'priority3':10,
+                   'rez_11'   :11,
+                   'rez_12'   :12,
+                   'Front_0_1':13,
+                   'Front_1_0':14,
+                   'CfgErr'   :15}
+        stateNPS = {'ModeNPSDst'       :0,
+                    'MNSInWork'        :1,
+                    'IsMNSOff'         :2,
+                    'IsNPSModePsl'     :3,
+                    'IsPressureReady'  :4,
+                    'NeNomFeedInterval':5,
+                    'OIPHighPressure'  :6,
+                    'KTPR_P'           :7,
+                    'KTPR_M'           :8,
+                    'CSPAlinkOK'       :9,
+                    'CSPAWorkDeny'     :10,
+                    'TSstopped'        :11,
+                    'rez_12'           :12,
+                    'stopDisp'         :13,
+                    'stopCSPA'         :14,
+                    'stopARM'          :15}
         stateFacility = {'longGasPoint1':0,
-                        'longGasPoint2':1,
-                        'longGasPoint3':2,
-                        'longGasPoint4':3,
-                        'longGasPoint5':4,
-                        'longGasPoint6':5,
-                        'longGasPoint7':6,
-                        'longGasPoint8':7,
-                        'rez_8':8,
-                        'rez_9':9,
-                        'rez_10':10,
-                        'rez_11':11,
-                        'rez_12':12,
-                        'rez_13':13,
-                        'rez_14':14,
-                        'rez_15':15}
+                         'longGasPoint2':1,
+                         'longGasPoint3':2,
+                         'longGasPoint4':3,
+                         'longGasPoint5':4,
+                         'longGasPoint6':5,
+                         'longGasPoint7':6,
+                         'longGasPoint8':7,
+                         'rez_8'        :8,
+                         'rez_9'        :9,
+                         'rez_10'       :10,
+                         'rez_11'       :11,
+                         'rez_12'       :12,
+                         'rez_13'       :13,
+                         'rez_14'       :14,
+                         'rez_15'       :15}
         warnFacility = {'warnGasPoint1':0,
                         'warnGasPoint2':1,
                         'warnGasPoint3':2,
@@ -5343,47 +5346,46 @@ class Filling_CodeSys():
                         'warnGasPoint6':5,
                         'warnGasPoint7':6,
                         'warnGasPoint8':7,
-                        'rez_8':8,
-                        'rez_9':9,
-                        'rez_10':10,
-                        'rez_11':11,
-                        'rez_12':12,
-                        'rez_13':13,
-                        'rez_14':14,
-                        'rez_15':15
-                        }
-        Facility = {'ndv2Gas':0,
-                    'GasLim':1,
-                    'GasAv':2,
-                    'GasKeep':3,
+                        'rez_8'        :8,
+                        'rez_9'        :9,
+                        'rez_10'       :10,
+                        'rez_11'       :11,
+                        'rez_12'       :12,
+                        'rez_13'       :13,
+                        'rez_14'       :14,
+                        'rez_15'       :15}
+        Facility = {'ndv2Gas'   :0,
+                    'GasLim'    :1,
+                    'GasAv'     :2,
+                    'GasKeep'   :3,
                     'GasNdvWait':4,
                     'GasLimWait':5,
                     'GasNdvProt':6,
-                    'GasAvProt':7,
-                    'ColdOn':8,
-                    'HotOn':9,
-                    'rez_10':10,
-                    'rez_11':11,
-                    'ColdOff':12,
-                    'HotOff':13,
-                    'rez_14':14,
-                    'rez_15':15}
-        vsgrpstate = {'REZ_EXIST':0,
-                        'REM':1,
-                        'OTKL':2,
-                        'OTKL_BY_CMD':3,
-                        'VKL_AS_DOP':4,
-                        'PUSK_OSN':5,
-                        'rez_6':6,
-                        'rez_7':7,
-                        'rez_8':8,
-                        'rez_9':9,
-                        'rez_10':10,
-                        'rez_11':11,
-                        'rez_12':12,
-                        'rez_13':13,
-                        'LAST_OFF_BY_CMD_ARM ':14,
-                        'ALL_OFF_WITH_BLOCK ':15}
+                    'GasAvProt' :7,
+                    'ColdOn'    :8,
+                    'HotOn'     :9,
+                    'rez_10'    :10,
+                    'rez_11'    :11,
+                    'ColdOff'   :12,
+                    'HotOff'    :13,
+                    'rez_14'    :14,
+                    'rez_15'    :15}
+        vsgrpstate = {'REZ_EXIST'           :0,
+                      'REM'                 :1,
+                      'OTKL'                :2,
+                      'OTKL_BY_CMD'         :3,
+                      'VKL_AS_DOP'          :4,
+                      'PUSK_OSN'            :5,
+                      'rez_6'               :6,
+                      'rez_7'               :7,
+                      'rez_8'               :8,
+                      'rez_9'               :9,
+                      'rez_10'              :10,
+                      'rez_11'              :11,
+                      'rez_12'              :12,
+                      'rez_13'              :13,
+                      'LAST_OFF_BY_CMD_ARM ':14,
+                      'ALL_OFF_WITH_BLOCK ' :15}
 
         ktpr_cfg = ['Отключение ПНС с выдержкой времени до 5 с после отключения всех МНА','Автоматическая деблокировка защиты','Запрет маскирования']
         ktpr_ctrl1 = ['Закрытие задвижек на входе РП',
@@ -5400,7 +5402,6 @@ class Filling_CodeSys():
                       'Закрытие задвижек между ПНС и МНС',
                       'Закрытие задвижек на выходе НПС',
                       'Закрытие задвижек на входе НПС']
-
         ktpr_ctrl2 = ['Отключение вентиляторов водоохлаждения системы оборотного водоснабжения',
                       'Отключение АВО',
                       'Отключение насосов артскважин',
@@ -5449,35 +5450,64 @@ class Filling_CodeSys():
                       'Закрытие воздушных клапанов (жалюзийных решёток) помещения компрессорной подпора воздуха ЭД',
                       'Закрытие воздушных клапанов (жалюзийных решёток) насосного зала']
         try:
-            data_value = self.dop_function.connect_by_sql('ktpr', f'''"id", "control", "deblock"''')
+            data_value = self.dop_function.connect_by_sql('ktpr', f'''"id", "tag", "name", "avar_parameter", "bitmask_protection_group_membership", "stop_type_NA", "pump_station_stop_type",
+                                                          
+                                                          "shutdown_PNS_a_time_delay_up_5s_after_turning", "auto_unlock_protection", "DisableMasking", 
+                                                          
+                                                          "closing_valves_inlet_RP", "closing_secant_valve_connection_unit__oil_production_oil", 
+                                                          "closing_valves_inlet_FGU", "closing_valves_inlet_SSVD", "closing_valves_outlet_RD", "closing_valves_inlet_RD", 
+                                                          "closing_valves_inlet_and_outlet_PNA", "closing_valves_inlet_and_outlet_MNA", "closing_valves_inlet_and_outlet_PNS", 
+                                                          "closing_valves_inlet_and_outlet_MNS", "closing_gate_valves_between_RP_and_PNS", "closing_gate_valves_between_PNS_and_MNS", 
+                                                          "closing_gate_valves_at_the_outlet_NPS", "closing_gate_valves_at_the_inlet_NPS", 
+                                                          
+                                                          "shutdown_of_water_cooling_fans_circulating_water_supply_system", "AVO_shutdown", "shutdown_of_art_well_pumps", 
+                                                          "shutdown_domestic_and_drinking_water_pumps", "disabling_pumps_for_pumping_oil_oil_products_through_BIC", 
+                                                          "shutdown_pumps_providing_oil", "shutdown_of_ED_air_compressors", "shutdown_of_retaining_fans_of_the_electrical_room", 
+                                                          "shutdown_of_booster_fans_ED", "switching_off_the_electric_room_fans", "shutdown_pumps_pumping_out_from_tanks_SSVD", 
+                                                          "shutdown_pumps_pumping_out_from_tanks_collection_of_leaks_PNS", "shutdown_pumps_pumping_out_from_tanks_collection_of_leaks_MNS", 
+                                                          "shutdown_circulating_water_pumps", "shutdown_oil_pumps_after_signal_stopped_NA", "shutdown_oil_pumps", 
+                                                          
+                                                          "switching_off_the_supply_fan_of_the_SIKN_room", "switching_off_the_supply_fan_of_the_BIK_room", 
+                                                          "switching_off_the_supply_fans_of_the_ED_air_compressor", "switching_off_the_supply_fan_of_the_SSVD_room", 
+                                                          "switching_off_the_supply_fan_of_the_RD_room", "switch_off_the_supply_fans_in_the_centralized_oil", 
+                                                          "switching_off_the_supply_fans_pumping_room_of_the_PNS", "switching_off_the_supply_fans_pumping_room_of_the_MNS", 
+                                                          "shutdown_of_the_roof_fans_of_the_PNS_pump_room", "shutdown_of_the_roof_fans_of_the_MNS_pump_room", 
+                                                          "shutdown_of_exhaust_fans_in_the_SSVD_room", "shutdown_of_exhaust_fans_in_the_RD_room", 
+                                                          "shutdown_of_exhaust_fans_oil_pit_in_the_electrical_room", "shutdown_of_exhaust_fans_in_the_centralized_oil_system_room", 
+                                                          "shutdown_of_exhaust_fans_of_the_pumping_room_PNS", "shutdown_exhaust_fans_of_the_pumping_room_of_the_MNS", 
+                                                          
+                                                          "fire_protection", "shutdown_of_anticondensation_electric_heaters_ED", "shutdown_of_pumping_pumps_from_leakage_collection_tanks", 
+                                                          "shutdown_of_pumps_for_pumping_oil_oil_products_through", "shutdown_of_locking_system_pumps", 
+                                                          "shutdown_of_the_external_cooling_circuit_ChRP_PNA", "shutdown_of_the_external_cooling_circuit_ChRP_MNA", 
+                                                          "shutdown_of_air_coolers_of_the_locking_system_disc_NA", "shutdown_of_air_coolers_of_the_locking_system_MNA", 
+                                                          "shutdown_of_electric_heaters_of_the_SIKN_leak_collection_tank", "shutdown_of_the_electric_heaters_of_the_leakage_collection_PNS", 
+                                                          "shutdown_of_the_electric_heaters_of_the_leakage_collection_MNS", "shutdown_of_electric_oil_heaters", 
+                                                          "closing_of_air_valves_louvered_grilles_of_the_compressor_room", "closing_the_air_valves_louvered_grilles_of_the_pump_room"
+                                                          ''')
             # Проверяем файл на наличие в папке, если есть удаляем и создаем новый
-            write_file = self.file_check('сfg_DPS')
+            write_file = self.file_check('сfg_KTPR')
 
             for value in data_value:
-                numbers         = value['№']
-                tag             = value['Идентификатор']
-                name            = value['Название']
-                pInputpInputVar= value['Аварийный параметр']
-                pInputnum      = value['№']
+                numbers         = value[0]
+                pInputnum       = value[0]
+                tag             = value[1]
+                name            = value[2]
+                pInputpInputVar = value[3]
+
                 cfg_unioncfg = '0000000000000'
                 ctrl1 = '00'
-                ctrl2=''
-                ctrl3=''
-                ctrl4=''
-                isNum=0
-                isInv=0
+                ctrl2 = ''
+                ctrl3 = ''
+                ctrl4 = ''
+                isNum = 0
+                isInv = 0
                 Inputvar = str(pInputpInputVar).split(".")
 
-                # if self.str_find(Inputvar[0],'NOT'):
-                #     isInv=1
-                #     b = str(Inputvar[0]).replace('NOT ','')
-                #     if self.str_find(Inputvar[0], 'NPS'):
-                #         isInv = 0
-                if self.str_find(Inputvar[0], {'NOT '}):
+                if self.dop_function.str_find(Inputvar[0], {'NOT '}):
                     isInv = 1
                 b = str(Inputvar[0]).replace('NOT ', '')
                 if len(Inputvar)>2:
-                    if self.str_find(Inputvar[0],'stateBUF'):
+                    if self.dop_function.str_find(Inputvar[0],'stateBUF'):
                         pInputnum = Inputvar[2]
                         isNum = 0
                         pInputpInputVar = Inputvar[0] + '.state.reg'
@@ -5516,46 +5546,402 @@ class Filling_CodeSys():
                         pInputpInputVar=str(b).replace('NPS','stateNPS')+'.state.reg'
 
                 i=0
-                for el in ktpr_cfg:
-                    i+=1
+                for count in range(7, 10):
+                    i += 1
+                    cfg_unioncfg = cfg_unioncfg+str(value[count]) if value[count] is not None else cfg_unioncfg+'0'
+                    if i == 2: cfg_unioncfg = cfg_unioncfg + '0'
 
-                    cfg_unioncfg = cfg_unioncfg+str(value[el]) if value[el] is not None else cfg_unioncfg+'0'
-                    if i == 2:
-                        cfg_unioncfg = cfg_unioncfg + '0'
-                        #print(el, ' ', value[el])
-                for el in ktpr_ctrl1:
-                    ctrl1 = ctrl1+str(value[el]) if value[el] is not None else ctrl1+'0'
-                for el in ktpr_ctrl2:
-                    ctrl2 = ctrl2+str(value[el]) if value[el] is not None else ctrl2+'0'
-                for el in ktpr_ctrl3:
-                    ctrl3 = ctrl3+str(value[el]) if value[el] is not None else ctrl3+'0'
-                for el in ktpr_ctrl4:
-                    ctrl4 = ctrl4+str(value[el]) if value[el] is not None else ctrl4+'0'
-                Group           = value['Битовая маска принадлежности защиты группе'] if value['Битовая маска принадлежности защиты группе'] is not None else '0'
-                NA_StopType       = value['Тип остановки НА'] if value['Тип остановки НА'] is not None else '0'
-                NS_StopType       = value['Тип остановки насосной станции'] if value['Тип остановки насосной станции'] is not None else '0'
+                for count in range(10, 24): ctrl1 = ctrl1+str(value[count]) if value[count] is not None else ctrl1+'0'
+                for count in range(24, 40): ctrl2 = ctrl2+str(value[count]) if value[count] is not None else ctrl2+'0'
+                for count in range(40, 56): ctrl3 = ctrl3+str(value[count]) if value[count] is not None else ctrl3+'0'
+                for count in range(56, 71): ctrl4 = ctrl4+str(value[count]) if value[count] is not None else ctrl4+'0'
+
+                Group        = value[4] if value[4] is not None else '0'
+                NA_StopType  = value[5] if value[5] is not None else '0'
+                NS_StopType  = value[6] if value[6] is not None else '0'
+                
                 pInputcfg_unioncfg = '00000000000000'+str(isNum)+str(isInv)
                 if tag is None: continue
-                cfg_txt = f'(*{tag} {name}*)\n' \
-                          f'cfgKTPR[{numbers}].pInput.pInputVar REF={pInputpInputVar};\n' \
-                          f'cfgKTPR[{numbers}].pInput.num:={pInputnum};\n' \
-                          f"cfgKTPR[{numbers}].pInput.cfg.reg:={str(hex(int(pInputcfg_unioncfg,2))).replace('0x','16#')};\n" \
-                          f"cfgKTPR[{numbers}].cfg.reg:={str(hex(int(cfg_unioncfg,2))).replace('0x','16#')};\n" \
-                          f'cfgKTPR[{numbers}].Group:={Group};\n' \
-                          f'cfgKTPR[{numbers}].NA_StopType:={NA_StopType};\n' \
-                          f'cfgKTPR[{numbers}].NS_StopType:={NS_StopType};\n' \
-                          f"cfgKTPR[{numbers}].ctrl.ctrl1.reg:={str(hex(int(ctrl1,2))).replace('0x','16#')};\n" \
-                          f"cfgKTPR[{numbers}].ctrl.ctrl2.reg:={str(hex(int(ctrl2, 2))).replace('0x','16#')};\n" \
-                          f"cfgKTPR[{numbers}].ctrl.ctrl3.reg:={str(hex(int(ctrl3, 2))).replace('0x','16#')};\n" \
-                          f"cfgKTPR[{numbers}].ctrl.ctrl4.reg:={str(hex(int(ctrl4, 2))).replace('0x','16#')};\n"
+                cfg_txt = f'(*{numbers} - {name}*)\n' \
+                          f'cfgKTPR[{numbers}].pInput.pInputVar         REF={pInputpInputVar};\n' \
+                          f'cfgKTPR[{numbers}].pInput.num                 :={pInputnum};\n' \
+                          f"cfgKTPR[{numbers}].pInput.cfg.reg             :={str(hex(int(pInputcfg_unioncfg,2))).replace('0x','16#')};\n" \
+                          f"cfgKTPR[{numbers}].cfg.reg                    :={str(hex(int(cfg_unioncfg,2))).replace('0x','16#')};\n" \
+                          f'cfgKTPR[{numbers}].Group                      :={Group};\n' \
+                          f'cfgKTPR[{numbers}].NA_StopType                :={NA_StopType};\n' \
+                          f'cfgKTPR[{numbers}].NS_StopType                :={NS_StopType};\n' \
+                          f"cfgKTPR[{numbers}].ctrl.ctrl1.reg             :={str(hex(int(ctrl1,2))).replace('0x','16#')};\n" \
+                          f"cfgKTPR[{numbers}].ctrl.ctrl2.reg             :={str(hex(int(ctrl2, 2))).replace('0x','16#')};\n" \
+                          f"cfgKTPR[{numbers}].ctrl.ctrl3.reg             :={str(hex(int(ctrl3, 2))).replace('0x','16#')};\n" \
+                          f"cfgKTPR[{numbers}].ctrl.ctrl4.reg             :={str(hex(int(ctrl4, 2))).replace('0x','16#')};\n"
 
-           
                 write_file.write(cfg_txt)
             write_file.close()
-            msg[f'{today} - Файл СУ: cfg_dps заполнен'] = 1
+            msg[f'{today} - Файл СУ: cfg_ktpr заполнен'] = 1
             return msg
         except Exception:
-            msg[f'{today} - Файл СУ: ошибка при заполнении cfg_dps: {traceback.format_exc()}'] = 2
+            msg[f'{today} - Файл СУ: ошибка при заполнении cfg_ktpr: {traceback.format_exc()}'] = 2
+            return msg  
+    def cfg_diag(self):
+        msg = {}
+        # type_mk500 = {'PSU' : 'typePSU',
+        #               'CPU' : 'typeCPU',
+        #               'CN'  : 'typeCN',
+        #               'MN'  : 'typeMN',
+        #               'AI'  : 'typeAI_8ch',
+        #               'AO'  : 'typeAO',
+        #               'DI'  : 'typeDI',
+        #               'DO'  : 'typeDO',
+        #               'RS'  : 'typeRS485'}
+        
+        list_type = ['CPU', 'PSU', 'CN', 'MN', 'AI', 'AO', 'DI', 'RS', 'DO', 'EthEx']
+        
+        #list_type = ['MK-504-120', 'MK-550-024', 'MK-545-010', 'MK-546-010', 'MK-516-008A', 'MK-514-008', 'MK-521-032', 'MK-541-002', 'MK-531-032', 'MK-544-040']
+
+        try:
+            data_ss = self.dop_function.connect_by_sql('ss', f'''"id", "name", "counter_1", "number_array_stateRSreq_1", "number_NOM_1", "channel_NOM_1", 
+                                                                               "counter_2", "number_array_stateRSreq_2", "number_NOM_2", "channel_NOM_2", "link_timeout"''')
+            data_tmdp   = self.dop_function.connect_by_sql('tm_dp', f'''"id", "variable", "name", "link_to_link_signal", "link_to_timeout"''')
+
+            # Проверяем файл на наличие в папке, если есть удаляем и создаем новый
+            write_file_gv = self.file_check('gv_DIAG')
+            write_file_cfg = self.file_check('cfg_DIAG')
+
+            signals      = []
+            signals_ss   = []
+            signals_tmdp = []
+            countPSUmodules     = 0
+            countCPUmodules     = 0
+            countCNmodules      = 0
+            countMNmodules      = 0
+            countAI_16CHmodules = 0
+            countAI_8CHmodules  = 0
+            countAOmodules      = 0
+            countDImodules      = 0
+            countDOmodules      = 0
+            countRS485modules   = 0
+
+            with db:
+                for basket in HardWare.select().order_by(HardWare.id).dicts():
+                    id_        = basket['id']
+                    tag        = basket['tag']
+                    uso        = basket['uso']
+                    num_basket = basket['basket']
+                    for key, value in basket.items():
+                        if self.dop_function.str_find(value, list_type):
+                            if self.dop_function.str_find(value, {'PSU'}):
+                                countPSUmodules += 1
+                                abs_num = countPSUmodules
+                                type_modul = 'typePSU'
+                            if self.dop_function.str_find(value, {'CPU'}):
+                                countCPUmodules += 1
+                                abs_num = countCPUmodules
+                                type_modul = 'typeCPU'
+                            if self.dop_function.str_find(value, {'CN'}):
+                                countCNmodules += 1
+                                abs_num = countCNmodules
+                                type_modul = 'typeCN'
+                            if self.dop_function.str_find(value, {'MN'}):
+                                countMNmodules += 1
+                                abs_num = countMNmodules
+                                type_modul = 'typeMN'
+                            if self.dop_function.str_find(value, {'AI'}):
+                                countAI_8CHmodules += 1
+                                abs_num = countAI_8CHmodules
+                                type_modul = 'typeAI_8ch'
+                            if self.dop_function.str_find(value, {'AO'}):
+                                countAOmodules += 1
+                                abs_num = countAOmodules
+                                type_modul = 'typeAO'
+                            if self.dop_function.str_find(value, {'DI'}):
+                                countDImodules += 1
+                                abs_num = countDImodules
+                                type_modul = 'typeDI'
+                            if self.dop_function.str_find(value, {'DO'}):
+                                countDOmodules += 1
+                                abs_num = countDOmodules
+                                type_modul = 'typeDO'
+                            if self.dop_function.str_find(value, {'RS'}):
+                                countRS485modules += 1
+                                abs_num = countRS485modules
+                                type_modul = 'typeRS485'
+
+                            number_modul = str(key).split('_')[1]
+                            if int(number_modul) < 10: string_name = f'{tag}_0{number_modul}'
+                            else                     : string_name = f'{tag}_{number_modul}'
+
+                            signals.append(dict(name_uso_rus   = uso,
+                                                uso_rack_modul = string_name,
+                                                rack           = id_,
+                                                number_modul   = f'_{string_name[-2:]}',
+                                                modul_dash     = number_modul,
+                                                gvd            = value,
+                                                abs_num        = abs_num,
+                                                type_modul     = type_modul))
+            # Смежные системы
+            for value in data_ss:
+                number_ss, name_ss, time_out  = value[0], value[1], value[10]
+                count_ss, array1_req, num1_nom, chann1_nom = value[2], value[3], value[4], value[5]
+                count_SS, array2_req, num2_nom, chann2_nom = value[6], value[7], value[8], value[9]
+
+                if number_ss is None: continue
+                if name_ss   is None: continue
+
+                signals_ss.append(dict(number_ss  = number_ss,
+                                       name_ss    = name_ss,
+                                       count_ss   = count_ss,
+                                       array1_req = array1_req,
+                                       num1_nom   = num1_nom,
+                                       chann1_nom = chann1_nom,
+                                       count_SS   = count_SS,
+                                       array2_req = array2_req,
+                                       num2_nom   = num2_nom,
+                                       chann2_nom = chann2_nom,
+                                       time_out   = time_out))
+            # Диспетчерские пункты
+            for value in data_tmdp:
+                number        = value[0]
+                variable      = value[1]
+                name          = value[2]
+                connection    = value[3]
+                link_time_out = value[4]
+
+                if number is None: continue
+                if name   is None: continue
+
+                signals_tmdp.append(dict(number       = number,
+                                         variable      = variable,
+                                         name          = name,
+                                         link_time_out = link_time_out,
+                                         connection    = connection))
+
+            write_file_gv.write('VAR_GLOBAL CONSTANT\n' \
+                            f'\tcountPSUmodules\t: UINT := {countPSUmodules};\t(* Количество модулей PSU *)\n' \
+                            f'\tcountCPUmodules\t: UINT := {countCPUmodules};\t(* Количество модулей CPU *)\n' \
+                            f'\tcountCNmodules\t: UINT := {countCNmodules};\t(* Количество модулей CN *)\n' \
+                            f'\tcountMNmodules\t: UINT := {countMNmodules};\t(* Количество модулей MN *)\n' \
+                            f'\tcountAI16modules\t: UINT := {countAI_16CHmodules};\t(* Количество 16-ти канальных модулей AI *)\n' \
+                            f'\tcountAI8modules\t: UINT := {countAI_8CHmodules};\t(* Количество 8-ми канальных модулей AI *)\n' \
+                            f'\tcountAOmodules\t: UINT := {countAOmodules};\t(* Количество модулей AO *)\n' \
+                            f'\tcountDImodules\t: UINT := {countDImodules};\t(* Количество модулей DI *)\n' \
+                            f'\tcountDOmodules\t: UINT := {countDOmodules};\t(* Количество модулей DO *)\n' \
+                            f'\tcountRS485modules\t: UINT := {countRS485modules};\t(* Количество интерфейсных модулей *)\n' \
+                            f'\tcontRack:=\t: UINT := {countPSUmodules};\t(* Количество всех корзин *)\n' \
+                            f'\tcontSS:=\t: UINT := {countRS485modules};\t(* Количество смежных систем - ПОКА НЕ ГЕНЕРИТСЯ *)\n' \
+                            f'END_VAR\n' \
+                            'VAR_GLOBAL\n')
+
+            mbusexist = {}
+            for i in range(1, 33):
+                count = -1
+                for value in signals:
+                    if value['rack'] == str(i):
+                        count = count + 1
+                mbusexist[i] = count
+
+            for value in signals:
+                uso_rack_modul = value['uso_rack_modul']
+                type_modul = value['type_modul']
+                if type_modul in ['typeAI_8ch', 'typeAO', 'typeDI', 'typeDO']:
+                    if type_modul == 'typeAI_8ch':
+                        t = 'AI'
+                        count = '8'
+                        dData = 'UINT'
+                    if type_modul == 'typeDI':
+                        t = 'DI'
+                        count = '32'
+                        dData = 'BOOL'
+                    if type_modul == 'typeDO':
+                        t = 'DO'
+                        count = '32'
+                        dData = 'BOOL'
+                    if type_modul == 'typeAO':
+                        t = 'AO'
+                        count = '8'
+                        dData = 'UINT'
+                    if type_modul == 'typeAO':
+                        cfg_txt = f'\t{uso_rack_modul}_Diagnostics: NftIOItfs.IOModuleDiag;\n' \
+                                f'\t{uso_rack_modul}_{t}: ARRAY[1..{count}] OF {dData};\n' \
+                                f'\t{uso_rack_modul}_{t}_Statuses: ARRAY[1..{count}] OF USINT;\n' \
+                                '\t(*-----------------*)\n'
+                    else:
+                        cfg_txt = f'\t{uso_rack_modul}_Diagnostics: NftIOItfs.IOModuleDiag;\n' \
+                                f'\t{uso_rack_modul}_{t}: ARRAY[1..{count}] OF {dData};\n' \
+                                '\t(*-----------------*)\n'
+                    write_file_gv.write(cfg_txt)
+                else:
+
+                    cfg_txt = f"\t{uso_rack_modul}:{type_modul};\n"
+                    write_file_gv.write(cfg_txt)
+
+            write_file_gv.write('\tCfgDiag:       typeCfgDiag;\t(* Конфигурация диагностики *)\n' \
+                            '\tStateDiag:     typeStateDiag;\t(* Данные по диагностике, передаваемые на ВУ *)\n' \
+                            '\tMemDiag:       typeMemDiag;\t(* Хранилище данных по диагностике *)\n' \
+                            '\tCmdDiag:       WORD;\t(* Команда для диагностики *)\n' \
+                            '\tmAI16_HEALTH:  ARRAY[1..countAI16modules] \tOF BOOL;\n' \
+                            '\tmAI8_HEALTH:   ARRAY[1..countAI8modules] \tOF BOOL;\n' \
+                            '\tmAO_HEALTH:    ARRAY[1..countAOmodules] \tOF BOOL;\n' \
+                            '\tmDI_HEALTH:    ARRAY[1..countDImodules] \tOF BOOL;\n' \
+                            '\tmDO_HEALTH:    ARRAY[1..countDOmodules] \tOF BOOL;\n' \
+                            '\tprjVersion:    typePrjVersion;\n' \
+                            '\tprjVersionKvit:typePrjVersion;\n' \
+                            'END_VAR\n')
+            write_file_gv.close()
+
+            write_file_cfg.write('IF NOT flInit THEN\n')
+            for key, value in mbusexist.items():
+                if value != -1:
+                    st_bin = 0
+                    for b in range(0, value + 1):
+                        st_bin = st_bin + 2 ** b
+                    write_file_cfg.write(f"\tCfgDiag.mBUSExists[{key}] := {str(bin(st_bin)).replace('0b', '2#')};\n")
+
+            for mod in signals:
+                PortsEnbl = []
+                if mod['type_modul'] == 'typePSU':
+                    write_file_cfg.write(
+                        f"\tCfgDiag.PSU[{mod['abs_num']}].mPSU                   REF= {mod['uso_rack_modul']};\n" \
+                        f"\tCfgDiag.PSU[{mod['abs_num']}].nRack                    := {mod['rack']};\n" \
+                        f"\tCfgDiag.PSU[{mod['abs_num']}].nMod                     := {mod['modul_dash']};\n" \
+                        '\t(*---------------------*)\n')
+                if mod['type_modul'] == 'typeCPU':
+                    PortsEnbl = str(mod['gvd']).split(';')
+                    pe = PortsEnbl[1] if len(PortsEnbl) > 1 else 7
+                    write_file_cfg.write(
+                        f"\tCfgDiag.CPU[{mod['abs_num']}].mCPU                   REF= {mod['uso_rack_modul']};\n" \
+                        f"\tCfgDiag.CPU[{mod['abs_num']}].nRack                    := {mod['rack']};\n" \
+                        f"\tCfgDiag.CPU[{mod['abs_num']}].nMod                     := {mod['modul_dash']};\n" \
+                        f"\tCfgDiag.CPU[{mod['abs_num']}].PortsEnbl                := {pe};\n" \
+                        '\t(*---------------------*)\n')
+                if mod['type_modul'] == 'typeCN':
+                    PortsEnbl = str(mod['gvd']).split(';')
+                    pe = PortsEnbl[1] if len(PortsEnbl) > 1 else 3
+                    write_file_cfg.write(
+                        f"\tCfgDiag.CN[{mod['abs_num']}].mCN                     REF= {mod['uso_rack_modul']};\n" \
+                        f"\tCfgDiag.CN[{mod['abs_num']}].nRack                     := {mod['rack']};\n" \
+                        f"\tCfgDiag.CN[{mod['abs_num']}].nMod                      := {mod['modul_dash']};\n" \
+                        f"\tCfgDiag.CN[{mod['abs_num']}].PortsEnbl                 := {pe};\n" \
+                        '\t(*---------------------*)\n')
+                if mod['type_modul'] == 'typeMN':
+                    PortsEnbl = str(mod['gvd']).split(';')
+                    pe = PortsEnbl[1] if len(PortsEnbl) > 1 else 3
+                    write_file_cfg.write(
+                        f"\tCfgDiag.MN[{mod['abs_num']}].mMN                     REF= {mod['uso_rack_modul']};\n" \
+                        f"\tCfgDiag.MN[{mod['abs_num']}].nRack                     := {mod['rack']};\n" \
+                        f"\tCfgDiag.MN[{mod['abs_num']}].nMod                      := {mod['modul_dash']};\n" \
+                        f"\tCfgDiag.MN[{mod['abs_num']}].PortsEnbl                 := {pe};\n" \
+                        '\t(*---------------------*)\n')
+                if mod['type_modul'] == 'typeAI_8ch':
+                    write_file_cfg.write(
+                        f"\tCfgDiag.AI8[{mod['abs_num']}].mAI8.AI                REF= {mod['uso_rack_modul']}_AI;\n" \
+                        f"\tCfgDiag.AI8[{mod['abs_num']}].nRack                    := {mod['rack']};\n" \
+                        f"\tCfgDiag.AI8[{mod['abs_num']}].nMod                     := {mod['modul_dash']};\n" \
+                        f"\tCfgDiag.AI8[{mod['abs_num']}].mAI8.Diagnostics       REF= {mod['uso_rack_modul']}_Diagnostics;\n" \
+                        '\t(*---------------------*)\n')
+                if mod['type_modul'] == 'typeAO':
+                    write_file_cfg.write(
+                        f"\tCfgDiag.AO[{mod['abs_num']}].mAO.AO                  REF= {mod['uso_rack_modul']}_AO;\n" \
+                        f"\tCfgDiag.AO[{mod['abs_num']}].nRack                     := {mod['rack']};\n" \
+                        f"\tCfgDiag.AO[{mod['abs_num']}].nMod                      := {mod['modul_dash']};\n" \
+                        f"\tCfgDiag.AO[{mod['abs_num']}].mAO.Diagnostics         REF= {mod['uso_rack_modul']}_Diagnostics;\n" \
+                        f"\tCfgDiag.AO[{mod['abs_num']}].mAO.AOStatuses          REF= {mod['uso_rack_modul']}_AO_Statuses;\n" \
+                        '\t(*---------------------*)\n')
+                if mod['type_modul'] == 'typeDI':
+                    write_file_cfg.write(
+                        f"\tCfgDiag.DI[{mod['abs_num']}].mDI.DI                  REF= {mod['uso_rack_modul']}_DI;\n" \
+                        f"\tCfgDiag.DI[{mod['abs_num']}].nRack                     := {mod['rack']};\n" \
+                        f"\tCfgDiag.DI[{mod['abs_num']}].nMod                      := {mod['modul_dash']};\n" \
+                        f"\tCfgDiag.DI[{mod['abs_num']}].mDI.Diagnostics         REF= {mod['uso_rack_modul']}_Diagnostics;\n" \
+                        '\t(*---------------------*)\n')
+                if mod['type_modul'] == 'typeDO':
+                    write_file_cfg.write(
+                        f"\tCfgDiag.DOs[{mod['abs_num']}].mDO.DOs                 REF= {mod['uso_rack_modul']}_DO;\n" \
+                        f"\tCfgDiag.DOs[{mod['abs_num']}].nRack                     := {mod['rack']};\n" \
+                        f"\tCfgDiag.DOs[{mod['abs_num']}].nMod                      := {mod['modul_dash']};\n" \
+                        f"\tCfgDiag.DOs[{mod['abs_num']}].mDO.Diagnostics         REF= {mod['uso_rack_modul']}_Diagnostics;\n" \
+                        '\t(*---------------------*)\n')
+                if mod['type_modul'] == 'typeRS485':
+                    PortsEnbl = str(mod['gvd']).split(';')
+                    pe = PortsEnbl[1] if len(PortsEnbl) > 1 else 3
+                    write_file_cfg.write(
+                        f"\tCfgDiag.RS485[{mod['abs_num']}].mRS485               REF= {mod['uso_rack_modul']};\n" \
+                        f"\tCfgDiag.RS485[{mod['abs_num']}].nRack                  := {mod['rack']};\n" \
+                        f"\tCfgDiag.RS485[{mod['abs_num']}].nMod                   := {mod['modul_dash']};\n" \
+                        f"\tCfgDiag.RS485[{mod['abs_num']}].PortsEnbl              := {pe};\n" \
+                        '(*---------------------*)\n')
+
+            for data in signals_ss:
+                number_ss  = data['number_ss']
+                name_ss    = data['name_ss']
+                count_ss   = data['count_ss']
+                array1_req = data['array1_req']
+                num1_nom   = data['num1_nom']
+                chann1_nom = data['chann1_nom']
+                count_SS   = data['count_SS']
+                array2_req = data['array2_req']
+                num2_nom   = data['num2_nom']
+                chann2_nom = data['chann2_nom']
+                time_out   = data['time_out']
+
+                if time_out is None: time_out = 'tmCommon.Diag_RStimeout'
+                else               : time_out = f'REF= {time_out}'
+
+                if (not num1_nom is None) and (not chann1_nom is None):
+                    write_file_cfg.write(
+                        f'(*------{name_ss}--------*)\n'
+                        f"\tcfgDiag.SS[{number_ss}, 1].pTimeOut	         REF= {time_out};\n" \
+                        f"\tcfgDiag.SS[{number_ss}, 1].RSreq                   := {array1_req}; \n" \
+                        f"\tcfgDiag.SS[{number_ss}, 1].nRS                     := {num1_nom};   \n" \
+                        f"\tcfgDiag.SS[{number_ss}, 1].chRS                    := {chann1_nom}; \n")
+                elif not count_ss is None:
+                    write_file_cfg.write(
+                        f'(*------{name_ss}--------*)\n'
+                        f"\tcfgDiag.SS[{number_ss}, 1].pTimeOut	         REF= {time_out};\n" \
+                        f"\tcfgDiag.SS[{number_ss}, 1].pCounter	         REF= {count_ss};\n" \
+                        f"\tcfgDiag.SS[{number_ss}, 1].RSreq                   := 0; \n")
+
+                if (not num2_nom is None) and (not chann2_nom is None):
+                    write_file_cfg.write(
+                        f'(*------{name_ss}--------*)\n'
+                        f"\tcfgDiag.SS[{number_ss}, 2].pTimeOut	         REF= {time_out};\n" \
+                        f"\tcfgDiag.SS[{number_ss}, 2].RSreq                   := {array2_req}; \n" \
+                        f"\tcfgDiag.SS[{number_ss}, 2].nRS                     := {num2_nom};   \n" \
+                        f"\tcfgDiag.SS[{number_ss}, 2].chRS                    := {chann2_nom}; \n")
+                elif not count_SS is None:
+                    write_file_cfg.write(
+                        f'(*------{name_ss}--------*)\n'
+                        f"\tcfgDiag.SS[{number_ss}, 2].pTimeOut	         REF= {time_out};\n" \
+                        f"\tcfgDiag.SS[{number_ss}, 2].pCounter	         REF= {count_SS};\n" \
+                        f"\tcfgDiag.SS[{number_ss}, 2].RSreq                   := 0; \n")
+
+            for data in signals_tmdp:
+                number        = data['number']
+                variable      = data['variable']
+                name          = data['name']
+                link_time_out = data['link_time_out']
+                connection    = data['connection']
+
+                if link_time_out is None: link_time_out = 'tmCommon.CSPA_t1'
+
+                InputVar, Num, Unioncfg_st = self.ret_inp_cfg(connection)
+
+                write_file_cfg.write(
+                    f'(*------{name}--------*)\n'
+                    f"\tcfgDiag.TM_DP[{number}].pLinkOk.pInputVar    REF= {InputVar};\n" \
+                    f"\tcfgDiag.TM_DP[{number}].pLinkOk.num               := {Num}; \n" \
+                    f"\tcfgDiag.TM_DP[{number}].pLinkOk.cfg.reg           := {Unioncfg_st};   \n" \
+                    f"\tcfgDiag.TM_DP[{number}].pTimeOut                  := {link_time_out}; \n")
+
+
+            write_file_cfg.write("\tflInit := TRUE;\n" \
+                            "END_IF;")
+
+            write_file_cfg.close()
+            write_file_gv.close()
+            msg[f'{today} - Файл СУ: cfg_diag, gv_diag заполнен'] = 1
+            return msg
+        except Exception:
+            msg[f'{today} - Файл СУ: ошибка при заполнении cfg_diag, gv_diag: {traceback.format_exc()}'] = 2
             return msg  
         
         
@@ -5568,8 +5954,8 @@ class Filling_HardWare():
     # Получаем данные с таблицы Signals по количеству корзин и модулю
     def getting_modul(self, kk_is_True):
         msg = {}
-        list_type = {'CPU': 'MK-504-120', 'PSU': 'MK-550-024', 'CN' : 'MK-545-010', 'MN' : 'MK-546-010', 'AI' : 'MK-516-008A',
-                     'AO' : 'MK-514-008', 'DI' : 'MK-521-032', 'RS' : 'MK-541-002', 'DO' : 'MK-531-032', 'EthEx' : 'MK-544-040'}
+        list_type = {'CPU': 'MK-504-120', 'PSU': 'MK-550-024', 'CN': 'MK-545-010', 'MN' : 'MK-546-010', 'AI'    : 'MK-516-008A',
+                     'AO' : 'MK-514-008', 'DI' : 'MK-521-032', 'RS': 'MK-541-002', 'DO' : 'MK-531-032', 'EthEx' : 'MK-544-040'}
         with db:
             try:
                 if self.dop_function.empty_table('signals'): 
@@ -5600,22 +5986,22 @@ class Filling_HardWare():
                             test_s.append(dict(uso = uso[0], tag = '',
                                                 powerLink_ID ='',
                                                 basket  = i + 1,
-                                                type_0  = 'MK-550-024',  variable_0 = f'PSU', type_1 = f'MK-546-010', variable_1 = f'MN',
-                                                type_2  = f'MK-504-120', variable_2 = f'CPU', type_3 = f'',           variable_3 = f'',
-                                                type_4  = f'',           variable_4 = f'',    type_5 = f'',           variable_5 = f'',
-                                                type_6  = f'',           variable_6 = f'',    type_7 = f'',           variable_7 = f'',
-                                                type_8  = f'',           variable_8 = f'',    type_9 = f'',           variable_9 = f'',
-                                                type_10 = f'',           variable_10= f'',    type_11= f'',           variable_11= f'',
-                                                type_12 = f'',           variable_12= f'',    type_13= f'',           variable_13= f'',
-                                                type_14 = f'',           variable_14= f'',    type_15= f'',           variable_15= f'',
-                                                type_16 = f'',           variable_16= f'',    type_17= f'',           variable_17= f'',
-                                                type_18 = f'',           variable_18= f'',    type_19= f'',           variable_19= f'',
-                                                type_20 = f'',           variable_20= f'',    type_21= f'',           variable_21= f'',
-                                                type_22 = f'',           variable_22= f'',    type_23= f'',           variable_23= f'',
-                                                type_24 = f'',           variable_24= f'',    type_25= f'',           variable_25= f'',
-                                                type_26 = f'',           variable_26= f'',    type_27= f'',           variable_27= f'',
-                                                type_28 = f'',           variable_28= f'',    type_29= f'',           variable_29= f'',
-                                                type_30 = f'',           variable_30= f'',    type_31= f'',           variable_31= f'',
+                                                type_0  = f'MK-550-024', variable_0 = f'PSU',   type_1 = f'MK-546-010', variable_1 = f'MN;3',
+                                                type_2  = f'MK-504-120', variable_2 = f'CPU;7', type_3 = f'',           variable_3 = f'',
+                                                type_4  = f'',           variable_4 = f'',      type_5 = f'',           variable_5 = f'',
+                                                type_6  = f'',           variable_6 = f'',      type_7 = f'',           variable_7 = f'',
+                                                type_8  = f'',           variable_8 = f'',      type_9 = f'',           variable_9 = f'',
+                                                type_10 = f'',           variable_10= f'',      type_11= f'',           variable_11= f'',
+                                                type_12 = f'',           variable_12= f'',      type_13= f'',           variable_13= f'',
+                                                type_14 = f'',           variable_14= f'',      type_15= f'',           variable_15= f'',
+                                                type_16 = f'',           variable_16= f'',      type_17= f'',           variable_17= f'',
+                                                type_18 = f'',           variable_18= f'',      type_19= f'',           variable_19= f'',
+                                                type_20 = f'',           variable_20= f'',      type_21= f'',           variable_21= f'',
+                                                type_22 = f'',           variable_22= f'',      type_23= f'',           variable_23= f'',
+                                                type_24 = f'',           variable_24= f'',      type_25= f'',           variable_25= f'',
+                                                type_26 = f'',           variable_26= f'',      type_27= f'',           variable_27= f'',
+                                                type_28 = f'',           variable_28= f'',      type_29= f'',           variable_29= f'',
+                                                type_30 = f'',           variable_30= f'',      type_31= f'',           variable_31= f'',
                                                 type_32 = f'',           variable_32= f''))
                         temp_flag = True
                     for basket in list_basket:
@@ -5633,9 +6019,9 @@ class Filling_HardWare():
                                                    type_0     = 'MK-550-024',
                                                    variable_0 = f'PSU',
                                                    type_1     = f'MK-544-040',
-                                                   variable_1 = f'EthEx',
+                                                   variable_1 = f'EthEx;3',
                                                    type_2     = f'MK-504-120',
-                                                   variable_2 = f'CPU'))
+                                                   variable_2 = f'CPU;7'))
 
                         self.cursor.execute(f"""SELECT DISTINCT module, type_signal 
                                                 FROM signals
@@ -5664,7 +6050,7 @@ class Filling_HardWare():
                                             type_mod = f'{key}[{count_DO}]'
                                         elif key == 'RS': 
                                             count_RS += 1
-                                            type_mod = f'{key}[{count_RS}]'
+                                            type_mod = f'RS[{count_RS}];3'
                                         elif key == 'EthEx': 
                                             count_EthEx += 1
                                             type_mod = f'{key}[{count_EthEx}]'
@@ -5680,7 +6066,7 @@ class Filling_HardWare():
                             list_hw[f'type_0']          = 'MK-550-024'
                             list_hw[f'variable_0']      = 'PSU'
                             list_hw[f'type_1']          = 'MK-545-010'
-                            list_hw[f'variable_1']      = 'CN'
+                            list_hw[f'variable_1']      = 'CN;3'
                             list_hw[f'type_{i[0]}']     = type_kod
                             list_hw[f'variable_{i[0]}'] = type_mod
                         test_s.append(list_hw)

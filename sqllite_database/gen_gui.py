@@ -1259,6 +1259,10 @@ class Widget(QWidget):
         self.q_check_cfg_ai = QCheckBox('cfg_AI', tab_7)
         self.q_check_cfg_ai.move(170, 95) 
         self.q_check_cfg_ai.stateChanged.connect(self.check_cfg_AI)
+        self.q_check_cfg_diag = QCheckBox('cfg_DIAG', tab_7)
+        self.q_check_cfg_diag.move(170, 110) 
+        self.q_check_cfg_diag.stateChanged.connect(self.check_cfg_DIAG)
+
 
         # self.q_check_omx_upts = QCheckBox('UPTSs', tab_6)
         # self.q_check_omx_upts.move(90, 20) 
@@ -2297,6 +2301,9 @@ class Widget(QWidget):
     def check_cfg_NA(self, checked):
         if checked: self.list_gen_su.append('cfg_NA')
         else      : self.list_gen_su.remove('cfg_NA')
+    def check_cfg_KTPR(self, checked):
+        if checked: self.list_gen_su.append('cfg_KTPR')
+        else      : self.list_gen_su.remove('cfg_KTPR')
     def check_cfg_KTPRA(self, checked):
         if checked: self.list_gen_su.append('cfg_KTPRA')
         else      : self.list_gen_su.remove('cfg_KTPRA')
@@ -2321,6 +2328,9 @@ class Widget(QWidget):
     def check_cfg_DPS(self, checked):
         if checked: self.list_gen_su.append('cfg_DPS')
         else      : self.list_gen_su.remove('cfg_DPS')
+    def check_cfg_DIAG(self, checked):
+        if checked: self.list_gen_su.append('cfg_DIAG')
+        else      : self.list_gen_su.remove('cfg_DIAG')
     
     # Button confirm
     def su_list(self):
