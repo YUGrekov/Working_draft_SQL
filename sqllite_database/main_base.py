@@ -4106,6 +4106,9 @@ class Filling_CodeSys():
             if tabl == 'cfg_DIAG': 
                 msg.update(self.cfg_diag())
                 continue
+            if tabl == 'cfg_PIC': 
+                msg.update(self.cfg_pic())
+                continue
         return msg
     def file_check(self, name_file):
         path_request = f'{path_su}\\{name_file}.txt'
@@ -5943,7 +5946,187 @@ class Filling_CodeSys():
         except Exception:
             msg[f'{today} - Файл СУ: ошибка при заполнении cfg_diag, gv_diag: {traceback.format_exc()}'] = 2
             return msg  
+    def cfg_pic(self):
+        msg = {}
+        try:
+            data_pic   = self.dop_function.connect_by_sql('pic', f'''"id", "name", "frame", "Pic"''')
+            data_ai    = self.dop_function.connect_by_sql('ai', f'''"id", "name", "Pic"''')
+            data_di    = self.dop_function.connect_by_sql('di', f'''"id", "name", "priority_0", "priority_1", "pNC_AI", "Pic"''')
+            data_zd    = self.dop_function.connect_by_sql('zd', f'''"id", "name", "Pic"''')
+            data_vs    = self.dop_function.connect_by_sql('vs', f'''"id", "name", "Pic"''')
+            data_ss    = self.dop_function.connect_by_sql('ss', f'''"id", "name", "number_array_stateRSreq_1", "number_array_stateRSreq_2", "Pic"''')
+            data_ktpr  = self.dop_function.connect_by_sql('ktpr', f'''"id", "name", "Pic"''')
+            data_ktpra = self.dop_function.connect_by_sql('ktpra', f'''"id", "name", "Pic"''')
+
+            # Проверяем файл на наличие в папке, если есть удаляем и создаем новый
+            write_file = self.file_check('cfg_PIC')
+            list_pic = []
+
+            for info_pic in data_pic:
+                id_pic   = info_pic[0]
+                name_pic = info_pic[1]
+                frame    = info_pic[2]
+
+                for value in data_ai:
+                    id_ai  = value[0]
+                    name   = value[1]
+                    pic_ai = value[2]
+                    
+                    if pic_ai is None: continue
+
+                    s_pic = str(pic_ai).split(';')
+                    for pic_num in s_pic:
+                        if str(pic_num) == str(id_pic):
+                            list_pic.append(dict(id_pic = id_pic,
+                                                 name_pic = name_pic,
+                                                 value_warn = f"AIcountWarn[{id_ai}]",
+                                                 value_avar = f"AIcountAvar[{id_ai}]",
+                                                 name = name))
+                    
+                for value in data_di:
+                    id_di  = value[0]
+                    name   = value[1]
+                    prio_0 = value[2]
+                    prio_1 = value[3]
+                    pNC    = value[4]
+                    pic_di = value[5]
+
+                    if pic_di is None: continue
+                    s_pic = str(pic_di).split(';')
+
+                    for pic_num in s_pic:
+                        if str(pic_num) == str(id_pic):
+                            di_avar = None
+                            di_warn = None
+                            if prio_0 == 3 or prio_1 == 3:
+                                di_avar = f"BYTE_TO_UDINT(DIcountAvar[{id_di}])"
+                                if pNC is not None:
+                                    di_warn = f"BYTE_TO_UDINT(DIcountWarn[{id_di}])"
+                            else:
+                                di_warn = f"BYTE_TO_UDINT(DIcountWarn[{id_di}])"
+                            
+                            list_pic.append(dict(id_pic     = id_pic,
+                                                 name_pic   = name_pic,
+                                                 value_warn = di_warn,
+                                                 value_avar = di_avar,
+                                                 name       = name))
+                
+                for value in data_zd:
+                    id_zd  = value[0]
+                    name   = value[1]
+                    pic_zd = value[2]
+
+                    if pic_zd is None: continue
+                    s_pic = str(pic_zd).split(';')
+
+                    for pic_num in s_pic:
+                        if str(pic_num) == str(id_pic):
+                            list_pic.append(dict(id_pic = id_pic,
+                                                 name_pic = name_pic,
+                                                 value_warn = f"BOOL_TO_UDINT(stateZD[{id_zd}].state2.bits.NeispravVU)",
+                                                 value_avar = f"BOOL_TO_UDINT(stateZD[{id_zd}].state1.bits.Avar)+\nBOOL_TO_UDINT(stateZD[{id_zd}].state1.bits.NOT_EC)",
+                                                 name = name))
+
+                for value in data_vs:
+                    id_vs  = value[0]
+                    name   = value[1]
+                    pic_vs = value[2]
+
+                    if pic_vs is None: continue
+                    s_pic = str(pic_vs).split(';')
+
+                    for pic_num in s_pic:
+                        if str(pic_num) == str(id_pic):
+                            list_pic.append(dict(id_pic = id_pic,
+                                                 name_pic = name_pic,
+                                                 value_warn = None,
+                                                 value_avar = f"BOOL_TO_UDINT(stateVS[{id_vs}].state1.bits.NEISPRAV)+\nBOOL_TO_UDINT(stateVS[{id_vs}].state1.bits.MPC_CEPI_VKL)+\nBOOL_TO_UDINT(NOT stateVS[{id_vs}].state1.bits.EC)",
+                                                 name = name))
+                
+                for value in data_ktpra:
+                    id_ktpra  = value[0]
+                    name      = value[1]
+                    pic_ktpra = value[2]
+
+                    if pic_ktpra is None: continue
+                    s_pic = str(pic_ktpra).split(';')
+
+                    for pic_num in s_pic:
+                        if str(pic_num) == str(id_pic):
+                            list_pic.append(dict(id_pic = id_pic,
+                                                 name_pic = name_pic,
+                                                 value_warn = None,
+                                                 value_avar = f"BOOL_TO_UDINT(state{id_ktpra}.state.bits.F AND (NOT state{id_ktpra}.state.bits.M))",
+                                                 name = name))
+               
+                for value in data_ktpr:
+                    id_ktpr  = value[0]
+                    name     = value[1]
+                    pic_ktpr = value[2]
+
+                    if pic_ktpr is None: continue
+                    s_pic = str(pic_ktpr).split(';')
+
+                    for pic_num in s_pic:
+                        if str(pic_num) == str(id_pic):
+                            list_pic.append(dict(id_pic = id_pic,
+                                                 name_pic = name_pic,
+                                                 value_warn = None,
+                                                 value_avar = f"BOOL_TO_UDINT((state{id_ktpr}.state.bits.F) AND (NOT state{id_ktpr}.state.bits.M))",
+                                                 name = name))
+                            
+                for value in data_pic:
+                    id_pic_d = value[0]
+                    name     = value[1]
+                    pic_pic  = value[2]
+
+                    if pic_pic is None: continue
+
+                    if id_pic == id_pic_d:
+                        s_pic = str(pic_pic).split(';') 
+                        for pic_num in s_pic:
+                            if str(pic_num) == str(id_pic):
+                                list_pic.append(dict(id_pic = id_pic,
+                                                     name_pic = name_pic,
+                                                     value_warn = f"ctrlPic[{id_pic_d}].countWarn",
+                                                     value_avar = f"ctrlPic[{id_pic_d}].countAvar",
+                                                     name = name))
+                    
+                for value in data_ss:
+                    id_ss   = value[0]
+                    name    = value[1]
+                    array_1 = value[2]
+                    array_2 = value[3]
+                    pic_ss  = value[4]
+
+                    if pic_ss is None: continue
+                    s_pic = str(pic_pic).split(';') 
+                    
+                    for pic_num in s_pic:
+                        if str(pic_num) == str(id_pic):
+                            ss_warn = None
+                            if not array_1 is None and not array_2 is None:
+                                ss_warn = f"BOOL_TO_UDINT(NOT stateDIAG.SS[{id_ss}].bits.link1Ok)+\nBOOL_TO_UDINT(NOT stateDIAG.SS[{id_ss}].bits.link2Ok)"
+                                
+                            list_pic.append(dict(id_pic = id_pic,
+                                                 name_pic = name_pic,
+                                                 value_warn = ss_warn,
+                                                 value_avar = f"BOOL_TO_UDINT(NOT stateDIAG.SS[{id_ss}].bits.linkOk)",
+                                                 name = name))
+
+            for i in list_pic:
+                print(i)
+                #write_file.write(cfg_txt)
+            write_file.close()
+            msg[f'{today} - Файл СУ: cfg_pic заполнен'] = 1
+            return msg
+        except Exception:
+            msg[f'{today} - Файл СУ: ошибка при заполнении cfg_pic: {traceback.format_exc()}'] = 2
+            return msg  
         
+
+
+
         
 
 # Work with filling in the table 
@@ -5984,8 +6167,7 @@ class Filling_HardWare():
                         for i in range(2):
                             uso_kk = uso[0]
                             test_s.append(dict(uso = uso[0], tag = '',
-                                                powerLink_ID ='',
-                                                basket  = i + 1,
+                                                basket  = i + 1, powerLink_ID ='', Pic = '',
                                                 type_0  = f'MK-550-024', variable_0 = f'PSU',   type_1 = f'MK-546-010', variable_1 = f'MN;3',
                                                 type_2  = f'MK-504-120', variable_2 = f'CPU;7', type_3 = f'',           variable_3 = f'',
                                                 type_4  = f'',           variable_4 = f'',      type_5 = f'',           variable_5 = f'',
@@ -6080,7 +6262,7 @@ class Filling_HardWare():
         return(msg)
     # Заполняем таблицу HardWare
     def column_check(self):
-        list_default = ['tag', 'uso', 'basket', 'powerLink_ID', 
+        list_default = ['tag', 'uso', 'basket', 'powerLink_ID', 'Pic', 
                         'type_0',  'variable_0',  'type_1',  'variable_1',  'type_2',  'variable_2', 
                         'type_3',  'variable_3',  'type_4',  'variable_4',  'type_5',  'variable_5', 
                         'type_6',  'variable_6',  'type_7',  'variable_7',  'type_8',  'variable_8',
@@ -6233,7 +6415,7 @@ class Filling_AI():
                     msg[f'{today} - Таблицы: signals или hardware пустые! Заполни таблицу!'] = 2
                     return msg
                 
-                for row_sql in Signals.select().dicts():
+                for row_sql in Signals.select().order_by(Signals.id).dicts():
                     id_s        = row_sql['id']    
                     uso_s       = row_sql['uso']    
                     tag         = row_sql['tag']
@@ -6244,7 +6426,9 @@ class Filling_AI():
                     module_s    = row_sql['module']
                     channel_s   = row_sql['channel']
 
-                    if tag == 'None': tag = ''
+                    if tag == 'None' or tag is None: tag = ''
+                    tag_eng = self.dop_function.translate(tag)
+
                     if self.dop_function.str_find(type_signal, {'AI'}) or self.dop_function.str_find(scheme, {'AI'}):
                         count_AI += 1
                         # Выбор между полным заполнением или обновлением
@@ -6439,7 +6623,7 @@ class Filling_AI():
                                             MsgMask = MsgMask, 
                                             CtrlMask = CtrlMask,
                                             Pic = '', TrendingGroup = None, DeltaT = 0, PhysicEgu = 'мкА', 
-                                            RuleName = rule, fuse = '', uso = uso_s, basket = basket_s, module = module_s, channel = channel_s,
+                                            RuleName = rule, fuse = '', uso = uso_s, basket = basket_s, module = module_s, channel = channel_s, tag_eng = tag_eng,
                                             AlphaHMI = '', AlphaHMI_PIC1 = '', AlphaHMI_PIC1_Number_kont = '', AlphaHMI_PIC2 = '', 
                                             AlphaHMI_PIC2_Number_kont = '', AlphaHMI_PIC3 = '', AlphaHMI_PIC3_Number_kont = '', 
                                             AlphaHMI_PIC4 = '', AlphaHMI_PIC4_Number_kont = ''))
@@ -6460,7 +6644,7 @@ class Filling_AI():
                         'Histeresis', 'TimeFilter', 
                         'Min6', 'Min5', 'Min4', 'Min3', 'Min2', 'Min1', 'Max1', 'Max2', 'Max3', 'Max4', 'Max5', 'Max6', 
                         'SigMask', 'MsgMask', 'CtrlMask', 'Precision', 'Pic', 'TrendingGroup', 'DeltaT', 
-                        'PhysicEgu', 'RuleName', 'fuse', 'uso', 'basket', 'module', 'channel', 'AlphaHMI', 'AlphaHMI_PIC1', 
+                        'PhysicEgu', 'RuleName', 'fuse', 'uso', 'basket', 'module', 'channel', 'tag_eng', 'AlphaHMI', 'AlphaHMI_PIC1', 
                         'AlphaHMI_PIC1_Number_kont', 'AlphaHMI_PIC2', 'AlphaHMI_PIC2_Number_kont',
                         'AlphaHMI_PIC3', 'AlphaHMI_PIC3_Number_kont', 'AlphaHMI_PIC4', 'AlphaHMI_PIC4_Number_kont']
     
@@ -6482,7 +6666,7 @@ class Filling_AO():
                     msg[f'{today} - Таблицы: signals или hardware пустые! Заполни таблицу!'] = 2
                     return msg
                 
-                for row_sql in Signals.select().dicts():
+                for row_sql in Signals.select().order_by(Signals.id).dicts():
                     id_s        = row_sql['id']  
                     uso_s       = row_sql['uso']    
                     tag         = row_sql['tag']
@@ -6492,6 +6676,9 @@ class Filling_AO():
                     basket_s    = row_sql['basket']
                     module_s    = row_sql['module']
                     channel_s   = row_sql['channel']
+
+                    if tag == 'None' or tag is None: tag = ''
+                    tag_eng = self.dop_function.translate(tag)
 
                     if self.dop_function.str_find(type_signal, {'AO'}) or self.dop_function.str_find(scheme, {'AO'}):
                         count_AO += 1
@@ -6580,6 +6767,7 @@ class Filling_AO():
                                             basket = basket_s, 
                                             module = module_s, 
                                             channel = channel_s,
+                                            tag_eng = tag_eng,
                                             ))
 
                 # Checking for the existence of a database
@@ -6590,7 +6778,7 @@ class Filling_AO():
         return(msg)
     # Заполняем таблицу AO
     def column_check(self):
-        list_default = ['variable', 'tag', 'name', 'pValue', 'pHealth', 'uso', 'basket', 'module', 'channel']
+        list_default = ['variable', 'tag', 'name', 'pValue', 'pHealth', 'uso', 'basket', 'module', 'channel', 'tag_eng']
         msg = self.dop_function.column_check(AO, 'ao', list_default)
         return msg 
 class Filling_DI():
@@ -6608,7 +6796,7 @@ class Filling_DI():
                     msg[f'{today} - Таблицы: signals или hardware пустые! Заполни таблицу!'] = 2
                     return msg
                 
-                for row_sql in Signals.select().dicts():
+                for row_sql in Signals.select().order_by(Signals.id).dicts():
                     id_s       = row_sql['id'] 
                     uso_s       = row_sql['uso']    
                     tag         = row_sql['tag']
@@ -6619,7 +6807,8 @@ class Filling_DI():
                     module_s    = row_sql['module']
                     channel_s   = row_sql['channel']
 
-                    if tag == 'None': tag = ''
+                    if tag == 'None' or tag is None: tag = ''
+                    tag_eng = self.dop_function.translate(tag)
 
                     if self.dop_function.str_find(type_signal, {'DI'}) or self.dop_function.str_find(scheme, {'DI'}):
                         count_DI += 1
@@ -6719,7 +6908,7 @@ class Filling_DI():
                                             tabl_msg = 'TblDiscretes',
                                             group_diskrets = group_diskrets,
                                             short_title = description,
-                                            uso = uso_s, basket = basket_s, module = module_s, channel = channel_s))
+                                            uso = uso_s, basket = basket_s, module = module_s, channel = channel_s, tag_eng = tag_eng,))
 
                 # Checking for the existence of a database
                 DI.insert_many(list_DI).execute()
@@ -6733,7 +6922,7 @@ class Filling_DI():
                         'ErrValue', 'priority_0', 'priority_1', 'Msg', 'isDI_NC',  
                         'isAI_Warn', 'isAI_Avar', 'pNC_AI',  'TS_ID', 
                         'isModuleNC',  'Pic',  'tabl_msg',  'group_diskrets', 
-                        'msg_priority_0',  'msg_priority_1', 'short_title', 'uso', 'basket', 'module', 'channel', 
+                        'msg_priority_0',  'msg_priority_1', 'short_title', 'uso', 'basket', 'module', 'channel', 'tag_eng',
                         'AlphaHMI', 'AlphaHMI_PIC1', 'AlphaHMI_PIC1_Number_kont', 'AlphaHMI_PIC2',
                         'AlphaHMI_PIC2_Number_kont','AlphaHMI_PIC3', 'AlphaHMI_PIC3_Number_kont', 
                         'AlphaHMI_PIC4', 'AlphaHMI_PIC4_Number_kont']
@@ -6754,7 +6943,7 @@ class Filling_DO():
                     msg[f'{today} - Таблицы: signals или hardware пустые! Заполни таблицу!'] = 2
                     return msg
                 
-                for row_sql in Signals.select().dicts():
+                for row_sql in Signals.select().order_by(Signals.id).dicts():
                     id_s       = row_sql['id'] 
                     uso_s       = row_sql['uso']    
                     tag         = row_sql['tag']
@@ -6765,7 +6954,8 @@ class Filling_DO():
                     module_s    = row_sql['module']
                     channel_s   = row_sql['channel']
 
-                    if tag == 'None': tag = ''
+                    if tag == 'None' or tag is None: tag = ''
+                    tag_eng = self.dop_function.translate(tag)
 
                     if self.dop_function.str_find(type_signal, {'DO'}) or self.dop_function.str_find(scheme, {'DO'}):
                         count_DO += 1
@@ -6851,7 +7041,7 @@ class Filling_DO():
                                             pValue = f'{tag_h}_{prefix}_DO[{channel_s}]',
                                             pHealth = f'mDO_HEALTH[{str(isdigit_num)}]',
                                             short_title = description, tabl_msg = '',
-                                            uso = uso_s, basket = basket_s, module = module_s, channel = channel_s,
+                                            uso = uso_s, basket = basket_s, module = module_s, channel = channel_s, tag_eng = tag_eng,
                                             AlphaHMI = '', AlphaHMI_PIC1 = '', AlphaHMI_PIC1_Number_kont = '', AlphaHMI_PIC2 = '', 
                                             AlphaHMI_PIC2_Number_kont = '', AlphaHMI_PIC3 = '', AlphaHMI_PIC3_Number_kont = '', 
                                             AlphaHMI_PIC4 = '', AlphaHMI_PIC4_Number_kont = ''))
@@ -6864,7 +7054,7 @@ class Filling_DO():
         return(msg)
     # Заполняем таблицу DO
     def column_check(self):
-        list_default = ['variable', 'tag', 'name', 'pValue', 'pHealth', 'short_title', 'tabl_msg', 'uso', 'basket', 'module', 'channel', 
+        list_default = ['variable', 'tag', 'name', 'pValue', 'pHealth', 'short_title', 'tabl_msg', 'uso', 'basket', 'module', 'channel', 'tag_eng',
                         'AlphaHMI', 'AlphaHMI_PIC1', 'AlphaHMI_PIC1_Number_kont', 'AlphaHMI_PIC2',
                         'AlphaHMI_PIC2_Number_kont','AlphaHMI_PIC3', 'AlphaHMI_PIC3_Number_kont', 
                         'AlphaHMI_PIC4', 'AlphaHMI_PIC4_Number_kont']
@@ -6885,7 +7075,7 @@ class Filling_RS():
                     msg[f'{today} - Таблицы: signals или hardware пустые! Заполни таблицу!'] = 2
                     return msg
                 
-                for row_sql in Signals.select().dicts():
+                for row_sql in Signals.select().order_by(Signals.id).dicts():
                     id_s       = row_sql['id'] 
                     uso_s       = row_sql['uso']    
                     tag         = row_sql['tag']
@@ -7585,11 +7775,19 @@ class Filling_ZD():
                                         FROM di
                                         WHERE name LIKE '%задвижк%' OR name LIKE '%Задвижк%' OR 
                                               name LIKE '%клап%' OR name LIKE '%Клап%' OR
-                                              name LIKE '%клоп%' OR name LIKE '%КЛОП%'""")
+                                              name LIKE '%клоп%' OR name LIKE '%КЛОП%' OR
+                                              name LIKE '%кран шар%' OR name LIKE '%Кран шар%'
+                                        ORDER BY id""")
                 name_zd_new = self.cursor.fetchall()
                 list_zd_name_split = []
                 for i in name_zd_new: 
-                    list_zd_name_split.append(str(i[0]).split(' - ')[0])
+                    zd_default = str(i[0]).split(' - ')[0]
+                    zd_default = str(zd_default).split('. ')[0]
+                    zd_default = zd_default.replace('. Клапан закрыт', '').replace('. клапан закрыт', '').replace('.Клапан закрыт', '').replace('.клапан закрыт', '')
+                    zd_default = zd_default.replace('. Клапан открыт', '').replace('. клапан открыт', '').replace('.Клапан открыт', '').replace('.клапан открыт', '')
+                    zd_default = zd_default.replace('открыт', '').replace('Открыт', '')
+                    zd_default = zd_default.replace('закрыт', '').replace('Закрыт', '')
+                    list_zd_name_split.append(zd_default)
                 unique_name = set(list_zd_name_split)
 
                 # Существующий список задвижек из таблицы ZD
@@ -7611,11 +7809,12 @@ class Filling_ZD():
                     open_zd, close_zd, stop_zd, open_stop, close_stop = '', '', '', '', ''
 
                     for tag in array_di_tag_zd:
-                        self.cursor.execute(f"""SELECT id, tag, name 
+                        self.cursor.execute(f"""SELECT id, tag_eng, name 
                                                 FROM di
-                                                WHERE name LIKE '%{name}%' AND tag LIKE '%{tag}%'""")
+                                                WHERE (name LIKE '%{name} %' or name LIKE '%{name}%') AND tag_eng LIKE '%{tag}%'""")
                         
-                        try   : number_id = self.cursor.fetchall()[0][0]
+                        try: 
+                            number_id = self.cursor.fetchall()[0][0]
                         except: continue
 
                         if tag == 'OKC':   kvo = f'DI[{number_id}].Value'
@@ -7634,9 +7833,9 @@ class Filling_ZD():
                         if tag == 'CFC':  isp_closing_chain = f'DI[{number_id}].Value'
 
                     for tag in array_do_tag_zd:    
-                        self.cursor.execute(f"""SELECT id, tag, name 
+                        self.cursor.execute(f"""SELECT id, tag_eng, name 
                                                 FROM "do"
-                                                WHERE name LIKE '%{name}%' AND tag LIKE '%{tag}%'""")
+                                                WHERE name LIKE '%{name} %' AND tag_eng LIKE '%{tag}%'""")
                         
                         try   : number_id = self.cursor.fetchall()[0][0]
                         except: continue
@@ -7674,7 +7873,6 @@ class Filling_ZD():
                         msg.update(self.dop_function.update_signal_dop(ZD, "zd", name, ZD.Stop, 'Stop', stop_zd))
                         msg.update(self.dop_function.update_signal_dop(ZD, "zd", name, ZD.Opening_stop, 'Opening_stop', open_stop))
                         msg.update(self.dop_function.update_signal_dop(ZD, "zd", name, ZD.Closeing_stop, 'Closeing_stop', close_stop))
-
                     else:
                         count_row += 1
         
@@ -7685,46 +7883,19 @@ class Filling_ZD():
                                             name = name,
                                             short_name = '',
                                             exists_interface = 0,
-                                            KVO = kvo,
-                                            KVZ = kvz,
-                                            MPO = mpo,
-                                            MPZ = mpz,
-                                            Dist = dist,
-                                            Mufta = mufta,
-                                            Drive_failure = error,
-                                            Open = open_zd,
-                                            Close = close_zd,
-                                            Stop = stop_zd,
-                                            Opening_stop = open_stop,
-                                            Closeing_stop = close_stop,
-                                            KVO_i = '',
-                                            KVZ_i = '',
-                                            MPO_i = '',
-                                            MPZ_i = '',
-                                            Dist_i = '',
-                                            Mufta_i = '',
-                                            Drive_failure_i = '',
-                                            Open_i = '',
-                                            Close_i = '',
-                                            Stop_i = '',
-                                            Opening_stop_i = '',
-                                            Closeing_stop_i = '',
+                                            KVO = kvo,KVZ = kvz,MPO = mpo,MPZ = mpz,Dist = dist,Mufta = mufta,Drive_failure = error,
+                                            Open = open_zd,Close = close_zd,Stop = stop_zd,Opening_stop = open_stop,Closeing_stop = close_stop,
+                                            KVO_i = '',KVZ_i = '',MPO_i = '',MPZ_i = '',Dist_i = '',Mufta_i = '',Drive_failure_i = '',
+                                            Open_i = '',Close_i = '',Stop_i = '',Opening_stop_i = '',Closeing_stop_i = '',
                                             No_connection = '',
-                                            Close_BRU = close_bru,
-                                            Stop_BRU = stop_bru,
-                                            Voltage = voltage,
-                                            Voltage_CHSU = '',
-                                            Voltage_in_signaling_circuits = '',
-                                            Serviceability_opening_circuits = isp_opening_chain,
-                                            Serviceability_closening_circuits = isp_closing_chain,
-                                            VMMO = vmmo,
-                                            VMMZ = vmmz,
+                                            Close_BRU = close_bru,Stop_BRU = stop_bru,
+                                            Voltage = voltage,Voltage_CHSU = '',Voltage_in_signaling_circuits = '',
+                                            Serviceability_opening_circuits = isp_opening_chain,Serviceability_closening_circuits = isp_closing_chain,
+                                            VMMO = vmmo,VMMZ = vmmz,
                                             Freeze_on_suspicious_change = '',
                                             Is_klapan = klapan,
                                             Opening_percent = '',
-                                            Pic = '',
-
-                                            Type_BUR_ZD = '', tabl_msg='TblValves',
+                                            Pic = '',Type_BUR_ZD = '', tabl_msg='TblValves',
                                             AlphaHMI = '',AlphaHMI_PIC1 = '',AlphaHMI_PIC1_Number_kont = '',
                                             AlphaHMI_PIC2 = '',AlphaHMI_PIC2_Number_kont = '',AlphaHMI_PIC3 = '',
                                             AlphaHMI_PIC3_Number_kont = '',AlphaHMI_PIC4 = '',AlphaHMI_PIC4_Number_kont = ''))
@@ -7822,8 +7993,8 @@ class Filling_VS():
     # Получаем данные с таблицы AI и DI 
     def getting_modul(self):
         msg = {}
-        array_di_tag_vs = ('MPC', 'EC')
-        array_do_tag_vs = ('ABB', 'ABO')
+        array_di_tag_vs = ('MPC', 'МРС',  'ЕC', 'EC')
+        array_do_tag_vs = ('ABB', 'АВВ', 'АВО', 'ABO')
         array_tag_opc_vs = ('авар', 'Авар', 'исправн', 'Исправн')
 
         with db:
@@ -7837,9 +8008,9 @@ class Filling_VS():
                     return msg
                 
                 # Новый список вспомсистем из таблицы DI
-                self.cursor.execute(f"""SELECT tag, name 
+                self.cursor.execute(f"""SELECT tag_eng, name 
                                         FROM di
-                                        WHERE tag LIKE '%MPC%'""")
+                                        WHERE tag_eng LIKE '%MPC%' or tag_eng LIKE '%МРС%'""")
                 vs_name = self.cursor.fetchall()
                 list_vs_name_split = []
                 for i in vs_name: 
@@ -7875,9 +8046,9 @@ class Filling_VS():
 
                     # Принадлежность OPC тега
                     for tag in array_tag_opc_vs:  
-                        self.cursor.execute(f"""SELECT id, tag, name 
+                        self.cursor.execute(f"""SELECT id, tag_eng, name 
                                                 FROM di
-                                                WHERE name LIKE '%{name}%' AND name LIKE '%{tag}%' AND tag LIKE '%OPC%'""")
+                                                WHERE name LIKE '%{name}%' AND name LIKE '%{tag}%' AND tag_eng LIKE '%OPC%'""")
                         
                         try   : number_id = self.cursor.fetchall()[0][0]
                         except: continue
@@ -7892,26 +8063,26 @@ class Filling_VS():
                             isp_opening_chain = f'DI[{number_id}].Value'
 
                     for tag in array_di_tag_vs:
-                        self.cursor.execute(f"""SELECT id, tag, name
+                        self.cursor.execute(f"""SELECT id, tag_eng, name
                                                 FROM di
-                                                WHERE name LIKE '%{name}%' AND tag LIKE '%{tag}%'""")
+                                                WHERE name LIKE '%{name}%' AND tag_eng LIKE '%{tag}%'""")
                         
                         try   : number_id = self.cursor.fetchall()[0][0]
                         except: continue
 
-                        if tag == 'MPC': mp      = f'DI[{number_id}].Value'
-                        if tag == 'EC' : voltage = f'DI[{number_id}].Value'
+                        if tag == 'MPC' or tag == 'МРС': mp      = f'DI[{number_id}].Value'
+                        if tag == 'EC' or tag == 'ЕC'  : voltage = f'DI[{number_id}].Value'
                         
                     for tag in array_do_tag_vs:    
-                        self.cursor.execute(f"""SELECT id, tag, name 
+                        self.cursor.execute(f"""SELECT id, tag_eng, name 
                                                 FROM "do"
-                                                WHERE name LIKE '%{name}%' AND tag LIKE '%{tag}%'""")
+                                                WHERE name LIKE '%{name}%' AND tag_eng LIKE '%{tag}%'""")
                         
                         try   : number_id = self.cursor.fetchall()[0][0]
                         except: continue
                         
-                        if tag == 'ABB': open_vs  = f'ctrlDO[{number_id}]'
-                        if tag == 'ABO': close_vs = f'ctrlDO[{number_id}]'
+                        if tag == 'ABB' or tag == 'АВВ': open_vs  = f'ctrlDO[{number_id}]'
+                        if tag == 'ABO' or tag == 'АВО': close_vs = f'ctrlDO[{number_id}]'
 
                     # Давление на выходе
                     new_name = str(name).strip()
@@ -7923,6 +8094,7 @@ class Filling_VS():
                     new_name = str(new_name).replace('ель', 'еля')
                     new_name = str(new_name).replace('Нас', 'нас')
                     new_name = str(new_name).replace('Масл', 'масл')
+                    new_name = str(new_name).replace('Венти', 'венти')
                     new_name = str(new_name).replace('Погр', 'погр')
                     new_name = str(new_name).replace('Подп', 'подп')
                     new_name = str(new_name).replace('Прит', 'прит')
@@ -7930,7 +8102,7 @@ class Filling_VS():
 
                     self.cursor.execute(f"""SELECT id, "name" 
                                             FROM ai
-                                            WHERE "name" LIKE '%{new_name}%'""")
+                                            WHERE "name" LIKE '%{new_name}%' and ("name" LIKE '%Давл%' or  "name" LIKE '%давл%')""")
                     try: 
                         number_id = self.cursor.fetchall()[0][0]
                         pressure_norm = f'AI[{number_id}].Norm'
@@ -8331,11 +8503,11 @@ class Filling_VV():
                     return msg
                 
                 # Cписок ВВ из таблицы DI
-                self.cursor.execute(f'''SELECT id, tag, name
+                self.cursor.execute(f'''SELECT id, tag_eng, name
                                         FROM di
-                                        WHERE (name LIKE '%ввода%' AND tag LIKE '%MBC%') OR
-                                              (name LIKE '%СВВ%' AND tag LIKE '%MBC%') OR
-                                              (name LIKE '%ССВ%' AND tag LIKE '%MBC%')''')
+                                        WHERE (name LIKE '%ввода%' AND (tag_eng LIKE '%MBC%' OR tag_eng LIKE '%EC%')) OR
+                                              (name LIKE '%СВВ%' AND (tag_eng LIKE '%MBC%' OR tag_eng LIKE '%EC%')) OR
+                                              (name LIKE '%ССВ%' AND (tag_eng LIKE '%MBC%' OR tag_eng LIKE '%EC%'))''')
                 list_vv_di = self.cursor.fetchall()
 
                 # Существующий список из таблицы VV

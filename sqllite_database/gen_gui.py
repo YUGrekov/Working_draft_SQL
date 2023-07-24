@@ -2,8 +2,8 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 import sys
-# for path in sys.path:
-#     print(path)
+for path in sys.path:
+    print(path)
 from main_base import *
 
 # ГРАФИЧЕСКИЙ ИНТЕРФЕЙС ДЛЯ ЗАПУСКА ГЕНЕРАТОРА
@@ -99,6 +99,12 @@ class Widget(QWidget):
         l_devstudio_path = QLabel(tab_1)
         l_devstudio_path.move(135, 65)
         l_devstudio_path.setText(path_to_devstudio)
+        # Файлы СУ
+        l_su_desc = QLabel('Файлы СУ: ', tab_1)
+        l_su_desc.move(10, 80)
+        l_su_path = QLabel(tab_1)
+        l_su_path.move(135, 80)
+        l_su_path.setText(path_su)
         # SQL
         l_sql_desc = QLabel('Данные для подключения к базе SQL: ', tab_1)
         l_sql_desc.move(50, 100)
@@ -1240,6 +1246,9 @@ class Widget(QWidget):
         self.q_check_cfg_dps = QCheckBox('cfg_DPS', tab_7)
         self.q_check_cfg_dps.move(90, 95) 
         self.q_check_cfg_dps.stateChanged.connect(self.check_cfg_DPS)
+        self.q_check_cfg_pic = QCheckBox('cfg_PIC', tab_7)
+        self.q_check_cfg_pic.move(90, 110) 
+        self.q_check_cfg_pic.stateChanged.connect(self.check_cfg_PIC)
       
         self.q_check_cfg_vs = QCheckBox('cfg_VS', tab_7)
         self.q_check_cfg_vs.move(170, 20) 
@@ -2331,6 +2340,9 @@ class Widget(QWidget):
     def check_cfg_DIAG(self, checked):
         if checked: self.list_gen_su.append('cfg_DIAG')
         else      : self.list_gen_su.remove('cfg_DIAG')
+    def check_cfg_PIC(self, checked):
+        if checked: self.list_gen_su.append('cfg_PIC')
+        else      : self.list_gen_su.remove('cfg_PIC')
     
     # Button confirm
     def su_list(self):

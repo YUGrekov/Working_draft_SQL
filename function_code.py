@@ -7281,416 +7281,419 @@ class Equipment(Initialisation_path):
         rows_tmdp = sheet_tmdp.max_row
 
         data       = {}
-        data_pic   = self.data['Pic']
-        data['AI'] = self.data['AI']
-        data['DI'] = self.data['DI']
-        data['ZD'] = self.data['ZD']
-        data['VS'] = self.data['VS']
-        data['SS'] = self.data['SS']
 
+        data_pic      = self.data['Pic']
+        data['AI']    = self.data['AI']
+        data['DI']    = self.data['DI']
+        data['ZD']    = self.data['ZD']
+        data['VS']    = self.data['VS']
+        data['SS']    = self.data['SS']
         data['KTPRA'] = self.data['KTPRA']
-        if system != 'ASPT':
+        data['Pic']   = self.data['Pic']
+        
+        if system != 'ASPT': 
             data['KTPR'] = self.data['KTPR']
-        data['Pic'] = self.data['Pic']
 
-        #try:
-        path_cfg = f'{path}\cfg_PIC.txt'
-        # Проверяем файл на наличие в папке, если есть удаляем и создаем новый
-        if not os.path.exists(path_cfg):
-            text_file = open(path_cfg, 'w')
-            text_file.write('(*cfg_PIC*)\n')
-        else:
-            os.remove(path_cfg)
-            text_file = open(path_cfg, 'w')
-            text_file.write('(*cfg_PIC*)\n')
-        cfg_txt = ''
 
-        lst = {}
+        try:
+            path_cfg = f'{path}\cfg_PIC.txt'
+            # Проверяем файл на наличие в папке, если есть удаляем и создаем новый
+            if not os.path.exists(path_cfg):
+                text_file = open(path_cfg, 'w')
+                text_file.write('(*cfg_PIC*)\n')
+            else:
+                os.remove(path_cfg)
+                text_file = open(path_cfg, 'w')
+                text_file.write('(*cfg_PIC*)\n')
+            cfg_txt = ''
 
-        for info_pic in data_pic:
-            pic   = info_pic['№']
-            frame = info_pic['Кадр IFix(*.grf)']
+            lst = {}
 
-            if pic is None: continue
+            for info_pic in data_pic:
+                pic   = info_pic['№']
+                frame = info_pic['Кадр IFix(*.grf)']
 
-            a = {}
-            s_a = []
+                if pic is None: continue
 
-            lst_ai           = []
-            lst_di_err       = []
-            lst_di_avar      = []
-            lst_zd           = []
-            lst_vs           = []
-            lst_ktpra        = []
-            lst_ktpr         = []
-            lst_pic          = []
-            lst_hw           = []
-            lst_ss_warn      = []
-            lst_ss_avar      = []
-            lst_net_uso_mn   = []
-            lst_net_uso_cn   = []
-            ss_warn          = []
-            ss_avar          = []
-            ss_avar_dp       = []
-            lst_net_uso      = {}
-            lst_net_ss       = {}
-            count            = 0
-            count_avar       = 0
-            count_net_uso_mn = 0
-            count_net_uso_cn = 0
+                a = {}
+                s_a = []
 
-            for el in data['AI']:
-                if el['Pic'] is None: continue
-                s_pic = str(el['Pic']).split(';')
-                for pic_num in s_pic:
-                    if str(pic_num) == str(pic):
-                        lst_ai.append(el['№'])
-            a['AI'] = lst_ai
-            count = count + len(lst_ai)
-            count_avar = count_avar + len(lst_ai)
+                lst_ai           = []
+                lst_di_err       = []
+                lst_di_avar      = []
+                lst_zd           = []
+                lst_vs           = []
+                lst_ktpra        = []
+                lst_ktpr         = []
+                lst_pic          = []
+                lst_hw           = []
+                lst_ss_warn      = []
+                lst_ss_avar      = []
+                lst_net_uso_mn   = []
+                lst_net_uso_cn   = []
+                ss_warn          = []
+                ss_avar          = []
+                ss_avar_dp       = []
+                lst_net_uso      = {}
+                lst_net_ss       = {}
+                count            = 0
+                count_avar       = 0
+                count_net_uso_mn = 0
+                count_net_uso_cn = 0
 
-            for el in data['DI']:
-                if el['Pic'] is None: continue
-                s_pic = str(el['Pic']).split(';')
-                for pic_num in s_pic:
-                    if str(pic_num) == str(pic):
-                        if el['priority[0]'] == 3 or el['priority[1]'] == 3:
-                            lst_di_avar.append(el['№'])
-                            if el['pNC_AI'] is not None:
-                                lst_di_err.append(el['№'])
-                        else:
-                            lst_di_err.append(el['№'])
-
-            a['DI_err']  = lst_di_err
-            a['DI_avar'] = lst_di_avar
-            count = count + len(lst_di_err)
-            count_avar = count_avar + len(lst_di_avar)
-
-            for el in data['ZD']:
-                s_pic = str(el['Pic']).split(';')
-                for pic_num in s_pic:
-                    if str(pic_num) == str(pic):
-                        lst_zd.append(el['№'])
-            a['ZD'] = lst_zd
-            count = count + len(lst_zd)
-            count_avar = count_avar + len(lst_zd)
-
-            for el in data['VS']:
-                if el['Pic'] is None: continue
-                s_pic = str(el['Pic']).split(';')
-                for pic_num in s_pic:
-                    if str(pic_num) == str(pic):
-                        lst_vs.append(el['№'])
-            a['VS'] = lst_vs
-            count_avar = count_avar + len(lst_vs)
-
-            for el in data['KTPRA']:
-                if el['Pic'] is None: continue
-                s_pic = str(el['Pic']).split(';')
-                for pic_num in s_pic:
-                    if str(pic_num) == str(pic):
-                        lst_ktpra.append(el['Переменная'])
-            a['KTPRA'] = lst_ktpra
-            count_avar = count_avar + len(lst_ktpra)
-
-            if system != 'ASPT':
-                for el in data['KTPR']:
+                for el in data['AI']:
                     if el['Pic'] is None: continue
                     s_pic = str(el['Pic']).split(';')
                     for pic_num in s_pic:
                         if str(pic_num) == str(pic):
-                            lst_ktpr.append(el['Переменная'])
-                a['KTPR'] = lst_ktpr
-                count_avar = count_avar + len(lst_ktpr)
+                            lst_ai.append(el['№'])
+                a['AI'] = lst_ai
+                count = count + len(lst_ai)
+                count_avar = count_avar + len(lst_ai)
 
-            for el in data['Pic']:
-                caption_pic = el['№']
-                if el['Pic'] is None: continue
-                if pic == caption_pic:
+                for el in data['DI']:
+                    if el['Pic'] is None: continue
                     s_pic = str(el['Pic']).split(';')
                     for pic_num in s_pic:
-                        #if str(pic_num) == str(pic):
-                        lst_pic.append(pic_num)
-            a['Pic']   = lst_pic
-            count = count + len(lst_pic)
-            count_avar = count_avar + len(lst_pic)
+                        if str(pic_num) == str(pic):
+                            if el['priority[0]'] == 3 or el['priority[1]'] == 3:
+                                lst_di_avar.append(el['№'])
+                                if el['pNC_AI'] is not None:
+                                    lst_di_err.append(el['№'])
+                            else:
+                                lst_di_err.append(el['№'])
 
-            # HW
-            for i in range(4, rows_hw + 1):
-                number = sheet_hw.cell(row=i, column=1).value
-                pic_hw = sheet_hw.cell(row=i, column=39).value
-                if number is None or pic_hw is None: continue
-                s_pic = str(pic_hw).split(';')
-                for pic_num in s_pic:
-                    if str(pic_num) == str(pic):
-                        lst_hw.append(number)
-            a['HW']   = lst_hw
-            count_avar = count_avar + len(lst_hw)
+                a['DI_err']  = lst_di_err
+                a['DI_avar'] = lst_di_avar
+                count = count + len(lst_di_err)
+                count_avar = count_avar + len(lst_di_avar)
 
-            #Сеть УСО
-            if self.str_find(str(frame).lower(), {'net_uso'}):
+                for el in data['ZD']:
+                    s_pic = str(el['Pic']).split(';')
+                    for pic_num in s_pic:
+                        if str(pic_num) == str(pic):
+                            lst_zd.append(el['№'])
+                a['ZD'] = lst_zd
+                count = count + len(lst_zd)
+                count_avar = count_avar + len(lst_zd)
+
+                for el in data['VS']:
+                    if el['Pic'] is None: continue
+                    s_pic = str(el['Pic']).split(';')
+                    for pic_num in s_pic:
+                        if str(pic_num) == str(pic):
+                            lst_vs.append(el['№'])
+                a['VS'] = lst_vs
+                count_avar = count_avar + len(lst_vs)
+
+                for el in data['KTPRA']:
+                    if el['Pic'] is None: continue
+                    s_pic = str(el['Pic']).split(';')
+                    for pic_num in s_pic:
+                        if str(pic_num) == str(pic):
+                            lst_ktpra.append(el['Переменная'])
+                a['KTPRA'] = lst_ktpra
+                count_avar = count_avar + len(lst_ktpra)
+
+                if system != 'ASPT':
+                    for el in data['KTPR']:
+                        if el['Pic'] is None: continue
+                        s_pic = str(el['Pic']).split(';')
+                        for pic_num in s_pic:
+                            if str(pic_num) == str(pic):
+                                lst_ktpr.append(el['Переменная'])
+                    a['KTPR'] = lst_ktpr
+                    count_avar = count_avar + len(lst_ktpr)
+
+                for el in data['Pic']:
+                    caption_pic = el['№']
+                    if el['Pic'] is None: continue
+                    if pic == caption_pic:
+                        s_pic = str(el['Pic']).split(';')
+                        for pic_num in s_pic:
+                            #if str(pic_num) == str(pic):
+                            lst_pic.append(pic_num)
+                a['Pic']   = lst_pic
+                count = count + len(lst_pic)
+                count_avar = count_avar + len(lst_pic)
+
+                # HW
                 for i in range(4, rows_hw + 1):
-                    cell = sheet_hw.cell(row=i, column=9).value
-                    if cell is None: continue
-                    if self.str_find(cell, {'MK-546-010'}):
-                        count_net_uso_mn += 1
-                        lst_net_uso_mn.append(count_net_uso_mn)
-                    if self.str_find(cell, {'MK-545-010'}):
-                        count_net_uso_cn += 1
-                        lst_net_uso_cn.append(count_net_uso_cn)
+                    number = sheet_hw.cell(row=i, column=1).value
+                    pic_hw = sheet_hw.cell(row=i, column=39).value
+                    if number is None or pic_hw is None: continue
+                    s_pic = str(pic_hw).split(';')
+                    for pic_num in s_pic:
+                        if str(pic_num) == str(pic):
+                            lst_hw.append(number)
+                a['HW']   = lst_hw
+                count_avar = count_avar + len(lst_hw)
 
-                lst_net_uso['MN'] = lst_net_uso_mn
-                lst_net_uso['CN'] = lst_net_uso_cn
-                a['Net_USO'] = lst_net_uso
-            count = count + len(lst_net_uso)
-            count_avar = count_avar + len(lst_net_uso)
+                #Сеть УСО
+                if self.str_find(str(frame).lower(), {'net_uso'}):
+                    for i in range(4, rows_hw + 1):
+                        cell = sheet_hw.cell(row=i, column=9).value
+                        if cell is None: continue
+                        if self.str_find(cell, {'MK-546-010'}):
+                            count_net_uso_mn += 1
+                            lst_net_uso_mn.append(count_net_uso_mn)
+                        if self.str_find(cell, {'MK-545-010'}):
+                            count_net_uso_cn += 1
+                            lst_net_uso_cn.append(count_net_uso_cn)
 
-            # Смежные системы
-            for i in range(4, rows_ss + 1):
-                cell_port1  = sheet_ss.cell(row=i, column=6).value
-                cell_port2  = sheet_ss.cell(row=i, column=10).value
-                cell_number = sheet_ss.cell(row=i, column=1).value
-                cell_Pic    = sheet_ss.cell(row=i, column=13).value
-                s_pic = str(cell_Pic).split(';')
-                for pic_num in s_pic:
-                    if str(pic_num) == str(pic):
-                        if not cell_port1 is None and not cell_port2 is None:
-                            lst_ss_warn.append(cell_number)
-                        lst_ss_avar.append(cell_number)
-            a['SS_warn'] = lst_ss_warn
-            a['SS_avar'] = lst_ss_avar
-            count = count + len(lst_ss_warn)
-            count_avar = count_avar + len(lst_ss_avar)
+                    lst_net_uso['MN'] = lst_net_uso_mn
+                    lst_net_uso['CN'] = lst_net_uso_cn
+                    a['Net_USO'] = lst_net_uso
+                count = count + len(lst_net_uso)
+                count_avar = count_avar + len(lst_net_uso)
 
-            if self.str_find(str(frame).lower(), {'relatedsystems'}):
+                # Смежные системы
                 for i in range(4, rows_ss + 1):
                     cell_port1  = sheet_ss.cell(row=i, column=6).value
                     cell_port2  = sheet_ss.cell(row=i, column=10).value
                     cell_number = sheet_ss.cell(row=i, column=1).value
-                    if not cell_port1 is None and not cell_port2 is None:
-                        ss_warn.append(cell_number)
-                    ss_avar.append(cell_number)
+                    cell_Pic    = sheet_ss.cell(row=i, column=13).value
+                    s_pic = str(cell_Pic).split(';')
+                    for pic_num in s_pic:
+                        if str(pic_num) == str(pic):
+                            if not cell_port1 is None and not cell_port2 is None:
+                                lst_ss_warn.append(cell_number)
+                            lst_ss_avar.append(cell_number)
+                a['SS_warn'] = lst_ss_warn
+                a['SS_avar'] = lst_ss_avar
+                count = count + len(lst_ss_warn)
+                count_avar = count_avar + len(lst_ss_avar)
 
-                for i in range(4, rows_tmdp + 1):
-                    name_tdp = sheet_tmdp.cell(row=i, column=4).value
-                    link_tdp = sheet_tmdp.cell(row=i, column=5).value
-                    if name_tdp is None: continue
+                if self.str_find(str(frame).lower(), {'relatedsystems'}):
+                    for i in range(4, rows_ss + 1):
+                        cell_port1  = sheet_ss.cell(row=i, column=6).value
+                        cell_port2  = sheet_ss.cell(row=i, column=10).value
+                        cell_number = sheet_ss.cell(row=i, column=1).value
+                        if not cell_port1 is None and not cell_port2 is None:
+                            ss_warn.append(cell_number)
+                        ss_avar.append(cell_number)
 
-                    ss_avar_dp.append(f"TM_DP_linkOk.{str(link_tdp).split('.state.')[1]}")
+                    for i in range(4, rows_tmdp + 1):
+                        name_tdp = sheet_tmdp.cell(row=i, column=4).value
+                        link_tdp = sheet_tmdp.cell(row=i, column=5).value
+                        if name_tdp is None: continue
 
-                lst_net_ss['WARN'] = ss_warn
-                lst_net_ss['AVAR'] = ss_avar
-                lst_net_ss['DP']   = ss_avar_dp
-                a['SS'] = lst_net_ss
-            count = count + len(lst_net_ss)
-            count_avar = count_avar + len(lst_net_ss)
+                        ss_avar_dp.append(f"TM_DP_linkOk.{str(link_tdp).split('.state.')[1]}")
 
-            a['count']      = count
-            a['count_avar'] = count_avar
-            s_a.append(a)
-            lst[pic] = s_a
+                    lst_net_ss['WARN'] = ss_warn
+                    lst_net_ss['AVAR'] = ss_avar
+                    lst_net_ss['DP']   = ss_avar_dp
+                    a['SS'] = lst_net_ss
+                count = count + len(lst_net_ss)
+                count_avar = count_avar + len(lst_net_ss)
 
-        cfg_txt = cfg_txt + '(* Желтые рамки *)\n'
+                a['count']      = count
+                a['count_avar'] = count_avar
+                s_a.append(a)
+                lst[pic] = s_a
 
-        for el in data_pic:
-            cfg_txt = cfg_txt + f"(*{el['Переменная']} \t{el['Название']}*)\n"
-            cfg_txt = cfg_txt + f"ctrlPic[{el['№']}].countWarn :="
-            # warning
-            for el1 in lst[el['№']]:
-                cnt = 0
-                if el1['count'] == 0:
-                    cfg_txt = cfg_txt + f"0;\n"
-                    continue
-                else:
-                    for el2 in el1['AI']:
-                        for i in data['AI']:
-                            number = i['№']
-                            name   = i['Название']
-                            if number == el2:
-                                name_signal = name
-                                break
-                        cnt += 1
-                        znak = '+' if cnt < el1['count'] else ';'
-                        cfg_txt = cfg_txt + f"AIcountWarn[{el2}]{znak}                              (* {name_signal} *)\n"
+            cfg_txt = cfg_txt + '(* Желтые рамки *)\n'
 
-                    for el2 in el1['DI_err']:
-                        for i in data['DI']:
-                            number = i['№']
-                            name   = i['Название']
-                            if number == el2:
-                                name_signal = name
-                                break
-                        cnt += 1
-                        znak = '+' if cnt < el1['count'] else ';'
-                        cfg_txt = cfg_txt + f"BYTE_TO_UDINT(DIcountWarn[{el2}]){znak}               (* {name_signal} *)\n"
 
-                    for el2 in el1['ZD']:
-                        for i in data['ZD']:
-                            number = i['№']
-                            name   = i['Название']
-                            if number == el2:
-                                name_signal = name
-                                break
-                        cnt += 1
-                        znak = '+' if cnt < el1['count'] else ';'
-                        cfg_txt = cfg_txt + f"BOOL_TO_UDINT(stateZD[{el2}].state2.bits.NeispravVU){znak}            (* {name_signal} *)\n"
+            for el in data_pic:
+                cfg_txt = cfg_txt + f"(*{el['Переменная']} \t{el['Название']}*)\n"
+                cfg_txt = cfg_txt + f"ctrlPic[{el['№']}].countWarn :="
+                # warning
+                for el1 in lst[el['№']]:
+                    cnt = 0
+                    if el1['count'] == 0:
+                        cfg_txt = cfg_txt + f"0;\n"
+                        continue
+                    else:
+                        for el2 in el1['AI']:
+                            for i in data['AI']:
+                                number = i['№']
+                                name   = i['Название']
+                                if number == el2:
+                                    name_signal = name
+                                    break
+                            cnt += 1
+                            znak = '+' if cnt < el1['count'] else ';'
+                            cfg_txt = cfg_txt + f"AIcountWarn[{el2}]{znak}                              (* {name_signal} *)\n"
 
-                    for el2 in el1['Pic']:
-                        for i in data['Pic']:
-                            number = i['№']
-                            name   = i['Название']
-                            if number == el2:
-                                name_signal = name
-                                break
-                        cnt += 1
-                        znak = '+' if cnt < el1['count'] else ';'
-                        cfg_txt = cfg_txt + f"ctrlPic[{el2}].countWarn{znak}                        (* {name_signal} *)\n"
+                        for el2 in el1['DI_err']:
+                            for i in data['DI']:
+                                number = i['№']
+                                name   = i['Название']
+                                if number == el2:
+                                    name_signal = name
+                                    break
+                            cnt += 1
+                            znak = '+' if cnt < el1['count'] else ';'
+                            cfg_txt = cfg_txt + f"BYTE_TO_UDINT(DIcountWarn[{el2}]){znak}               (* {name_signal} *)\n"
 
-                    for el2 in el1['SS_warn']:
-                        for i in data['SS']:
-                            number = i['№']
-                            name   = i['Название']
-                            if number == el2:
-                                name_signal = name
-                                break
+                        for el2 in el1['ZD']:
+                            for i in data['ZD']:
+                                number = i['№']
+                                name   = i['Название']
+                                if number == el2:
+                                    name_signal = name
+                                    break
+                            cnt += 1
+                            znak = '+' if cnt < el1['count'] else ';'
+                            cfg_txt = cfg_txt + f"BOOL_TO_UDINT(stateZD[{el2}].state2.bits.NeispravVU){znak}            (* {name_signal} *)\n"
 
-                        cfg_txt = cfg_txt + f"BOOL_TO_UDINT(NOT stateDIAG.SS[{el2}].bits.link1Ok)+   (* {name_signal} *)\n"
-                        cnt += 1
-                        znak = '+' if cnt < len(el1['SS_warn']) else ';'
-                        cfg_txt = cfg_txt + f"BOOL_TO_UDINT(NOT stateDIAG.SS[{el2}].bits.link2Ok){znak} (* {name_signal} *)\n "
+                        for el2 in el1['Pic']:
+                            for i in data['Pic']:
+                                number = i['№']
+                                name   = i['Название']
+                                if number == el2:
+                                    name_signal = name
+                                    break
+                            cnt += 1
+                            znak = '+' if cnt < el1['count'] else ';'
+                            cfg_txt = cfg_txt + f"ctrlPic[{el2}].countWarn{znak}                        (* {name_signal} *)\n"
 
-        cfg_txt = cfg_txt + '(* Красные рамки *)\n'
-        for el in data_pic:
-            cfg_txt = cfg_txt + f"\t(*{el['Переменная']} \t{el['Название']}*)\n"
-            cfg_txt = cfg_txt + f"ctrlPic[{el['№']}].countAvar:="
-            # cfg_txt = cfg_txt + f"0;\n"
-            for el1 in lst[el['№']]:
-                cnt = 0
-                if el1['count_avar'] == 0:
-                    cfg_txt = cfg_txt + f"0;\n"
-                    continue
-                else:
-                    for el2 in el1['AI']:
-                        for i in data['AI']:
-                            number = i['№']
-                            name   = i['Название']
-                            if number == el2:
-                                name_signal = name
-                                break
-                        cnt += 1
-                        znak = '+' if cnt < el1['count_avar'] else ';'
-                        cfg_txt = cfg_txt + f"AIcountAvar[{el2}]{znak}                                  (* {name_signal} *)\n"
-                    for el2 in el1['DI_avar']:
-                        for i in data['DI']:
-                            number = i['№']
-                            name   = i['Название']
-                            if number == el2:
-                                name_signal = name
-                                break
-                        cnt += 1
-                        znak = '+' if cnt < el1['count_avar'] else ';'
-                        cfg_txt = cfg_txt + f"BYTE_TO_UDINT(DIcountAvar[{el2}]){znak}                   (* {name_signal} *)\n"
-                    for el2 in el1['ZD']:
-                        for i in data['ZD']:
-                            number = i['№']
-                            name   = i['Название']
-                            if number == el2:
-                                name_signal = name
-                                break
-                        cnt += 1
-                        znak = '+' if cnt < el1['count_avar'] else ';'
-                        cfg_txt = cfg_txt + f"BOOL_TO_UDINT(stateZD[{el2}].state1.bits.Avar)+\n" \
-                                            f"BOOL_TO_UDINT(stateZD[{el2}].state1.bits.NOT_EC){znak}        (* {name_signal} *)\n"
-                    for el2 in el1['VS']:
-                        for i in data['VS']:
-                            number = i['№']
-                            name   = i['Название']
-                            if number == el2:
-                                name_signal = name
-                                break
-                        cnt += 1
-                        znak = '+' if cnt < el1['count_avar'] else ';'
-                        cfg_txt = cfg_txt + f"BOOL_TO_UDINT(stateVS[{el2}].state1.bits.NEISPRAV)+\n"
-                        cfg_txt = cfg_txt + f"BOOL_TO_UDINT(stateVS[{el2}].state1.bits.MPC_CEPI_VKL)+\n"
-                        cfg_txt = cfg_txt + f"BOOL_TO_UDINT(NOT stateVS[{el2}].state1.bits.EC){znak}        (* {name_signal} *)\n"
-                    if system != 'ASPT':
-                        for el2 in el1['KTPR']:
-                            for i in data['KTPR']:
-                                number = i['Переменная']
-                                name = i['Название']
+                        for el2 in el1['SS_warn']:
+                            for i in data['SS']:
+                                number = i['№']
+                                name   = i['Название']
+                                if number == el2:
+                                    name_signal = name
+                                    break
+
+                            cfg_txt = cfg_txt + f"BOOL_TO_UDINT(NOT stateDIAG.SS[{el2}].bits.link1Ok)+   (* {name_signal} *)\n"
+                            cnt += 1
+                            znak = '+' if cnt < len(el1['SS_warn']) else ';'
+                            cfg_txt = cfg_txt + f"BOOL_TO_UDINT(NOT stateDIAG.SS[{el2}].bits.link2Ok){znak} (* {name_signal} *)\n "
+
+            cfg_txt = cfg_txt + '(* Красные рамки *)\n'
+            for el in data_pic:
+                cfg_txt = cfg_txt + f"\t(*{el['Переменная']} \t{el['Название']}*)\n"
+                cfg_txt = cfg_txt + f"ctrlPic[{el['№']}].countAvar:="
+                # cfg_txt = cfg_txt + f"0;\n"
+                for el1 in lst[el['№']]:
+                    cnt = 0
+                    if el1['count_avar'] == 0:
+                        cfg_txt = cfg_txt + f"0;\n"
+                        continue
+                    else:
+                        for el2 in el1['AI']:
+                            for i in data['AI']:
+                                number = i['№']
+                                name   = i['Название']
                                 if number == el2:
                                     name_signal = name
                                     break
                             cnt += 1
                             znak = '+' if cnt < el1['count_avar'] else ';'
-                            cfg_txt = cfg_txt + f"BOOL_TO_UDINT((state{el2}.state.bits.F) AND (NOT state{el2}.state.bits.M)){znak}        (* {name_signal} *)\n"
-                    for el2 in el1['KTPRA']:
-                        for i in data['KTPRA']:
-                            number = i['Переменная']
-                            name   = i['Название']
-                            if number == el2:
-                                name_signal = name
-                                break
-                        cnt += 1
-                        znak = '+' if cnt < el1['count_avar'] else ';'
-                        cfg_txt = cfg_txt + f"BOOL_TO_UDINT(state{el2}.state.bits.F AND (NOT state{el2}.state.bits.M)){znak}        (* {name_signal} *)\n"
-
-                    for el2 in el1['Pic']:
-                        for i in data['Pic']:
-                            number = i['№']
-                            name   = i['Название']
-                            if number == el2:
-                                name_signal = name
-                                break
-                        cnt += 1
-                        znak = '+' if cnt < el1['count_avar'] else ';'
-                        cfg_txt = cfg_txt + f"ctrlPic[{el2}].countAvar{znak}                        (* {name_signal} *)\n"
-
-                    for el2 in el1['HW']:
-                        for i in range(4, rows_hw + 1):
-                            number = sheet_hw.cell(row=i, column=1).value
-                            perem  = sheet_hw.cell(row=i, column=2).value
-                            name   = sheet_hw.cell(row=i, column=4).value
-
-                            if number == el2:
-                                name_signal = name
-                                break
-                        cnt += 1
-                        znak = '+' if cnt < el1['count_avar'] else ';'
-                        cfg_txt = cfg_txt + f"{perem}{znak}                        (* {name_signal} *)\n"
-
-                    for el2 in el1['SS_avar']:
-                        for i in data['SS']:
-                            number = i['№']
-                            name   = i['Название']
-                            if number == el2:
-                                name_signal = name
-                                break
-                        cnt += 1
-                        znak = '+' if cnt < el1['count_avar'] else ';'
-                        cfg_txt = cfg_txt + f"BOOL_TO_UDINT(NOT stateDIAG.SS[{el2}].bits.linkOk){znak}  (* {name_signal} *)\n "
-
-                    try:
-                        if el1['Net_USO']:
-                            list_MN = el1.get('Net_USO').get('MN')
-                            list_CN = el1.get('Net_USO').get('CN')
-
-                            for mn in list_MN:
-                                for i in range(2):
-                                    cfg_txt = cfg_txt + f"BOOL_TO_UDINT(stateDIAG.diagMN[{mn}].ports_State.bits.eP{i + 1}NotLink)+\n"
-                            for cn in list_CN:
-                                cfg_txt = cfg_txt + f"BOOL_TO_UDINT(stateDIAG.diagCN[{cn}].ports_State.bits.eP1NotLink)+\n"
-
+                            cfg_txt = cfg_txt + f"AIcountAvar[{el2}]{znak}                                  (* {name_signal} *)\n"
+                        for el2 in el1['DI_avar']:
+                            for i in data['DI']:
+                                number = i['№']
+                                name   = i['Название']
+                                if number == el2:
+                                    name_signal = name
+                                    break
+                            cnt += 1
+                            znak = '+' if cnt < el1['count_avar'] else ';'
+                            cfg_txt = cfg_txt + f"BYTE_TO_UDINT(DIcountAvar[{el2}]){znak}                   (* {name_signal} *)\n"
+                        for el2 in el1['ZD']:
+                            for i in data['ZD']:
+                                number = i['№']
+                                name   = i['Название']
+                                if number == el2:
+                                    name_signal = name
+                                    break
+                            cnt += 1
+                            znak = '+' if cnt < el1['count_avar'] else ';'
+                            cfg_txt = cfg_txt + f"BOOL_TO_UDINT(stateZD[{el2}].state1.bits.Avar)+\n" \
+                                                f"BOOL_TO_UDINT(stateZD[{el2}].state1.bits.NOT_EC){znak}        (* {name_signal} *)\n"
+                        for el2 in el1['VS']:
+                            for i in data['VS']:
+                                number = i['№']
+                                name   = i['Название']
+                                if number == el2:
+                                    name_signal = name
+                                    break
+                            cnt += 1
+                            znak = '+' if cnt < el1['count_avar'] else ';'
+                            cfg_txt = cfg_txt + f"BOOL_TO_UDINT(stateVS[{el2}].state1.bits.NEISPRAV)+\n"
+                            cfg_txt = cfg_txt + f"BOOL_TO_UDINT(stateVS[{el2}].state1.bits.MPC_CEPI_VKL)+\n"
+                            cfg_txt = cfg_txt + f"BOOL_TO_UDINT(NOT stateVS[{el2}].state1.bits.EC){znak}        (* {name_signal} *)\n"
+                        if system != 'ASPT':
+                            for el2 in el1['KTPR']:
+                                for i in data['KTPR']:
+                                    number = i['Переменная']
+                                    name = i['Название']
+                                    if number == el2:
+                                        name_signal = name
+                                        break
                                 cnt += 1
-                                znak = '+' if cnt < len(list_CN) else ';'
-                                cfg_txt = cfg_txt + f"BOOL_TO_UDINT(stateDIAG.diagCN[{cn}].ports_State.bits.eP2NotLink){znak}\n"
-                    except: pass
+                                znak = '+' if cnt < el1['count_avar'] else ';'
+                                cfg_txt = cfg_txt + f"BOOL_TO_UDINT((state{el2}.state.bits.F) AND (NOT state{el2}.state.bits.M)){znak}        (* {name_signal} *)\n"
+                        for el2 in el1['KTPRA']:
+                            for i in data['KTPRA']:
+                                number = i['Переменная']
+                                name   = i['Название']
+                                if number == el2:
+                                    name_signal = name
+                                    break
+                            cnt += 1
+                            znak = '+' if cnt < el1['count_avar'] else ';'
+                            cfg_txt = cfg_txt + f"BOOL_TO_UDINT(state{el2}.state.bits.F AND (NOT state{el2}.state.bits.M)){znak}        (* {name_signal} *)\n"
 
-        text_file.write(cfg_txt)
-        text_file.close()
-        logger.info(f'{self.name_prefix} выполнено {path_cfg}')
-        #except:
-           #logger.error(f'{self.name_prefix} FAILED')
+                        for el2 in el1['Pic']:
+                            for i in data['Pic']:
+                                number = i['№']
+                                name   = i['Название']
+                                if number == el2:
+                                    name_signal = name
+                                    break
+                            cnt += 1
+                            znak = '+' if cnt < el1['count_avar'] else ';'
+                            cfg_txt = cfg_txt + f"ctrlPic[{el2}].countAvar{znak}                        (* {name_signal} *)\n"
+
+                        for el2 in el1['HW']:
+                            for i in range(4, rows_hw + 1):
+                                number = sheet_hw.cell(row=i, column=1).value
+                                perem  = sheet_hw.cell(row=i, column=2).value
+                                name   = sheet_hw.cell(row=i, column=4).value
+
+                                if number == el2:
+                                    name_signal = name
+                                    break
+                            cnt += 1
+                            znak = '+' if cnt < el1['count_avar'] else ';'
+                            cfg_txt = cfg_txt + f"{perem}{znak}                        (* {name_signal} *)\n"
+
+                        for el2 in el1['SS_avar']:
+                            for i in data['SS']:
+                                number = i['№']
+                                name   = i['Название']
+                                if number == el2:
+                                    name_signal = name
+                                    break
+                            cnt += 1
+                            znak = '+' if cnt < el1['count_avar'] else ';'
+                            cfg_txt = cfg_txt + f"BOOL_TO_UDINT(NOT stateDIAG.SS[{el2}].bits.linkOk){znak}  (* {name_signal} *)\n "
+
+                        try:
+                            if el1['Net_USO']:
+                                list_MN = el1.get('Net_USO').get('MN')
+                                list_CN = el1.get('Net_USO').get('CN')
+
+                                for mn in list_MN:
+                                    for i in range(2):
+                                        cfg_txt = cfg_txt + f"BOOL_TO_UDINT(stateDIAG.diagMN[{mn}].ports_State.bits.eP{i + 1}NotLink)+\n"
+                                for cn in list_CN:
+                                    cfg_txt = cfg_txt + f"BOOL_TO_UDINT(stateDIAG.diagCN[{cn}].ports_State.bits.eP1NotLink)+\n"
+
+                                    cnt += 1
+                                    znak = '+' if cnt < len(list_CN) else ';'
+                                    cfg_txt = cfg_txt + f"BOOL_TO_UDINT(stateDIAG.diagCN[{cn}].ports_State.bits.eP2NotLink){znak}\n"
+                        except: pass
+
+            text_file.write(cfg_txt)
+            text_file.close()
+            logger.info(f'{self.name_prefix} выполнено {path_cfg}')
+        except:
+           logger.error(f'{self.name_prefix} FAILED')
     # Cfg_ktprs
     @logger.catch
     def gen_cfg_ktprs(self, path):
