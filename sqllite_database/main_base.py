@@ -4109,6 +4109,27 @@ class Filling_CodeSys():
             if tabl == 'cfg_PIC': 
                 msg.update(self.cfg_pic())
                 continue
+            if tabl == 'cfg_TM_TS': 
+                msg.update(self.cfg_ts())
+                continue
+            if tabl == 'cfg_TM_TU': 
+                msg.update(self.cfg_tu())
+                continue
+            if tabl == 'cfg_TM_TI2': 
+                msg.update(self.cfg_ti2())
+                continue
+            if tabl == 'cfg_TM_TI4': 
+                msg.update(self.cfg_ti4())
+                continue
+            if tabl == 'cfg_TM_TII': 
+                msg.update(self.cfg_tii())
+                continue
+            if tabl == 'cfg_TM_TR2': 
+                msg.update(self.cfg_tr2())
+                continue
+            if tabl == 'cfg_TM_TR4': 
+                msg.update(self.cfg_tr4())
+                continue
         return msg
     def file_check(self, name_file):
         path_request = f'{path_su}\\{name_file}.txt'
@@ -5949,14 +5970,15 @@ class Filling_CodeSys():
     def cfg_pic(self):
         msg = {}
         try:
-            data_pic   = self.dop_function.connect_by_sql('pic', f'''"id", "name", "frame", "Pic"''')
-            data_ai    = self.dop_function.connect_by_sql('ai', f'''"id", "name", "Pic"''')
-            data_di    = self.dop_function.connect_by_sql('di', f'''"id", "name", "priority_0", "priority_1", "pNC_AI", "Pic"''')
-            data_zd    = self.dop_function.connect_by_sql('zd', f'''"id", "name", "Pic"''')
-            data_vs    = self.dop_function.connect_by_sql('vs', f'''"id", "name", "Pic"''')
-            data_ss    = self.dop_function.connect_by_sql('ss', f'''"id", "name", "number_array_stateRSreq_1", "number_array_stateRSreq_2", "Pic"''')
-            data_ktpr  = self.dop_function.connect_by_sql('ktpr', f'''"id", "name", "Pic"''')
+            data_pic   = self.dop_function.connect_by_sql('pic'  , f'''"id", "name", "frame", "Pic"''')
+            data_ai    = self.dop_function.connect_by_sql('ai'   , f'''"id", "name", "Pic"''')
+            data_di    = self.dop_function.connect_by_sql('di'   , f'''"id", "name", "priority_0", "priority_1", "pNC_AI", "Pic"''')
+            data_zd    = self.dop_function.connect_by_sql('zd'   , f'''"id", "name", "Pic"''')
+            data_vs    = self.dop_function.connect_by_sql('vs'   , f'''"id", "name", "Pic"''')
+            data_ss    = self.dop_function.connect_by_sql('ss'   , f'''"id", "name", "number_array_stateRSreq_1", "number_array_stateRSreq_2", "Pic"''')
+            data_ktpr  = self.dop_function.connect_by_sql('ktpr' , f'''"id", "name", "Pic"''')
             data_ktpra = self.dop_function.connect_by_sql('ktpra', f'''"id", "name", "Pic"''')
+            data_hw    = self.dop_function.connect_by_sql('hardware', f'''"id", "variable", "uso", "Pic"''')
 
             # Проверяем файл на наличие в папке, если есть удаляем и создаем новый
             write_file = self.file_check('cfg_PIC')
@@ -6113,6 +6135,23 @@ class Filling_CodeSys():
                                                  value_warn = ss_warn,
                                                  value_avar = f"BOOL_TO_UDINT(NOT stateDIAG.SS[{id_ss}].bits.linkOk)",
                                                  name = name))
+                
+                for value in data_hw:
+                    id_hw  = value[0]
+                    var_hw = value[1]
+                    uso    = value[2]
+                    pic_hw = value[3]
+
+                    if pic_hw is None: continue
+                    s_pic = str(pic_hw).split(';') 
+                    
+                    for pic_num in s_pic:
+                        if str(pic_num) == str(id_pic):
+                            list_pic.append(dict(id_pic = id_pic,
+                                                 name_pic = name_pic,
+                                                 value_warn = None,
+                                                 value_avar = f"{var_hw}",
+                                                 name = uso))
 
             for i in list_pic:
                 print(i)
@@ -6123,9 +6162,216 @@ class Filling_CodeSys():
         except Exception:
             msg[f'{today} - Файл СУ: ошибка при заполнении cfg_pic: {traceback.format_exc()}'] = 2
             return msg  
-        
+    def cfg_ts(self):
+        msg = {}
+        try:
+            data_value = self.dop_function.connect_by_sql('tm_ts', f'"id", "name", "addr_object", "link_value"')
+            # Проверяем файл на наличие в папке, если есть удаляем и создаем новый
+            write_file = self.file_check('cfg_TM_TS')
 
+            for data in data_value:
+                number    = data[0]
+                name      = data[1]
+                adress    = data[2]
+                reference = data[3]
+                
+                pInput, pnum, pcfg = self.ret_inp_cfg(reference)
 
+                if pInput != 0:
+                    cfg_txt = f'(* {adress} - {name} *)\n' \
+                            f'cfgTM_TS[{number}].pInputVar          REF={str(pInput)};\n' \
+                            f'cfgTM_TS[{number}].num                  :={str(pnum)};\n' \
+                            f'cfgTM_TS[{number}].cfg.reg              :={str(pcfg)};\n'
+
+                write_file.write(cfg_txt)
+            write_file.close()
+            msg[f'{today} - Файл СУ: cfg_tm_ts заполнен'] = 1
+            return msg
+        except Exception:
+            msg[f'{today} - Файл СУ: ошибка при заполнении cfg_tm_ts: {traceback.format_exc()}'] = 2
+            return msg  
+    def cfg_tu(self):
+        msg = {}
+        try:
+            data_value = self.dop_function.connect_by_sql('tm_tu', f'"id", "name", "variable_change", "change_bit", "addr_object"')
+            # Проверяем файл на наличие в папке, если есть удаляем и создаем новый
+            write_file = self.file_check('cfg_TM_TU')
+
+            for data in data_value:
+                number  = data[0]
+                name    = data[1]
+                mut_var = data[2]
+                bits    = data[3]
+                adress  = data[4]
+
+                if mut_var is None: continue
+                if bits    is None: continue
+
+                cfg_txt = f'(* {adress} - {name} *)\n' \
+                        f'cfgTM_TU[{number}].pVal       REF={str(mut_var)}.reg;\n' \
+                        f'cfgTM_TU[{number}].iBit         :={str(bits)};\n'
+
+                write_file.write(cfg_txt)
+            write_file.close()
+            msg[f'{today} - Файл СУ: cfg_tm_tu заполнен'] = 1
+            return msg
+        except Exception:
+            msg[f'{today} - Файл СУ: ошибка при заполнении cfg_tm_tu: {traceback.format_exc()}'] = 2
+            return msg  
+    def cfg_ti2(self):
+        msg = {}
+        try:
+            data_value = self.dop_function.connect_by_sql('tm_ti2', f'"id", "name", "variable_value", "variable_status", "addr_object"')
+            # Проверяем файл на наличие в папке, если есть удаляем и создаем новый
+            write_file = self.file_check('Cfg_TM_TI2')
+
+            for data in data_value:
+                number  = data[0]
+                name    = data[1]
+                value   = data[2]
+                status  = data[3]
+                adress  = data[4]
+
+                if name is None: continue
+                if status is None:
+                    cfg_txt = f'(* {adress} - {name} *)\n' \
+                            f'cfgTM_TI2[{number}].pVal              REF={str(value)};\n'
+                else:
+                    cfg_txt = f'(* {adress} - {name} *)\n' \
+                            f'cfgTM_TI2[{number}].pVal              REF={str(value)};\n' \
+                            f'cfgTM_TI2[{number}].pState            REF={str(status)};\n'
+
+                write_file.write(cfg_txt)
+            write_file.close()
+            msg[f'{today} - Файл СУ: cfg_tm_ti2 заполнен'] = 1
+            return msg
+        except Exception:
+            msg[f'{today} - Файл СУ: ошибка при заполнении cfg_tm_ti2: {traceback.format_exc()}'] = 2
+            return msg  
+    def cfg_ti4(self):
+        msg = {}
+        try:
+            data_value = self.dop_function.connect_by_sql('tm_ti4', f'"id", "name", "variable_value", "variable_status", "variable_Aiparam", "addr_object"')
+            # Проверяем файл на наличие в папке, если есть удаляем и создаем новый
+            write_file = self.file_check('Cfg_TM_TI4')
+
+            for data in data_value:
+                number   = data[0]
+                name     = data[1]
+                value    = data[2]
+                status   = data[3]
+                ai_param = data[4]
+                adress   = data[5]
+
+                if value is None: continue
+
+                if (not status is None) and (not ai_param is None):
+                    cfg_txt = f'(* {adress} - {name} *)\n' \
+                            f'cfgTM_TI4[{number}].pVal              REF={str(value)};\n' \
+                            f'cfgTM_TI4[{number}].pState            REF={str(status)}.reg;\n' \
+                            f'cfgTM_TI4[{number}].pAIparam          REF={str(ai_param)};\n'
+                if (status is None) and (not ai_param is None):
+                    cfg_txt = f'(* {adress} - {name} *)\n' \
+                            f'cfgTM_TI4[{number}].pVal              REF={str(value)};\n' \
+                            f'cfgTM_TI4[{number}].pAIparam          REF={str(ai_param)};\n'
+                if (not status is None) and (ai_param is None):
+                    cfg_txt = f'(* {adress} - {name} *)\n' \
+                            f'cfgTM_TI4[{number}].pVal              REF={str(value)};\n' \
+                            f'cfgTM_TI4[{number}].pState            REF={str(status)}.reg;\n'
+                if (status is None) and (ai_param is None):
+                    cfg_txt = f'(* {adress} - {name} *)\n' \
+                            f'cfgTM_TI4[{number}].pVal              REF={str(value)};\n'
+
+                write_file.write(cfg_txt)
+            write_file.close()
+            msg[f'{today} - Файл СУ: cfg_tm_ti4 заполнен'] = 1
+            return msg
+        except Exception:
+            msg[f'{today} - Файл СУ: ошибка при заполнении cfg_tm_ti4: {traceback.format_exc()}'] = 2
+            return msg  
+    def cfg_tii(self):
+        msg = {}
+        try:
+            data_value = self.dop_function.connect_by_sql('tm_tii', f'"id", "name", "variable_value", "variable_status", "addr_object"')
+            # Проверяем файл на наличие в папке, если есть удаляем и создаем новый
+            write_file = self.file_check('cfg_TM_TII')
+
+            for data in data_value:
+                number  = data[0]
+                name    = data[1]
+                value   = data[2]
+                status  = data[3]
+                adress  = data[4]
+
+                if value is None: continue
+
+                if status is None:
+                    cfg_txt = f'(* {name} - {adress} *)\n' \
+                            f'cfgTM_TII[{number}].pVal              REF={str(value)};\n'
+                else:
+                    cfg_txt = f'(* {name} - {adress} *)\n' \
+                            f'cfgTM_TII[{number}].pVal              REF={str(value)};\n' \
+                            f'cfgTM_TII[{number}].pState            REF={str(status)};\n'
+
+                write_file.write(cfg_txt)
+            write_file.close()
+            msg[f'{today} - Файл СУ: cfg_tm_tii заполнен'] = 1
+            return msg
+        except Exception:
+            msg[f'{today} - Файл СУ: ошибка при заполнении cfg_tm_tii: {traceback.format_exc()}'] = 2
+            return msg  
+    def cfg_tr2(self):
+        msg = {}
+        try:
+            data_value = self.dop_function.connect_by_sql('tm_tr2', f'"id", "name", "variable_change", "descriptionTR4", "addr_object"')
+            # Проверяем файл на наличие в папке, если есть удаляем и создаем новый
+            write_file = self.file_check('Cfg_TM_TR2')
+
+            for data in data_value:
+                number = data[0]
+                name   = data[1]
+                value  = data[2]
+                sign   = data[3]
+                adress = data[4]
+
+                if value is None: continue
+
+                cfg_txt = f'(* {adress} - {name} - {sign} *)\n' \
+                        f'cfgTM_TR2[{number}].pVal              REF={str(value)};\n'
+
+                write_file.write(cfg_txt)
+            write_file.close()
+            msg[f'{today} - Файл СУ: cfg_tm_tr2 заполнен'] = 1
+            return msg
+        except Exception:
+            msg[f'{today} - Файл СУ: ошибка при заполнении cfg_tm_tr2: {traceback.format_exc()}'] = 2
+            return msg  
+    def cfg_tr4(self):
+        msg = {}
+        try:
+            data_value = self.dop_function.connect_by_sql('tm_tr4', f'"id", "name", "variable_change", "descriptionTR4", "addr_object"')
+            # Проверяем файл на наличие в папке, если есть удаляем и создаем новый
+            write_file = self.file_check('cfg_TM_TR4')
+
+            for data in data_value:
+                number = data['№']
+                name   = data['Название']
+                value  = data['Изменяемая переменная']
+                sign   = data['descriptionTR4 (не более 16 символов латиницы)']
+                adress = data['Адрес объекта']
+
+                if value is None: continue
+
+                cfg_txt = f'(* {adress} - {name} - {sign} *)\n' \
+                        f'cfgTM_TR4[{number}].pVal              REF={str(value)};\n'
+
+                write_file.write(cfg_txt)
+            write_file.close()
+            msg[f'{today} - Файл СУ: cfg_tm_tr4 заполнен'] = 1
+            return msg
+        except Exception:
+            msg[f'{today} - Файл СУ: ошибка при заполнении cfg_tm_tr4: {traceback.format_exc()}'] = 2
+            return msg  
 
         
 
@@ -6166,7 +6412,7 @@ class Filling_HardWare():
                     if temp_flag is False:
                         for i in range(2):
                             uso_kk = uso[0]
-                            test_s.append(dict(uso = uso[0], tag = '',
+                            test_s.append(dict(uso = uso[0], variable = f'countsErrDiag[{i + 1}]', tag = '',
                                                 basket  = i + 1, powerLink_ID ='', Pic = '',
                                                 type_0  = f'MK-550-024', variable_0 = f'PSU',   type_1 = f'MK-546-010', variable_1 = f'MN;3',
                                                 type_2  = f'MK-504-120', variable_2 = f'CPU;7', type_3 = f'',           variable_3 = f'',
@@ -6196,6 +6442,7 @@ class Filling_HardWare():
                         if kk_is_True and count_basket == 3:
                             for i in range(4, 6, 1):
                                 test_s.append(dict(uso        = uso_kk,
+                                                   variable   = f'countsErrDiag[{i + 1}]',
                                                    tag        = '',
                                                    basket     = i + 1,
                                                    type_0     = 'MK-550-024',
@@ -6242,7 +6489,8 @@ class Filling_HardWare():
 
                             if   kk_is_True and (count_basket == 1 or count_basket == 2): list_hw[f'id'] = count_basket + 2
                             else: list_hw[f'id'] = count_basket + 4
-
+                            
+                            list_hw[f'variable']        = f'countsErrDiag[]'
                             list_hw[f'tag']             = ''
                             list_hw[f'powerLink_ID']    = count_basket
                             list_hw[f'type_0']          = 'MK-550-024'
@@ -6262,7 +6510,7 @@ class Filling_HardWare():
         return(msg)
     # Заполняем таблицу HardWare
     def column_check(self):
-        list_default = ['tag', 'uso', 'basket', 'powerLink_ID', 'Pic', 
+        list_default = ['variable', 'tag', 'uso', 'basket', 'powerLink_ID', 'Pic', 
                         'type_0',  'variable_0',  'type_1',  'variable_1',  'type_2',  'variable_2', 
                         'type_3',  'variable_3',  'type_4',  'variable_4',  'type_5',  'variable_5', 
                         'type_6',  'variable_6',  'type_7',  'variable_7',  'type_8',  'variable_8',

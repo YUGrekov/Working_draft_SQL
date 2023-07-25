@@ -1,5 +1,6 @@
 from peewee import *
 from playhouse.migrate import *
+import codecs
 
 from gen_gui import MainWin
 from PyQt5.QtWidgets import QApplication
@@ -108,7 +109,7 @@ rus_list = {'signals': {'id':'№', 'type_signal':'Тип сигнала', 'uso'
                    'pValue':'Ссылка на входное\nзначение сигнала', 'pHealth':'Ссылка на исправность\nканала', 'Pic':'Pic',
                    'uso':'Шкаф', 'basket':'Корзина', 'module':'Модуль', 'channel':'Канал'},
             
-            'hardware': {'id':'№', 'tag':'Идентификатор\n(не генерится!)', 'uso':'Шкаф', 'basket':'Корзина',
+            'hardware': {'id':'№', 'variable':'Переменная', 'tag':'Идентификатор\n(не генерится!)', 'uso':'Шкаф', 'basket':'Корзина',
                          'type_0':'Тип модуля 0',   'variable_0':'Переменная модуля 0',   'type_1':'Тип модуля 1',   'variable_1':'Переменная модуля 1',  
                          'type_2':'Тип модуля 2',   'variable_2':'Переменная модуля 2',   'type_3':'Тип модуля 3',   'variable_3':'Переменная модуля 3',  
                          'type_4':'Тип модуля 4',   'variable_4':'Переменная модуля 4',   'type_5':'Тип модуля 5',   'variable_5':'Переменная модуля 5',
@@ -468,6 +469,7 @@ class Signals(BaseModel):
     class Meta:
         table_name = 'signals'
 class HardWare(BaseModel):
+    variable     = CharField(null = True)
     tag          = CharField(null = True)
     uso          = CharField(null = True)
     basket       = IntegerField(null = True)

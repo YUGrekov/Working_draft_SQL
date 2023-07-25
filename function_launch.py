@@ -7,11 +7,11 @@ import codecs
 
 # Пути до файлов неисповедимы
 #path_to_exel        = 'D:\Проекты\ЛПДС_Каракатеевы\KarkateevoIO_PT.xlsx'
-path_to_exel        = 'D:\Проекты\НПС-Аксинино_2\HMI\_Docs\НПС Аксинино-2 IO МК-500 v1.78.xlsx'
+#path_to_exel        = 'D:\Проекты\НПС-Аксинино_2\HMI\_Docs\НПС Аксинино-2 IO МК-500 v1.78.xlsx'
 #path_to_exel        = 'D:\Проекты\НПС-Аксинино_2\HMI\_Docs\KarkateevoIO.xlsx'
 #path_to_exel        = 'D:\Проекты\LPDS_Salim\HMI\_Docs\ИО_ПТ_Салым_v2.56.xlsx'
 #path_to_exel        = 'D:\Проекты\НПС-Аксинино_2\HMI\_Docs\АСУ ПТ Аксинино-2 IO_v3.72.xlsx'
-#path_to_exel        = 'D:\Проекты\LPDS_Salim\HMI\_Docs\НПС Салым-4 IO v0.38.xlsx'
+path_to_exel        = 'D:\Проекты\LPDS_Salim\HMI\_Docs\НПС Салым-4 IO v0.38.xlsx'
 #path_to_exel        = 'D:\Проекты\LPDS_Salim\HMI_KARKAR\_Docs\KarkateevoIO.xlsx'
 
 # path_to_adressmap       = 'D:\Проекты\НПС-Аксинино_2\HMI\project\\typical_prj\ODA.xml'
@@ -148,7 +148,7 @@ New_copy = Equipment(path_to_exel, path_to_adressmap, path_to_adressmap_mb,
 # Imitator
 #New_copy.file_xml_imitator(path_file_txt, 50200, 50000)
 
-New_copy.gen_cfg_pic('D:\Проекты\НПС-Аксинино_2\HMI\_Docs\SU\\', 'MNS')
+#New_copy.gen_cfg_pic('D:\Проекты\НПС-Аксинино_2\HMI\_Docs\SU\\', 'MNS')
 #New_copy.gen_cfg_ktprs('D:\Проекты\НПС-Аксинино_2\HMI\_Docs\SU\\')
 #New_copy.gen_cfg_ktpr('D:\Проекты\НПС-Аксинино_2\HMI\_Docs\SU\\')
 #New_copy.gen_cfg_ZD('D:\Проекты\НПС-Аксинино_2\HMI\_Docs\SU\\')
@@ -166,7 +166,7 @@ New_copy.gen_cfg_pic('D:\Проекты\НПС-Аксинино_2\HMI\_Docs\SU\\
 
 # Тренды
 #New_copy.trends1_xml()
-#New_copy.trends_xml(path_item, path_file_txt, 'АСУТП НПС-4 ЛПДС Салым')
+New_copy.trends_xml(path_item, path_file_txt, 'АСУТП НПС-4 ЛПДС Салым')
 #New_copy.trends_snmp_xml()
 #New_copy.analogs_trend(file_AnalogTrends)
 #New_copy.trends_linux_xml(path_file_txt, 'АСУПТ НПС-2 Аксинино')
