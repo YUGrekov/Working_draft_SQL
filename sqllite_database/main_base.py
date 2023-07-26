@@ -4130,6 +4130,15 @@ class Filling_CodeSys():
             if tabl == 'cfg_TM_TR4': 
                 msg.update(self.cfg_tr4())
                 continue
+            if tabl == 'cfg_DO_sim': 
+                msg.update(self.cfg_do_sim())
+                continue
+            if tabl == 'cfg_DI_sim': 
+                msg.update(self.cfg_di_sim())
+                continue
+            if tabl == 'cfg_AI_sim': 
+                msg.update(self.cfg_ai_sim())
+                continue
         return msg
     def file_check(self, name_file):
         path_request = f'{path_su}\\{name_file}.txt'
@@ -6183,7 +6192,7 @@ class Filling_CodeSys():
                             f'cfgTM_TS[{number}].num                  :={str(pnum)};\n' \
                             f'cfgTM_TS[{number}].cfg.reg              :={str(pcfg)};\n'
 
-                write_file.write(cfg_txt)
+                    write_file.write(cfg_txt)
             write_file.close()
             msg[f'{today} - Файл СУ: cfg_tm_ts заполнен'] = 1
             return msg
@@ -6354,11 +6363,11 @@ class Filling_CodeSys():
             write_file = self.file_check('cfg_TM_TR4')
 
             for data in data_value:
-                number = data['№']
-                name   = data['Название']
-                value  = data['Изменяемая переменная']
-                sign   = data['descriptionTR4 (не более 16 символов латиницы)']
-                adress = data['Адрес объекта']
+                number = data[0]
+                name   = data[1]
+                value  = data[2]
+                sign   = data[3]
+                adress = data[4]
 
                 if value is None: continue
 
@@ -6372,8 +6381,90 @@ class Filling_CodeSys():
         except Exception:
             msg[f'{today} - Файл СУ: ошибка при заполнении cfg_tm_tr4: {traceback.format_exc()}'] = 2
             return msg  
+    def cfg_do_sim(self):
+        msg = {}
+        try:
+            data_value = self.dop_function.connect_by_sql('do', f'"id", "tag", "name", "pValue", "pHealth"')
+            # Проверяем файл на наличие в папке, если есть удаляем и создаем новый
+            write_file = self.file_check('Cfg_DO_sim')
 
-        
+            for value in data_value:
+                numbers = value[0]
+                tag     = value[1]
+                name    = value[2]
+                pValue  = value[3]
+                pHealth = value[4]
+
+                if self.dop_function.str_find(pHealth,'mDO'):
+                    pValue = str(pValue)[str(pValue).index('['):]
+                    pHealth = str(pHealth)[str(pHealth).index('['):]
+                    cfg_txt = f'(*{tag} {name}*)\n' \
+                              f'cfgDO[{numbers}].pValue         REF=simDO_bool{pHealth}{pValue};\n'
+
+                    write_file.write(cfg_txt)
+            write_file.close()
+            msg[f'{today} - Файл СУ: cfg_do_sim заполнен'] = 1
+            return msg
+        except Exception:
+            msg[f'{today} - Файл СУ: ошибка при заполнении cfg_do_sim: {traceback.format_exc()}'] = 2
+            return msg  
+    def cfg_di_sim(self):
+        msg = {}
+        try:
+            data_value = self.dop_function.connect_by_sql('di', f'"id", "tag", "name", "pValue", "pHealth"')
+            # Проверяем файл на наличие в папке, если есть удаляем и создаем новый
+            write_file = self.file_check('Cfg_DI_sim')
+
+            for value in data_value:
+                numbers = value[0]
+                tag     = value[1]
+                name    = value[2]
+                pValue  = value[3]
+                pHealth = value[4]
+
+                if self.dop_function.str_find(pHealth,'mDO'):
+                    pValue = str(pValue)[str(pValue).index('['):]
+                    pHealth = str(pHealth)[str(pHealth).index('['):]
+                    cfg_txt = f'(*{tag} {name}*)\n' \
+                              f'cfgDI[{numbers}].pValue         REF=simDI_bool{pHealth}{pValue};\n'
+                    
+                    write_file.write(cfg_txt)
+            write_file.close()
+            msg[f'{today} - Файл СУ: cfg_di_sim заполнен'] = 1
+            return msg
+        except Exception:
+            msg[f'{today} - Файл СУ: ошибка при заполнении cfg_di_sim: {traceback.format_exc()}'] = 2
+            return msg  
+    def cfg_ai_sim(self):
+        msg = {}
+        try:
+            data_value = self.dop_function.connect_by_sql('di', f'"id", "tag", "name", "pValue", "pHealth"')
+            # Проверяем файл на наличие в папке, если есть удаляем и создаем новый
+            write_file = self.file_check('cfg_AI_sim')
+
+            for value in data_value:
+                numbers = value[0]
+                tag     = value[1]
+                name    = value[2]
+                pValue  = value[3]
+                pHealth = value[4]
+
+                if pHealth is None: continue
+
+                ch = str(pValue).split('[')
+                modul = str(pHealth).split('[')
+                num = f'[{str(modul[1]).replace("]","")}][{str(ch[1]).replace("]","")}]'
+                cfg_txt = f'(*{tag} {name}*)\n' \
+                          f'cfgAI[{numbers}].pValue         REF=simAI{num};\n' \
+                    
+                write_file.write(cfg_txt)
+            write_file.close()
+            msg[f'{today} - Файл СУ: cfg_ai_sim заполнен'] = 1
+            return msg
+        except Exception:
+            msg[f'{today} - Файл СУ: ошибка при заполнении cfg_ai_sim: {traceback.format_exc()}'] = 2
+            return msg  
+
 
 # Work with filling in the table 
 class Filling_HardWare():
