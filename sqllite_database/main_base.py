@@ -236,6 +236,13 @@ class General_functions():
         except Exception:
             return 
         return cursor.fetchall()
+    def connect_by_sql_order(self, table_used, column, order):
+        try:
+            cursor = db.cursor()
+            cursor.execute(f'''SELECT {column} FROM "{table_used}" ORDER BY {order}''')
+        except Exception:
+            return 
+        return cursor.fetchall()
     def connect_by_sql_condition(self, table_used, column, condition):
         try:
             cursor = db.cursor()
@@ -253,6 +260,14 @@ class General_functions():
         except Exception:
             return True
         return cursor.fetchall()
+    def max_value_column(self, table_used, column, condition, *args):
+        try:
+            cursor = db.cursor()
+            if condition is False: cursor.execute(f'''SELECT MAX("{column}") FROM "{table_used}"''')
+            else                 : cursor.execute(f'''SELECT MAX("{column}") FROM "{table_used}" WHERE "{args[0]}"={args[1]}''')
+        except Exception:
+            return 
+        return cursor.fetchall()[0][0]
     # Создание атрибутов
     def new_attr(self, obj, type, value):
          atrb = etree.Element("attribute")
@@ -364,6 +379,7 @@ class General_functions():
                 root.remove(item)
         tree.write(path_map, pretty_print=True)
         return root, tree
+
 # Work with filling in the table 'Signals'
 class Import_in_SQL():
     def __init__(self, exel):
@@ -2166,7 +2182,7 @@ class Filling_attribute_DevStudio():
             if tabl == 'mapEGU': 
                 msg.update(self.egu_map())
                 continue
-        return msg
+        return msg  
     def write_in_map(self, list_tabl):
             list_param_AI_AO = ['mod_State', 'ch_01', 'ch_02', 'ch_03', 'ch_04', 'ch_05', 'ch_06', 'ch_07', 'ch_08' ]
             list_param_DI_DO = ['mod_State', 'mDI']

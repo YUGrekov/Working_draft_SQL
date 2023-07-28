@@ -50,9 +50,9 @@ prefix_sys_HMI   = 'MNS_'
 
 # Карта защит
 # Путь расположения файлов .omobj для генерации защит, здесь должен быть шаблон: Form_Defences_default.omobj
-path_gen_station_defence   = 'D:\Проекты\LPDS_Salim\HMI\_Docs\Defence\\'
+path_gen_station_defence   = 'D:\Development\Generation_msg\HMI\\'
 # GMPNA или KTPRA или KTPR иди KTPRP
-list_defence = 'KTPR'
+list_defence = 'KTPRA'
 
 
 # DevStudio
@@ -166,7 +166,7 @@ New_copy = Equipment(path_to_exel, path_to_adressmap, path_to_adressmap_mb,
 
 # Тренды
 #New_copy.trends1_xml()
-New_copy.trends_xml(path_item, path_file_txt, 'АСУТП НПС-4 ЛПДС Салым')
+#New_copy.trends_xml(path_item, path_file_txt, 'АСУТП НПС-4 ЛПДС Салым')
 #New_copy.trends_snmp_xml()
 #New_copy.analogs_trend(file_AnalogTrends)
 #New_copy.trends_linux_xml(path_file_txt, 'АСУПТ НПС-2 Аксинино')
@@ -187,7 +187,7 @@ New_copy.trends_xml(path_item, path_file_txt, 'АСУТП НПС-4 ЛПДС Са
 #generate_serv_signal('D:\Проекты\НПС-Аксинино_2\HMI\_Docs\Defence\\', path_to_exel, False, 'MNS_')
 
 # Карты защит и готовностей
-#gen_station_defence(path_gen_station_defence, path_to_exel, list_defence)
+gen_station_defence(path_gen_station_defence, path_to_exel, list_defence)
 
 # Табло и сирены
 #gen_uts_upts('D:\Проекты\LPDS_Salim\HMI\_Docs\Defence\\', path_to_exel, 'UTS', 'false')

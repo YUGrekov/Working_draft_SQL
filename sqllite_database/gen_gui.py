@@ -2,9 +2,10 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 import sys
-for path in sys.path:
-    print(path)
+# for path in sys.path:
+#     print(path)
 from main_base import *
+from defence_hmi import *
 
 # ГРАФИЧЕСКИЙ ИНТЕРФЕЙС ДЛЯ ЗАПУСКА ГЕНЕРАТОРА
 # Сформировать exe: в терминале добавить: auto-py-to-exe
@@ -1089,6 +1090,7 @@ class Widget(QWidget):
 
         # ------------------ВУ------------------
         self.list_gen_vu = []
+        self.list_gen_hmi = []
         self.filing_attrib = Filling_attribute_DevStudio()
         l_vu_desc = QLabel('DevStudio', tab_6)
         l_vu_desc.move(140, 5)
@@ -1180,6 +1182,19 @@ class Widget(QWidget):
         self.q_check_omx_map_egu = QCheckBox('MapEGU', tab_6)
         self.q_check_omx_map_egu.move(250, 110) 
         self.q_check_omx_map_egu.stateChanged.connect(self.check_mapEGU)
+
+        self.q_check_hmi_ktpr = QCheckBox('HMI_KTPR', tab_6)
+        self.q_check_hmi_ktpr.move(410, 20) 
+        self.q_check_hmi_ktpr.stateChanged.connect(self.check_hmi_ktpr)
+        self.q_check_hmi_ktpra = QCheckBox('HMI_KTPRA', tab_6)
+        self.q_check_hmi_ktpra.move(410, 35) 
+        self.q_check_hmi_ktpra.stateChanged.connect(self.check_hmi_ktpra)
+        self.q_check_hmi_gmpna = QCheckBox('HMI_GMPNA', tab_6)
+        self.q_check_hmi_gmpna.move(410, 50) 
+        self.q_check_hmi_gmpna.stateChanged.connect(self.check_hmi_gmpna)
+        self.q_check_hmi_ktprp = QCheckBox('HMI_KTPRP', tab_6)
+        self.q_check_hmi_ktprp.move(410, 65) 
+        self.q_check_hmi_ktprp.stateChanged.connect(self.check_hmi_ktprp)
         # Установить все
         check_all_omx = QCheckBox('Установить/Снять', tab_6)
         check_all_omx.setToolTip('Установить или снять все флаги для заполнения атрибутов omx')
@@ -1212,6 +1227,11 @@ class Widget(QWidget):
         b_map_clear.move(180, 205) 
         b_map_clear.clicked.connect(self.map_clear)
 
+        b_hmi_list = QPushButton('Собрать\nPictures', tab_6)
+        b_hmi_list.setStyleSheet("border: 1px solid; border-radius: 3px;")
+        b_hmi_list.resize(120,30)
+        b_hmi_list.move(400, 170) 
+        b_hmi_list.clicked.connect(self.hmi_list)
         # ------------------СУ------------------
         self.list_gen_su = []
         self.filingCS = Filling_CodeSys()
@@ -2184,6 +2204,18 @@ class Widget(QWidget):
     def check_mapEGU(self, checked):
         if checked: self.list_gen_vu.append('mapEGU')
         else      : self.list_gen_vu.remove('mapEGU')
+    def check_hmi_ktpr(self, checked):
+        if checked: self.list_gen_hmi.append('HMI_KTPR')
+        else      : self.list_gen_hmi.remove('HMI_KTPR')
+    def check_hmi_ktprp(self, checked):
+        if checked: self.list_gen_hmi.append('HMI_KTPRP')
+        else      : self.list_gen_hmi.remove('HMI_KTPRP')
+    def check_hmi_ktpra(self, checked):
+        if checked: self.list_gen_hmi.append('HMI_KTPRA')
+        else      : self.list_gen_hmi.remove('HMI_KTPRA')
+    def check_hmi_gmpna(self, checked):
+        if checked: self.list_gen_hmi.append('HMI_GMPNA')
+        else      : self.list_gen_hmi.remove('HMI_GMPNA')
     # Button confirm
     def omx_list(self):
         msg = self.filing_attrib.write_in_omx(self.list_gen_vu)
@@ -2196,6 +2228,26 @@ class Widget(QWidget):
         self.logs_msg('default', 1, msg, True)
     def map_clear(self):
         msg = self.filing_attrib.clear_map(self.list_gen_vu)
+        self.logs_msg('default', 1, msg, True)
+    def hmi_list(self):
+        msg = {}
+        if len(self.list_gen_hmi) == 0:             
+            msg[f'{today} - HMI Pictures: не выбраны атрибуты'] = 2
+            return msg
+        
+        for tabl in self.list_gen_hmi: 
+            if tabl == 'HMI_KTPR': 
+                msg.update(gen_station_defence('ktpr', False))
+                continue
+            if tabl == 'HMI_KTPRA': 
+                msg.update(gen_station_defence('ktpra', True))
+                continue
+            if tabl == 'HMI_KTPRP': 
+                msg.update(gen_station_defence('ktprp', False))
+                continue
+            if tabl == 'HMI_GMPNA': 
+                msg.update(gen_station_defence('gmpna', True))
+                continue
         self.logs_msg('default', 1, msg, True)
     # ------------------------СУ-------------------------
     def check_all_su(self, checked):
