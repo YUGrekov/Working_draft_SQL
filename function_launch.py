@@ -7,11 +7,11 @@ import codecs
 
 # Пути до файлов неисповедимы
 #path_to_exel        = 'D:\Проекты\ЛПДС_Каракатеевы\KarkateevoIO_PT.xlsx'
-#path_to_exel        = 'D:\Проекты\НПС-Аксинино_2\HMI\_Docs\НПС Аксинино-2 IO МК-500 v1.78.xlsx'
+path_to_exel        = 'D:\\Проекты\\НПС-Аксинино_2\\HMI\\_Docs\\НПС Аксинино-2 IO МК-500 v1.93.xlsx'
 #path_to_exel        = 'D:\Проекты\НПС-Аксинино_2\HMI\_Docs\KarkateevoIO.xlsx'
 #path_to_exel        = 'D:\Проекты\LPDS_Salim\HMI\_Docs\ИО_ПТ_Салым_v2.56.xlsx'
 #path_to_exel        = 'D:\Проекты\НПС-Аксинино_2\HMI\_Docs\АСУ ПТ Аксинино-2 IO_v3.72.xlsx'
-path_to_exel        = 'D:\Проекты\LPDS_Salim\HMI\_Docs\НПС Салым-4 IO v0.38.xlsx'
+#path_to_exel        = 'D:\Проекты\LPDS_Salim\HMI\_Docs\НПС Салым-4 IO v0.38.xlsx'
 #path_to_exel        = 'D:\Проекты\LPDS_Salim\HMI_KARKAR\_Docs\KarkateevoIO.xlsx'
 
 # path_to_adressmap       = 'D:\Проекты\НПС-Аксинино_2\HMI\project\\typical_prj\ODA.xml'
@@ -163,6 +163,8 @@ New_copy = Equipment(path_to_exel, path_to_adressmap, path_to_adressmap_mb,
 #New_copy.gen_cfg_TR4('D:\Проекты\НПС-Аксинино_2\HMI\_Docs\SU\\')
 #New_copy.gen_cfg_DI_imit('D:\Проекты\НПС-Аксинино_2\HMI\_Docs\SU\\')
 #New_copy.gen_cfg_AI_imit('D:\Проекты\НПС-Аксинино_2\HMI\_Docs\SU\\')
+#New_copy.gen_cfg_AI_sim('D:\Проекты\НПС-Аксинино_2\HMI\_Docs\SU\\') 
+New_copy.gen_cfg_DI_sim('D:\Проекты\НПС-Аксинино_2\HMI\_Docs\SU\\')
 
 # Тренды
 #New_copy.trends1_xml()
@@ -187,7 +189,7 @@ New_copy = Equipment(path_to_exel, path_to_adressmap, path_to_adressmap_mb,
 #generate_serv_signal('D:\Проекты\НПС-Аксинино_2\HMI\_Docs\Defence\\', path_to_exel, False, 'MNS_')
 
 # Карты защит и готовностей
-gen_station_defence(path_gen_station_defence, path_to_exel, list_defence)
+#gen_station_defence(path_gen_station_defence, path_to_exel, list_defence)
 
 # Табло и сирены
 #gen_uts_upts('D:\Проекты\LPDS_Salim\HMI\_Docs\Defence\\', path_to_exel, 'UTS', 'false')

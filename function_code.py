@@ -8535,11 +8535,14 @@ class Equipment(Initialisation_path):
                 pValue          = value['pValue']
                 pHealth         = value['pHealth']
 
-                if self.str_find(pHealth,'mDI'):
+                if pValue is None: continue
+                if pHealth is None: continue
+
+                if self.str_find(pHealth,{'mDI_HEALTH'}):
                     pValue = str(pValue)[str(pValue).index('['):]
                     pHealth = str(pHealth)[str(pHealth).index('['):]
                     cfg_txt = f'(*{tag} {name}*)\n' \
-                              f'cfgDI[{numbers}].pValue         REF=  simDI_bool{pHealth}{pValue};\n'
+                            f'cfgDI[{numbers}].pValue         REF=simDI_bool{pHealth}{pValue};\n'
                     text_file.write(cfg_txt)
             text_file.close()
             logger.info(f'{self.name_prefix} выполнено {path_cfg}')
@@ -8786,34 +8789,40 @@ class Equipment(Initialisation_path):
     @logger.catch
     def gen_cfg_AI_sim(self,path):
         data      = self.data['AI']
-        try:
-            path_cfg = f'{path}\cfg_AI_sim.txt'
-            # Проверяем файл на наличие в папке, если есть удаляем и создаем новый
-            if not os.path.exists(path_cfg):
-                text_file = open(path_cfg, 'w')
-                text_file.write('(*cfg_AI_sim*)\n')
-            else:
-                os.remove(path_cfg)
-                text_file = open(path_cfg, 'w')
-                text_file.write('(*cfg_AI_sim*)\n')
-            for value in data:
-                numbers         = value['№']
-                tag             = value['Идентификатор']
-                name            = value['Название']
-                pValue          = value['УСО, модуль, канал']
-                pHealth         = value['Исправность канала']
-                if pHealth is None: continue
+        #try:
+        path_cfg = f'{path}\cfg_AI_sim.txt'
+        # Проверяем файл на наличие в папке, если есть удаляем и создаем новый
+        if not os.path.exists(path_cfg):
+            text_file = open(path_cfg, 'w')
+            text_file.write('(*cfg_AI_sim*)\n')
+        else:
+            os.remove(path_cfg)
+            text_file = open(path_cfg, 'w')
+            text_file.write('(*cfg_AI_sim*)\n')
+        for value in data:
+            numbers         = value['№']
+            tag             = value['Идентификатор']
+            name            = value['Название']
+            pValue          = value['УСО, модуль, канал']
+            pHealth         = value['Исправность канала']
+            if pHealth is None: continue
+            
+            try:
                 ch = str(pValue).split('[')
                 modul = str(pHealth).split('[')
-                num = f'[{str(modul[1]).replace("]","")}][{str(ch[1]).replace("]","")}]'
+                #num = f'[{str(modul[1]).replace("]","")}][{str(ch[1]).replace("]","")}]'
+                num = f'[{str(ch[1]).replace("]","")}]'
+                num_spl = str(num).split(',')
                 cfg_txt = f'(*{tag} {name}*)\n' \
-                          f'cfgAI[{numbers}].pValue\tREF=\tsimAI{num};\n' \
+                            f'cfgAI[{numbers}].pValue\tREF=simAI[{str(num_spl[0]).replace("[","")}][{num_spl[1].replace("]","").strip()}];\n' 
+            except:
+                continue
 
-                text_file.write(cfg_txt)
-            text_file.close()
-            logger.info(f'{self.name_prefix} выполнено {path_cfg}')
-        except:
-            logger.error(f'{self.name_prefix} FAILED')
+            text_file.write(cfg_txt)
+        text_file.close()
+        logger.info(f'{self.name_prefix} выполнено {path_cfg}')
+        #except:
+            #logger.error(f'{self.name_prefix} FAILED')
     # Cfg_DPS
     @logger.catch
     def gen_cfg_DPS(self, path):

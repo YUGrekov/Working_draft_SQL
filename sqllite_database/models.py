@@ -1,6 +1,5 @@
 from peewee import *
 from playhouse.migrate import *
-import codecs
 
 # from gen_gui import MainWin
 # from PyQt5.QtWidgets import QApplication

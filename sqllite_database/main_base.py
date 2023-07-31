@@ -287,9 +287,9 @@ class General_functions():
         tree.write(f'{path_to_devstudio}\\typical_prj.omx', pretty_print=True)
 
         if msg_bool == 1: 
-            msg[f'{today} - Файл omx: ошибка при чистке атрибутов {directory}'] = 2
+            msg[f'{today} - Файл omx: ошибка при чистке {directory}'] = 2
             return msg
-        msg[f'{today} - Файл omx: атрибуты {directory} удалены'] = 1
+        msg[f'{today} - Файл omx: {directory} удалены'] = 1
         return msg
     def clear_diag_objects_omx(self, directory):
         # Чистка объектов
@@ -298,16 +298,16 @@ class General_functions():
         tree.write(f'{path_to_devstudio}\\typical_prj.omx', pretty_print=True)
 
         if msg_bool == 1: 
-            msg[f'{today} - Файл omx: ошибка при чистке атрибутов {directory}'] = 2
+            msg[f'{today} - Файл omx: ошибка при чистке {directory}'] = 2
             return msg
-        msg[f'{today} - Файл omx: атрибуты {directory} удалены'] = 1
+        msg[f'{today} - Файл omx: {directory} удалены'] = 1
         return msg
     def clear_objects_attrib(self, directory, map_attrib):
         msg = {}
         try:
             for path in map_attrib:
                 self.parser_diag_map(directory, path)
-            msg[f'{today} - Очистка значений атрибутов {directory}. Успешно'] = 1
+            msg[f'{today} - Очистка значений {directory}. Успешно'] = 1
         except Exception:
             msg[f'{today} - Ошибка при очистке значений атрибутов: {path}, {traceback.format_exc()}'] = 2
         return msg
@@ -2536,7 +2536,7 @@ class Filling_attribute_DevStudio():
                 data_value = self.dop_function.connect_by_sql('ai', f'"id", "tag", "name", "PhysicEgu", "Egu", "IsOilPressure", "AnalogGroupId"')
                 msg_bool, el1, tree = self.dop_function.parser_omx('Analogs')
                 if msg_bool == 1: 
-                    msg[f'{today} - Файл omx: ошибка при очистке атрибутов Analogs'] = 2
+                    msg[f'{today} - Файл omx: ошибка при очистке Analogs'] = 2
                     return msg
                 for value in data_value:
                     number      = value[0]
@@ -2586,10 +2586,10 @@ class Filling_attribute_DevStudio():
 
                     el1.append(object)
                 tree.write(f'{path_to_devstudio}\\typical_prj.omx', pretty_print=True)
-                msg[f'{today} - Файл omx: атрибуты Analogs добавлены'] = 1
+                msg[f'{today} - Файл omx: Analogs добавлены'] = 1
                 return msg
             except Exception:
-                msg[f'{today} - Файл omx: ошибка при добавлении атрибута Analogs: {traceback.format_exc()}'] = 2
+                msg[f'{today} - Файл omx: ошибка при добавлении Analogs: {traceback.format_exc()}'] = 2
                 return msg
     def diskret_in_omx(self):
         msg = {}
@@ -2605,7 +2605,7 @@ class Filling_attribute_DevStudio():
             data_ai = self.dop_function.connect_by_sql('ai', f'"id", "tag"')
             msg_bool, el1, tree = self.dop_function.parser_omx('Diskrets')
             if msg_bool == 1: 
-                msg[f'{today} - Файл omx: ошибка при очистке атрибутов Diskrets'] = 2
+                msg[f'{today} - Файл omx: ошибка при очистке Diskrets'] = 2
                 return msg
             for value in data_di:
                 number_di = value[0]
@@ -2619,20 +2619,23 @@ class Filling_attribute_DevStudio():
                 tag_di     = self.dop_function.translate(str(tag_di))
                 tag_ai     = ' '
                 tag_ai_ref = ' '
-                
-                if not pNC_AI == '': 
-                    isdigit = re.findall('\d+', str(pNC_AI))
-                    for number in data_ai:
-                        number_ai = number[0]
-                        tag_ai    = number[1]
-                        if str(number_ai) == str(isdigit[0]):
-                            if tag_ai == '' or tag_ai is None:
-                                msg[f'{today} - Файл omx: атрибуты Diskrets. Тэг AI сигнала {number_ai} пуст. Поля AI_Ref_KZFKP и AI_Ref не заполнены'] = 3
-                                break
-                            else: 
-                                tag_ai_ref = tag_ai
-                                tag_ai     = self.dop_function.translate(tag_ai)
-                                break
+                try:
+                    if pNC_AI is not None: 
+                        isdigit = re.findall('\d+', str(pNC_AI))
+                        for number in data_ai:
+                            number_ai = number[0]
+                            tag_ai    = number[1]
+                            if str(number_ai) == str(isdigit[0]):
+                                if tag_ai == '' or tag_ai is None:
+                                    msg[f'{today} - Файл omx: Diskrets. Тэг AI сигнала {number_ai} пуст. Поля AI_Ref_KZFKP и AI_Ref не заполнены'] = 3
+                                    break
+                                else: 
+                                    tag_ai_ref = tag_ai
+                                    tag_ai     = self.dop_function.translate(tag_ai)
+                                    break
+                except Exception:
+                    msg[f'{today} - Файл omx: Diskrets, ошибка пропускается: {traceback.format_exc()}'] = 2
+                    continue
                 sign = ' '
                 for key, value in dop_discret.items():
                     if self.dop_function.str_find(str(name).lower(), {key}):
@@ -2653,10 +2656,10 @@ class Filling_attribute_DevStudio():
 
                 el1.append(object)
             tree.write(f'{path_to_devstudio}\\typical_prj.omx', pretty_print=True)
-            msg[f'{today} - Файл omx: атрибуты Diskrets добавлены'] = 1
+            msg[f'{today} - Файл omx: Diskrets добавлены'] = 1
             return msg
         except Exception:
-            msg[f'{today} - Файл omx: ошибка при добавлении атрибута Diskrets: {traceback.format_exc()}'] = 2
+            msg[f'{today} - Файл omx: ошибка при добавлении Diskrets: {traceback.format_exc()}'] = 2
             return msg
     def picture_omx(self):
             msg = {}
@@ -2664,7 +2667,7 @@ class Filling_attribute_DevStudio():
                 data = self.dop_function.connect_by_sql('pic', f'"id", "name", "frame"')
                 msg_bool, el1, tree = self.dop_function.parser_omx('Pictures')
                 if msg_bool == 1: 
-                    msg[f'{today} - Файл omx: ошибка при очистке атрибутов Pictures'] = 2
+                    msg[f'{today} - Файл omx: ошибка при очистке Pictures'] = 2
                     return msg
                 for value in data:
                     number   = value[0]
@@ -2685,10 +2688,10 @@ class Filling_attribute_DevStudio():
                     
                     el1.append(object)
                 tree.write(f'{path_to_devstudio}\\typical_prj.omx', pretty_print=True)
-                msg[f'{today} - Файл omx: атрибуты Pictures добавлены'] = 1
+                msg[f'{today} - Файл omx: Pictures добавлены'] = 1
                 return msg
             except Exception:
-                msg[f'{today} - Файл omx: ошибка при добавлении атрибута Pictures: {traceback.format_exc()}'] = 2
+                msg[f'{today} - Файл omx: ошибка при добавлении Pictures: {traceback.format_exc()}'] = 2
                 return msg
     def auxsystem_omx(self):
         msg = {}
@@ -2699,7 +2702,7 @@ class Filling_attribute_DevStudio():
             data_do = self.dop_function.connect_by_sql('do', f'"id", "tag"')
             msg_bool, el1, tree = self.dop_function.parser_omx('AuxSystems')
             if msg_bool == 1: 
-                msg[f'{today} - Файл omx: ошибка при очистке атрибутов AuxSystems'] = 2
+                msg[f'{today} - Файл omx: ошибка при очистке AuxSystems'] = 2
                 return msg
 
             for value_vs in data_vs:
@@ -2772,10 +2775,10 @@ class Filling_attribute_DevStudio():
 
                 el1.append(object)
             tree.write(f'{path_to_devstudio}\\typical_prj.omx', pretty_print=True)
-            msg[f'{today} - Файл omx: атрибуты AuxSystems добавлены'] = 1
+            msg[f'{today} - Файл omx: AuxSystems добавлены'] = 1
             return msg
         except Exception:
-            msg[f'{today} - Файл omx: ошибка при добавлении атрибута AuxSystems: {traceback.format_exc()}'] = 2
+            msg[f'{today} - Файл omx: ошибка при добавлении AuxSystems: {traceback.format_exc()}'] = 2
             return msg
     def valves_omx(self):
         msg = {}
@@ -2785,7 +2788,7 @@ class Filling_attribute_DevStudio():
             data_do = self.dop_function.connect_by_sql('do', f'"id", "tag"')
             msg_bool, el1, tree = self.dop_function.parser_omx('Valves')
             if msg_bool == 1: 
-                msg[f'{today} - Файл omx: ошибка при очистке атрибутов Valves'] = 2
+                msg[f'{today} - Файл omx: ошибка при очистке Valves'] = 2
                 return msg
 
             for value in data_zd:
@@ -2841,10 +2844,10 @@ class Filling_attribute_DevStudio():
 
                 el1.append(object)
             tree.write(f'{path_to_devstudio}\\typical_prj.omx', pretty_print=True)
-            msg[f'{today} - Файл omx: атрибуты Valves добавлены'] = 1
+            msg[f'{today} - Файл omx: Valves добавлены'] = 1
             return msg
         except Exception:
-            msg[f'{today} - Файл omx: ошибка при добавлении атрибута Valves: {traceback.format_exc()}'] = 2
+            msg[f'{today} - Файл omx: ошибка при добавлении Valves: {traceback.format_exc()}'] = 2
             return msg
     def pumps_omx(self):
         msg = {}
@@ -2852,7 +2855,7 @@ class Filling_attribute_DevStudio():
             data = self.dop_function.connect_by_sql('umpna', f'"id", "name"')
             msg_bool, el1, tree = self.dop_function.parser_omx('NAs')
             if msg_bool == 1: 
-                msg[f'{today} - Файл omx: ошибка при очистке атрибутов NAs'] = 2
+                msg[f'{today} - Файл omx: ошибка при очистке  NAs'] = 2
                 return msg
             
             for value in data:
@@ -2874,10 +2877,10 @@ class Filling_attribute_DevStudio():
                 
                 el1.append(object)
             tree.write(f'{path_to_devstudio}\\typical_prj.omx', pretty_print=True)
-            msg[f'{today} - Файл omx: атрибуты NAs добавлены'] = 1
+            msg[f'{today} - Файл omx: NAs добавлены'] = 1
             return msg
         except Exception:
-            msg[f'{today} - Файл omx: ошибка при добавлении атрибута NAs: {traceback.format_exc()}'] = 2
+            msg[f'{today} - Файл omx: ошибка при добавлении NAs: {traceback.format_exc()}'] = 2
             return msg
     def relayted_system_omx(self):
         msg = {}
@@ -2885,7 +2888,7 @@ class Filling_attribute_DevStudio():
             data = self.dop_function.connect_by_sql('ss', f'"id", "name"')
             msg_bool, el1, tree = self.dop_function.parser_omx('SSs')
             if msg_bool == 1: 
-                msg[f'{today} - Файл omx: ошибка при очистке атрибутов SSs'] = 2
+                msg[f'{today} - Файл omx: ошибка при очистке SSs'] = 2
                 return msg
 
             for value in data:
@@ -2907,10 +2910,10 @@ class Filling_attribute_DevStudio():
 
                 el1.append(object)
             tree.write(f'{path_to_devstudio}\\typical_prj.omx', pretty_print=True)
-            msg[f'{today} - Файл omx: атрибуты SSs добавлены'] = 1
+            msg[f'{today} - Файл omx: SSs добавлены'] = 1
             return msg
         except Exception:
-            msg[f'{today} - Файл omx: ошибка при добавлении атрибута SSs: {traceback.format_exc()}'] = 2
+            msg[f'{today} - Файл omx: ошибка при добавлении SSs: {traceback.format_exc()}'] = 2
             return msg
     def uts_omx(self):
         msg = {}
@@ -2918,7 +2921,7 @@ class Filling_attribute_DevStudio():
             data = self.dop_function.connect_by_sql('uts', f'"id", "tag", "name", "siren"')
             msg_bool, el1, tree = self.dop_function.parser_omx('UTSs')
             if msg_bool == 1: 
-                msg[f'{today} - Файл omx: ошибка при очистке атрибутов UTSs'] = 2
+                msg[f'{today} - Файл omx: ошибка при очистке UTSs'] = 2
                 return msg
 
             for value in data:
@@ -2949,10 +2952,10 @@ class Filling_attribute_DevStudio():
                 
                 el1.append(object)
             tree.write(f'{path_to_devstudio}\\typical_prj.omx', pretty_print=True)
-            msg[f'{today} - Файл omx: атрибуты UTSs добавлены'] = 1
+            msg[f'{today} - Файл omx: UTSs добавлены'] = 1
             return msg
         except Exception:
-            msg[f'{today} - Файл omx: ошибка при добавлении атрибута UTSs: {traceback.format_exc()}'] = 2
+            msg[f'{today} - Файл omx: ошибка при добавлении UTSs: {traceback.format_exc()}'] = 2
             return msg
     def upts_omx(self):
         msg = {}
@@ -2960,7 +2963,7 @@ class Filling_attribute_DevStudio():
             data = self.dop_function.connect_by_sql('upts', f'"id", "tag", "name", "location", "short_name"')
             msg_bool, el1, tree = self.dop_function.parser_omx('UPTSs')
             if msg_bool == 1: 
-                msg[f'{today} - Файл omx: ошибка при очистке атрибутов UPTSs'] = 2
+                msg[f'{today} - Файл omx: ошибка при очистке UPTSs'] = 2
                 return msg
 
             for value in data:
@@ -2989,10 +2992,10 @@ class Filling_attribute_DevStudio():
                 
                 el1.append(object)
             tree.write(f'{path_to_devstudio}\\typical_prj.omx', pretty_print=True)
-            msg[f'{today} - Файл omx: атрибуты UPTSs добавлены'] = 1
+            msg[f'{today} - Файл omx: UPTSs добавлены'] = 1
             return msg
         except Exception:
-            msg[f'{today} - Файл omx: ошибка при добавлении атрибута UPTSs: {traceback.format_exc()}'] = 2
+            msg[f'{today} - Файл omx: ошибка при добавлении UPTSs: {traceback.format_exc()}'] = 2
             return msg
     def ktpr_omx(self):
         msg = {}
@@ -3000,7 +3003,7 @@ class Filling_attribute_DevStudio():
             data = self.dop_function.connect_by_sql('ktpr', f'"id"')
             msg_bool, el1, tree = self.dop_function.parser_omx('KTPRs')
             if msg_bool == 1: 
-                msg[f'{today} - Файл omx: ошибка при очистке атрибутов KTPRs'] = 2
+                msg[f'{today} - Файл omx: ошибка при очистке KTPRs'] = 2
                 return msg
             number_group = 0
 
@@ -3018,10 +3021,10 @@ class Filling_attribute_DevStudio():
                 object.attrib['aspect'] = "unit.Library.PLC_Types.PLC"
                 el1.append(object)
             tree.write(f'{path_to_devstudio}\\typical_prj.omx', pretty_print=True)
-            msg[f'{today} - Файл omx: атрибуты KTPRs добавлены'] = 1
+            msg[f'{today} - Файл omx: KTPRs добавлены'] = 1
             return msg
         except Exception:
-            msg[f'{today} - Файл omx: ошибка при добавлении атрибута KTPRs: {traceback.format_exc()}'] = 2
+            msg[f'{today} - Файл omx: ошибка при добавлении KTPRs: {traceback.format_exc()}'] = 2
             return msg
     def ktprp_omx(self):
         msg = {}
@@ -3029,7 +3032,7 @@ class Filling_attribute_DevStudio():
             data = self.dop_function.connect_by_sql('ktprp', f'"id"')
             msg_bool, el1, tree = self.dop_function.parser_omx('KTPRs')
             if msg_bool == 1: 
-                msg[f'{today} - Файл omx: ошибка при очистке атрибутов KTPRs'] = 2
+                msg[f'{today} - Файл omx: ошибка при очистке KTPRs'] = 2
                 return msg
             number_group = 0
 
@@ -3047,10 +3050,10 @@ class Filling_attribute_DevStudio():
                     object.attrib['aspect'] = "unit.Library.PLC_Types.PLC"
                     el1.append(object)
             tree.write(f'{path_to_devstudio}\\typical_prj.omx', pretty_print=True)
-            msg[f'{today} - Файл omx: атрибуты KTPRPs добавлены'] = 1
+            msg[f'{today} - Файл omx: KTPRPs добавлены'] = 1
             return msg
         except Exception:
-            msg[f'{today} - Файл omx: ошибка при добавлении атрибута KTPRPs: {traceback.format_exc()}'] = 2
+            msg[f'{today} - Файл omx: ошибка при добавлении KTPRPs: {traceback.format_exc()}'] = 2
             return msg
     def ktpra_omx(self):
         msg = {}
@@ -3058,7 +3061,7 @@ class Filling_attribute_DevStudio():
             data = self.dop_function.connect_by_sql('ktpra', f'"id", "NA"')
             msg_bool, el1, tree = self.dop_function.parser_omx('KTPRAs')
             if msg_bool == 1: 
-                msg[f'{today} - Файл omx: ошибка при очистке атрибутов KTPRAs'] = 2
+                msg[f'{today} - Файл omx: ошибка при очистке KTPRAs'] = 2
                 return msg
 
             number_pumps_old = ''
@@ -3089,10 +3092,10 @@ class Filling_attribute_DevStudio():
                     object.append(group)
                 el1.append(object)
             tree.write(f'{path_to_devstudio}\\typical_prj.omx', pretty_print=True)
-            msg[f'{today} - Файл omx: атрибуты KTPRAs добавлены'] = 1
+            msg[f'{today} - Файл omx: KTPRAs добавлены'] = 1
             return msg
         except Exception:
-            msg[f'{today} - Файл omx: ошибка при добавлении атрибута KTPRAs: {traceback.format_exc()}'] = 2
+            msg[f'{today} - Файл omx: ошибка при добавлении KTPRAs: {traceback.format_exc()}'] = 2
             return msg
     def gmpna_omx(self):
         msg = {}
@@ -3100,7 +3103,7 @@ class Filling_attribute_DevStudio():
             data = self.dop_function.connect_by_sql('gmpna', f'"id", "NA"')
             msg_bool, el1, tree = self.dop_function.parser_omx('GMPNAs')
             if msg_bool == 1: 
-                msg[f'{today} - Файл omx: ошибка при очистке атрибутов GMPNAs'] = 2
+                msg[f'{today} - Файл omx: ошибка при очистке GMPNAs'] = 2
                 return msg
 
             number_pumps_old = ''
@@ -3131,10 +3134,10 @@ class Filling_attribute_DevStudio():
                     object.append(group)
                 el1.append(object)
             tree.write(f'{path_to_devstudio}\\typical_prj.omx', pretty_print=True)
-            msg[f'{today} - Файл omx: атрибуты GMPNAs добавлены'] = 1
+            msg[f'{today} - Файл omx: GMPNAs добавлены'] = 1
             return msg
         except Exception:
-            msg[f'{today} - Файл omx: ошибка при добавлении атрибута GMPNAs: {traceback.format_exc()}'] = 2
+            msg[f'{today} - Файл omx: ошибка при добавлении GMPNAs: {traceback.format_exc()}'] = 2
             return msg
     def pi_omx(self):
         msg = {}
@@ -3142,7 +3145,7 @@ class Filling_attribute_DevStudio():
             data = self.dop_function.connect_by_sql('pi', f'"id", "tag", "location", "name"')
             msg_bool, el1, tree = self.dop_function.parser_omx('PIs')
             if msg_bool == 1: 
-                msg[f'{today} - Файл omx: ошибка при очистке атрибутов PIs'] = 2
+                msg[f'{today} - Файл omx: ошибка при очистке PIs'] = 2
                 return msg
 
             for value in data:
@@ -3173,10 +3176,10 @@ class Filling_attribute_DevStudio():
 
                 el1.append(object)
             tree.write(f'{path_to_devstudio}\\typical_prj.omx', pretty_print=True)
-            msg[f'{today} - Файл omx: атрибуты PIs добавлены'] = 1
+            msg[f'{today} - Файл omx: PIs добавлены'] = 1
             return msg
         except Exception:
-            msg[f'{today} - Файл omx: ошибка при добавлении атрибута PIs: {traceback.format_exc()}'] = 2
+            msg[f'{today} - Файл omx: ошибка при добавлении PIs: {traceback.format_exc()}'] = 2
             return msg
     def pz_omx(self):
         msg = {}
@@ -3184,7 +3187,7 @@ class Filling_attribute_DevStudio():
             data = self.dop_function.connect_by_sql('pz', f'"id", "name", "short_name"')
             msg_bool, el1, tree = self.dop_function.parser_omx('PZs')
             if msg_bool == 1: 
-                msg[f'{today} - Файл omx: ошибка при очистке атрибутов PZs'] = 2
+                msg[f'{today} - Файл omx: ошибка при очистке PZs'] = 2
                 return msg
 
             for value in data:
@@ -3208,10 +3211,10 @@ class Filling_attribute_DevStudio():
                 
                 el1.append(object)
             tree.write(f'{path_to_devstudio}\\typical_prj.omx', pretty_print=True)
-            msg[f'{today} - Файл omx: атрибуты PZs добавлены'] = 1
+            msg[f'{today} - Файл omx: PZs добавлены'] = 1
             return msg
         except Exception:
-            msg[f'{today} - Файл omx: ошибка при добавлении атрибута PZs: {traceback.format_exc()}'] = 2
+            msg[f'{today} - Файл omx: ошибка при добавлении PZs: {traceback.format_exc()}'] = 2
             return msg
     
     def mklogic_AI_AO_atrib(self, variable_mod, type_mod, prefix):
@@ -3330,7 +3333,7 @@ class Filling_attribute_DevStudio():
         try:
             msg_bool, el1, tree = self.dop_function.parser_diag_omx(variable_mod)
             if msg_bool == 1: 
-                msg[f'{today} - Файл omx: ошибка при очистке атрибутов Diag.{variable_mod}'] = 2
+                msg[f'{today} - Файл omx: ошибка при очистке Diag.{variable_mod}'] = 2
                 return msg
             
             data_hw = self.hardware_data(type_mod)
@@ -3368,17 +3371,17 @@ class Filling_attribute_DevStudio():
 
                 el1.append(object)
             tree.write(f'{path_to_devstudio}\\typical_prj.omx', pretty_print=True)
-            msg[f'{today} - Файл omx: атрибуты Diag.{variable_mod} добавлены'] = 1
+            msg[f'{today} - Файл omx: Diag.{variable_mod} добавлены'] = 1
             return msg
         except Exception:
-            msg[f'{today} - Файл omx: ошибка при добавлении атрибута Diag.{variable_mod}: {traceback.format_exc()}'] = 2   
+            msg[f'{today} - Файл omx: ошибка при добавлении Diag.{variable_mod}: {traceback.format_exc()}'] = 2   
             return msg
     def rackstate_omx(self):
             msg = {}
             try:
                 msg_bool, el1, tree = self.dop_function.parser_diag_omx('RackStates')
                 if msg_bool == 1: 
-                    msg[f'{today} - Файл omx: ошибка при очистке атрибутов Diag.RackStates'] = 2
+                    msg[f'{today} - Файл omx: ошибка при очистке Diag.RackStates'] = 2
                     return msg
                 
                 cursor = db.cursor()
@@ -3395,10 +3398,10 @@ class Filling_attribute_DevStudio():
                     
                     el1.append(object)
                 tree.write(f'{path_to_devstudio}\\typical_prj.omx', pretty_print=True)
-                msg[f'{today} - Файл omx: атрибуты Diag.RackStates добавлены'] = 1
+                msg[f'{today} - Файл omx: Diag.RackStates добавлены'] = 1
                 return msg
             except Exception:
-                msg[f'{today} - Файл omx: ошибка при добавлении атрибута Diag.RackStates: {traceback.format_exc()}'] = 2   
+                msg[f'{today} - Файл omx: ошибка при добавлении Diag.RackStates: {traceback.format_exc()}'] = 2   
                 return msg     
     def colorscheme_di(self):
         link_path = f'{path_to_devstudio}\\AttributesMapColorScheme.xml'
@@ -5994,6 +5997,7 @@ class Filling_CodeSys():
             return msg  
     def cfg_pic(self):
         msg = {}
+        list_pic = []
         try:
             data_pic   = self.dop_function.connect_by_sql('pic'  , f'''"id", "name", "frame", "Pic"''')
             data_ai    = self.dop_function.connect_by_sql('ai'   , f'''"id", "name", "Pic"''')
@@ -6003,11 +6007,11 @@ class Filling_CodeSys():
             data_ss    = self.dop_function.connect_by_sql('ss'   , f'''"id", "name", "number_array_stateRSreq_1", "number_array_stateRSreq_2", "Pic"''')
             data_ktpr  = self.dop_function.connect_by_sql('ktpr' , f'''"id", "name", "Pic"''')
             data_ktpra = self.dop_function.connect_by_sql('ktpra', f'''"id", "name", "Pic"''')
-            data_hw    = self.dop_function.connect_by_sql('hardware', f'''"id", "variable", "uso", "Pic"''')
+            data_hw    = self.dop_function.connect_by_sql('hardware', f'''"id", "variable", "uso", "type_1", "Pic"''')
+            data_tm_dp = self.dop_function.connect_by_sql('tm_dp', f'''"name", "link_to_link_signal", "Pic"''')
 
             # Проверяем файл на наличие в папке, если есть удаляем и создаем новый
             write_file = self.file_check('cfg_PIC')
-            list_pic = []
 
             for info_pic in data_pic:
                 id_pic   = info_pic[0]
@@ -6147,7 +6151,7 @@ class Filling_CodeSys():
                     pic_ss  = value[4]
 
                     if pic_ss is None: continue
-                    s_pic = str(pic_pic).split(';') 
+                    s_pic = str(pic_ss).split(';') 
                     
                     for pic_num in s_pic:
                         if str(pic_num) == str(id_pic):
@@ -6161,11 +6165,26 @@ class Filling_CodeSys():
                                                  value_avar = f"BOOL_TO_UDINT(NOT stateDIAG.SS[{id_ss}].bits.linkOk)",
                                                  name = name))
                 
+                for value in data_tm_dp:
+                    name    = value[0]
+                    link    = value[1]
+                    pic_tmdp= value[2]
+
+                    if pic_tmdp is None: continue
+                    s_pic = str(pic_tmdp).split(';') 
+                    
+                    for pic_num in s_pic:
+                        if str(pic_num) == str(id_pic):
+                            list_pic.append(dict(id_pic = id_pic,
+                                                 name_pic = name_pic,
+                                                 value_warn = None,
+                                                 value_avar = f"TM_DP_linkOk.{str(link).split('.state.')[1]}",
+                                                 name = name))
+                
                 for value in data_hw:
-                    id_hw  = value[0]
                     var_hw = value[1]
                     uso    = value[2]
-                    pic_hw = value[3]
+                    pic_hw = value[4]
 
                     if pic_hw is None: continue
                     s_pic = str(pic_hw).split(';') 
@@ -6177,6 +6196,28 @@ class Filling_CodeSys():
                                                  value_warn = None,
                                                  value_avar = f"{var_hw}",
                                                  name = uso))
+                
+                # Сеть УСО
+                if self.dop_function.str_find(str(frame).lower(), {'net_uso'}) or self.dop_function.str_find(str(name_pic).lower(), {'сеть усо'}):
+                    count_mn = 0
+                    count_cn = 0
+                    for value in data_hw:
+                        var_hw = value[1]
+                        uso    = value[2]
+                        type_1 = value[3]
+
+                        if type_1 == 'MK-546-010':
+                            count_mn += 1
+                            value_avar = f"BOOL_TO_UDINT(stateDIAG.diagMN[{count_mn}].ports_State.bits.eP1NotLink)+\nBOOL_TO_UDINT(stateDIAG.diagMN[{count_mn}].ports_State.bits.eP2NotLink)"
+                        if type_1 == 'MK-545-010':
+                            count_cn += 1
+                            value_avar = f"BOOL_TO_UDINT(stateDIAG.diagCN[{count_cn}].ports_State.bits.eP1NotLink)+\nBOOL_TO_UDINT(stateDIAG.diagCN[{count_cn}].ports_State.bits.eP2NotLink)"
+                        
+                        list_pic.append(dict(id_pic = id_pic,
+                                             name_pic = name_pic,
+                                             value_warn = None,
+                                             value_avar = value_avar,
+                                             name = uso))
 
             for i in list_pic:
                 print(i)
@@ -6480,7 +6521,6 @@ class Filling_CodeSys():
         except Exception:
             msg[f'{today} - Файл СУ: ошибка при заполнении cfg_ai_sim: {traceback.format_exc()}'] = 2
             return msg  
-
 
 # Work with filling in the table 
 class Filling_HardWare():
