@@ -1087,6 +1087,12 @@ class Widget(QWidget):
         b_export_sql_tabl.resize(120,23)
         b_export_sql_tabl.move(800, 115) 
         b_export_sql_tabl.clicked.connect(self.write_in_sql_tabl)
+        b_synh_sql_tabl = QPushButton('Синхронизация', tab_4)
+        b_synh_sql_tabl.setStyleSheet("border: 1px solid; border-radius: 3px;")
+        b_synh_sql_tabl.setToolTip('''Схема: objects\nСинхронизация данных базы проекта с базой разработкой''')
+        b_synh_sql_tabl.resize(120,23)
+        b_synh_sql_tabl.move(950, 115) 
+        b_synh_sql_tabl.clicked.connect(self.synh_in_sql)
 
         # ------------------ВУ------------------
         self.list_gen_vu = []
@@ -2046,6 +2052,9 @@ class Widget(QWidget):
         self.logs_msg('default', 1, msg, True)
     def write_in_sql_tabl(self):
         msg = self.gen_sql.write_in_sql_tabl(self.list_gen_tabl, True)
+        self.logs_msg('default', 1, msg, True)
+    def synh_in_sql(self):
+        msg = self.gen_sql.synh_in_sql(self.list_gen_tabl)
         self.logs_msg('default', 1, msg, True)
     # ------------------Окно редактирования------------------
     # Choose table

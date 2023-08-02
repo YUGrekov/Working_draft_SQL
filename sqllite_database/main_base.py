@@ -967,6 +967,47 @@ class Generate_database_SQL():
                     msg.update(self.gen_table_pumps(flag_write_db, 'gmpna', 'TblPumpreadinesesSetpoints'))
                     continue
             return msg
+    def synh_in_sql(self, list_tabl):
+            msg = {}
+            if len(list_tabl) == 0: return
+            for tabl in list_tabl: 
+                if tabl == 'AI_tabl': 
+                    msg.update(self.synh_tabl_ai())
+                    continue
+                # if tabl == 'ZD_tabl': 
+                #     msg.update(self.gen_table_general(flag_write_db, 'zd_tm', 'TblValveTimeSetpoints'))
+                #     continue
+                # if tabl == 'VS_tabl': 
+                #     msg.update(self.gen_table_general(flag_write_db, 'vs_tm', 'TblAuxSysTimeSetpoints'))
+                #     continue
+                # if tabl == 'VSGRP_tabl': 
+                #     msg.update(self.gen_table_general(flag_write_db, 'vsgrp_tm', 'TblAuxsysgrouptimeSetpoints'))
+                #     continue
+                # if tabl == 'Pump_tabl': 
+                #     msg.update(self.gen_table_general(flag_write_db, 'umpna_tm', 'TblPumptimeSetpoints'))
+                #     continue
+                # if tabl == 'UTS_tabl': 
+                #     msg.update(self.gen_table_general(flag_write_db, 'uts_tm', 'TblSignalingdevicetimeSetpoints'))
+                #     continue
+                # if tabl == 'Prj_tabl': 
+                #     msg.update(self.gen_table_general(flag_write_db, 'prj_tm', 'TblProjecttimeSetpoints'))
+                #     continue
+                # if tabl == 'PZ_tabl': 
+                #     msg.update(self.gen_table_general(flag_write_db, 'pz_tm', 'TblFirezonetimeSetpoints'))
+                #     continue
+                # if tabl == 'PumpTime_tabl': 
+                #     msg.update(self.gen_table_general(flag_write_db, 'umpna_narab_tm', 'TblOpTimeSetpoints'))
+                #     continue
+                # if tabl == 'KTPR_tabl': 
+                #     msg.update(self.gen_table_ktpr(flag_write_db))
+                #     continue
+                # if tabl == 'KTPRA_tabl': 
+                #     msg.update(self.gen_table_pumps(flag_write_db, 'ktpra', 'TblPumpDefencesSetpoints'))
+                #     continue
+                # if tabl == 'GMPNA_tabl': 
+                #     msg.update(self.gen_table_pumps(flag_write_db, 'gmpna', 'TblPumpreadinesesSetpoints'))
+                #     continue
+            return msg
     # msg
     def gen_msg_ai(self, flag_write_db):
         msg = {}
@@ -1558,9 +1599,10 @@ class Generate_database_SQL():
                 try   : SetpointGroupId = cursor.fetchall()[0][0]
                 except: SetpointGroupId = 'NULL'
                 # IsOilPressure
-                IsOilPressure = 'NULL' if IsOilPressure is None else IsOilPressure
+                IsOilPressure = False if IsOilPressure is None else IsOilPressure
                 # IsPumpVibration
-                IsPumpVibration = 'NULL' if IsPumpVibration is None else IsPumpVibration
+                IsPumpVibration = False if IsPumpVibration is None else IsPumpVibration
+                if IsPumpVibration == 1: IsPumpVibration = True
                 # IsInterface
                 IsInterface = False
                 # IsBackup
@@ -2083,7 +2125,36 @@ class Generate_database_SQL():
                 msg[f'{today} - TblPumpReadinesesSetpoints: ошибка записи в файл: {traceback.format_exc()}'] = 2
         msg[f'{today} - TblPumpReadinesesSetpoints: генерация завершена!'] = 1
         return(msg)
+    # synh_tabl
+    def synh_tabl_ai(self):
+        cursor = db.cursor()
+        cursor_prj = db_prj.cursor()
+        cursor_prj.execute(f"""SELECT "id", "tag", "name", "egu", "precision", "lolimfield", "hilimfield", "lolimeng", "hilimeng", "lolim", "hilim", 
+                              "min6", "min5", "min4", "min3", "min2", "min1", "max1", "max2", "max3", "max4", "max5", "max6", 
+                              "histeresis", "deltat", "ctrl", "msgmask", "sigmask", "ctrlmask", "rulename", "timefilter" FROM objects.tblanalogs ORDER BY Id""")
+        ai_prj = cursor_prj.fetchall()
+        cursor.execute(f"""SELECT "id", "tag", "name", "Egu", "Precision", "LoLimField", "HiLimField", "LoLimEng", "HiLimEng", "LoLim", "HiLim", 
+                          "Min6", "Min5", "Min4", "Min3", "Min2", "Min1", "Max1", "Max2", "Max3", "Max4", "Max5", "Max6", 
+                          "Histeresis", "DeltaT", "MsgMask", "SigMask", "CtrlMask", "RuleName", "TimeFilter" FROM "ai" ORDER BY Id""")
+        ai_design = cursor.fetchall()
 
+        for i in ai_prj:
+            id_prj   = i[0]
+            tag_prj  = i[1]
+            name_prj = i[2]
+
+            self.dop_function.connect_by_sql_condition("ai", )
+
+
+
+
+
+
+
+
+
+
+    
 # Filling attribute DevStudio
 class Filling_attribute_DevStudio():
     def __init__(self):
@@ -5996,6 +6067,18 @@ class Filling_CodeSys():
             msg[f'{today} - Файл СУ: ошибка при заполнении cfg_diag, gv_diag: {traceback.format_exc()}'] = 2
             return msg  
     def cfg_pic(self):
+        def cycle_list_pic(cfg_txt, pic_int, id_pic, event, name_pic, sort_event):
+            all_symbol = 0
+            count_znak = 0
+            for i in list_pic: 
+                if i['id_pic'] == id_pic: 
+                    if i[sort_event] is None: continue
+                    all_symbol += 1
+
+            cfg_txt = cfg_txt + f"(* Pic[{id_pic}] - {name_pic} *)\n"
+            cfg_txt = cfg_txt + f"ctrlPic[{id_pic}].{event} :=\n"
+            pic_int = id_pic
+            return cfg_txt, pic_int, count_znak, all_symbol
         msg = {}
         list_pic = []
         try:
@@ -6012,6 +6095,7 @@ class Filling_CodeSys():
 
             # Проверяем файл на наличие в папке, если есть удаляем и создаем новый
             write_file = self.file_check('cfg_PIC')
+            cfg_txt    = ''
 
             for info_pic in data_pic:
                 id_pic   = info_pic[0]
@@ -6033,7 +6117,6 @@ class Filling_CodeSys():
                                                  value_warn = f"AIcountWarn[{id_ai}]",
                                                  value_avar = f"AIcountAvar[{id_ai}]",
                                                  name = name))
-                    
                 for value in data_di:
                     id_di  = value[0]
                     name   = value[1]
@@ -6061,7 +6144,6 @@ class Filling_CodeSys():
                                                  value_warn = di_warn,
                                                  value_avar = di_avar,
                                                  name       = name))
-                
                 for value in data_zd:
                     id_zd  = value[0]
                     name   = value[1]
@@ -6077,7 +6159,6 @@ class Filling_CodeSys():
                                                  value_warn = f"BOOL_TO_UDINT(stateZD[{id_zd}].state2.bits.NeispravVU)",
                                                  value_avar = f"BOOL_TO_UDINT(stateZD[{id_zd}].state1.bits.Avar)+\nBOOL_TO_UDINT(stateZD[{id_zd}].state1.bits.NOT_EC)",
                                                  name = name))
-
                 for value in data_vs:
                     id_vs  = value[0]
                     name   = value[1]
@@ -6093,7 +6174,6 @@ class Filling_CodeSys():
                                                  value_warn = None,
                                                  value_avar = f"BOOL_TO_UDINT(stateVS[{id_vs}].state1.bits.NEISPRAV)+\nBOOL_TO_UDINT(stateVS[{id_vs}].state1.bits.MPC_CEPI_VKL)+\nBOOL_TO_UDINT(NOT stateVS[{id_vs}].state1.bits.EC)",
                                                  name = name))
-                
                 for value in data_ktpra:
                     id_ktpra  = value[0]
                     name      = value[1]
@@ -6109,7 +6189,6 @@ class Filling_CodeSys():
                                                  value_warn = None,
                                                  value_avar = f"BOOL_TO_UDINT(state{id_ktpra}.state.bits.F AND (NOT state{id_ktpra}.state.bits.M))",
                                                  name = name))
-               
                 for value in data_ktpr:
                     id_ktpr  = value[0]
                     name     = value[1]
@@ -6124,8 +6203,7 @@ class Filling_CodeSys():
                                                  name_pic = name_pic,
                                                  value_warn = None,
                                                  value_avar = f"BOOL_TO_UDINT((state{id_ktpr}.state.bits.F) AND (NOT state{id_ktpr}.state.bits.M))",
-                                                 name = name))
-                            
+                                                 name = name))       
                 for value in data_pic:
                     id_pic_d = value[0]
                     name     = value[1]
@@ -6141,8 +6219,7 @@ class Filling_CodeSys():
                                                      name_pic = name_pic,
                                                      value_warn = f"ctrlPic[{id_pic_d}].countWarn",
                                                      value_avar = f"ctrlPic[{id_pic_d}].countAvar",
-                                                     name = name))
-                    
+                                                     name = name)) 
                 for value in data_ss:
                     id_ss   = value[0]
                     name    = value[1]
@@ -6164,7 +6241,6 @@ class Filling_CodeSys():
                                                  value_warn = ss_warn,
                                                  value_avar = f"BOOL_TO_UDINT(NOT stateDIAG.SS[{id_ss}].bits.linkOk)",
                                                  name = name))
-                
                 for value in data_tm_dp:
                     name    = value[0]
                     link    = value[1]
@@ -6180,7 +6256,6 @@ class Filling_CodeSys():
                                                  value_warn = None,
                                                  value_avar = f"TM_DP_linkOk.{str(link).split('.state.')[1]}",
                                                  name = name))
-                
                 for value in data_hw:
                     var_hw = value[1]
                     uso    = value[2]
@@ -6196,7 +6271,6 @@ class Filling_CodeSys():
                                                  value_warn = None,
                                                  value_avar = f"{var_hw}",
                                                  name = uso))
-                
                 # Сеть УСО
                 if self.dop_function.str_find(str(frame).lower(), {'net_uso'}) or self.dop_function.str_find(str(name_pic).lower(), {'сеть усо'}):
                     count_mn = 0
@@ -6219,9 +6293,35 @@ class Filling_CodeSys():
                                              value_avar = value_avar,
                                              name = uso))
 
-            for i in list_pic:
-                print(i)
-                #write_file.write(cfg_txt)
+            cfg_txt = cfg_txt + '(* Желтые рамки *)\n'
+            pic_int = 0
+            for data in list_pic:
+                id_pic     = data['id_pic']
+                name_pic   = data['name_pic']
+                value_warn = data['value_warn']
+                name       = data['name']
+                if value_warn is None: continue
+                if pic_int != id_pic:
+                    cfg_txt, pic_int, count_znak, all_symbol = cycle_list_pic(cfg_txt, pic_int, id_pic, 'countWarn', name_pic, 'value_warn')
+                count_znak += 1
+                znak = ';' if count_znak == all_symbol else '+'
+                cfg_txt = cfg_txt + f"  {value_warn} {znak}           (* {name} *)\n"
+
+            cfg_txt = cfg_txt + '(* Красные рамки *)\n'
+            pic_int = 0
+            for data in list_pic:
+                id_pic     = data['id_pic']
+                name_pic   = data['name_pic']
+                value_avar = data['value_avar']
+                name       = data['name']
+                if value_avar is None: continue
+                if pic_int != id_pic:
+                    cfg_txt, pic_int, count_znak, all_symbol = cycle_list_pic(cfg_txt, pic_int, id_pic, 'countAvar', name_pic, 'value_avar')
+                count_znak += 1
+                znak = ';' if count_znak == all_symbol else '+'
+                cfg_txt = cfg_txt + f"  {value_avar} {znak}           (* {name} *)\n"
+
+            write_file.write(cfg_txt)
             write_file.close()
             msg[f'{today} - Файл СУ: cfg_pic заполнен'] = 1
             return msg
