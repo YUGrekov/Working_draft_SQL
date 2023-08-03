@@ -8,7 +8,7 @@ if defined _OLD_CODEPAGE (
     "%SystemRoot%\System32\chcp.com" 65001 > nul
 )
 
-set VIRTUAL_ENV=D:\Development\Py_development\Generator_Exel\venv
+set VIRTUAL_ENV=D:\Development\New_SQL_generator\Working_draft_SQL\venv
 
 if not defined PROMPT set PROMPT=$P$G
 

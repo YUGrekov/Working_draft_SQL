@@ -3,6 +3,7 @@ import openpyxl as wb
 from lxml import etree
 from datetime import datetime
 import re, traceback, os, codecs, uuid, math
+import numpy as geek
 import psycopg2
 today = datetime.now()
 
@@ -228,7 +229,15 @@ class General_functions():
             list_tabl.append(name[0])
         return list_tabl
     # ВУ
-    # Подключение к SQL
+    # Подключение к SQL - база проекта
+    def connect_by_sql_prj(self, table_used, column):
+        try:
+            cursor = db_prj.cursor()
+            cursor.execute(f'''SELECT {column} FROM {table_used} ORDER BY id''')
+        except Exception:
+            return 
+        return cursor.fetchall()
+    # Подключение к SQL - база разработки
     def connect_by_sql(self, table_used, column):
         try:
             cursor = db.cursor()
@@ -268,6 +277,14 @@ class General_functions():
         except Exception:
             return 
         return cursor.fetchall()[0][0]
+    # Обновление строки
+    def update_row(self, tabl_used, tag, column_update, id_):
+        cursor = db.cursor()
+        cursor.execute(f"""UPDATE {tabl_used}
+                           SET "{column_update}"='{tag}' 
+                           WHERE "id"={id_}""")
+        return f'{column_update}-{tag}, '
+        
     # Создание атрибутов
     def new_attr(self, obj, type, value):
          atrb = etree.Element("attribute")
@@ -2127,30 +2144,87 @@ class Generate_database_SQL():
         return(msg)
     # synh_tabl
     def synh_tabl_ai(self):
-        cursor = db.cursor()
-        cursor_prj = db_prj.cursor()
-        cursor_prj.execute(f"""SELECT "id", "tag", "name", "egu", "precision", "lolimfield", "hilimfield", "lolimeng", "hilimeng", "lolim", "hilim", 
-                              "min6", "min5", "min4", "min3", "min2", "min1", "max1", "max2", "max3", "max4", "max5", "max6", 
-                              "histeresis", "deltat", "ctrl", "msgmask", "sigmask", "ctrlmask", "rulename", "timefilter" FROM objects.tblanalogs ORDER BY Id""")
-        ai_prj = cursor_prj.fetchall()
-        cursor.execute(f"""SELECT "id", "tag", "name", "Egu", "Precision", "LoLimField", "HiLimField", "LoLimEng", "HiLimEng", "LoLim", "HiLim", 
-                          "Min6", "Min5", "Min4", "Min3", "Min2", "Min1", "Max1", "Max2", "Max3", "Max4", "Max5", "Max6", 
-                          "Histeresis", "DeltaT", "MsgMask", "SigMask", "CtrlMask", "RuleName", "TimeFilter" FROM "ai" ORDER BY Id""")
-        ai_design = cursor.fetchall()
+        def notation(value):
+            s, new_s = '', ''
+            while value > 0:
+                s = str(value % 2) + s
+                value //= 2
+            if len(s) < 16:
+                for i in range(16 - len(s)):
+                    s = '0' + s
 
-        for i in ai_prj:
-            id_prj   = i[0]
-            tag_prj  = i[1]
-            name_prj = i[2]
+            for i in range(1, len(s) + 1):
+                new_s += s[i - 1]
+                if (i % 4 == 0) and (i != 16): 
+                    new_s += '_'
+            return new_s
+        msg = {}
+        try:
+            ai_prj = self.dop_function.connect_by_sql_prj("objects.tblanalogs", 
+                                                          '''"id", "tag", "name", "egu", "precision", "lolimfield", "hilimfield", "lolimeng", "hilimeng", "lolim", "hilim", 
+                                                             "min6", "min5", "min4", "min3", "min2", "min1", "max1", "max2", "max3", "max4", "max5", "max6", 
+                                                             "histeresis", "deltat", "msgmask", "sigmask", "ctrlmask", "rulename", "timefilter"''')
+            for prj in ai_prj:
+                id_prj, tag_prj, name_prj  = prj[0], prj[1], prj[2]
+                data = self.dop_function.connect_by_sql_condition("ai", '''"Egu", "Precision", "LoLimField", "HiLimField", "LoLimEng", "HiLimEng", "LoLim", "HiLim", 
+                                                                        "Min6", "Min5", "Min4", "Min3", "Min2", "Min1", "Max1", "Max2", "Max3", "Max4", "Max5", "Max6", 
+                                                                        "Histeresis", "DeltaT", "MsgMask", "SigMask", "CtrlMask", "RuleName", "TimeFilter"''',
+                                                                  f'''"id"={id_prj} AND "tag"='{tag_prj}' AND "name"='{name_prj}' ''')
+                if len(data) == 0: continue   
+                value = data[0]
+                    
+                egu, precision, lolimfield, hilimfield, lolimeng, hilimeng, lolim, hilim = prj[3], prj[4], prj[5], prj[6], prj[7], prj[8], prj[9], prj[10]
+                min6, min5, min4, min3, min2, min1, max1, max2, max3, max4, max5 = prj[11], prj[12], prj[13], prj[14], prj[15], prj[16], prj[17], prj[18], prj[19], prj[20], prj[21]
+                max6, histeresis, deltat, msgmask, sigmask, ctrlmask, rulename, timefilter = prj[22], prj[23], prj[24], prj[25], prj[26], prj[27], prj[28], prj[29]
+                
+                pred_msg = ''
+                if egu        != value[0] : pred_msg += self.dop_function.update_row("ai", egu, "Egu", id_prj)
+                if precision  != value[1] : pred_msg += self.dop_function.update_row("ai", precision, "Precision", id_prj)
+                if lolimfield != value[2] : pred_msg += self.dop_function.update_row("ai", lolimfield, "LoLimField", id_prj)
+                if hilimfield != value[3] : pred_msg += self.dop_function.update_row("ai", hilimfield, "HiLimField", id_prj)
+                if lolimeng   != value[4] : pred_msg += self.dop_function.update_row("ai", lolimeng, "LoLimEng", id_prj)
+                if hilimeng   != value[5] : pred_msg += self.dop_function.update_row("ai", hilimeng, "HiLimEng", id_prj)
+                if lolim      != value[6] : pred_msg += self.dop_function.update_row("ai", lolim, "LoLim", id_prj)
+                if hilim      != value[7] : pred_msg += self.dop_function.update_row("ai", hilim, "HiLim", id_prj)
+                if min6       != value[8] : pred_msg += self.dop_function.update_row("ai", min6, "Min6", id_prj)
+                if min5       != value[9] : pred_msg += self.dop_function.update_row("ai", min5, "Min5", id_prj)
+                if min4       != value[10]: pred_msg += self.dop_function.update_row("ai", min4, "Min4", id_prj)
+                if min3       != value[11]: pred_msg += self.dop_function.update_row("ai", min3, "Min3", id_prj)
+                if min2       != value[12]: pred_msg += self.dop_function.update_row("ai", min2, "Min2", id_prj)
+                if min1       != value[13]: pred_msg += self.dop_function.update_row("ai", min1, "Min1", id_prj)
+                if max1       != value[14]: pred_msg += self.dop_function.update_row("ai", max1, "Max1", id_prj)
+                if max2       != value[15]: pred_msg += self.dop_function.update_row("ai", max2, "Max2", id_prj)
+                if max3       != value[16]: pred_msg += self.dop_function.update_row("ai", max3, "Max3", id_prj)
+                if max4       != value[17]: pred_msg += self.dop_function.update_row("ai", max4, "Max4", id_prj)
+                if max5       != value[18]: pred_msg += self.dop_function.update_row("ai", max5, "Max5", id_prj)
+                if max6       != value[19]: pred_msg += self.dop_function.update_row("ai", max6, "Max6", id_prj)
+                if histeresis != value[20]: pred_msg += self.dop_function.update_row("ai", histeresis, "Histeresis", id_prj)
+                if deltat     != value[21]: pred_msg += self.dop_function.update_row("ai", deltat, "DeltaT", id_prj)
+                if timefilter != value[26]: pred_msg += self.dop_function.update_row("ai", timefilter, "TimeFilter", id_prj)
 
-            self.dop_function.connect_by_sql_condition("ai", )
-
-
-
-
-
-
-
+                # rulename
+                sp_rules = self.dop_function.connect_by_sql("sp_rules", '''"rule_name", "name_rules"''')
+                for rule in sp_rules:
+                    if str(rule[0]) == rulename:
+                        name_rules = rule[1]
+                        break
+                if name_rules != value[25]: pred_msg += self.dop_function.update_row("ai", name_rules, "RuleName", id_prj) 
+                # msgmask
+                msgmask_bin = notation(msgmask)
+                if msgmask_bin != value[22]: pred_msg += self.dop_function.update_row("ai", msgmask_bin, "MsgMask", id_prj)
+                # sigmask
+                sigmask_bin = notation(sigmask)
+                if sigmask_bin != value[23]: pred_msg += self.dop_function.update_row("ai", sigmask_bin, "SigMask", id_prj)
+                # ctrlmask
+                ctrlmask_bin = notation(ctrlmask)
+                if ctrlmask_bin != value[24]: pred_msg += self.dop_function.update_row("ai", ctrlmask_bin, "CtrlMask", id_prj)
+                if pred_msg != '': msg[f'{today} - Update: {id_prj}, {name_prj}: {pred_msg}'] = 3
+        except Exception:
+            msg[f'{today} - TblAnalogs: ошибка синхронизации: {traceback.format_exc()}'] = 2
+            return msg
+        
+        msg[f'{today} - TblAnalogs: синхронизация завершена!'] = 1
+        return(msg)
 
 
 
