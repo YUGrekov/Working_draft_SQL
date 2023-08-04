@@ -991,15 +991,15 @@ class Generate_database_SQL():
                 if tabl == 'AI_tabl': 
                     msg.update(self.synh_tabl_ai())
                     continue
-                # if tabl == 'ZD_tabl': 
-                #     msg.update(self.gen_table_general(flag_write_db, 'zd_tm', 'TblValveTimeSetpoints'))
-                #     continue
-                # if tabl == 'VS_tabl': 
-                #     msg.update(self.gen_table_general(flag_write_db, 'vs_tm', 'TblAuxSysTimeSetpoints'))
-                #     continue
-                # if tabl == 'VSGRP_tabl': 
-                #     msg.update(self.gen_table_general(flag_write_db, 'vsgrp_tm', 'TblAuxsysgrouptimeSetpoints'))
-                #     continue
+                if tabl == 'ZD_tabl': 
+                    msg.update(self.synh_tabl('tblvalvetimesetpoints', 'zd_tm', 'TblValveTimeSetPoints'))
+                    continue
+                if tabl == 'VS_tabl': 
+                    msg.update(self.synh_tabl('tblauxsystimesetpoints', 'vs_tm', 'TblAuxsysTimeSetPoints'))
+                    continue
+                if tabl == 'VSGRP_tabl': 
+                    msg.update(self.synh_tabl('tblauxsysgrouptimesetpoints', 'vsgrp_tm', 'TblAuxsysgrouptimeSetpoints'))
+                    continue
                 # if tabl == 'Pump_tabl': 
                 #     msg.update(self.gen_table_general(flag_write_db, 'umpna_tm', 'TblPumptimeSetpoints'))
                 #     continue
@@ -2218,17 +2218,44 @@ class Generate_database_SQL():
                 # ctrlmask
                 ctrlmask_bin = notation(ctrlmask)
                 if ctrlmask_bin != value[24]: pred_msg += self.dop_function.update_row("ai", ctrlmask_bin, "CtrlMask", id_prj)
-                if pred_msg != '': msg[f'{today} - Update: {id_prj}, {name_prj}: {pred_msg}'] = 3
+                if pred_msg != '': msg[f'{today} - Изменения: {id_prj}, {name_prj}: {pred_msg}'] = 3
         except Exception:
             msg[f'{today} - TblAnalogs: ошибка синхронизации: {traceback.format_exc()}'] = 2
             return msg
         
         msg[f'{today} - TblAnalogs: синхронизация завершена!'] = 1
         return(msg)
+    def synh_tabl(self, tbl_prj, tbl_dev, sign):
+        msg = {}
+        try:
+            tbl = self.dop_function.connect_by_sql_prj(f"objects.{tbl_prj}", '''"id", "tag", "name", "source", "value", "rulename"''')
+            for prj in tbl:
+                id_prj, tag_prj, name_prj, source_prj, value_prj, rulename_prj  = prj[0], prj[1], prj[2], prj[3], prj[4], prj[5]
+                data = self.dop_function.connect_by_sql_condition(f"{tbl_dev}", '''"variable", "value_ust", "rule_map_ust"''',
+                                                                  f'''"id"={id_prj} AND "tag"='{tag_prj}' AND "name"='{name_prj}' ''')
+                if len(data) == 0: continue   
+                value = data[0]
+                
+                pred_msg = ''
+                if source_prj != value[0]: pred_msg += self.dop_function.update_row(f"{tbl_dev}", source_prj, "variable", id_prj)
+                if value_prj  != value[1]: pred_msg += self.dop_function.update_row(f"{tbl_dev}", value_prj, "value_ust", id_prj)
+
+                # rulename
+                sp_rules = self.dop_function.connect_by_sql("sp_rules", '''"rule_name", "name_rules"''')
+                for rule in sp_rules:
+                    if str(rule[0]) == rulename_prj:
+                        name_rules = rule[1]
+                        break
+                if name_rules != value[2]: pred_msg += self.dop_function.update_row(f"{tbl_dev}", name_rules, "RuleName", id_prj) 
+
+                if pred_msg != '': msg[f'{today} - Изменения: {id_prj}, {name_prj}: {pred_msg}'] = 3
+        except Exception:
+            msg[f'{today} - {sign}: ошибка синхронизации: {traceback.format_exc()}'] = 2
+            return msg
+        msg[f'{today} - {sign}: синхронизация завершена!'] = 1
+        return(msg)
 
 
-
-    
 # Filling attribute DevStudio
 class Filling_attribute_DevStudio():
     def __init__(self):
