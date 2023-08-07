@@ -1,0 +1,1377 @@
+2023-08-07 10:21:07.886 +05 [8416] РћРЁРР‘РљРђ:  РѕС‚РЅРѕС€РµРЅРёРµ "tblpumptimesetpoints_pkey" СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚
+2023-08-07 10:21:07.886 +05 [8416] РћРџР•Р РђРўРћР :  	CREATE SCHEMA IF NOT EXISTS objects;
+		CREATE TABLE IF NOT EXISTS objects.TblPumptimeSetpoints(
+			Id INT NOT NULL,
+			Prefix VARCHAR(1024),
+			SetpointGroupId INT,
+			Tag VARCHAR(1024),
+			Name VARCHAR(1024),
+			Source VARCHAR(1024),
+			Value INT,
+			Egu VARCHAR(1024),
+			RuleName VARCHAR(1024),
+			CONSTRAINT TblPumptimeSetpoints_pkey PRIMARY KEY (Id)
+		);
+			DELETE FROM objects.TblPumptimeSetpoints ;
+	
+2023-08-07 10:21:07.901 +05 [8416] РћРЁРР‘РљРђ:  РѕС‚РЅРѕС€РµРЅРёРµ "tblpumptimesetpoints_pkey" СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚
+2023-08-07 10:21:07.901 +05 [8416] РћРџР•Р РђРўРћР :  	CREATE SCHEMA IF NOT EXISTS objects;
+		CREATE TABLE IF NOT EXISTS objects.TblPumptimeSetpoints(
+			Id INT NOT NULL,
+			Prefix VARCHAR(1024),
+			SetpointGroupId INT,
+			Tag VARCHAR(1024),
+			Name VARCHAR(1024),
+			Source VARCHAR(1024),
+			Value INT,
+			Egu VARCHAR(1024),
+			RuleName VARCHAR(1024),
+			CONSTRAINT TblPumptimeSetpoints_pkey PRIMARY KEY (Id)
+		);
+			DELETE FROM objects.TblPumptimeSetpoints ;
+	
+2023-08-07 10:21:07.905 +05 [8416] РћРЁРР‘РљРђ:  РѕС‚РЅРѕС€РµРЅРёРµ "tblpumptimesetpoints_pkey" СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚
+2023-08-07 10:21:07.905 +05 [8416] РћРџР•Р РђРўРћР :  	CREATE SCHEMA IF NOT EXISTS objects;
+		CREATE TABLE IF NOT EXISTS objects.TblPumptimeSetpoints(
+			Id INT NOT NULL,
+			Prefix VARCHAR(1024),
+			SetpointGroupId INT,
+			Tag VARCHAR(1024),
+			Name VARCHAR(1024),
+			Source VARCHAR(1024),
+			Value INT,
+			Egu VARCHAR(1024),
+			RuleName VARCHAR(1024),
+			CONSTRAINT TblPumptimeSetpoints_pkey PRIMARY KEY (Id)
+		);
+			DELETE FROM objects.TblPumptimeSetpoints ;
+	
+2023-08-07 10:21:07.909 +05 [8416] РћРЁРР‘РљРђ:  РѕС‚РЅРѕС€РµРЅРёРµ "tblpumptimesetpoints_pkey" СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚
+2023-08-07 10:21:07.909 +05 [8416] РћРџР•Р РђРўРћР :  	CREATE SCHEMA IF NOT EXISTS objects;
+		CREATE TABLE IF NOT EXISTS objects.TblPumptimeSetpoints(
+			Id INT NOT NULL,
+			Prefix VARCHAR(1024),
+			SetpointGroupId INT,
+			Tag VARCHAR(1024),
+			Name VARCHAR(1024),
+			Source VARCHAR(1024),
+			Value INT,
+			Egu VARCHAR(1024),
+			RuleName VARCHAR(1024),
+			CONSTRAINT TblPumptimeSetpoints_pkey PRIMARY KEY (Id)
+		);
+			DELETE FROM objects.TblPumptimeSetpoints ;
+	
+2023-08-07 10:21:07.912 +05 [8416] РћРЁРР‘РљРђ:  РѕС‚РЅРѕС€РµРЅРёРµ "tblpumptimesetpoints_pkey" СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚
+2023-08-07 10:21:07.912 +05 [8416] РћРџР•Р РђРўРћР :  	CREATE SCHEMA IF NOT EXISTS objects;
+		CREATE TABLE IF NOT EXISTS objects.TblPumptimeSetpoints(
+			Id INT NOT NULL,
+			Prefix VARCHAR(1024),
+			SetpointGroupId INT,
+			Tag VARCHAR(1024),
+			Name VARCHAR(1024),
+			Source VARCHAR(1024),
+			Value INT,
+			Egu VARCHAR(1024),
+			RuleName VARCHAR(1024),
+			CONSTRAINT TblPumptimeSetpoints_pkey PRIMARY KEY (Id)
+		);
+			DELETE FROM objects.TblPumptimeSetpoints ;
+	
+2023-08-07 10:21:07.914 +05 [8416] РћРЁРР‘РљРђ:  РѕС‚РЅРѕС€РµРЅРёРµ "tblpumptimesetpoints_pkey" СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚
+2023-08-07 10:21:07.914 +05 [8416] РћРџР•Р РђРўРћР :  	CREATE SCHEMA IF NOT EXISTS objects;
+		CREATE TABLE IF NOT EXISTS objects.TblPumptimeSetpoints(
+			Id INT NOT NULL,
+			Prefix VARCHAR(1024),
+			SetpointGroupId INT,
+			Tag VARCHAR(1024),
+			Name VARCHAR(1024),
+			Source VARCHAR(1024),
+			Value INT,
+			Egu VARCHAR(1024),
+			RuleName VARCHAR(1024),
+			CONSTRAINT TblPumptimeSetpoints_pkey PRIMARY KEY (Id)
+		);
+			DELETE FROM objects.TblPumptimeSetpoints ;
+	
+2023-08-07 10:21:07.917 +05 [8416] РћРЁРР‘РљРђ:  РѕС‚РЅРѕС€РµРЅРёРµ "tblpumptimesetpoints_pkey" СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚
+2023-08-07 10:21:07.917 +05 [8416] РћРџР•Р РђРўРћР :  	CREATE SCHEMA IF NOT EXISTS objects;
+		CREATE TABLE IF NOT EXISTS objects.TblPumptimeSetpoints(
+			Id INT NOT NULL,
+			Prefix VARCHAR(1024),
+			SetpointGroupId INT,
+			Tag VARCHAR(1024),
+			Name VARCHAR(1024),
+			Source VARCHAR(1024),
+			Value INT,
+			Egu VARCHAR(1024),
+			RuleName VARCHAR(1024),
+			CONSTRAINT TblPumptimeSetpoints_pkey PRIMARY KEY (Id)
+		);
+			DELETE FROM objects.TblPumptimeSetpoints ;
+	
+2023-08-07 10:21:07.923 +05 [8416] РћРЁРР‘РљРђ:  РѕС‚РЅРѕС€РµРЅРёРµ "tblpumptimesetpoints_pkey" СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚
+2023-08-07 10:21:07.923 +05 [8416] РћРџР•Р РђРўРћР :  	CREATE SCHEMA IF NOT EXISTS objects;
+		CREATE TABLE IF NOT EXISTS objects.TblPumptimeSetpoints(
+			Id INT NOT NULL,
+			Prefix VARCHAR(1024),
+			SetpointGroupId INT,
+			Tag VARCHAR(1024),
+			Name VARCHAR(1024),
+			Source VARCHAR(1024),
+			Value INT,
+			Egu VARCHAR(1024),
+			RuleName VARCHAR(1024),
+			CONSTRAINT TblPumptimeSetpoints_pkey PRIMARY KEY (Id)
+		);
+			DELETE FROM objects.TblPumptimeSetpoints ;
+	
+2023-08-07 10:21:07.926 +05 [8416] РћРЁРР‘РљРђ:  РѕС‚РЅРѕС€РµРЅРёРµ "tblpumptimesetpoints_pkey" СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚
+2023-08-07 10:21:07.926 +05 [8416] РћРџР•Р РђРўРћР :  	CREATE SCHEMA IF NOT EXISTS objects;
+		CREATE TABLE IF NOT EXISTS objects.TblPumptimeSetpoints(
+			Id INT NOT NULL,
+			Prefix VARCHAR(1024),
+			SetpointGroupId INT,
+			Tag VARCHAR(1024),
+			Name VARCHAR(1024),
+			Source VARCHAR(1024),
+			Value INT,
+			Egu VARCHAR(1024),
+			RuleName VARCHAR(1024),
+			CONSTRAINT TblPumptimeSetpoints_pkey PRIMARY KEY (Id)
+		);
+			DELETE FROM objects.TblPumptimeSetpoints ;
+	
+2023-08-07 10:21:07.928 +05 [8416] РћРЁРР‘РљРђ:  РѕС‚РЅРѕС€РµРЅРёРµ "tblpumptimesetpoints_pkey" СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚
+2023-08-07 10:21:07.928 +05 [8416] РћРџР•Р РђРўРћР :  	CREATE SCHEMA IF NOT EXISTS objects;
+		CREATE TABLE IF NOT EXISTS objects.TblPumptimeSetpoints(
+			Id INT NOT NULL,
+			Prefix VARCHAR(1024),
+			SetpointGroupId INT,
+			Tag VARCHAR(1024),
+			Name VARCHAR(1024),
+			Source VARCHAR(1024),
+			Value INT,
+			Egu VARCHAR(1024),
+			RuleName VARCHAR(1024),
+			CONSTRAINT TblPumptimeSetpoints_pkey PRIMARY KEY (Id)
+		);
+			DELETE FROM objects.TblPumptimeSetpoints ;
+	
+2023-08-07 10:21:07.931 +05 [8416] РћРЁРР‘РљРђ:  РѕС‚РЅРѕС€РµРЅРёРµ "tblpumptimesetpoints_pkey" СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚
+2023-08-07 10:21:07.931 +05 [8416] РћРџР•Р РђРўРћР :  	CREATE SCHEMA IF NOT EXISTS objects;
+		CREATE TABLE IF NOT EXISTS objects.TblPumptimeSetpoints(
+			Id INT NOT NULL,
+			Prefix VARCHAR(1024),
+			SetpointGroupId INT,
+			Tag VARCHAR(1024),
+			Name VARCHAR(1024),
+			Source VARCHAR(1024),
+			Value INT,
+			Egu VARCHAR(1024),
+			RuleName VARCHAR(1024),
+			CONSTRAINT TblPumptimeSetpoints_pkey PRIMARY KEY (Id)
+		);
+			DELETE FROM objects.TblPumptimeSetpoints ;
+	
+2023-08-07 10:21:07.937 +05 [8416] РћРЁРР‘РљРђ:  РѕС‚РЅРѕС€РµРЅРёРµ "tblpumptimesetpoints_pkey" СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚
+2023-08-07 10:21:07.937 +05 [8416] РћРџР•Р РђРўРћР :  	CREATE SCHEMA IF NOT EXISTS objects;
+		CREATE TABLE IF NOT EXISTS objects.TblPumptimeSetpoints(
+			Id INT NOT NULL,
+			Prefix VARCHAR(1024),
+			SetpointGroupId INT,
+			Tag VARCHAR(1024),
+			Name VARCHAR(1024),
+			Source VARCHAR(1024),
+			Value INT,
+			Egu VARCHAR(1024),
+			RuleName VARCHAR(1024),
+			CONSTRAINT TblPumptimeSetpoints_pkey PRIMARY KEY (Id)
+		);
+			DELETE FROM objects.TblPumptimeSetpoints ;
+	
+2023-08-07 10:21:07.940 +05 [8416] РћРЁРР‘РљРђ:  РѕС‚РЅРѕС€РµРЅРёРµ "tblpumptimesetpoints_pkey" СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚
+2023-08-07 10:21:07.940 +05 [8416] РћРџР•Р РђРўРћР :  	CREATE SCHEMA IF NOT EXISTS objects;
+		CREATE TABLE IF NOT EXISTS objects.TblPumptimeSetpoints(
+			Id INT NOT NULL,
+			Prefix VARCHAR(1024),
+			SetpointGroupId INT,
+			Tag VARCHAR(1024),
+			Name VARCHAR(1024),
+			Source VARCHAR(1024),
+			Value INT,
+			Egu VARCHAR(1024),
+			RuleName VARCHAR(1024),
+			CONSTRAINT TblPumptimeSetpoints_pkey PRIMARY KEY (Id)
+		);
+			DELETE FROM objects.TblPumptimeSetpoints ;
+	
+2023-08-07 10:21:07.942 +05 [8416] РћРЁРР‘РљРђ:  РѕС‚РЅРѕС€РµРЅРёРµ "tblpumptimesetpoints_pkey" СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚
+2023-08-07 10:21:07.942 +05 [8416] РћРџР•Р РђРўРћР :  	CREATE SCHEMA IF NOT EXISTS objects;
+		CREATE TABLE IF NOT EXISTS objects.TblPumptimeSetpoints(
+			Id INT NOT NULL,
+			Prefix VARCHAR(1024),
+			SetpointGroupId INT,
+			Tag VARCHAR(1024),
+			Name VARCHAR(1024),
+			Source VARCHAR(1024),
+			Value INT,
+			Egu VARCHAR(1024),
+			RuleName VARCHAR(1024),
+			CONSTRAINT TblPumptimeSetpoints_pkey PRIMARY KEY (Id)
+		);
+			DELETE FROM objects.TblPumptimeSetpoints ;
+	
+2023-08-07 10:21:07.944 +05 [8416] РћРЁРР‘РљРђ:  РѕС‚РЅРѕС€РµРЅРёРµ "tblpumptimesetpoints_pkey" СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚
+2023-08-07 10:21:07.944 +05 [8416] РћРџР•Р РђРўРћР :  	CREATE SCHEMA IF NOT EXISTS objects;
+		CREATE TABLE IF NOT EXISTS objects.TblPumptimeSetpoints(
+			Id INT NOT NULL,
+			Prefix VARCHAR(1024),
+			SetpointGroupId INT,
+			Tag VARCHAR(1024),
+			Name VARCHAR(1024),
+			Source VARCHAR(1024),
+			Value INT,
+			Egu VARCHAR(1024),
+			RuleName VARCHAR(1024),
+			CONSTRAINT TblPumptimeSetpoints_pkey PRIMARY KEY (Id)
+		);
+			DELETE FROM objects.TblPumptimeSetpoints ;
+	
+2023-08-07 10:21:07.947 +05 [8416] РћРЁРР‘РљРђ:  РѕС‚РЅРѕС€РµРЅРёРµ "tblpumptimesetpoints_pkey" СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚
+2023-08-07 10:21:07.947 +05 [8416] РћРџР•Р РђРўРћР :  	CREATE SCHEMA IF NOT EXISTS objects;
+		CREATE TABLE IF NOT EXISTS objects.TblPumptimeSetpoints(
+			Id INT NOT NULL,
+			Prefix VARCHAR(1024),
+			SetpointGroupId INT,
+			Tag VARCHAR(1024),
+			Name VARCHAR(1024),
+			Source VARCHAR(1024),
+			Value INT,
+			Egu VARCHAR(1024),
+			RuleName VARCHAR(1024),
+			CONSTRAINT TblPumptimeSetpoints_pkey PRIMARY KEY (Id)
+		);
+			DELETE FROM objects.TblPumptimeSetpoints ;
+	
+2023-08-07 10:21:07.949 +05 [8416] РћРЁРР‘РљРђ:  РѕС‚РЅРѕС€РµРЅРёРµ "tblpumptimesetpoints_pkey" СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚
+2023-08-07 10:21:07.949 +05 [8416] РћРџР•Р РђРўРћР :  	CREATE SCHEMA IF NOT EXISTS objects;
+		CREATE TABLE IF NOT EXISTS objects.TblPumptimeSetpoints(
+			Id INT NOT NULL,
+			Prefix VARCHAR(1024),
+			SetpointGroupId INT,
+			Tag VARCHAR(1024),
+			Name VARCHAR(1024),
+			Source VARCHAR(1024),
+			Value INT,
+			Egu VARCHAR(1024),
+			RuleName VARCHAR(1024),
+			CONSTRAINT TblPumptimeSetpoints_pkey PRIMARY KEY (Id)
+		);
+			DELETE FROM objects.TblPumptimeSetpoints ;
+	
+2023-08-07 10:21:07.951 +05 [8416] РћРЁРР‘РљРђ:  РѕС‚РЅРѕС€РµРЅРёРµ "tblpumptimesetpoints_pkey" СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚
+2023-08-07 10:21:07.951 +05 [8416] РћРџР•Р РђРўРћР :  	CREATE SCHEMA IF NOT EXISTS objects;
+		CREATE TABLE IF NOT EXISTS objects.TblPumptimeSetpoints(
+			Id INT NOT NULL,
+			Prefix VARCHAR(1024),
+			SetpointGroupId INT,
+			Tag VARCHAR(1024),
+			Name VARCHAR(1024),
+			Source VARCHAR(1024),
+			Value INT,
+			Egu VARCHAR(1024),
+			RuleName VARCHAR(1024),
+			CONSTRAINT TblPumptimeSetpoints_pkey PRIMARY KEY (Id)
+		);
+			DELETE FROM objects.TblPumptimeSetpoints ;
+	
+2023-08-07 10:21:07.954 +05 [8416] РћРЁРР‘РљРђ:  РѕС‚РЅРѕС€РµРЅРёРµ "tblpumptimesetpoints_pkey" СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚
+2023-08-07 10:21:07.954 +05 [8416] РћРџР•Р РђРўРћР :  	CREATE SCHEMA IF NOT EXISTS objects;
+		CREATE TABLE IF NOT EXISTS objects.TblPumptimeSetpoints(
+			Id INT NOT NULL,
+			Prefix VARCHAR(1024),
+			SetpointGroupId INT,
+			Tag VARCHAR(1024),
+			Name VARCHAR(1024),
+			Source VARCHAR(1024),
+			Value INT,
+			Egu VARCHAR(1024),
+			RuleName VARCHAR(1024),
+			CONSTRAINT TblPumptimeSetpoints_pkey PRIMARY KEY (Id)
+		);
+			DELETE FROM objects.TblPumptimeSetpoints ;
+	
+2023-08-07 10:21:07.956 +05 [8416] РћРЁРР‘РљРђ:  РѕС‚РЅРѕС€РµРЅРёРµ "tblpumptimesetpoints_pkey" СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚
+2023-08-07 10:21:07.956 +05 [8416] РћРџР•Р РђРўРћР :  	CREATE SCHEMA IF NOT EXISTS objects;
+		CREATE TABLE IF NOT EXISTS objects.TblPumptimeSetpoints(
+			Id INT NOT NULL,
+			Prefix VARCHAR(1024),
+			SetpointGroupId INT,
+			Tag VARCHAR(1024),
+			Name VARCHAR(1024),
+			Source VARCHAR(1024),
+			Value INT,
+			Egu VARCHAR(1024),
+			RuleName VARCHAR(1024),
+			CONSTRAINT TblPumptimeSetpoints_pkey PRIMARY KEY (Id)
+		);
+			DELETE FROM objects.TblPumptimeSetpoints ;
+	
+2023-08-07 10:21:07.958 +05 [8416] РћРЁРР‘РљРђ:  РѕС‚РЅРѕС€РµРЅРёРµ "tblpumptimesetpoints_pkey" СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚
+2023-08-07 10:21:07.958 +05 [8416] РћРџР•Р РђРўРћР :  	CREATE SCHEMA IF NOT EXISTS objects;
+		CREATE TABLE IF NOT EXISTS objects.TblPumptimeSetpoints(
+			Id INT NOT NULL,
+			Prefix VARCHAR(1024),
+			SetpointGroupId INT,
+			Tag VARCHAR(1024),
+			Name VARCHAR(1024),
+			Source VARCHAR(1024),
+			Value INT,
+			Egu VARCHAR(1024),
+			RuleName VARCHAR(1024),
+			CONSTRAINT TblPumptimeSetpoints_pkey PRIMARY KEY (Id)
+		);
+			DELETE FROM objects.TblPumptimeSetpoints ;
+	
+2023-08-07 10:21:07.960 +05 [8416] РћРЁРР‘РљРђ:  РѕС‚РЅРѕС€РµРЅРёРµ "tblpumptimesetpoints_pkey" СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚
+2023-08-07 10:21:07.960 +05 [8416] РћРџР•Р РђРўРћР :  	CREATE SCHEMA IF NOT EXISTS objects;
+		CREATE TABLE IF NOT EXISTS objects.TblPumptimeSetpoints(
+			Id INT NOT NULL,
+			Prefix VARCHAR(1024),
+			SetpointGroupId INT,
+			Tag VARCHAR(1024),
+			Name VARCHAR(1024),
+			Source VARCHAR(1024),
+			Value INT,
+			Egu VARCHAR(1024),
+			RuleName VARCHAR(1024),
+			CONSTRAINT TblPumptimeSetpoints_pkey PRIMARY KEY (Id)
+		);
+			DELETE FROM objects.TblPumptimeSetpoints ;
+	
+2023-08-07 10:21:07.963 +05 [8416] РћРЁРР‘РљРђ:  РѕС‚РЅРѕС€РµРЅРёРµ "tblpumptimesetpoints_pkey" СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚
+2023-08-07 10:21:07.963 +05 [8416] РћРџР•Р РђРўРћР :  	CREATE SCHEMA IF NOT EXISTS objects;
+		CREATE TABLE IF NOT EXISTS objects.TblPumptimeSetpoints(
+			Id INT NOT NULL,
+			Prefix VARCHAR(1024),
+			SetpointGroupId INT,
+			Tag VARCHAR(1024),
+			Name VARCHAR(1024),
+			Source VARCHAR(1024),
+			Value INT,
+			Egu VARCHAR(1024),
+			RuleName VARCHAR(1024),
+			CONSTRAINT TblPumptimeSetpoints_pkey PRIMARY KEY (Id)
+		);
+			DELETE FROM objects.TblPumptimeSetpoints ;
+	
+2023-08-07 10:21:07.965 +05 [8416] РћРЁРР‘РљРђ:  РѕС‚РЅРѕС€РµРЅРёРµ "tblpumptimesetpoints_pkey" СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚
+2023-08-07 10:21:07.965 +05 [8416] РћРџР•Р РђРўРћР :  	CREATE SCHEMA IF NOT EXISTS objects;
+		CREATE TABLE IF NOT EXISTS objects.TblPumptimeSetpoints(
+			Id INT NOT NULL,
+			Prefix VARCHAR(1024),
+			SetpointGroupId INT,
+			Tag VARCHAR(1024),
+			Name VARCHAR(1024),
+			Source VARCHAR(1024),
+			Value INT,
+			Egu VARCHAR(1024),
+			RuleName VARCHAR(1024),
+			CONSTRAINT TblPumptimeSetpoints_pkey PRIMARY KEY (Id)
+		);
+			DELETE FROM objects.TblPumptimeSetpoints ;
+	
+2023-08-07 10:21:07.968 +05 [8416] РћРЁРР‘РљРђ:  РѕС‚РЅРѕС€РµРЅРёРµ "tblpumptimesetpoints_pkey" СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚
+2023-08-07 10:21:07.968 +05 [8416] РћРџР•Р РђРўРћР :  	CREATE SCHEMA IF NOT EXISTS objects;
+		CREATE TABLE IF NOT EXISTS objects.TblPumptimeSetpoints(
+			Id INT NOT NULL,
+			Prefix VARCHAR(1024),
+			SetpointGroupId INT,
+			Tag VARCHAR(1024),
+			Name VARCHAR(1024),
+			Source VARCHAR(1024),
+			Value INT,
+			Egu VARCHAR(1024),
+			RuleName VARCHAR(1024),
+			CONSTRAINT TblPumptimeSetpoints_pkey PRIMARY KEY (Id)
+		);
+			DELETE FROM objects.TblPumptimeSetpoints ;
+	
+2023-08-07 10:21:07.970 +05 [8416] РћРЁРР‘РљРђ:  РѕС‚РЅРѕС€РµРЅРёРµ "tblpumptimesetpoints_pkey" СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚
+2023-08-07 10:21:07.970 +05 [8416] РћРџР•Р РђРўРћР :  	CREATE SCHEMA IF NOT EXISTS objects;
+		CREATE TABLE IF NOT EXISTS objects.TblPumptimeSetpoints(
+			Id INT NOT NULL,
+			Prefix VARCHAR(1024),
+			SetpointGroupId INT,
+			Tag VARCHAR(1024),
+			Name VARCHAR(1024),
+			Source VARCHAR(1024),
+			Value INT,
+			Egu VARCHAR(1024),
+			RuleName VARCHAR(1024),
+			CONSTRAINT TblPumptimeSetpoints_pkey PRIMARY KEY (Id)
+		);
+			DELETE FROM objects.TblPumptimeSetpoints ;
+	
+2023-08-07 10:21:07.972 +05 [8416] РћРЁРР‘РљРђ:  РѕС‚РЅРѕС€РµРЅРёРµ "tblpumptimesetpoints_pkey" СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚
+2023-08-07 10:21:07.972 +05 [8416] РћРџР•Р РђРўРћР :  	CREATE SCHEMA IF NOT EXISTS objects;
+		CREATE TABLE IF NOT EXISTS objects.TblPumptimeSetpoints(
+			Id INT NOT NULL,
+			Prefix VARCHAR(1024),
+			SetpointGroupId INT,
+			Tag VARCHAR(1024),
+			Name VARCHAR(1024),
+			Source VARCHAR(1024),
+			Value INT,
+			Egu VARCHAR(1024),
+			RuleName VARCHAR(1024),
+			CONSTRAINT TblPumptimeSetpoints_pkey PRIMARY KEY (Id)
+		);
+			DELETE FROM objects.TblPumptimeSetpoints ;
+	
+2023-08-07 10:21:07.975 +05 [8416] РћРЁРР‘РљРђ:  РѕС‚РЅРѕС€РµРЅРёРµ "tblpumptimesetpoints_pkey" СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚
+2023-08-07 10:21:07.975 +05 [8416] РћРџР•Р РђРўРћР :  	CREATE SCHEMA IF NOT EXISTS objects;
+		CREATE TABLE IF NOT EXISTS objects.TblPumptimeSetpoints(
+			Id INT NOT NULL,
+			Prefix VARCHAR(1024),
+			SetpointGroupId INT,
+			Tag VARCHAR(1024),
+			Name VARCHAR(1024),
+			Source VARCHAR(1024),
+			Value INT,
+			Egu VARCHAR(1024),
+			RuleName VARCHAR(1024),
+			CONSTRAINT TblPumptimeSetpoints_pkey PRIMARY KEY (Id)
+		);
+			DELETE FROM objects.TblPumptimeSetpoints ;
+	
+2023-08-07 10:21:07.977 +05 [8416] РћРЁРР‘РљРђ:  РѕС‚РЅРѕС€РµРЅРёРµ "tblpumptimesetpoints_pkey" СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚
+2023-08-07 10:21:07.977 +05 [8416] РћРџР•Р РђРўРћР :  	CREATE SCHEMA IF NOT EXISTS objects;
+		CREATE TABLE IF NOT EXISTS objects.TblPumptimeSetpoints(
+			Id INT NOT NULL,
+			Prefix VARCHAR(1024),
+			SetpointGroupId INT,
+			Tag VARCHAR(1024),
+			Name VARCHAR(1024),
+			Source VARCHAR(1024),
+			Value INT,
+			Egu VARCHAR(1024),
+			RuleName VARCHAR(1024),
+			CONSTRAINT TblPumptimeSetpoints_pkey PRIMARY KEY (Id)
+		);
+			DELETE FROM objects.TblPumptimeSetpoints ;
+	
+2023-08-07 10:21:07.979 +05 [8416] РћРЁРР‘РљРђ:  РѕС‚РЅРѕС€РµРЅРёРµ "tblpumptimesetpoints_pkey" СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚
+2023-08-07 10:21:07.979 +05 [8416] РћРџР•Р РђРўРћР :  	CREATE SCHEMA IF NOT EXISTS objects;
+		CREATE TABLE IF NOT EXISTS objects.TblPumptimeSetpoints(
+			Id INT NOT NULL,
+			Prefix VARCHAR(1024),
+			SetpointGroupId INT,
+			Tag VARCHAR(1024),
+			Name VARCHAR(1024),
+			Source VARCHAR(1024),
+			Value INT,
+			Egu VARCHAR(1024),
+			RuleName VARCHAR(1024),
+			CONSTRAINT TblPumptimeSetpoints_pkey PRIMARY KEY (Id)
+		);
+			DELETE FROM objects.TblPumptimeSetpoints ;
+	
+2023-08-07 10:21:07.986 +05 [8416] РћРЁРР‘РљРђ:  РѕС‚РЅРѕС€РµРЅРёРµ "tblpumptimesetpoints_pkey" СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚
+2023-08-07 10:21:07.986 +05 [8416] РћРџР•Р РђРўРћР :  	CREATE SCHEMA IF NOT EXISTS objects;
+		CREATE TABLE IF NOT EXISTS objects.TblPumptimeSetpoints(
+			Id INT NOT NULL,
+			Prefix VARCHAR(1024),
+			SetpointGroupId INT,
+			Tag VARCHAR(1024),
+			Name VARCHAR(1024),
+			Source VARCHAR(1024),
+			Value INT,
+			Egu VARCHAR(1024),
+			RuleName VARCHAR(1024),
+			CONSTRAINT TblPumptimeSetpoints_pkey PRIMARY KEY (Id)
+		);
+			DELETE FROM objects.TblPumptimeSetpoints ;
+	
+2023-08-07 10:21:07.989 +05 [8416] РћРЁРР‘РљРђ:  РѕС‚РЅРѕС€РµРЅРёРµ "tblpumptimesetpoints_pkey" СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚
+2023-08-07 10:21:07.989 +05 [8416] РћРџР•Р РђРўРћР :  	CREATE SCHEMA IF NOT EXISTS objects;
+		CREATE TABLE IF NOT EXISTS objects.TblPumptimeSetpoints(
+			Id INT NOT NULL,
+			Prefix VARCHAR(1024),
+			SetpointGroupId INT,
+			Tag VARCHAR(1024),
+			Name VARCHAR(1024),
+			Source VARCHAR(1024),
+			Value INT,
+			Egu VARCHAR(1024),
+			RuleName VARCHAR(1024),
+			CONSTRAINT TblPumptimeSetpoints_pkey PRIMARY KEY (Id)
+		);
+			DELETE FROM objects.TblPumptimeSetpoints ;
+	
+2023-08-07 10:21:07.991 +05 [8416] РћРЁРР‘РљРђ:  РѕС‚РЅРѕС€РµРЅРёРµ "tblpumptimesetpoints_pkey" СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚
+2023-08-07 10:21:07.991 +05 [8416] РћРџР•Р РђРўРћР :  	CREATE SCHEMA IF NOT EXISTS objects;
+		CREATE TABLE IF NOT EXISTS objects.TblPumptimeSetpoints(
+			Id INT NOT NULL,
+			Prefix VARCHAR(1024),
+			SetpointGroupId INT,
+			Tag VARCHAR(1024),
+			Name VARCHAR(1024),
+			Source VARCHAR(1024),
+			Value INT,
+			Egu VARCHAR(1024),
+			RuleName VARCHAR(1024),
+			CONSTRAINT TblPumptimeSetpoints_pkey PRIMARY KEY (Id)
+		);
+			DELETE FROM objects.TblPumptimeSetpoints ;
+	
+2023-08-07 10:21:07.993 +05 [8416] РћРЁРР‘РљРђ:  РѕС‚РЅРѕС€РµРЅРёРµ "tblpumptimesetpoints_pkey" СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚
+2023-08-07 10:21:07.993 +05 [8416] РћРџР•Р РђРўРћР :  	CREATE SCHEMA IF NOT EXISTS objects;
+		CREATE TABLE IF NOT EXISTS objects.TblPumptimeSetpoints(
+			Id INT NOT NULL,
+			Prefix VARCHAR(1024),
+			SetpointGroupId INT,
+			Tag VARCHAR(1024),
+			Name VARCHAR(1024),
+			Source VARCHAR(1024),
+			Value INT,
+			Egu VARCHAR(1024),
+			RuleName VARCHAR(1024),
+			CONSTRAINT TblPumptimeSetpoints_pkey PRIMARY KEY (Id)
+		);
+			DELETE FROM objects.TblPumptimeSetpoints ;
+	
+2023-08-07 10:21:07.996 +05 [8416] РћРЁРР‘РљРђ:  РѕС‚РЅРѕС€РµРЅРёРµ "tblpumptimesetpoints_pkey" СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚
+2023-08-07 10:21:07.996 +05 [8416] РћРџР•Р РђРўРћР :  	CREATE SCHEMA IF NOT EXISTS objects;
+		CREATE TABLE IF NOT EXISTS objects.TblPumptimeSetpoints(
+			Id INT NOT NULL,
+			Prefix VARCHAR(1024),
+			SetpointGroupId INT,
+			Tag VARCHAR(1024),
+			Name VARCHAR(1024),
+			Source VARCHAR(1024),
+			Value INT,
+			Egu VARCHAR(1024),
+			RuleName VARCHAR(1024),
+			CONSTRAINT TblPumptimeSetpoints_pkey PRIMARY KEY (Id)
+		);
+			DELETE FROM objects.TblPumptimeSetpoints ;
+	
+2023-08-07 10:21:07.998 +05 [8416] РћРЁРР‘РљРђ:  РѕС‚РЅРѕС€РµРЅРёРµ "tblpumptimesetpoints_pkey" СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚
+2023-08-07 10:21:07.998 +05 [8416] РћРџР•Р РђРўРћР :  	CREATE SCHEMA IF NOT EXISTS objects;
+		CREATE TABLE IF NOT EXISTS objects.TblPumptimeSetpoints(
+			Id INT NOT NULL,
+			Prefix VARCHAR(1024),
+			SetpointGroupId INT,
+			Tag VARCHAR(1024),
+			Name VARCHAR(1024),
+			Source VARCHAR(1024),
+			Value INT,
+			Egu VARCHAR(1024),
+			RuleName VARCHAR(1024),
+			CONSTRAINT TblPumptimeSetpoints_pkey PRIMARY KEY (Id)
+		);
+			DELETE FROM objects.TblPumptimeSetpoints ;
+	
+2023-08-07 10:21:08.000 +05 [8416] РћРЁРР‘РљРђ:  РѕС‚РЅРѕС€РµРЅРёРµ "tblpumptimesetpoints_pkey" СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚
+2023-08-07 10:21:08.000 +05 [8416] РћРџР•Р РђРўРћР :  	CREATE SCHEMA IF NOT EXISTS objects;
+		CREATE TABLE IF NOT EXISTS objects.TblPumptimeSetpoints(
+			Id INT NOT NULL,
+			Prefix VARCHAR(1024),
+			SetpointGroupId INT,
+			Tag VARCHAR(1024),
+			Name VARCHAR(1024),
+			Source VARCHAR(1024),
+			Value INT,
+			Egu VARCHAR(1024),
+			RuleName VARCHAR(1024),
+			CONSTRAINT TblPumptimeSetpoints_pkey PRIMARY KEY (Id)
+		);
+			DELETE FROM objects.TblPumptimeSetpoints ;
+	
+2023-08-07 10:21:08.003 +05 [8416] РћРЁРР‘РљРђ:  РѕС‚РЅРѕС€РµРЅРёРµ "tblpumptimesetpoints_pkey" СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚
+2023-08-07 10:21:08.003 +05 [8416] РћРџР•Р РђРўРћР :  	CREATE SCHEMA IF NOT EXISTS objects;
+		CREATE TABLE IF NOT EXISTS objects.TblPumptimeSetpoints(
+			Id INT NOT NULL,
+			Prefix VARCHAR(1024),
+			SetpointGroupId INT,
+			Tag VARCHAR(1024),
+			Name VARCHAR(1024),
+			Source VARCHAR(1024),
+			Value INT,
+			Egu VARCHAR(1024),
+			RuleName VARCHAR(1024),
+			CONSTRAINT TblPumptimeSetpoints_pkey PRIMARY KEY (Id)
+		);
+			DELETE FROM objects.TblPumptimeSetpoints ;
+	
+2023-08-07 10:21:08.005 +05 [8416] РћРЁРР‘РљРђ:  РѕС‚РЅРѕС€РµРЅРёРµ "tblpumptimesetpoints_pkey" СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚
+2023-08-07 10:21:08.005 +05 [8416] РћРџР•Р РђРўРћР :  	CREATE SCHEMA IF NOT EXISTS objects;
+		CREATE TABLE IF NOT EXISTS objects.TblPumptimeSetpoints(
+			Id INT NOT NULL,
+			Prefix VARCHAR(1024),
+			SetpointGroupId INT,
+			Tag VARCHAR(1024),
+			Name VARCHAR(1024),
+			Source VARCHAR(1024),
+			Value INT,
+			Egu VARCHAR(1024),
+			RuleName VARCHAR(1024),
+			CONSTRAINT TblPumptimeSetpoints_pkey PRIMARY KEY (Id)
+		);
+			DELETE FROM objects.TblPumptimeSetpoints ;
+	
+2023-08-07 10:21:08.007 +05 [8416] РћРЁРР‘РљРђ:  РѕС‚РЅРѕС€РµРЅРёРµ "tblpumptimesetpoints_pkey" СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚
+2023-08-07 10:21:08.007 +05 [8416] РћРџР•Р РђРўРћР :  	CREATE SCHEMA IF NOT EXISTS objects;
+		CREATE TABLE IF NOT EXISTS objects.TblPumptimeSetpoints(
+			Id INT NOT NULL,
+			Prefix VARCHAR(1024),
+			SetpointGroupId INT,
+			Tag VARCHAR(1024),
+			Name VARCHAR(1024),
+			Source VARCHAR(1024),
+			Value INT,
+			Egu VARCHAR(1024),
+			RuleName VARCHAR(1024),
+			CONSTRAINT TblPumptimeSetpoints_pkey PRIMARY KEY (Id)
+		);
+			DELETE FROM objects.TblPumptimeSetpoints ;
+	
+2023-08-07 10:21:08.009 +05 [8416] РћРЁРР‘РљРђ:  РѕС‚РЅРѕС€РµРЅРёРµ "tblpumptimesetpoints_pkey" СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚
+2023-08-07 10:21:08.009 +05 [8416] РћРџР•Р РђРўРћР :  	CREATE SCHEMA IF NOT EXISTS objects;
+		CREATE TABLE IF NOT EXISTS objects.TblPumptimeSetpoints(
+			Id INT NOT NULL,
+			Prefix VARCHAR(1024),
+			SetpointGroupId INT,
+			Tag VARCHAR(1024),
+			Name VARCHAR(1024),
+			Source VARCHAR(1024),
+			Value INT,
+			Egu VARCHAR(1024),
+			RuleName VARCHAR(1024),
+			CONSTRAINT TblPumptimeSetpoints_pkey PRIMARY KEY (Id)
+		);
+			DELETE FROM objects.TblPumptimeSetpoints ;
+	
+2023-08-07 10:21:08.011 +05 [8416] РћРЁРР‘РљРђ:  РѕС‚РЅРѕС€РµРЅРёРµ "tblpumptimesetpoints_pkey" СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚
+2023-08-07 10:21:08.011 +05 [8416] РћРџР•Р РђРўРћР :  	CREATE SCHEMA IF NOT EXISTS objects;
+		CREATE TABLE IF NOT EXISTS objects.TblPumptimeSetpoints(
+			Id INT NOT NULL,
+			Prefix VARCHAR(1024),
+			SetpointGroupId INT,
+			Tag VARCHAR(1024),
+			Name VARCHAR(1024),
+			Source VARCHAR(1024),
+			Value INT,
+			Egu VARCHAR(1024),
+			RuleName VARCHAR(1024),
+			CONSTRAINT TblPumptimeSetpoints_pkey PRIMARY KEY (Id)
+		);
+			DELETE FROM objects.TblPumptimeSetpoints ;
+	
+2023-08-07 10:21:08.014 +05 [8416] РћРЁРР‘РљРђ:  РѕС‚РЅРѕС€РµРЅРёРµ "tblpumptimesetpoints_pkey" СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚
+2023-08-07 10:21:08.014 +05 [8416] РћРџР•Р РђРўРћР :  	CREATE SCHEMA IF NOT EXISTS objects;
+		CREATE TABLE IF NOT EXISTS objects.TblPumptimeSetpoints(
+			Id INT NOT NULL,
+			Prefix VARCHAR(1024),
+			SetpointGroupId INT,
+			Tag VARCHAR(1024),
+			Name VARCHAR(1024),
+			Source VARCHAR(1024),
+			Value INT,
+			Egu VARCHAR(1024),
+			RuleName VARCHAR(1024),
+			CONSTRAINT TblPumptimeSetpoints_pkey PRIMARY KEY (Id)
+		);
+			DELETE FROM objects.TblPumptimeSetpoints ;
+	
+2023-08-07 10:21:08.016 +05 [8416] РћРЁРР‘РљРђ:  РѕС‚РЅРѕС€РµРЅРёРµ "tblpumptimesetpoints_pkey" СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚
+2023-08-07 10:21:08.016 +05 [8416] РћРџР•Р РђРўРћР :  	CREATE SCHEMA IF NOT EXISTS objects;
+		CREATE TABLE IF NOT EXISTS objects.TblPumptimeSetpoints(
+			Id INT NOT NULL,
+			Prefix VARCHAR(1024),
+			SetpointGroupId INT,
+			Tag VARCHAR(1024),
+			Name VARCHAR(1024),
+			Source VARCHAR(1024),
+			Value INT,
+			Egu VARCHAR(1024),
+			RuleName VARCHAR(1024),
+			CONSTRAINT TblPumptimeSetpoints_pkey PRIMARY KEY (Id)
+		);
+			DELETE FROM objects.TblPumptimeSetpoints ;
+	
+2023-08-07 10:21:08.018 +05 [8416] РћРЁРР‘РљРђ:  РѕС‚РЅРѕС€РµРЅРёРµ "tblpumptimesetpoints_pkey" СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚
+2023-08-07 10:21:08.018 +05 [8416] РћРџР•Р РђРўРћР :  	CREATE SCHEMA IF NOT EXISTS objects;
+		CREATE TABLE IF NOT EXISTS objects.TblPumptimeSetpoints(
+			Id INT NOT NULL,
+			Prefix VARCHAR(1024),
+			SetpointGroupId INT,
+			Tag VARCHAR(1024),
+			Name VARCHAR(1024),
+			Source VARCHAR(1024),
+			Value INT,
+			Egu VARCHAR(1024),
+			RuleName VARCHAR(1024),
+			CONSTRAINT TblPumptimeSetpoints_pkey PRIMARY KEY (Id)
+		);
+			DELETE FROM objects.TblPumptimeSetpoints ;
+	
+2023-08-07 10:21:08.021 +05 [8416] РћРЁРР‘РљРђ:  РѕС‚РЅРѕС€РµРЅРёРµ "tblpumptimesetpoints_pkey" СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚
+2023-08-07 10:21:08.021 +05 [8416] РћРџР•Р РђРўРћР :  	CREATE SCHEMA IF NOT EXISTS objects;
+		CREATE TABLE IF NOT EXISTS objects.TblPumptimeSetpoints(
+			Id INT NOT NULL,
+			Prefix VARCHAR(1024),
+			SetpointGroupId INT,
+			Tag VARCHAR(1024),
+			Name VARCHAR(1024),
+			Source VARCHAR(1024),
+			Value INT,
+			Egu VARCHAR(1024),
+			RuleName VARCHAR(1024),
+			CONSTRAINT TblPumptimeSetpoints_pkey PRIMARY KEY (Id)
+		);
+			DELETE FROM objects.TblPumptimeSetpoints ;
+	
+2023-08-07 10:21:08.023 +05 [8416] РћРЁРР‘РљРђ:  РѕС‚РЅРѕС€РµРЅРёРµ "tblpumptimesetpoints_pkey" СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚
+2023-08-07 10:21:08.023 +05 [8416] РћРџР•Р РђРўРћР :  	CREATE SCHEMA IF NOT EXISTS objects;
+		CREATE TABLE IF NOT EXISTS objects.TblPumptimeSetpoints(
+			Id INT NOT NULL,
+			Prefix VARCHAR(1024),
+			SetpointGroupId INT,
+			Tag VARCHAR(1024),
+			Name VARCHAR(1024),
+			Source VARCHAR(1024),
+			Value INT,
+			Egu VARCHAR(1024),
+			RuleName VARCHAR(1024),
+			CONSTRAINT TblPumptimeSetpoints_pkey PRIMARY KEY (Id)
+		);
+			DELETE FROM objects.TblPumptimeSetpoints ;
+	
+2023-08-07 10:21:08.025 +05 [8416] РћРЁРР‘РљРђ:  РѕС‚РЅРѕС€РµРЅРёРµ "tblpumptimesetpoints_pkey" СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚
+2023-08-07 10:21:08.025 +05 [8416] РћРџР•Р РђРўРћР :  	CREATE SCHEMA IF NOT EXISTS objects;
+		CREATE TABLE IF NOT EXISTS objects.TblPumptimeSetpoints(
+			Id INT NOT NULL,
+			Prefix VARCHAR(1024),
+			SetpointGroupId INT,
+			Tag VARCHAR(1024),
+			Name VARCHAR(1024),
+			Source VARCHAR(1024),
+			Value INT,
+			Egu VARCHAR(1024),
+			RuleName VARCHAR(1024),
+			CONSTRAINT TblPumptimeSetpoints_pkey PRIMARY KEY (Id)
+		);
+			DELETE FROM objects.TblPumptimeSetpoints ;
+	
+2023-08-07 10:21:08.027 +05 [8416] РћРЁРР‘РљРђ:  РѕС‚РЅРѕС€РµРЅРёРµ "tblpumptimesetpoints_pkey" СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚
+2023-08-07 10:21:08.027 +05 [8416] РћРџР•Р РђРўРћР :  	CREATE SCHEMA IF NOT EXISTS objects;
+		CREATE TABLE IF NOT EXISTS objects.TblPumptimeSetpoints(
+			Id INT NOT NULL,
+			Prefix VARCHAR(1024),
+			SetpointGroupId INT,
+			Tag VARCHAR(1024),
+			Name VARCHAR(1024),
+			Source VARCHAR(1024),
+			Value INT,
+			Egu VARCHAR(1024),
+			RuleName VARCHAR(1024),
+			CONSTRAINT TblPumptimeSetpoints_pkey PRIMARY KEY (Id)
+		);
+			DELETE FROM objects.TblPumptimeSetpoints ;
+	
+2023-08-07 10:21:08.029 +05 [8416] РћРЁРР‘РљРђ:  РѕС‚РЅРѕС€РµРЅРёРµ "tblpumptimesetpoints_pkey" СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚
+2023-08-07 10:21:08.029 +05 [8416] РћРџР•Р РђРўРћР :  	CREATE SCHEMA IF NOT EXISTS objects;
+		CREATE TABLE IF NOT EXISTS objects.TblPumptimeSetpoints(
+			Id INT NOT NULL,
+			Prefix VARCHAR(1024),
+			SetpointGroupId INT,
+			Tag VARCHAR(1024),
+			Name VARCHAR(1024),
+			Source VARCHAR(1024),
+			Value INT,
+			Egu VARCHAR(1024),
+			RuleName VARCHAR(1024),
+			CONSTRAINT TblPumptimeSetpoints_pkey PRIMARY KEY (Id)
+		);
+			DELETE FROM objects.TblPumptimeSetpoints ;
+	
+2023-08-07 10:21:08.032 +05 [8416] РћРЁРР‘РљРђ:  РѕС‚РЅРѕС€РµРЅРёРµ "tblpumptimesetpoints_pkey" СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚
+2023-08-07 10:21:08.032 +05 [8416] РћРџР•Р РђРўРћР :  	CREATE SCHEMA IF NOT EXISTS objects;
+		CREATE TABLE IF NOT EXISTS objects.TblPumptimeSetpoints(
+			Id INT NOT NULL,
+			Prefix VARCHAR(1024),
+			SetpointGroupId INT,
+			Tag VARCHAR(1024),
+			Name VARCHAR(1024),
+			Source VARCHAR(1024),
+			Value INT,
+			Egu VARCHAR(1024),
+			RuleName VARCHAR(1024),
+			CONSTRAINT TblPumptimeSetpoints_pkey PRIMARY KEY (Id)
+		);
+			DELETE FROM objects.TblPumptimeSetpoints ;
+	
+2023-08-07 10:21:08.034 +05 [8416] РћРЁРР‘РљРђ:  РѕС‚РЅРѕС€РµРЅРёРµ "tblpumptimesetpoints_pkey" СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚
+2023-08-07 10:21:08.034 +05 [8416] РћРџР•Р РђРўРћР :  	CREATE SCHEMA IF NOT EXISTS objects;
+		CREATE TABLE IF NOT EXISTS objects.TblPumptimeSetpoints(
+			Id INT NOT NULL,
+			Prefix VARCHAR(1024),
+			SetpointGroupId INT,
+			Tag VARCHAR(1024),
+			Name VARCHAR(1024),
+			Source VARCHAR(1024),
+			Value INT,
+			Egu VARCHAR(1024),
+			RuleName VARCHAR(1024),
+			CONSTRAINT TblPumptimeSetpoints_pkey PRIMARY KEY (Id)
+		);
+			DELETE FROM objects.TblPumptimeSetpoints ;
+	
+2023-08-07 10:21:08.036 +05 [8416] РћРЁРР‘РљРђ:  РѕС‚РЅРѕС€РµРЅРёРµ "tblpumptimesetpoints_pkey" СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚
+2023-08-07 10:21:08.036 +05 [8416] РћРџР•Р РђРўРћР :  	CREATE SCHEMA IF NOT EXISTS objects;
+		CREATE TABLE IF NOT EXISTS objects.TblPumptimeSetpoints(
+			Id INT NOT NULL,
+			Prefix VARCHAR(1024),
+			SetpointGroupId INT,
+			Tag VARCHAR(1024),
+			Name VARCHAR(1024),
+			Source VARCHAR(1024),
+			Value INT,
+			Egu VARCHAR(1024),
+			RuleName VARCHAR(1024),
+			CONSTRAINT TblPumptimeSetpoints_pkey PRIMARY KEY (Id)
+		);
+			DELETE FROM objects.TblPumptimeSetpoints ;
+	
+2023-08-07 10:21:08.038 +05 [8416] РћРЁРР‘РљРђ:  РѕС‚РЅРѕС€РµРЅРёРµ "tblpumptimesetpoints_pkey" СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚
+2023-08-07 10:21:08.038 +05 [8416] РћРџР•Р РђРўРћР :  	CREATE SCHEMA IF NOT EXISTS objects;
+		CREATE TABLE IF NOT EXISTS objects.TblPumptimeSetpoints(
+			Id INT NOT NULL,
+			Prefix VARCHAR(1024),
+			SetpointGroupId INT,
+			Tag VARCHAR(1024),
+			Name VARCHAR(1024),
+			Source VARCHAR(1024),
+			Value INT,
+			Egu VARCHAR(1024),
+			RuleName VARCHAR(1024),
+			CONSTRAINT TblPumptimeSetpoints_pkey PRIMARY KEY (Id)
+		);
+			DELETE FROM objects.TblPumptimeSetpoints ;
+	
+2023-08-07 10:21:08.040 +05 [8416] РћРЁРР‘РљРђ:  РѕС‚РЅРѕС€РµРЅРёРµ "tblpumptimesetpoints_pkey" СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚
+2023-08-07 10:21:08.040 +05 [8416] РћРџР•Р РђРўРћР :  	CREATE SCHEMA IF NOT EXISTS objects;
+		CREATE TABLE IF NOT EXISTS objects.TblPumptimeSetpoints(
+			Id INT NOT NULL,
+			Prefix VARCHAR(1024),
+			SetpointGroupId INT,
+			Tag VARCHAR(1024),
+			Name VARCHAR(1024),
+			Source VARCHAR(1024),
+			Value INT,
+			Egu VARCHAR(1024),
+			RuleName VARCHAR(1024),
+			CONSTRAINT TblPumptimeSetpoints_pkey PRIMARY KEY (Id)
+		);
+			DELETE FROM objects.TblPumptimeSetpoints ;
+	
+2023-08-07 10:21:08.046 +05 [8416] РћРЁРР‘РљРђ:  РѕС‚РЅРѕС€РµРЅРёРµ "tblpumptimesetpoints_pkey" СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚
+2023-08-07 10:21:08.046 +05 [8416] РћРџР•Р РђРўРћР :  	CREATE SCHEMA IF NOT EXISTS objects;
+		CREATE TABLE IF NOT EXISTS objects.TblPumptimeSetpoints(
+			Id INT NOT NULL,
+			Prefix VARCHAR(1024),
+			SetpointGroupId INT,
+			Tag VARCHAR(1024),
+			Name VARCHAR(1024),
+			Source VARCHAR(1024),
+			Value INT,
+			Egu VARCHAR(1024),
+			RuleName VARCHAR(1024),
+			CONSTRAINT TblPumptimeSetpoints_pkey PRIMARY KEY (Id)
+		);
+			DELETE FROM objects.TblPumptimeSetpoints ;
+	
+2023-08-07 10:21:08.048 +05 [8416] РћРЁРР‘РљРђ:  РѕС‚РЅРѕС€РµРЅРёРµ "tblpumptimesetpoints_pkey" СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚
+2023-08-07 10:21:08.048 +05 [8416] РћРџР•Р РђРўРћР :  	CREATE SCHEMA IF NOT EXISTS objects;
+		CREATE TABLE IF NOT EXISTS objects.TblPumptimeSetpoints(
+			Id INT NOT NULL,
+			Prefix VARCHAR(1024),
+			SetpointGroupId INT,
+			Tag VARCHAR(1024),
+			Name VARCHAR(1024),
+			Source VARCHAR(1024),
+			Value INT,
+			Egu VARCHAR(1024),
+			RuleName VARCHAR(1024),
+			CONSTRAINT TblPumptimeSetpoints_pkey PRIMARY KEY (Id)
+		);
+			DELETE FROM objects.TblPumptimeSetpoints ;
+	
+2023-08-07 10:21:08.050 +05 [8416] РћРЁРР‘РљРђ:  РѕС‚РЅРѕС€РµРЅРёРµ "tblpumptimesetpoints_pkey" СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚
+2023-08-07 10:21:08.050 +05 [8416] РћРџР•Р РђРўРћР :  	CREATE SCHEMA IF NOT EXISTS objects;
+		CREATE TABLE IF NOT EXISTS objects.TblPumptimeSetpoints(
+			Id INT NOT NULL,
+			Prefix VARCHAR(1024),
+			SetpointGroupId INT,
+			Tag VARCHAR(1024),
+			Name VARCHAR(1024),
+			Source VARCHAR(1024),
+			Value INT,
+			Egu VARCHAR(1024),
+			RuleName VARCHAR(1024),
+			CONSTRAINT TblPumptimeSetpoints_pkey PRIMARY KEY (Id)
+		);
+			DELETE FROM objects.TblPumptimeSetpoints ;
+	
+2023-08-07 10:21:08.053 +05 [8416] РћРЁРР‘РљРђ:  РѕС‚РЅРѕС€РµРЅРёРµ "tblpumptimesetpoints_pkey" СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚
+2023-08-07 10:21:08.053 +05 [8416] РћРџР•Р РђРўРћР :  	CREATE SCHEMA IF NOT EXISTS objects;
+		CREATE TABLE IF NOT EXISTS objects.TblPumptimeSetpoints(
+			Id INT NOT NULL,
+			Prefix VARCHAR(1024),
+			SetpointGroupId INT,
+			Tag VARCHAR(1024),
+			Name VARCHAR(1024),
+			Source VARCHAR(1024),
+			Value INT,
+			Egu VARCHAR(1024),
+			RuleName VARCHAR(1024),
+			CONSTRAINT TblPumptimeSetpoints_pkey PRIMARY KEY (Id)
+		);
+			DELETE FROM objects.TblPumptimeSetpoints ;
+	
+2023-08-07 10:21:08.055 +05 [8416] РћРЁРР‘РљРђ:  РѕС‚РЅРѕС€РµРЅРёРµ "tblpumptimesetpoints_pkey" СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚
+2023-08-07 10:21:08.055 +05 [8416] РћРџР•Р РђРўРћР :  	CREATE SCHEMA IF NOT EXISTS objects;
+		CREATE TABLE IF NOT EXISTS objects.TblPumptimeSetpoints(
+			Id INT NOT NULL,
+			Prefix VARCHAR(1024),
+			SetpointGroupId INT,
+			Tag VARCHAR(1024),
+			Name VARCHAR(1024),
+			Source VARCHAR(1024),
+			Value INT,
+			Egu VARCHAR(1024),
+			RuleName VARCHAR(1024),
+			CONSTRAINT TblPumptimeSetpoints_pkey PRIMARY KEY (Id)
+		);
+			DELETE FROM objects.TblPumptimeSetpoints ;
+	
+2023-08-07 10:21:08.057 +05 [8416] РћРЁРР‘РљРђ:  РѕС‚РЅРѕС€РµРЅРёРµ "tblpumptimesetpoints_pkey" СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚
+2023-08-07 10:21:08.057 +05 [8416] РћРџР•Р РђРўРћР :  	CREATE SCHEMA IF NOT EXISTS objects;
+		CREATE TABLE IF NOT EXISTS objects.TblPumptimeSetpoints(
+			Id INT NOT NULL,
+			Prefix VARCHAR(1024),
+			SetpointGroupId INT,
+			Tag VARCHAR(1024),
+			Name VARCHAR(1024),
+			Source VARCHAR(1024),
+			Value INT,
+			Egu VARCHAR(1024),
+			RuleName VARCHAR(1024),
+			CONSTRAINT TblPumptimeSetpoints_pkey PRIMARY KEY (Id)
+		);
+			DELETE FROM objects.TblPumptimeSetpoints ;
+	
+2023-08-07 10:21:08.059 +05 [8416] РћРЁРР‘РљРђ:  РѕС‚РЅРѕС€РµРЅРёРµ "tblpumptimesetpoints_pkey" СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚
+2023-08-07 10:21:08.059 +05 [8416] РћРџР•Р РђРўРћР :  	CREATE SCHEMA IF NOT EXISTS objects;
+		CREATE TABLE IF NOT EXISTS objects.TblPumptimeSetpoints(
+			Id INT NOT NULL,
+			Prefix VARCHAR(1024),
+			SetpointGroupId INT,
+			Tag VARCHAR(1024),
+			Name VARCHAR(1024),
+			Source VARCHAR(1024),
+			Value INT,
+			Egu VARCHAR(1024),
+			RuleName VARCHAR(1024),
+			CONSTRAINT TblPumptimeSetpoints_pkey PRIMARY KEY (Id)
+		);
+			DELETE FROM objects.TblPumptimeSetpoints ;
+	
+2023-08-07 10:21:08.061 +05 [8416] РћРЁРР‘РљРђ:  РѕС‚РЅРѕС€РµРЅРёРµ "tblpumptimesetpoints_pkey" СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚
+2023-08-07 10:21:08.061 +05 [8416] РћРџР•Р РђРўРћР :  	CREATE SCHEMA IF NOT EXISTS objects;
+		CREATE TABLE IF NOT EXISTS objects.TblPumptimeSetpoints(
+			Id INT NOT NULL,
+			Prefix VARCHAR(1024),
+			SetpointGroupId INT,
+			Tag VARCHAR(1024),
+			Name VARCHAR(1024),
+			Source VARCHAR(1024),
+			Value INT,
+			Egu VARCHAR(1024),
+			RuleName VARCHAR(1024),
+			CONSTRAINT TblPumptimeSetpoints_pkey PRIMARY KEY (Id)
+		);
+			DELETE FROM objects.TblPumptimeSetpoints ;
+	
+2023-08-07 10:21:08.064 +05 [8416] РћРЁРР‘РљРђ:  РѕС‚РЅРѕС€РµРЅРёРµ "tblpumptimesetpoints_pkey" СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚
+2023-08-07 10:21:08.064 +05 [8416] РћРџР•Р РђРўРћР :  	CREATE SCHEMA IF NOT EXISTS objects;
+		CREATE TABLE IF NOT EXISTS objects.TblPumptimeSetpoints(
+			Id INT NOT NULL,
+			Prefix VARCHAR(1024),
+			SetpointGroupId INT,
+			Tag VARCHAR(1024),
+			Name VARCHAR(1024),
+			Source VARCHAR(1024),
+			Value INT,
+			Egu VARCHAR(1024),
+			RuleName VARCHAR(1024),
+			CONSTRAINT TblPumptimeSetpoints_pkey PRIMARY KEY (Id)
+		);
+			DELETE FROM objects.TblPumptimeSetpoints ;
+	
+2023-08-07 10:21:08.066 +05 [8416] РћРЁРР‘РљРђ:  РѕС‚РЅРѕС€РµРЅРёРµ "tblpumptimesetpoints_pkey" СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚
+2023-08-07 10:21:08.066 +05 [8416] РћРџР•Р РђРўРћР :  	CREATE SCHEMA IF NOT EXISTS objects;
+		CREATE TABLE IF NOT EXISTS objects.TblPumptimeSetpoints(
+			Id INT NOT NULL,
+			Prefix VARCHAR(1024),
+			SetpointGroupId INT,
+			Tag VARCHAR(1024),
+			Name VARCHAR(1024),
+			Source VARCHAR(1024),
+			Value INT,
+			Egu VARCHAR(1024),
+			RuleName VARCHAR(1024),
+			CONSTRAINT TblPumptimeSetpoints_pkey PRIMARY KEY (Id)
+		);
+			DELETE FROM objects.TblPumptimeSetpoints ;
+	
+2023-08-07 10:21:08.068 +05 [8416] РћРЁРР‘РљРђ:  РѕС‚РЅРѕС€РµРЅРёРµ "tblpumptimesetpoints_pkey" СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚
+2023-08-07 10:21:08.068 +05 [8416] РћРџР•Р РђРўРћР :  	CREATE SCHEMA IF NOT EXISTS objects;
+		CREATE TABLE IF NOT EXISTS objects.TblPumptimeSetpoints(
+			Id INT NOT NULL,
+			Prefix VARCHAR(1024),
+			SetpointGroupId INT,
+			Tag VARCHAR(1024),
+			Name VARCHAR(1024),
+			Source VARCHAR(1024),
+			Value INT,
+			Egu VARCHAR(1024),
+			RuleName VARCHAR(1024),
+			CONSTRAINT TblPumptimeSetpoints_pkey PRIMARY KEY (Id)
+		);
+			DELETE FROM objects.TblPumptimeSetpoints ;
+	
+2023-08-07 10:21:08.070 +05 [8416] РћРЁРР‘РљРђ:  РѕС‚РЅРѕС€РµРЅРёРµ "tblpumptimesetpoints_pkey" СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚
+2023-08-07 10:21:08.070 +05 [8416] РћРџР•Р РђРўРћР :  	CREATE SCHEMA IF NOT EXISTS objects;
+		CREATE TABLE IF NOT EXISTS objects.TblPumptimeSetpoints(
+			Id INT NOT NULL,
+			Prefix VARCHAR(1024),
+			SetpointGroupId INT,
+			Tag VARCHAR(1024),
+			Name VARCHAR(1024),
+			Source VARCHAR(1024),
+			Value INT,
+			Egu VARCHAR(1024),
+			RuleName VARCHAR(1024),
+			CONSTRAINT TblPumptimeSetpoints_pkey PRIMARY KEY (Id)
+		);
+			DELETE FROM objects.TblPumptimeSetpoints ;
+	
+2023-08-07 10:21:08.073 +05 [8416] РћРЁРР‘РљРђ:  РѕС‚РЅРѕС€РµРЅРёРµ "tblpumptimesetpoints_pkey" СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚
+2023-08-07 10:21:08.073 +05 [8416] РћРџР•Р РђРўРћР :  	CREATE SCHEMA IF NOT EXISTS objects;
+		CREATE TABLE IF NOT EXISTS objects.TblPumptimeSetpoints(
+			Id INT NOT NULL,
+			Prefix VARCHAR(1024),
+			SetpointGroupId INT,
+			Tag VARCHAR(1024),
+			Name VARCHAR(1024),
+			Source VARCHAR(1024),
+			Value INT,
+			Egu VARCHAR(1024),
+			RuleName VARCHAR(1024),
+			CONSTRAINT TblPumptimeSetpoints_pkey PRIMARY KEY (Id)
+		);
+			DELETE FROM objects.TblPumptimeSetpoints ;
+	
+2023-08-07 10:21:08.075 +05 [8416] РћРЁРР‘РљРђ:  РѕС‚РЅРѕС€РµРЅРёРµ "tblpumptimesetpoints_pkey" СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚
+2023-08-07 10:21:08.075 +05 [8416] РћРџР•Р РђРўРћР :  	CREATE SCHEMA IF NOT EXISTS objects;
+		CREATE TABLE IF NOT EXISTS objects.TblPumptimeSetpoints(
+			Id INT NOT NULL,
+			Prefix VARCHAR(1024),
+			SetpointGroupId INT,
+			Tag VARCHAR(1024),
+			Name VARCHAR(1024),
+			Source VARCHAR(1024),
+			Value INT,
+			Egu VARCHAR(1024),
+			RuleName VARCHAR(1024),
+			CONSTRAINT TblPumptimeSetpoints_pkey PRIMARY KEY (Id)
+		);
+			DELETE FROM objects.TblPumptimeSetpoints ;
+	
+2023-08-07 10:21:08.077 +05 [8416] РћРЁРР‘РљРђ:  РѕС‚РЅРѕС€РµРЅРёРµ "tblpumptimesetpoints_pkey" СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚
+2023-08-07 10:21:08.077 +05 [8416] РћРџР•Р РђРўРћР :  	CREATE SCHEMA IF NOT EXISTS objects;
+		CREATE TABLE IF NOT EXISTS objects.TblPumptimeSetpoints(
+			Id INT NOT NULL,
+			Prefix VARCHAR(1024),
+			SetpointGroupId INT,
+			Tag VARCHAR(1024),
+			Name VARCHAR(1024),
+			Source VARCHAR(1024),
+			Value INT,
+			Egu VARCHAR(1024),
+			RuleName VARCHAR(1024),
+			CONSTRAINT TblPumptimeSetpoints_pkey PRIMARY KEY (Id)
+		);
+			DELETE FROM objects.TblPumptimeSetpoints ;
+	
+2023-08-07 10:21:08.080 +05 [8416] РћРЁРР‘РљРђ:  РѕС‚РЅРѕС€РµРЅРёРµ "tblpumptimesetpoints_pkey" СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚
+2023-08-07 10:21:08.080 +05 [8416] РћРџР•Р РђРўРћР :  	CREATE SCHEMA IF NOT EXISTS objects;
+		CREATE TABLE IF NOT EXISTS objects.TblPumptimeSetpoints(
+			Id INT NOT NULL,
+			Prefix VARCHAR(1024),
+			SetpointGroupId INT,
+			Tag VARCHAR(1024),
+			Name VARCHAR(1024),
+			Source VARCHAR(1024),
+			Value INT,
+			Egu VARCHAR(1024),
+			RuleName VARCHAR(1024),
+			CONSTRAINT TblPumptimeSetpoints_pkey PRIMARY KEY (Id)
+		);
+			DELETE FROM objects.TblPumptimeSetpoints ;
+	
+2023-08-07 10:21:08.083 +05 [8416] РћРЁРР‘РљРђ:  РѕС‚РЅРѕС€РµРЅРёРµ "tblpumptimesetpoints_pkey" СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚
+2023-08-07 10:21:08.083 +05 [8416] РћРџР•Р РђРўРћР :  	CREATE SCHEMA IF NOT EXISTS objects;
+		CREATE TABLE IF NOT EXISTS objects.TblPumptimeSetpoints(
+			Id INT NOT NULL,
+			Prefix VARCHAR(1024),
+			SetpointGroupId INT,
+			Tag VARCHAR(1024),
+			Name VARCHAR(1024),
+			Source VARCHAR(1024),
+			Value INT,
+			Egu VARCHAR(1024),
+			RuleName VARCHAR(1024),
+			CONSTRAINT TblPumptimeSetpoints_pkey PRIMARY KEY (Id)
+		);
+			DELETE FROM objects.TblPumptimeSetpoints ;
+	
+2023-08-07 10:21:08.085 +05 [8416] РћРЁРР‘РљРђ:  РѕС‚РЅРѕС€РµРЅРёРµ "tblpumptimesetpoints_pkey" СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚
+2023-08-07 10:21:08.085 +05 [8416] РћРџР•Р РђРўРћР :  	CREATE SCHEMA IF NOT EXISTS objects;
+		CREATE TABLE IF NOT EXISTS objects.TblPumptimeSetpoints(
+			Id INT NOT NULL,
+			Prefix VARCHAR(1024),
+			SetpointGroupId INT,
+			Tag VARCHAR(1024),
+			Name VARCHAR(1024),
+			Source VARCHAR(1024),
+			Value INT,
+			Egu VARCHAR(1024),
+			RuleName VARCHAR(1024),
+			CONSTRAINT TblPumptimeSetpoints_pkey PRIMARY KEY (Id)
+		);
+			DELETE FROM objects.TblPumptimeSetpoints ;
+	
+2023-08-07 10:21:08.088 +05 [8416] РћРЁРР‘РљРђ:  РѕС‚РЅРѕС€РµРЅРёРµ "tblpumptimesetpoints_pkey" СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚
+2023-08-07 10:21:08.088 +05 [8416] РћРџР•Р РђРўРћР :  	CREATE SCHEMA IF NOT EXISTS objects;
+		CREATE TABLE IF NOT EXISTS objects.TblPumptimeSetpoints(
+			Id INT NOT NULL,
+			Prefix VARCHAR(1024),
+			SetpointGroupId INT,
+			Tag VARCHAR(1024),
+			Name VARCHAR(1024),
+			Source VARCHAR(1024),
+			Value INT,
+			Egu VARCHAR(1024),
+			RuleName VARCHAR(1024),
+			CONSTRAINT TblPumptimeSetpoints_pkey PRIMARY KEY (Id)
+		);
+			DELETE FROM objects.TblPumptimeSetpoints ;
+	
+2023-08-07 10:21:08.090 +05 [8416] РћРЁРР‘РљРђ:  РѕС‚РЅРѕС€РµРЅРёРµ "tblpumptimesetpoints_pkey" СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚
+2023-08-07 10:21:08.090 +05 [8416] РћРџР•Р РђРўРћР :  	CREATE SCHEMA IF NOT EXISTS objects;
+		CREATE TABLE IF NOT EXISTS objects.TblPumptimeSetpoints(
+			Id INT NOT NULL,
+			Prefix VARCHAR(1024),
+			SetpointGroupId INT,
+			Tag VARCHAR(1024),
+			Name VARCHAR(1024),
+			Source VARCHAR(1024),
+			Value INT,
+			Egu VARCHAR(1024),
+			RuleName VARCHAR(1024),
+			CONSTRAINT TblPumptimeSetpoints_pkey PRIMARY KEY (Id)
+		);
+			DELETE FROM objects.TblPumptimeSetpoints ;
+	
+2023-08-07 10:21:08.092 +05 [8416] РћРЁРР‘РљРђ:  РѕС‚РЅРѕС€РµРЅРёРµ "tblpumptimesetpoints_pkey" СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚
+2023-08-07 10:21:08.092 +05 [8416] РћРџР•Р РђРўРћР :  	CREATE SCHEMA IF NOT EXISTS objects;
+		CREATE TABLE IF NOT EXISTS objects.TblPumptimeSetpoints(
+			Id INT NOT NULL,
+			Prefix VARCHAR(1024),
+			SetpointGroupId INT,
+			Tag VARCHAR(1024),
+			Name VARCHAR(1024),
+			Source VARCHAR(1024),
+			Value INT,
+			Egu VARCHAR(1024),
+			RuleName VARCHAR(1024),
+			CONSTRAINT TblPumptimeSetpoints_pkey PRIMARY KEY (Id)
+		);
+			DELETE FROM objects.TblPumptimeSetpoints ;
+	
+2023-08-07 10:21:08.097 +05 [8416] РћРЁРР‘РљРђ:  РѕС‚РЅРѕС€РµРЅРёРµ "tblpumptimesetpoints_pkey" СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚
+2023-08-07 10:21:08.097 +05 [8416] РћРџР•Р РђРўРћР :  	CREATE SCHEMA IF NOT EXISTS objects;
+		CREATE TABLE IF NOT EXISTS objects.TblPumptimeSetpoints(
+			Id INT NOT NULL,
+			Prefix VARCHAR(1024),
+			SetpointGroupId INT,
+			Tag VARCHAR(1024),
+			Name VARCHAR(1024),
+			Source VARCHAR(1024),
+			Value INT,
+			Egu VARCHAR(1024),
+			RuleName VARCHAR(1024),
+			CONSTRAINT TblPumptimeSetpoints_pkey PRIMARY KEY (Id)
+		);
+			DELETE FROM objects.TblPumptimeSetpoints ;
+	
+2023-08-07 10:21:08.099 +05 [8416] РћРЁРР‘РљРђ:  РѕС‚РЅРѕС€РµРЅРёРµ "tblpumptimesetpoints_pkey" СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚
+2023-08-07 10:21:08.099 +05 [8416] РћРџР•Р РђРўРћР :  	CREATE SCHEMA IF NOT EXISTS objects;
+		CREATE TABLE IF NOT EXISTS objects.TblPumptimeSetpoints(
+			Id INT NOT NULL,
+			Prefix VARCHAR(1024),
+			SetpointGroupId INT,
+			Tag VARCHAR(1024),
+			Name VARCHAR(1024),
+			Source VARCHAR(1024),
+			Value INT,
+			Egu VARCHAR(1024),
+			RuleName VARCHAR(1024),
+			CONSTRAINT TblPumptimeSetpoints_pkey PRIMARY KEY (Id)
+		);
+			DELETE FROM objects.TblPumptimeSetpoints ;
+	
+2023-08-07 10:21:08.102 +05 [8416] РћРЁРР‘РљРђ:  РѕС‚РЅРѕС€РµРЅРёРµ "tblpumptimesetpoints_pkey" СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚
+2023-08-07 10:21:08.102 +05 [8416] РћРџР•Р РђРўРћР :  	CREATE SCHEMA IF NOT EXISTS objects;
+		CREATE TABLE IF NOT EXISTS objects.TblPumptimeSetpoints(
+			Id INT NOT NULL,
+			Prefix VARCHAR(1024),
+			SetpointGroupId INT,
+			Tag VARCHAR(1024),
+			Name VARCHAR(1024),
+			Source VARCHAR(1024),
+			Value INT,
+			Egu VARCHAR(1024),
+			RuleName VARCHAR(1024),
+			CONSTRAINT TblPumptimeSetpoints_pkey PRIMARY KEY (Id)
+		);
+			DELETE FROM objects.TblPumptimeSetpoints ;
+	
+2023-08-07 10:21:08.104 +05 [8416] РћРЁРР‘РљРђ:  РѕС‚РЅРѕС€РµРЅРёРµ "tblpumptimesetpoints_pkey" СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚
+2023-08-07 10:21:08.104 +05 [8416] РћРџР•Р РђРўРћР :  	CREATE SCHEMA IF NOT EXISTS objects;
+		CREATE TABLE IF NOT EXISTS objects.TblPumptimeSetpoints(
+			Id INT NOT NULL,
+			Prefix VARCHAR(1024),
+			SetpointGroupId INT,
+			Tag VARCHAR(1024),
+			Name VARCHAR(1024),
+			Source VARCHAR(1024),
+			Value INT,
+			Egu VARCHAR(1024),
+			RuleName VARCHAR(1024),
+			CONSTRAINT TblPumptimeSetpoints_pkey PRIMARY KEY (Id)
+		);
+			DELETE FROM objects.TblPumptimeSetpoints ;
+	
+2023-08-07 10:22:24.758 +05 [7528] СООБЩЕНИЕ:  начата контрольная точка: time
+2023-08-07 10:22:36.768 +05 [7528] СООБЩЕНИЕ:  контрольная точка завершена: записано буферов: 111 (0.7%); добавлено файлов WAL 0, удалено: 0, переработано: 0; запись=11.959 сек., синхр.=0.025 сек., всего=12.011 сек.; синхронизировано_файлов=41, самая_долгая_синхр.=0.003 сек., средняя=0.001 сек.; расстояние=1334 kB, ожидалось=1334 kB
+2023-08-07 10:27:24.779 +05 [7528] СООБЩЕНИЕ:  начата контрольная точка: time
+2023-08-07 10:27:28.267 +05 [7528] СООБЩЕНИЕ:  контрольная точка завершена: записано буферов: 33 (0.2%); добавлено файлов WAL 0, удалено: 0, переработано: 0; запись=3.468 сек., синхр.=0.015 сек., всего=3.488 сек.; синхронизировано_файлов=15, самая_долгая_синхр.=0.004 сек., средняя=0.001 сек.; расстояние=202 kB, ожидалось=1221 kB
+2023-08-07 10:28:27.551 +05 [8412] РћРЁРР‘РљРђ:  Р±Р°Р·Р° РґР°РЅРЅС‹С… "asutp" Р·Р°РЅСЏС‚Р° РґСЂСѓРіРёРјРё РїРѕР»СЊР·РѕРІР°С‚РµР»СЏРјРё
+2023-08-07 10:28:27.551 +05 [8412] РџРћР”Р РћР‘РќРћРЎРўР:  Р­С‚Р° Р±Р°Р·Р° РґР°РЅРЅС‹С… РёСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ РµС‰С‘ РІ 2 СЃРµР°РЅСЃР°С….
+2023-08-07 10:28:27.551 +05 [8412] РћРџР•Р РђРўРћР :  DROP DATABASE IF EXISTS asutp;
+	
+2023-08-07 10:28:54.150 +05 [8412] РћРЁРР‘РљРђ:  Р±Р°Р·Р° РґР°РЅРЅС‹С… "asutp" Р·Р°РЅСЏС‚Р° РґСЂСѓРіРёРјРё РїРѕР»СЊР·РѕРІР°С‚РµР»СЏРјРё
+2023-08-07 10:28:54.150 +05 [8412] РџРћР”Р РћР‘РќРћРЎРўР:  Р­С‚Р° Р±Р°Р·Р° РґР°РЅРЅС‹С… РёСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ РµС‰С‘ РІ 1 СЃРµР°РЅСЃРµ.
+2023-08-07 10:28:54.150 +05 [8412] РћРџР•Р РђРўРћР :  DROP DATABASE IF EXISTS asutp;
+	
+2023-08-07 10:29:09.110 +05 [9516] РћРЁРР‘РљРђ:  Р±Р°Р·Р° РґР°РЅРЅС‹С… "asutp" Р·Р°РЅСЏС‚Р° РґСЂСѓРіРёРјРё РїРѕР»СЊР·РѕРІР°С‚РµР»СЏРјРё
+2023-08-07 10:29:09.110 +05 [9516] РџРћР”Р РћР‘РќРћРЎРўР:  Р­С‚Р° Р±Р°Р·Р° РґР°РЅРЅС‹С… РёСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ РµС‰С‘ РІ 1 СЃРµР°РЅСЃРµ.
+2023-08-07 10:29:09.110 +05 [9516] РћРџР•Р РђРўРћР :  drop database asutp
+2023-08-07 10:29:27.414 +05 [7528] СООБЩЕНИЕ:  начата контрольная точка: immediate force wait
+2023-08-07 10:29:27.430 +05 [7528] СООБЩЕНИЕ:  контрольная точка завершена: записано буферов: 21 (0.1%); добавлено файлов WAL 0, удалено: 0, переработано: 0; запись=0.002 сек., синхр.=0.010 сек., всего=0.017 сек.; синхронизировано_файлов=11, самая_долгая_синхр.=0.002 сек., средняя=0.001 сек.; расстояние=64 kB, ожидалось=1105 kB
+2023-08-07 10:30:49.244 +05 [18484] РћРЁРР‘РљРђ:  OID РІРЅРµ РґРёР°РїР°Р·РѕРЅР°
+2023-08-07 10:30:49.244 +05 [18484] РћРџР•Р РђРўРћР :  select T.oid as object_id,
+	                 T.relacl as acl
+	          from pg_catalog.pg_class T
+	          where relnamespace = $1::oid 
+	          union all
+	          select T.oid as object_id,
+	                 T.proacl as acl
+	          from pg_catalog.pg_proc T
+	          where pronamespace = $2::oid 
+	          union all
+	          select T.oid as object_id,
+	                 T.typacl as acl
+	          from pg_catalog.pg_type T
+	          where typnamespace = $3::oid 
+	          order by object_id
+2023-08-07 10:34:27.431 +05 [7528] СООБЩЕНИЕ:  начата контрольная точка: time
+2023-08-07 10:38:57.177 +05 [7528] СООБЩЕНИЕ:  контрольная точка завершена: записано буферов: 4990 (30.5%); добавлено файлов WAL 0, удалено: 0, переработано: 2; запись=269.582 сек., синхр.=0.144 сек., всего=269.746 сек.; синхронизировано_файлов=285, самая_долгая_синхр.=0.004 сек., средняя=0.001 сек.; расстояние=36533 kB, ожидалось=36533 kB
+2023-08-07 10:49:27.205 +05 [7528] СООБЩЕНИЕ:  начата контрольная точка: time
+2023-08-07 10:49:40.183 +05 [7528] СООБЩЕНИЕ:  контрольная точка завершена: записано буферов: 119 (0.7%); добавлено файлов WAL 0, удалено: 0, переработано: 0; запись=12.923 сек., синхр.=0.045 сек., всего=12.978 сек.; синхронизировано_файлов=68, самая_долгая_синхр.=0.001 сек., средняя=0.001 сек.; расстояние=699 kB, ожидалось=32949 kB
+2023-08-07 10:54:27.195 +05 [7528] СООБЩЕНИЕ:  начата контрольная точка: time
+2023-08-07 10:54:34.084 +05 [7528] СООБЩЕНИЕ:  контрольная точка завершена: записано буферов: 64 (0.4%); добавлено файлов WAL 0, удалено: 0, переработано: 0; запись=6.856 сек., синхр.=0.024 сек., всего=6.890 сек.; синхронизировано_файлов=31, самая_долгая_синхр.=0.006 сек., средняя=0.001 сек.; расстояние=401 kB, ожидалось=29695 kB
+2023-08-07 11:14:27.106 +05 [7528] СООБЩЕНИЕ:  начата контрольная точка: time
+2023-08-07 11:14:27.118 +05 [7528] СООБЩЕНИЕ:  контрольная точка завершена: записано буферов: 1 (0.0%); добавлено файлов WAL 0, удалено: 0, переработано: 0; запись=0.002 сек., синхр.=0.002 сек., всего=0.013 сек.; синхронизировано_файлов=1, самая_долгая_синхр.=0.002 сек., средняя=0.002 сек.; расстояние=0 kB, ожидалось=26725 kB
+2023-08-07 12:47:15.552 +05 [3628] РЎРћРћР‘Р©Р•РќРР•:  РЅРµ СѓРґР°Р»РѕСЃСЊ РїРѕР»СѓС‡РёС‚СЊ РґР°РЅРЅС‹Рµ РѕС‚ РєР»РёРµРЅС‚Р°: An existing connection was forcibly closed by the remote host.
+	
+2023-08-07 12:47:15.552 +05 [18108] РЎРћРћР‘Р©Р•РќРР•:  РЅРµ СѓРґР°Р»РѕСЃСЊ РїРѕР»СѓС‡РёС‚СЊ РґР°РЅРЅС‹Рµ РѕС‚ РєР»РёРµРЅС‚Р°: An existing connection was forcibly closed by the remote host.
+	
+2023-08-07 12:47:15.553 +05 [8664] РЎРћРћР‘Р©Р•РќРР•:  РЅРµ СѓРґР°Р»РѕСЃСЊ РїРѕР»СѓС‡РёС‚СЊ РґР°РЅРЅС‹Рµ РѕС‚ РєР»РёРµРЅС‚Р°: An existing connection was forcibly closed by the remote host.
+	
+2023-08-07 12:47:15.553 +05 [9060] РЎРћРћР‘Р©Р•РќРР•:  РЅРµ СѓРґР°Р»РѕСЃСЊ РїРѕР»СѓС‡РёС‚СЊ РґР°РЅРЅС‹Рµ РѕС‚ РєР»РёРµРЅС‚Р°: An existing connection was forcibly closed by the remote host.
+	
+2023-08-07 13:12:05.954 +05 [7528] СООБЩЕНИЕ:  начата контрольная точка: time
+2023-08-07 13:12:07.175 +05 [7528] СООБЩЕНИЕ:  контрольная точка завершена: записано буферов: 12 (0.1%); добавлено файлов WAL 0, удалено: 0, переработано: 0; запись=1.204 сек., синхр.=0.010 сек., всего=1.222 сек.; синхронизировано_файлов=7, самая_долгая_синхр.=0.004 сек., средняя=0.002 сек.; расстояние=6 kB, ожидалось=24053 kB
+2023-08-07 13:12:50.784 +05 [19084] РћРЁРР‘РљРђ:  РЅРµРІРµСЂРЅС‹Р№ СЃРёРЅС‚Р°РєСЃРёСЃ РґР»СЏ С‚РёРїР° double precision: "None" (СЃРёРјРІРѕР» 65)
+2023-08-07 13:12:50.784 +05 [19084] РћРџР•Р РђРўРћР :  UPDATE umpna_tm
+	                           SET "value_real_ust"='None' 
+	                           WHERE "id"=7
+2023-08-07 13:15:43.375 +05 [15608] РћРЁРР‘РљРђ:  РЅРµРІРµСЂРЅС‹Р№ СЃРёРЅС‚Р°РєСЃРёСЃ РґР»СЏ С‚РёРїР° double precision: "None" (СЃРёРјРІРѕР» 65)
+2023-08-07 13:15:43.375 +05 [15608] РћРџР•Р РђРўРћР :  UPDATE umpna_tm
+	                           SET "value_real_ust"='None' 
+	                           WHERE "id"=8
+2023-08-07 13:17:05.181 +05 [7528] СООБЩЕНИЕ:  начата контрольная точка: time
+2023-08-07 13:17:06.393 +05 [7528] СООБЩЕНИЕ:  контрольная точка завершена: записано буферов: 12 (0.1%); добавлено файлов WAL 0, удалено: 0, переработано: 0; запись=1.198 сек., синхр.=0.008 сек., всего=1.213 сек.; синхронизировано_файлов=8, самая_долгая_синхр.=0.003 сек., средняя=0.001 сек.; расстояние=29 kB, ожидалось=21651 kB
+2023-08-07 13:21:47.520 +05 [15060] РЎРћРћР‘Р©Р•РќРР•:  РЅРµ СѓРґР°Р»РѕСЃСЊ РїРѕР»СѓС‡РёС‚СЊ РґР°РЅРЅС‹Рµ РѕС‚ РєР»РёРµРЅС‚Р°: An existing connection was forcibly closed by the remote host.
+	
+2023-08-07 13:21:47.520 +05 [13776] РЎРћРћР‘Р©Р•РќРР•:  РЅРµ СѓРґР°Р»РѕСЃСЊ РїРѕР»СѓС‡РёС‚СЊ РґР°РЅРЅС‹Рµ РѕС‚ РєР»РёРµРЅС‚Р°: An existing connection was forcibly closed by the remote host.
+	
+2023-08-07 13:23:58.179 +05 [5612] РћРЁРР‘РљРђ:  РЅРµРІРµСЂРЅС‹Р№ СЃРёРЅС‚Р°РєСЃРёСЃ РґР»СЏ С‚РёРїР° double precision: "None" (СЃРёРјРІРѕР» 65)
+2023-08-07 13:23:58.179 +05 [5612] РћРџР•Р РђРўРћР :  UPDATE umpna_tm
+	                           SET "value_real_ust"='None' 
+	                           WHERE "id"=7
+2023-08-07 13:27:05.415 +05 [7528] СООБЩЕНИЕ:  начата контрольная точка: time
+2023-08-07 13:27:05.763 +05 [7528] СООБЩЕНИЕ:  контрольная точка завершена: записано буферов: 5 (0.0%); добавлено файлов WAL 0, удалено: 0, переработано: 0; запись=0.334 сек., синхр.=0.004 сек., всего=0.349 сек.; синхронизировано_файлов=3, самая_долгая_синхр.=0.002 сек., средняя=0.002 сек.; расстояние=16 kB, ожидалось=19487 kB
+2023-08-07 13:47:30.673 +05 [16820] РЎРћРћР‘Р©Р•РќРР•:  РЅРµ СѓРґР°Р»РѕСЃСЊ РїРѕР»СѓС‡РёС‚СЊ РґР°РЅРЅС‹Рµ РѕС‚ РєР»РёРµРЅС‚Р°: An existing connection was forcibly closed by the remote host.
+	
+2023-08-07 13:47:30.673 +05 [3112] РЎРћРћР‘Р©Р•РќРР•:  РЅРµ СѓРґР°Р»РѕСЃСЊ РїРѕР»СѓС‡РёС‚СЊ РґР°РЅРЅС‹Рµ РѕС‚ РєР»РёРµРЅС‚Р°: An existing connection was forcibly closed by the remote host.
+	
+2023-08-07 13:48:08.100 +05 [7528] СООБЩЕНИЕ:  начата контрольная точка: time
+2023-08-07 13:48:08.230 +05 [7528] СООБЩЕНИЕ:  контрольная точка завершена: записано буферов: 2 (0.0%); добавлено файлов WAL 0, удалено: 0, переработано: 0; запись=0.116 сек., синхр.=0.005 сек., всего=0.130 сек.; синхронизировано_файлов=2, самая_долгая_синхр.=0.004 сек., средняя=0.002 сек.; расстояние=8 kB, ожидалось=17539 kB
+2023-08-07 13:53:08.238 +05 [7528] СООБЩЕНИЕ:  начата контрольная точка: time
+2023-08-07 13:53:08.678 +05 [7528] СООБЩЕНИЕ:  контрольная точка завершена: записано буферов: 5 (0.0%); добавлено файлов WAL 0, удалено: 0, переработано: 0; запись=0.428 сек., синхр.=0.004 сек., всего=0.441 сек.; синхронизировано_файлов=3, самая_долгая_синхр.=0.003 сек., средняя=0.002 сек.; расстояние=20 kB, ожидалось=15787 kB
+2023-08-07 14:08:08.706 +05 [7528] СООБЩЕНИЕ:  начата контрольная точка: time
+2023-08-07 14:08:14.947 +05 [7528] СООБЩЕНИЕ:  контрольная точка завершена: записано буферов: 58 (0.4%); добавлено файлов WAL 0, удалено: 0, переработано: 0; запись=6.208 сек., синхр.=0.025 сек., всего=6.242 сек.; синхронизировано_файлов=37, самая_долгая_синхр.=0.004 сек., средняя=0.001 сек.; расстояние=273 kB, ожидалось=14236 kB
+2023-08-07 14:12:18.304 +05 [8412] РћРЁРР‘РљРђ:  Р±Р°Р·Р° РґР°РЅРЅС‹С… "asupt_temp" Р·Р°РЅСЏС‚Р° РґСЂСѓРіРёРјРё РїРѕР»СЊР·РѕРІР°С‚РµР»СЏРјРё
+2023-08-07 14:12:18.304 +05 [8412] РџРћР”Р РћР‘РќРћРЎРўР:  Р­С‚Р° Р±Р°Р·Р° РґР°РЅРЅС‹С… РёСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ РµС‰С‘ РІ 1 СЃРµР°РЅСЃРµ.
+2023-08-07 14:12:18.304 +05 [8412] РћРџР•Р РђРўРћР :  DROP DATABASE IF EXISTS asupt_temp;
+	
+2023-08-07 14:12:28.532 +05 [8412] РћРЁРР‘РљРђ:  Р±Р°Р·Р° РґР°РЅРЅС‹С… "asupt_temp" Р·Р°РЅСЏС‚Р° РґСЂСѓРіРёРјРё РїРѕР»СЊР·РѕРІР°С‚РµР»СЏРјРё
+2023-08-07 14:12:28.532 +05 [8412] РџРћР”Р РћР‘РќРћРЎРўР:  Р­С‚Р° Р±Р°Р·Р° РґР°РЅРЅС‹С… РёСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ РµС‰С‘ РІ 1 СЃРµР°РЅСЃРµ.
+2023-08-07 14:12:28.532 +05 [8412] РћРџР•Р РђРўРћР :  DROP DATABASE IF EXISTS asupt_temp;
+	
+2023-08-07 14:12:34.053 +05 [7528] СООБЩЕНИЕ:  начата контрольная точка: immediate force wait
+2023-08-07 14:12:34.061 +05 [7528] СООБЩЕНИЕ:  контрольная точка завершена: записано буферов: 1 (0.0%); добавлено файлов WAL 0, удалено: 0, переработано: 0; запись=0.001 сек., синхр.=0.002 сек., всего=0.009 сек.; синхронизировано_файлов=1, самая_долгая_синхр.=0.001 сек., средняя=0.001 сек.; расстояние=2 kB, ожидалось=12813 kB
+2023-08-07 14:13:43.914 +05 [13656] РћРЁРР‘РљРђ:  РЅРµРІРµСЂРЅС‹Р№ СЃРёРЅС‚Р°РєСЃРёСЃ РґР»СЏ С‚РёРїР° integer: "countsErrDiag[1]" (СЃРёРјРІРѕР» 930)
+2023-08-07 14:13:43.914 +05 [13656] РћРџР•Р РђРўРћР :  INSERT INTO "hardware" ("variable", "tag", "uso", "basket", "powerLink_ID", "Pic", "type_0", "variable_0", "type_1", "variable_1", "type_2", "variable_2", "type_3", "variable_3", "type_4", "variable_4", "type_5", "variable_5", "type_6", "variable_6", "type_7", "variable_7", "type_8", "variable_8", "type_9", "variable_9", "type_10", "variable_10", "type_11", "variable_11", "type_12", "variable_12", "type_13", "variable_13", "type_14", "variable_14", "type_15", "variable_15", "type_16", "variable_16", "type_17", "variable_17", "type_18", "variable_18", "type_19", "variable_19", "type_20", "variable_20", "type_21", "variable_21", "type_22", "variable_22", "type_23", "variable_23", "type_24", "variable_24", "type_25", "variable_25", "type_26", "variable_26", "type_27", "variable_27", "type_28", "variable_28", "type_29", "variable_29", "type_30", "variable_30", "type_31", "variable_31", "type_32", "variable_32") VALUES ('countsErrDiag[1]', '', 'РџРў.РљР¦', 1, '', '', 'MK-550-024', 'PSU', 'MK-546-010', 'MN;3', 'MK-504-120', 'CPU;7', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''), ('countsErrDiag[2]', '', 'РџРў.РљР¦', 2, '', '', 'MK-550-024', 'PSU', 'MK-546-010', 'MN;3', 'MK-504-120', 'CPU;7', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''), ('countsErrDiag[]', '', 'РџРў.РљР¦', 3, '1', NULL, 'MK-550-024', 'PSU', 'MK-545-010', 'CN;3', 'MK-516-008A', 'AI[1]', 'MK-521-032', 'DI[1]', 'MK-541-002', 'RS[1];3', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL), ('countsErrDiag[]', '', 'РџРў.РЈРЎРћ.1', 1, '2', NULL, 'MK-550-024', 'PSU', 'MK-545-010', 'CN;3', 'MK-516-008A', 'AI[2]', 'MK-516-008A', 'AI[3]', 'MK-516-008A', 'AI[4]', 'MK-516-008A', 'AI[5]', 'MK-521-032', 'DI[2]', 'MK-531-032', 'DO[1]', 'MK-541-002', 'RS[2];3', 'MK-541-002', 'RS[3];3', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL), ('countsErrDiag[]', '', 'РџРў.РЈРЎРћ.1', 2, '3', NULL, 'MK-550-024', 'PSU', 'MK-545-010', 'CN;3', 'MK-516-008A', 'AI[6]', 'MK-516-008A', 'AI[7]', 'MK-516-008A', 'AI[8]', 'MK-521-032', 'DI[3]', 'MK-531-032', 'DO[2]', 'MK-541-002', 'RS[4];3', 'MK-541-002', 'RS[5];3', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL), ('countsErrDiag[]', '', 'РџРў.РЈРЎРћ.2', 1, '4', NULL, 'MK-550-024', 'PSU', 'MK-545-010', 'CN;3', 'MK-516-008A', 'AI[9]', 'MK-516-008A', 'AI[10]', 'MK-516-008A', 'AI[11]', 'MK-516-008A', 'AI[12]', 'MK-521-032', 'DI[4]', 'MK-521-032', 'DI[5]', 'MK-521-032', 'DI[6]', 'MK-531-032', 'DO[3]', NULL, NULL, 'MK-541-002', 'RS[6];3', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL), ('countsErrDiag[]', '', 'РџРў.РЈРЎРћ.2', 2, '5', NULL, 'MK-550-024', 'PSU', 'MK-545-010', 'CN;3', 'MK-516-008A', 'AI[13]', 'MK-516-008A', 'AI[14]', 'MK-516-008A', 'AI[15]', 'MK-516-008A', 'AI[16]', 'MK-521-032', 'DI[7]', 'MK-521-032', 'DI[8]', 'MK-521-032', 'DI[9]', 'MK-531-032', 'DO[4]', 'MK-531-032', 'DO[5]', 'MK-541-002', 'RS[7];3', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL) RETURNING "hardware"."id"
+2023-08-07 14:17:34.071 +05 [7528] СООБЩЕНИЕ:  начата контрольная точка: time
+2023-08-07 14:19:36.822 +05 [7528] СООБЩЕНИЕ:  контрольная точка завершена: записано буферов: 1123 (6.9%); добавлено файлов WAL 0, удалено: 0, переработано: 1; запись=122.532 сек., синхр.=0.209 сек., всего=122.751 сек.; синхронизировано_файлов=335, самая_долгая_синхр.=0.003 сек., средняя=0.001 сек.; расстояние=5781 kB, ожидалось=12109 kB
+2023-08-07 14:22:34.842 +05 [7528] СООБЩЕНИЕ:  начата контрольная точка: time
+2023-08-07 14:22:40.956 +05 [7528] СООБЩЕНИЕ:  контрольная точка завершена: записано буферов: 57 (0.3%); добавлено файлов WAL 0, удалено: 0, переработано: 0; запись=6.089 сек., синхр.=0.018 сек., всего=6.114 сек.; синхронизировано_файлов=19, самая_долгая_синхр.=0.004 сек., средняя=0.001 сек.; расстояние=583 kB, ожидалось=10957 kB

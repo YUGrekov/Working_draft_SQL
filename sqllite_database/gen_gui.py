@@ -20,7 +20,7 @@ class Widget(QWidget):
         super().__init__()
 
         self.setWindowTitle('Меню разработки проекта')
-        self.resize(1095, 400)
+        self.setFixedSize(1095, 420)
 
         tab = QTabWidget(self)
         tab.resize(1085, 275)
@@ -291,7 +291,8 @@ class Widget(QWidget):
         l_hw.move(2, l_height)
         b_io_basket = QPushButton('Заполнить', tab_3)
         b_io_basket.setStyleSheet("background: #bfd6bf; border: 1px solid; border-radius: 3px; ")
-        b_io_basket.setToolTip('''Конфигурация корзин в проекте CodeSys. Обновления таблицы нет! При новом заполнении строки добавляются в конец таблицы''')
+        b_io_basket.setToolTip('''Конфигурация корзин в проекте CodeSys. Обновления таблицы нет! При новом заполнении строки добавляются в конец таблицы. 
+        После генерации заполнить вручную столбец Идентификатор!''')
         b_io_basket.resize(80,23)
         b_io_basket.move(b_width_one, b_height) 
         b_io_basket.clicked.connect(self.filling_hardware)
@@ -1343,10 +1344,12 @@ class Widget(QWidget):
 
         # Logs
         self.logTextBox = QTextEdit(self)
-        #self.logTextBox.setStyleSheet("border-radius: 4px; border: 1px solid")
-        self.logTextBox.setGeometry(5,284,1083,110)
+        self.logTextBox.setGeometry(5,284,1083,130)
         self.logTextBox.setReadOnly(True)
         self.logs_msg(f'Запущено меню разработки проекта', 1)
+        clearButton = QPushButton('Очистить журнал', self)
+        clearButton.setGeometry(952,390,120,25)
+        clearButton.clicked.connect(self.clear_textmsg)
 
         # Загружаем пути проекта
         self.path_file_prj()
@@ -2402,7 +2405,10 @@ class Widget(QWidget):
     def check_cfg_DO_sim(self, checked):
         if checked: self.list_gen_su.append('cfg_DO_sim')
         else      : self.list_gen_su.remove('cfg_DO_sim')
-
+    
+    # Clear messages operation log 
+    def clear_textmsg(self):
+        self.logTextBox.clear()
     # Button confirm
     def su_list(self):
         msg = self.filingCS.write_in_file(self.list_gen_su)

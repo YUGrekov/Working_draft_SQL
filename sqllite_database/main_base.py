@@ -1000,15 +1000,15 @@ class Generate_database_SQL():
                 if tabl == 'VSGRP_tabl': 
                     msg.update(self.synh_tabl('tblauxsysgrouptimesetpoints', 'vsgrp_tm', 'TblAuxsysgrouptimeSetpoints'))
                     continue
-                # if tabl == 'Pump_tabl': 
-                #     msg.update(self.gen_table_general(flag_write_db, 'umpna_tm', 'TblPumptimeSetpoints'))
-                #     continue
-                # if tabl == 'UTS_tabl': 
-                #     msg.update(self.gen_table_general(flag_write_db, 'uts_tm', 'TblSignalingdevicetimeSetpoints'))
-                #     continue
-                # if tabl == 'Prj_tabl': 
-                #     msg.update(self.gen_table_general(flag_write_db, 'prj_tm', 'TblProjecttimeSetpoints'))
-                #     continue
+                if tabl == 'Pump_tabl': 
+                    msg.update(self.synh_tabl('tblpumptimesetpoints', 'umpna_tm', 'TblPumptimeSetpoints'))
+                    continue
+                if tabl == 'UTS_tabl': 
+                    msg.update(self.synh_tabl('tblsignalingdevicetimesetpoints', 'uts_tm', 'TblSignalingdevicetimeSetpoints'))
+                    continue
+                if tabl == 'Prj_tabl': 
+                    msg.update(self.synh_tabl('tblprojecttimesetpoints', 'prj_tm', 'TblProjecttimeSetpoints'))
+                    continue
                 # if tabl == 'PZ_tabl': 
                 #     msg.update(self.gen_table_general(flag_write_db, 'pz_tm', 'TblFirezonetimeSetpoints'))
                 #     continue
@@ -1783,7 +1783,7 @@ class Generate_database_SQL():
                             '\t\tName VARCHAR(1024),\n'
                             '\t\tSource VARCHAR(1024),\n'
                             '\t\tValue INT,\n'
-                            '\t\t\Valuereal DOUBLE PRECISION,\n'
+                            '\t\tValuereal DOUBLE PRECISION,\n'
                             '\t\tEgu VARCHAR(1024),\n'
                             '\t\tRuleName VARCHAR(1024),\n'
                             f'\t\tCONSTRAINT {sign}_pkey PRIMARY KEY (Id)\n'
@@ -1829,7 +1829,7 @@ class Generate_database_SQL():
             if flag_write_db:
                 try:
                     if flag_del_tabl is False :
-                        if sign == 'TblPumptimesetpoints': cursor_prj.execute(text_start_pump)
+                        if sign == 'TblPumptimeSetpoints': cursor_prj.execute(text_start_pump)
                         else                             : cursor_prj.execute(text_start)
                         flag_del_tabl = True
 
@@ -2228,17 +2228,26 @@ class Generate_database_SQL():
     def synh_tabl(self, tbl_prj, tbl_dev, sign):
         msg = {}
         try:
-            tbl = self.dop_function.connect_by_sql_prj(f"objects.{tbl_prj}", '''"id", "tag", "name", "source", "value", "rulename"''')
+            if tbl_dev != 'umpna_tm': tbl = self.dop_function.connect_by_sql_prj(f"objects.{tbl_prj}", '''"id", "tag", "name", "source", "value", "rulename"''')
+            else                    : tbl = self.dop_function.connect_by_sql_prj(f"objects.{tbl_prj}", '''"id", "tag", "name", "source", "value", "valuereal", "rulename"''')
+            
             for prj in tbl:
-                id_prj, tag_prj, name_prj, source_prj, value_prj, rulename_prj  = prj[0], prj[1], prj[2], prj[3], prj[4], prj[5]
-                data = self.dop_function.connect_by_sql_condition(f"{tbl_dev}", '''"variable", "value_ust", "rule_map_ust"''',
-                                                                  f'''"id"={id_prj} AND "tag"='{tag_prj}' AND "name"='{name_prj}' ''')
+                if tbl_dev != 'umpna_tm': 
+                    id_prj, tag_prj, name_prj, source_prj, value_prj, rulename_prj = prj[0], prj[1], prj[2], prj[3], prj[4], prj[5]
+                    data = self.dop_function.connect_by_sql_condition(f"{tbl_dev}", '''"variable", "value_ust", "rule_map_ust"''',
+                                                                      f'''"id"={id_prj} AND "tag"='{tag_prj}' AND "name"='{name_prj}' ''')
+                else:      
+                    id_prj, tag_prj, name_prj, source_prj, value_prj, valuereal_prj, rulename_prj = prj[0], prj[1], prj[2], prj[3], prj[4], prj[5], prj[6]
+                    data = self.dop_function.connect_by_sql_condition(f"{tbl_dev}", '''"variable", "value_ust", "value_real_ust", "rule_map_ust"''',
+                                                                    f'''"id"={id_prj} AND "tag"='{tag_prj}' AND "name"='{name_prj}' ''')
                 if len(data) == 0: continue   
                 value = data[0]
                 
                 pred_msg = ''
                 if source_prj != value[0]: pred_msg += self.dop_function.update_row(f"{tbl_dev}", source_prj, "variable", id_prj)
                 if value_prj  != value[1]: pred_msg += self.dop_function.update_row(f"{tbl_dev}", value_prj, "value_ust", id_prj)
+                if tbl_dev == 'umpna_tm': 
+                    if valuereal_prj != value[2]: pred_msg += self.dop_function.update_row(f"{tbl_dev}", valuereal_prj, "value_real_ust", id_prj)
 
                 # rulename
                 sp_rules = self.dop_function.connect_by_sql("sp_rules", '''"rule_name", "name_rules"''')
@@ -2246,7 +2255,11 @@ class Generate_database_SQL():
                     if str(rule[0]) == rulename_prj:
                         name_rules = rule[1]
                         break
-                if name_rules != value[2]: pred_msg += self.dop_function.update_row(f"{tbl_dev}", name_rules, "RuleName", id_prj) 
+
+                if tbl_dev == 'umpna_tm': 
+                    if name_rules != value[3]: pred_msg += self.dop_function.update_row(f"{tbl_dev}", name_rules, "RuleName", id_prj) 
+                else: 
+                    if name_rules != value[2]: pred_msg += self.dop_function.update_row(f"{tbl_dev}", name_rules, "RuleName", id_prj) 
 
                 if pred_msg != '': msg[f'{today} - Изменения: {id_prj}, {name_prj}: {pred_msg}'] = 3
         except Exception:
@@ -8289,7 +8302,7 @@ class Filling_tmNA_UMPNA():
     # Заполняем таблицу tmNA_UMPNA
     def column_check(self):
         list_default = ['variable', 'tag', 'name', 
-                        'unit', 'used', 'value_ust', 'minimum', 'maximum', 'group_ust', 'rule_map_ust']
+                        'unit', 'used', 'value_ust', 'value_real_ust', 'minimum', 'maximum', 'group_ust', 'rule_map_ust']
         msg = self.dop_function.column_check(tmNA_UMPNA, 'umpna_tm', list_default)
         return msg 
 class Filling_tmNA_UMPNA_narab():

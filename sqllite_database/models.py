@@ -926,6 +926,7 @@ class tmNA_UMPNA(BaseModel):
     unit = CharField(null = True)
     used = BooleanField(null = True)
     value_ust = IntegerField(null = True)
+    value_real_ust = DoubleField(null = True)
     minimum = IntegerField(null = True)
     maximum = IntegerField(null = True)
     group_ust = CharField(null = True)
