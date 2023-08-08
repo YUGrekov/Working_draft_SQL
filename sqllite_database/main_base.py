@@ -3,7 +3,6 @@ import openpyxl as wb
 from lxml import etree
 from datetime import datetime
 import re, traceback, os, codecs, uuid, math
-import numpy as geek
 import psycopg2
 today = datetime.now()
 
@@ -1015,15 +1014,15 @@ class Generate_database_SQL():
                 # if tabl == 'PumpTime_tabl': 
                 #     msg.update(self.gen_table_general(flag_write_db, 'umpna_narab_tm', 'TblOpTimeSetpoints'))
                 #     continue
-                # if tabl == 'KTPR_tabl': 
-                #     msg.update(self.gen_table_ktpr(flag_write_db))
-                #     continue
-                # if tabl == 'KTPRA_tabl': 
-                #     msg.update(self.gen_table_pumps(flag_write_db, 'ktpra', 'TblPumpDefencesSetpoints'))
-                #     continue
-                # if tabl == 'GMPNA_tabl': 
-                #     msg.update(self.gen_table_pumps(flag_write_db, 'gmpna', 'TblPumpreadinesesSetpoints'))
-                #     continue
+                if tabl == 'KTPR_tabl':  
+                    msg.update(self.synh_tabl('tblstationdefencessetpoints', 'ktpr', 'TblStationDefencesSetpoints'))
+                    continue
+                if tabl == 'KTPRA_tabl': 
+                    msg.update(self.synh_tabl('tblpumpdefencessetpoints', 'ktpra', 'TblPumpDefencesSetpoints'))
+                    continue
+                if tabl == 'GMPNA_tabl': 
+                    msg.update(self.synh_tabl('tblpumpreadinesessetpoints', 'gmpna', 'TblPumpreadinesesSetpoints'))
+                    continue
             return msg
     # msg
     def gen_msg_ai(self, flag_write_db):
@@ -1900,7 +1899,7 @@ class Generate_database_SQL():
                 # Prefix
                 Prefix = 'NULL' if prefix_system == '' or prefix_system is None else str(prefix_system)
                 # tag
-                tag = 'NULL' if tag == '' or tag is None else str(tag)
+                tag = '' if tag == '' or tag is None else str(tag)
                 # Value
                 time_ust = 'NULL' if time_ust == '' or time_ust is None else time_ust
                 # SetpointGroupId
@@ -1922,7 +1921,7 @@ class Generate_database_SQL():
                     if flag_del_tabl is False :
                         cursor_prj.execute(text_start)
                         flag_del_tabl = True
-                    #cursor_prj.execute(ins_row_tabl)
+                    cursor_prj.execute(ins_row_tabl)
                 except Exception:
                     msg[f'{today} - TblStationDefencesSetpoints: ошибка добавления строки, пропускается: {traceback.format_exc()}'] = 2
                     continue
@@ -2227,6 +2226,7 @@ class Generate_database_SQL():
         return(msg)
     def synh_tabl(self, tbl_prj, tbl_dev, sign):
         msg = {}
+        msg[f'{today} - {sign}: синхронизация базы проекта с базой разработки'] = 2
         try:
             if tbl_dev != 'umpna_tm': tbl = self.dop_function.connect_by_sql_prj(f"objects.{tbl_prj}", '''"id", "tag", "name", "source", "value", "rulename"''')
             else                    : tbl = self.dop_function.connect_by_sql_prj(f"objects.{tbl_prj}", '''"id", "tag", "name", "source", "value", "valuereal", "rulename"''')
@@ -2267,6 +2267,7 @@ class Generate_database_SQL():
             return msg
         msg[f'{today} - {sign}: синхронизация завершена!'] = 1
         return(msg)
+    
 
 
 # Filling attribute DevStudio
@@ -7028,7 +7029,7 @@ class Filling_AI():
                     id_s        = row_sql['id']    
                     uso_s       = row_sql['uso']    
                     tag         = row_sql['tag']
-                    description = str(row_sql['description']).replace('"', '').replace("'", '')
+                    description = row_sql['description']
                     type_signal = row_sql['type_signal']
                     scheme      = row_sql['schema']
                     basket_s    = row_sql['basket']
@@ -7279,7 +7280,7 @@ class Filling_AO():
                     id_s        = row_sql['id']  
                     uso_s       = row_sql['uso']    
                     tag         = row_sql['tag']
-                    description = str(row_sql['description']).replace('"', '').replace("'", '')
+                    description = row_sql['description']
                     type_signal = row_sql['type_signal']
                     scheme      = row_sql['schema']
                     basket_s    = row_sql['basket']
@@ -7409,7 +7410,7 @@ class Filling_DI():
                     id_s       = row_sql['id'] 
                     uso_s       = row_sql['uso']    
                     tag         = row_sql['tag']
-                    description = str(row_sql['description']).replace('"', '').replace("'", '')
+                    description = row_sql['description']
                     type_signal = row_sql['type_signal']
                     scheme      = row_sql['schema']
                     basket_s    = row_sql['basket']
@@ -7556,7 +7557,7 @@ class Filling_DO():
                     id_s       = row_sql['id'] 
                     uso_s       = row_sql['uso']    
                     tag         = row_sql['tag']
-                    description = str(row_sql['description']).replace('"', '').replace("'", '')
+                    description = row_sql['description']
                     type_signal = row_sql['type_signal']
                     scheme      = row_sql['schema']
                     basket_s    = row_sql['basket']
@@ -7688,7 +7689,7 @@ class Filling_RS():
                     id_s       = row_sql['id'] 
                     uso_s       = row_sql['uso']    
                     tag         = row_sql['tag']
-                    description = str(row_sql['description']).replace('"', '').replace("'", '')
+                    description = row_sql['description']
                     type_signal = row_sql['type_signal']
                     scheme      = row_sql['schema']
                     basket_s    = row_sql['basket']
@@ -7890,7 +7891,7 @@ class Filling_KTPR():
                                     #   shutdown_of_anticondensation_electric_heaters_ED = '',
                                     #   fire_protection = '',
                                     #   reserve_aux_15 = '',
-                                    #   time_ust = '',
+                                    #   value_ust = '',
                                     #   Pic = '',
                                       group_ust = 'Временные уставки общестанционных защит',
                                       rule_map_ust = 'Временные уставки',
@@ -7935,7 +7936,7 @@ class Filling_KTPR():
                         'shutdown_of_the_external_cooling_circuit_ChRP_MNA', 'shutdown_of_the_external_cooling_circuit_ChRP_PNA', 'shutdown_of_locking_system_pumps',
                         'shutdown_of_pumps_for_pumping_oil_oil_products_through',
                         'shutdown_of_pumping_pumps_from_leakage_collection_tanks', 'shutdown_of_anticondensation_electric_heaters_ED', 'fire_protection', 'reserve_aux_15', 
-                        'time_ust', 'Pic', 'group_ust', 'rule_map_ust', 'number_list_VU', 'number_protect_VU']
+                        'value_ust', 'Pic', 'group_ust', 'rule_map_ust', 'number_list_VU', 'number_protect_VU']
         msg = self.dop_function.column_check(KTPR, 'ktpr', list_default)
         return msg 
 class Filling_KTPRA():
@@ -7962,7 +7963,7 @@ class Filling_KTPRA():
                                                 # AVR = '',
                                                 # close_valves = '',
                                                 DisableMasking = False,
-                                                #time_ust = '',
+                                                #value_ust = '',
                                                 Pic = '',
                                                 group_ust = f'Tm - Агрегатные защиты МНА{i}',
                                                 rule_map_ust = 'Временные уставки',
@@ -7981,7 +7982,7 @@ class Filling_KTPRA():
     def column_check(self):
         list_default = ['variable', 'tag', 'name', 
                         'NA', 'avar_parameter', 'stop_type', 'AVR', 'close_valves',
-                        'DisableMasking', 'time_ust', 'Pic', 
+                        'DisableMasking', 'value_ust', 'Pic', 
                         'group_ust', 'rule_map_ust', 'number_list_VU', 'number_protect_VU', 'number_pump_VU']
         msg = self.dop_function.column_check(KTPRA, 'ktpra', list_default)
         return msg 
@@ -8014,8 +8015,6 @@ class Filling_KTPRS():
                         'priority_msg_1', 'prohibition_issuing_msg', 'Pic']
         msg = self.dop_function.column_check(KTPRS, 'ktprs', list_default)
         return msg 
-    
-    # Work with filling in the table 'KTPR'
 class Filling_GMPNA():
     def __init__(self):
         self.cursor   = db.cursor()
@@ -8038,7 +8037,7 @@ class Filling_GMPNA():
                                                 name_for_Chrp_in_local_mode = '',
                                                 NA = '',
                                                 #used_time_ust = '',
-                                                #time_ust = '',
+                                                #value_ust = '',
                                                 group_ust = f'Tm - Агрегатные готовности МНА{i}',
                                                 rule_map_ust = 'Временные уставки',
                                                 # number_list_VU = '',
@@ -8054,7 +8053,7 @@ class Filling_GMPNA():
         return(msg)
     # Заполняем таблицу GMPNA
     def column_check(self):
-        list_default = ['variable', 'tag', 'name', 'name_for_Chrp_in_local_mode', 'NA', 'used_time_ust', 'time_ust', 'group_ust', 
+        list_default = ['variable', 'tag', 'name', 'name_for_Chrp_in_local_mode', 'NA', 'used_time_ust', 'value_ust', 'group_ust', 
                         'rule_map_ust', 'number_list_VU', 'number_protect_VU', 'number_pump_VU']
         msg = self.dop_function.column_check(GMPNA, 'gmpna', list_default)
         return msg 
