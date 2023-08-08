@@ -244,14 +244,14 @@ rus_list = {'signals': {'id':'№', 'type_signal':'Тип сигнала', 'uso'
                      'fire_protection':'Защита по пожару', 
                      'reserve_aux_15':'Резерв(15 бит)', 
 
-                     'time_ust':'Временная уставка', 
+                     'value_ust':'Временная уставка', 
                      'Pic':'Pic',
                      'group_ust':'Группа уставок', 'rule_map_ust':'Правило для карты уставок', 'number_list_VU':'Номер листа (для ВУ)', 'number_protect_VU':'Номер защиты (для ВУ)'},
             
             'ktpra': {'id':'№', 'id_num':'Номер защиты', 'variable':'Переменная', 'tag':'Идентификатор', 'name':'Название', 'NA':'Имя НА', 'avar_parameter':'Аварийный параметр', 
                     'stop_type':'''Тип остановки(0 - None,\n1 - ManageStop,\n2 - ElectricStop,\n3 - ManageStopOffVV,\n4 - ChRPAlarmStop,\n5 - StopAuto,\n6 - StopAuto2,\n7 - PovtorOtkl1)''',  
                     'AVR':'Флаг необходимости АВР\nНА при срабатывании защиты' , 'close_valves':'Флаг необходимости закрытия\nагрегатных задвижек НА\nпри срабатывании защиты', 
-                    'DisableMasking':'Флаг запрета маскирования', 'time_ust':'Временная уставка', 
+                    'DisableMasking':'Флаг запрета маскирования', 'value_ust':'Временная уставка', 
                     'Pic':'Pic', 'group_ust':'Группа уставок', 
                     'rule_map_ust':'Правило для карты уставок', 
                     'number_list_VU':'Номер листа (для ВУ)', 'number_protect_VU':'Номер защиты (для ВУ)', 'number_pump_VU':'Номер агрегата (для ВУ)'},
@@ -264,7 +264,7 @@ rus_list = {'signals': {'id':'№', 'type_signal':'Тип сигнала', 'uso'
             
             'gmpna': {'id':'№', 'id_num':'Номер защиты', 'variable':'Переменная', 'tag':'Идентификатор', 'name':'Название', 
                       'name_for_Chrp_in_local_mode':'Название для ЧРП в местном режиме', 'NA':'Имя НА', 'used_time_ust':'Использовать временную уставку', 
-                      'time_ust':'Уставка', 'group_ust':'Группа уставок', 'rule_map_ust':'Правило для карты уставок', 
+                      'value_ust':'Уставка', 'group_ust':'Группа уставок', 'rule_map_ust':'Правило для карты уставок', 
                       'number_list_VU':'Номер листа (для ВУ)', 'number_protect_VU':'Номер защиты (для ВУ)', 'number_pump_VU':'Номер агрегата (для ВУ)'},
             
             'umpna':{'id':'№','variable':'Переменная', 'tag':'Идентификатор', 'name':'Название', 'vv_included':'ВВ Включен', 'vv_double_included':'ВВ Включен дубль', 'vv_disabled':'ВВ отключен', 'vv_double_disabled':'ВВ отключен дубль', 
@@ -345,8 +345,8 @@ rus_list = {'signals': {'id':'№', 'type_signal':'Тип сигнала', 'uso'
             'vs_tm': {'id':'№','variable':'Переменная', 'tag':'Идентификатор', 'name':'Название', 'unit':'Единица измерения', 'used':'Используется', 'value_ust':'Значение уставки', 'minimum':'Минимум', 
                        'maximum':'Максимум', 'group_ust':'Группа уставок', 'rule_map_ust':'Правило для карты уставок'},
 
-            'vsgrp': {'id':'№','variable':'Переменная', 'tag':'Идентификатор', 'name':'Название', 'fire_or_watering':'Пож или водоорош', 'Number_of_auxsystem_in_group':'Количество вспомсистем в группе',
-                      'count_auxsys_in_group':'Количество вспомсистем в группе', 'WarnOff_flag_if_one_auxsystem_in_the_group_is_running':'Требуется выставлять флаг WarnOff если работает одна вспомсистема в группе'},
+            'vsgrp': {'id':'№','variable':'Переменная', 'tag':'Идентификатор', 'name':'Название', 'fire_or_watering':'Пож или водоорош', 'count_auxsys_in_group':'Количество вспомсистем в группе', 
+                      'WarnOff_flag_if_one_auxsystem_in_the_group_is_running':'Требуется выставлять флаг WarnOff\nесли работает одна вспомсистема в группе', 'additional_steps_required':'Требуется выполнять дополнительные действия\nперед пуском/остановом вспомсистем в группе'},
 
             'vsgrp_tm': {'id':'№','variable':'Переменная', 'tag':'Идентификатор', 'name':'Название', 'unit':'Единица измерения', 'used':'Используется', 'value_ust':'Значение уставки', 'minimum':'Минимум', 
                        'maximum':'Максимум', 'group_ust':'Группа уставок', 'rule_map_ust':'Правило для карты уставок'},
@@ -856,7 +856,7 @@ class KTPR(BaseModel):
     fire_protection = IntegerField(null = True)
     reserve_aux_15 = IntegerField(null = True)
 
-    time_ust = IntegerField(null = True)
+    value_ust = IntegerField(null = True)
     Pic = CharField(null = True)
     group_ust = CharField(null = True)
     rule_map_ust = CharField(null = True)
@@ -877,7 +877,7 @@ class KTPRA(BaseModel):
     AVR = IntegerField(null = True)
     close_valves = IntegerField(null = True)
     DisableMasking = IntegerField(null = True)
-    time_ust = IntegerField(null = True)
+    value_ust = IntegerField(null = True)
     Pic = CharField(null = True)
     group_ust = CharField(null = True)
     rule_map_ust = CharField(null = True)
@@ -909,7 +909,7 @@ class GMPNA(BaseModel):
     name_for_Chrp_in_local_mode = CharField(null = True)
     NA = CharField(null = True)
     used_time_ust = BooleanField(null = True)
-    time_ust = IntegerField(null = True)
+    value_ust = IntegerField(null = True)
     group_ust = CharField(null = True)
     rule_map_ust = CharField(null = True)
 
@@ -1147,8 +1147,8 @@ class VSGRP(BaseModel):
     name = CharField(null = True)
     fire_or_watering = BooleanField(null = True)
     count_auxsys_in_group = IntegerField(null = True)
-    Number_of_auxsystem_in_group = BooleanField(null = True)
     WarnOff_flag_if_one_auxsystem_in_the_group_is_running = BooleanField(null = True)
+    additional_steps_required = BooleanField(null = True)
 
     class Meta:
         table_name = 'vsgrp'

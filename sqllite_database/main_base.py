@@ -980,7 +980,7 @@ class Generate_database_SQL():
                     msg.update(self.gen_table_pumps(flag_write_db, 'ktpra', 'TblPumpDefencesSetpoints'))
                     continue
                 if tabl == 'GMPNA_tabl': 
-                    msg.update(self.gen_table_pumps(flag_write_db, 'gmpna', 'TblPumpreadinesesSetpoints'))
+                    msg.update(self.gen_table_pumps(flag_write_db, 'gmpna', 'TblPumpReadinesesSetpoints'))
                     continue
             return msg
     def synh_in_sql(self, list_tabl):
@@ -1884,7 +1884,7 @@ class Generate_database_SQL():
         gen_list = []
         flag_del_tabl = False
         try:
-            cursor.execute(f"""SELECT id, variable, tag, name, "time_ust", "group_ust", "rule_map_ust"
+            cursor.execute(f"""SELECT id, variable, tag, name, "value_ust", "group_ust", "rule_map_ust"
                                FROM "ktpr" ORDER BY Id""")
             list_signal = cursor.fetchall()
         except Exception:
@@ -1973,7 +1973,7 @@ class Generate_database_SQL():
         gen_list = []
         flag_del_tabl = False
         try:
-            cursor.execute(f"""SELECT id, variable, tag, name, "NA", "time_ust", "group_ust", "rule_map_ust", "number_pump_VU"
+            cursor.execute(f"""SELECT id, variable, tag, name, "NA", "value_ust", "group_ust", "rule_map_ust", "number_pump_VU"
                                FROM "{tabl_sql}" ORDER BY Id, "NA" """)
             list_signal = cursor.fetchall()
         except Exception:
@@ -1989,10 +1989,12 @@ class Generate_database_SQL():
 
                 # Prefix
                 Prefix = 'NULL' if prefix_system == '' or prefix_system is None else str(prefix_system)
+                # Name
+                name = '' if name == '' or name is None else str(name)
                 # PumpName
-                PumpName = 'NULL' if PumpName == '' or PumpName is None else str(PumpName)
+                PumpName = '' if PumpName == '' or PumpName is None else str(PumpName)
                 # tag
-                tag = 'NULL' if tag == '' or tag is None else str(tag)
+                tag = '' if tag == '' or tag is None else str(tag)
                 # SetpointGroupId
                 cursor.execute(f"""SELECT id FROM "sp_grp" WHERE name_group='{group_ust}'""")
                 try   : SetpointGroupId = cursor.fetchall()[0][0]
@@ -2042,104 +2044,6 @@ class Generate_database_SQL():
             except Exception:
                 msg[f'{today} - {sign}: ошибка записи в файл: {traceback.format_exc()}'] = 2
         msg[f'{today} - {sign}: генерация завершена!'] = 1
-        return(msg)
-    def gen_table_gmpna(self, flag_write_db):
-        cursor = db.cursor()
-        cursor_prj = db_prj.cursor()
-
-        text_start = ('\tCREATE SCHEMA IF NOT EXISTS objects;\n'
-                        f'\tCREATE TABLE IF NOT EXISTS objects.TblPumpReadinesesSetpoints(\n'
-                        '\t\tId INT NOT NULL,\n'
-                        '\t\tPumpId INT NOT NULL,\n'
-                        '\t\tPrefix VARCHAR(1024),\n'
-                        '\t\tName VARCHAR(1024),\n'
-                        '\t\tTag VARCHAR(1024),\n'
-                        '\t\tPumpName VARCHAR(1024),\n'
-                        '\t\tSource VARCHAR(1024),\n'
-                        '\t\tValue INT,\n'
-                        '\t\tEgu VARCHAR(1024),\n'
-                        '\t\tSetpointGroupId INT,\n'
-                        '\t\tRuleName VARCHAR(1024),\n'
-                        f'\t\tCONSTRAINT TblPumpReadinesesSetpoints_pkey PRIMARY KEY (Id,PumpId)\n'
-                        '\t);\n'
-                        f'\t\tDELETE FROM objects.TblPumpReadinesesSetpoints ;\n')
-        msg = {}
-        gen_list = []
-        flag_del_tabl = False
-        try:
-            cursor.execute(f"""SELECT id, variable, tag, name, "NA", "used_time_ust", "time_ust", "group_ust", "rule_map_ust", "number_pump_VU"
-                                FROM "gmpna" ORDER BY Id, "number_pump_VU", "NA" """)
-            list_signal = cursor.fetchall()
-        except Exception:
-            msg[f'{today} - TblPumpReadinesesSetpoints: ошибка генерации: {traceback.format_exc()}'] = 2
-            return msg
-
-        for signal in list_signal:
-            try:
-                Id, variable, tag, name, PumpName, used_ust = signal[0], signal[1], signal[2], signal[3], signal[4], signal[5]
-                time_ust, group_ust, rule_map_ust, number_pump_VU = signal[6], signal[7], signal[8], signal[9]
-                
-                if used_ust is not True: continue
-                # Prefix
-                Prefix = 'NULL' if prefix_system == '' or prefix_system is None else str(prefix_system)
-                # PumpId
-                PumpId = 'NULL' if number_pump_VU == '' or number_pump_VU is None else number_pump_VU
-                # name
-                name = '' if name == '' or name is None else str(name)
-                # PumpName
-                PumpName = 'NULL' if PumpName == '' or PumpName is None else str(PumpName)
-                # tag
-                tag = 'NULL' if tag == '' or tag is None else f'{tag}'
-                # Value
-                time_ust = 'NULL' if time_ust == '' or time_ust is None else time_ust
-                # SetpointGroupId
-                cursor.execute(f"""SELECT id FROM "sp_grp" WHERE name_group='{group_ust}'""")
-                try   : SetpointGroupId = cursor.fetchall()[0][0]
-                except: SetpointGroupId = 'NULL'
-                # RuleName
-                cursor.execute(f"""SELECT rule_name FROM "sp_rules" WHERE name_rules='{rule_map_ust}'""")
-                try   : RuleName = cursor.fetchall()[0][0]
-                except: RuleName = 'NULL'
-            except Exception:
-                msg[f'{today} - TblPumpReadinesesSetpoints: ошибка добавления строки, пропускается: {traceback.format_exc()}'] = 2
-                continue
-            
-            ins_row_tabl = f"INSERT INTO objects.TblPumpReadinesesSetpoints (Id, PumpId, Prefix, Name, Tag, PumpName, Source, Value, Egu, SetpointGroupId, RuleName) VALUES({Id}, {PumpId}, {Prefix}, '{PumpName}. {name}', '{tag}', '{PumpName}', 'tm{variable}', {time_ust}, 'c', {SetpointGroupId}, '{RuleName}');\n"
-
-            if flag_write_db:
-                try:
-                    if flag_del_tabl is False :
-                        cursor_prj.execute(text_start)
-                        flag_del_tabl = True
-                    cursor_prj.execute(ins_row_tabl)
-                except Exception:
-                    msg[f'{today} - TblPumpReadinesesSetpoints: ошибка добавления строки, пропускается: {traceback.format_exc()}'] = 2
-                    continue
-            else:
-                gen_list.append(ins_row_tabl)
-
-        if not flag_write_db:
-            try:
-                # Создаём файл запроса
-                path_request = f'{path_location_file}\\PostgreSQL-TblPumpReadinesesSetpoints.sql'
-                if not os.path.exists(path_request):
-                    file = codecs.open(path_request, 'w', 'utf-8')
-                else:
-                    os.remove(path_request)
-                    file = codecs.open(path_request, 'w', 'utf-8')
-                if path_location_file == '' or path_location_file is None or len(path_location_file) == 0:
-                    msg[f'{today} - TblPumpReadinesesSetpoints: не указана конечная папка'] = 2
-                    return msg
-                file.write(text_start)
-                for insert in gen_list:
-                    file.write(insert)
-                file.write(f'COMMIT;')
-                file.close()
-                msg[f'{today} - TblPumpReadinesesSetpoints: файл скрипта создан'] = 1
-                return(msg)
-            except Exception:
-                msg[f'{today} - TblPumpReadinesesSetpoints: ошибка записи в файл: {traceback.format_exc()}'] = 2
-        msg[f'{today} - TblPumpReadinesesSetpoints: генерация завершена!'] = 1
         return(msg)
     # synh_tabl
     def synh_tabl_ai(self):
@@ -2226,7 +2130,7 @@ class Generate_database_SQL():
         return(msg)
     def synh_tabl(self, tbl_prj, tbl_dev, sign):
         msg = {}
-        msg[f'{today} - {sign}: синхронизация базы проекта с базой разработки'] = 2
+        msg[f'{today} - {sign}: синхронизация базы проекта с базой разработки'] = 1
         try:
             if tbl_dev != 'umpna_tm': tbl = self.dop_function.connect_by_sql_prj(f"objects.{tbl_prj}", '''"id", "tag", "name", "source", "value", "rulename"''')
             else                    : tbl = self.dop_function.connect_by_sql_prj(f"objects.{tbl_prj}", '''"id", "tag", "name", "source", "value", "valuereal", "rulename"''')
@@ -2244,7 +2148,6 @@ class Generate_database_SQL():
                 value = data[0]
                 
                 pred_msg = ''
-                if source_prj != value[0]: pred_msg += self.dop_function.update_row(f"{tbl_dev}", source_prj, "variable", id_prj)
                 if value_prj  != value[1]: pred_msg += self.dop_function.update_row(f"{tbl_dev}", value_prj, "value_ust", id_prj)
                 if tbl_dev == 'umpna_tm': 
                     if valuereal_prj != value[2]: pred_msg += self.dop_function.update_row(f"{tbl_dev}", valuereal_prj, "value_real_ust", id_prj)
@@ -8841,8 +8744,8 @@ class Filling_VSGRP():
         self.dop_function = General_functions()
     # Заполняем таблицу VSGRP
     def column_check(self):
-        list_default = ['variable', 'tag', 'name', 'fire_or_watering', 'count_auxsys_in_group', 'Number_of_auxsystem_in_group',
-                        'WarnOff_flag_if_one_auxsystem_in_the_group_is_running']
+        list_default = ['variable', 'tag', 'name', 'fire_or_watering', 'count_auxsys_in_group',
+                        'WarnOff_flag_if_one_auxsystem_in_the_group_is_running', 'additional_steps_required']
         msg = self.dop_function.column_check(VSGRP, 'vsgrp', list_default)
         msg[f'{today} - Таблица: vs_grp подготовлена'] = 1
         return msg 

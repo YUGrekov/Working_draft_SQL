@@ -1052,8 +1052,8 @@ class Widget(QWidget):
         self.q_check_ktpra_tabl.setToolTip('''Название файла скрипта: TblPumpDefencesSetpoints''')
         self.q_check_ktpra_tabl.move(900, 41) 
         self.q_check_ktpra_tabl.stateChanged.connect(self.check_ktpra_tabl)
-        self.q_check_gmpna_tabl = QCheckBox('TblPumpreadinesesSetpoints', tab_4)
-        self.q_check_gmpna_tabl.setToolTip('''Название файла скрипта: TblPumpreadinesesSetpoints''')
+        self.q_check_gmpna_tabl = QCheckBox('TblPumpReadinesesSetpoints', tab_4)
+        self.q_check_gmpna_tabl.setToolTip('''Название файла скрипта: TblPumpReadinesesSetpoints''')
         self.q_check_gmpna_tabl.move(900, 57) 
         self.q_check_gmpna_tabl.stateChanged.connect(self.check_gmpna_tabl)
 
@@ -2478,6 +2478,7 @@ class Window_contexmenu_sql(QMainWindow):
         self.setWindowTitle('Ссылки')
         self.setStyleSheet("background-color: #e1e5e5;")
         self.setWindowFlags(Qt.WindowCloseButtonHint)
+        self.setWindowFlag(Qt.WindowStaysOnTopHint)
         self.resize(800, 675)
 
         self.edit_SQL = Editing_table_SQL()
@@ -2688,6 +2689,12 @@ class Window_update_sql(QWidget):
 
         self.TableWidget = QTableWidget(self)
         self.TableWidget.setGeometry(10,70,1580,680)
+        self.TableWidget_1 = QTableWidget(self)
+        self.TableWidget_1.move(10,70)
+        self.TableWidget_1.setVisible(False)
+        self.TableWidget.verticalScrollBar().valueChanged.connect(self.__chnge_position)
+        self.TableWidget_1.verticalScrollBar().valueChanged.connect(self.__chnge_position)
+        self.flag_once = True
 
         self.logTextBox = QTextEdit(self)
         self.logTextBox.setGeometry(10,750,1580,100)
@@ -2701,9 +2708,11 @@ class Window_update_sql(QWidget):
         self.logs_msg('default', 1, msg, True)
 
         self.gen_func = General_functions()
-        
-        try   : self.tablew(column, row, self.hat_name, value, rus_list[self.table_used])
-        except: self.tablew(column, row, self.hat_name, value)
+
+        self.value_tab1  = value
+        self.column_tab1 = column
+        self.row_tab1    = row
+        self.tablew(column, row, self.hat_name, value)
 
         new_addrow_Button = QPushButton('Добавить строку', self)
         new_addrow_Button.setStyleSheet("background: #bfd6bf; border-radius: 4px; border: 1px solid")
@@ -2901,8 +2910,7 @@ class Window_update_sql(QWidget):
                 self.TableWidget.removeRow(rowcount)
                 rowcount -= 1
         # Filling
-        try   : self.tablew(column, row, hat_name, value)
-        except: self.tablew(column, row, hat_name, value)
+        self.tablew(column, row, hat_name, value)
         #SELECT * FROM ai WHERE uso='МНС-2.КЦ' AND basket=3 AND module=3 AND channel=1
     # Reset a table query
     def reset_database_query(self):
@@ -2915,8 +2923,7 @@ class Window_update_sql(QWidget):
         column, row, self.hat_name, value, msg = self.edit_SQL.editing_sql(self.table_used)
         self.logs_msg('default', 1, msg, True)
 
-        try   : self.tablew(column, row, self.hat_name, value, rus_list[self.table_used])
-        except: self.tablew(column, row, self.hat_name, value)
+        self.tablew(column, row, self.hat_name, value)
     # Building the selected table
     def tablew(self, column, row, hat_name, value):
         # TableW
@@ -2932,10 +2939,10 @@ class Window_update_sql(QWidget):
         #        self.TableWidget.horizontalHeaderItem(col).setToolTip(column_tooltip[col])
 
         self.TableWidget.verticalHeader().setVisible(False)
-
+        
         # Разрешить щелчок правой кнопкой мыши для создания меню
-        self.TableWidget.setContextMenuPolicy(Qt.CustomContextMenu)
-        self.TableWidget.customContextMenuRequested.connect(self.generateMenu)
+        #self.TableWidget.setContextMenuPolicy(Qt.CustomContextMenu)
+        #self.TableWidget.customContextMenuRequested.connect(self.generateMenu)
 
         # column size
         #for size_column in list_size:
@@ -2972,7 +2979,89 @@ class Window_update_sql(QWidget):
         # Events
         self.TableWidget.itemChanged.connect(self.click_position)
         self.TableWidget.cellClicked.connect(self.click_transfer)
+        self.TableWidget.horizontalScrollBar().valueChanged.connect(self.scrollToColumn)
+    # Building the selected table
+    def tablew_1(self, column, row, hat_name, value):
+        # TableW
+        self.TableWidget_1.setColumnCount(column)
+        self.TableWidget_1.setRowCount(row)
+        self.TableWidget_1.setHorizontalHeaderLabels(hat_name)
+        # Color header
+        style = "::section {""background-color: #bbbabf; }"
+        self.TableWidget_1.horizontalHeader().setStyleSheet(style)
+        # Подсказки к столбцам
+        #if column_tooltip is not None:
+        #    for col in range(self.TableWidget.columnCount()):
+        #        self.TableWidget.horizontalHeaderItem(col).setToolTip(column_tooltip[col])
+
+        self.TableWidget_1.verticalHeader().setVisible(False)
+        
+        # Разрешить щелчок правой кнопкой мыши для создания меню
+        #self.TableWidget.setContextMenuPolicy(Qt.CustomContextMenu)
+        #self.TableWidget.customContextMenuRequested.connect(self.generateMenu)
+
+        # column size
+        #for size_column in list_size:
+        #   self.TableWidget.setColumnWidth(size_column[0], size_column[1])
+
+        for row_t in range(row):
+            for column_t in range(column):
+                if value[row_t][column_t] is None:
+                    item = QTableWidgetItem('')
+                else:
+                    item = QTableWidgetItem(str(value[row_t][column_t]))
+                    # Подсказки к ячейкам
+                    if self.gen_func.str_find(str(value[row_t][column_t]).lower(), {'di'}):
+                        name_signal = self.edit_SQL.search_name("di", str(value[row_t][column_t]))
+                        item.setToolTip(name_signal)
+                    elif self.gen_func.str_find(str(value[row_t][column_t]).lower(), {'do'}):
+                        name_signal = self.edit_SQL.search_name("do", str(value[row_t][column_t]))
+                        item.setToolTip(name_signal)
+                    elif self.gen_func.str_find(str(value[row_t][column_t]).lower(), {'ai'}):
+                        name_signal = self.edit_SQL.search_name("ai", str(value[row_t][column_t]))
+                        item.setToolTip(name_signal)
+                    else: item.setToolTip('')
+                    
+                if column_t == 0: item.setFlags(Qt.ItemIsEnabled)
+     
+                # center text
+                #item.setTextAlignment(Qt.AlignHCenter)
+                # Выравнивание все столбцов по общей ширине
+                self.TableWidget_1.setItem(row_t, column_t, item)
+        # Выравнивание по столбцов и строк по наибольшей длине
+        self.TableWidget_1.resizeColumnsToContents()
+        self.TableWidget_1.resizeRowsToContents()
+
     
+    def scrollToColumn(self, item):
+        def clear_widget():
+            rowcount = self.TableWidget_1.rowCount()
+            if rowcount != 0: 
+                while rowcount >= 0:
+                    self.TableWidget_1.removeRow(rowcount)
+                    rowcount -= 1
+        
+        width = 0
+        for i in range(4): width += self.TableWidget.columnWidth(i) 
+        self.TableWidget_1.resize(width, 662)
+        self.TableWidget_1.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.TableWidget_1.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+
+        if item > 0 and self.flag_once: 
+            clear_widget()
+            self.tablew_1(self.column_tab1, self.row_tab1, self.hat_name, self.value_tab1)
+            self.TableWidget_1.setVisible(True)
+            self.flag_once = False
+        elif item == 0: 
+            self.TableWidget_1.setVisible(False)
+            self.flag_once = True
+        self.TableWidget.setHorizontalScrollMode(QAbstractItemView.ScrollPerPixel)
+
+    def __chnge_position(self,index):
+        # slot to change the scroll bar position of all tables
+        self.TableWidget.verticalScrollBar().setValue(index)
+        self.TableWidget_1.verticalScrollBar().setValue(index)
+
     def click_transfer(self):
         row    = self.TableWidget.currentRow()
         column = self.TableWidget.currentColumn()
@@ -3024,40 +3113,7 @@ class Window_update_sql(QWidget):
             elif number_color == 2: self.logTextBox.append(errorFormat.format(f'{today} - {logs}'))
             elif number_color == 3: self.logTextBox.append(warningFormat.format(f'{today} - {logs}'))
             elif number_color == 0: self.logTextBox.append(newFormat.format(f'{today} - {logs}'))
-    # ContexMenu
-    def generateMenu(self, pos):
-        row    = self.TableWidget.currentRow()
-        column = self.TableWidget.currentColumn()
-        # Get index
-        for i in self.TableWidget.selectionModel().selection().indexes(): rowNum = i.row()
-        # If the selected row index is less than 1, the context menu will pop up
-        #if columnNum > 3:
-        menu = QMenu()
-        item1 = menu.addAction('AI')
-        item2 = menu.addAction('DI')
-        item3 = menu.addAction('DO')
-        # Make the menu display in the normal position
-        screenPos = self.TableWidget.mapToGlobal(pos)
-
-        # Click on a menu item to return, making it blocked
-        action = menu.exec(screenPos)
-        if action == item1:
-            list_ai = self.edit_SQL.dop_window_signal('ai')
-            self.start_contextmenu.shift(list_ai, 'ai', self.TableWidget, row, column)
-            self.start_contextmenu.show()
-        if action == item2:
-            list_di = self.edit_SQL.dop_window_signal('di')
-            self.start_contextmenu.launch_windows(list_di, 'di')
-            self.start_contextmenu.show()
-            #print('Select menu 2', self.TableWidget.item(rowNum, 0).text())
-        if action == item3:
-            list_do = self.edit_SQL.dop_window_signal('do')
-            self.start_contextmenu.launch_windows(list_do, 'do')
-            self.start_contextmenu.show()
-            #print('Select menu 3', self.TableWidget.item(rowNum, 0).text())
-        else: return
-
-
+    
  
 
 
