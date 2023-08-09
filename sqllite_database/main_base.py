@@ -686,11 +686,11 @@ class Editing_table_SQL():
         active_column = list(hat_name)[column]
         try:
             if flag_NULL:
-                self.cursor.execute(f"""UPDATE {table_used} 
+                self.cursor.execute(f"""UPDATE "{table_used}" 
                                         SET "{active_column}"= NULL
                                         WHERE id={text_cell_id}""")
             else:
-                self.cursor.execute(f"""UPDATE {table_used} 
+                self.cursor.execute(f"""UPDATE "{table_used}" 
                                         SET "{active_column}"='{text_cell}' 
                                         WHERE id={text_cell_id}""")
             return msg
@@ -699,27 +699,29 @@ class Editing_table_SQL():
             return msg
         #table_used.update(**{active_column: text_cell}).where(table_used.id == text_cell_id).execute()
     # Adding new lines
-    def add_new_row(self, table_used):
-        self.cursor.execute(f'''INSERT INTO {table_used} DEFAULT VALUES''')
+    def add_new_row(self, table_used, row):
+        #self.cursor.execute(f'''INSERT INTO {table_used} DEFAULT VALUES''')
+        self.cursor.execute(f'''INSERT INTO "{table_used}" (id) VALUES ({row});''')
 
         #table_used.insert(**{active_column: ''}).execute()
     # Removing rows
     def delete_row(self, text_cell_id, table_used):
-        self.cursor.execute(f'''DELETE FROM {table_used}
+        self.cursor.execute(f'''DELETE FROM "{table_used}"
                                 WHERE id={text_cell_id}''')
         #table_used.get(table_used.id == text_cell_id).delete_instance()
     # Adding new column
     def add_new_column(self, table_used, new_column):
-        self.cursor.execute(f'''ALTER TABLE {table_used} 
-                                ADD '{new_column}' VARCHAR(255)''')
+        print(f'''ALTER TABLE "{table_used}" ADD "{new_column}" VARCHAR(255)''')
+        self.cursor.execute(f'''ALTER TABLE "{table_used}" 
+                                ADD "{new_column}" VARCHAR(255)''')
     # Removing column
     def delete_column(self, column, hat_name, table_used):
         active_column = list(hat_name)[column]
-        self.cursor.execute(f'''ALTER TABLE {table_used} 
-                                DROP COLUMN {active_column}''')
+        self.cursor.execute(f'''ALTER TABLE "{table_used}" 
+                                DROP COLUMN "{active_column}"''')
     # Removing all rows
     def clear_tabl(self, table_used):
-        self.cursor.execute(f'''DELETE FROM {table_used}''')
+        self.cursor.execute(f'''DELETE FROM "{table_used}"''')
     # Drop table
     def drop_tabl(self, table_used):
         self.cursor.execute(f'''DROP TABLE "{table_used}"''')

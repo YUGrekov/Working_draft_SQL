@@ -2491,8 +2491,8 @@ class Window_contexmenu_sql(QMainWindow):
         self.combo.move(5, 5)
         self.combo.setFont(QFont('Arial', 10))
         self.tuple_tabl = {'AI':'ai', 'AO':'ao', 'DI':'di', 'DO':'do', 'ctrlDO':'do', 'NA':'umpna', 'ZD':'zd', 'VS':'vs', 'VSGRP':'vsgrp',
-                     'BUF':'buf', 'RSreq':'rsreq', 'KTPR':'ktpr', 'KTPRA':'ktpra', 'KTPRS':'ktprs', 'NPS':'nps', 'AIVisualValue':'ai', 
-                     'ctrlAO':'ao', 'Facility':'', 'BUFr':'bufr'}
+                           'BUF':'buf', 'RSreq':'rsreq', 'KTPR':'ktpr', 'KTPRA':'ktpra', 'KTPRS':'ktprs', 'NPS':'nps', 'AIVisualValue':'ai', 
+                           'ctrlAO':'ao', 'Facility':'', 'BUFr':'bufr', 'PI':'pi', 'UTS':'uts', 'UPTS':'upts'}
         for key, tabl in self.tuple_tabl.items():
            self.combo.addItem(str(key))
         # Кнопка открыть таблицу
@@ -2662,21 +2662,27 @@ class Window_contexmenu_sql(QMainWindow):
         self.update_str() 
     # Значение в строке
     def update_str(self):
+        column = self.TableWidget.currentColumn()
+        row    = self.TableWidget.currentRow()
         try:
-            if self.combo.currentText() in  ['ctrlDO', 'AO', 'AIVisualValue', 'ctrlAO', 'BUFr']: 
-                self.link_value.setText(f'{self.combo.currentText()}[{self.cell_value}]')
-                self.write_text_cell = f'{self.combo.currentText()}[{self.cell_value}]'
-            elif self.combo.currentText() == 'Facility': 
-                self.link_value.setText(f'{self.combo.currentText()}[].{self.combo_type.currentText()}')
-                self.load.setText('Добавь индекс вручную!')
-                self.load.setStyleSheet("background-color: red")
-                self.write_text_cell = f'{self.combo.currentText()}[].{self.combo_type.currentText()}'
-            elif self.combo.currentText() == 'KTPRA': 
-                self.link_value.setText(f'{self.cell_value_ktpra}.{self.combo_type.currentText()}')
-                self.write_text_cell = f'{self.cell_value_ktpra}.{self.combo_type.currentText()}'
+            if column == 0:
+                self.link_value.setText(str(row + 1))
+                self.write_text_cell = str(row + 1)
             else:
-                self.link_value.setText(f'{self.combo.currentText()}[{self.cell_value}].{self.combo_type.currentText()}')
-                self.write_text_cell = f'{self.combo.currentText()}[{self.cell_value}].{self.combo_type.currentText()}'
+                if self.combo.currentText() in  ['ctrlDO', 'AO', 'AIVisualValue', 'ctrlAO', 'BUFr']: 
+                    self.link_value.setText(f'{self.combo.currentText()}[{self.cell_value}]')
+                    self.write_text_cell = f'{self.combo.currentText()}[{self.cell_value}]'
+                elif self.combo.currentText() == 'Facility': 
+                    self.link_value.setText(f'{self.combo.currentText()}[].{self.combo_type.currentText()}')
+                    self.load.setText('Добавь индекс вручную!')
+                    self.load.setStyleSheet("background-color: red")
+                    self.write_text_cell = f'{self.combo.currentText()}[].{self.combo_type.currentText()}'
+                elif self.combo.currentText() == 'KTPRA': 
+                    self.link_value.setText(f'{self.cell_value_ktpra}.{self.combo_type.currentText()}')
+                    self.write_text_cell = f'{self.cell_value_ktpra}.{self.combo_type.currentText()}'
+                else:
+                    self.link_value.setText(f'{self.combo.currentText()}[{self.cell_value}].{self.combo_type.currentText()}')
+                    self.write_text_cell = f'{self.combo.currentText()}[{self.cell_value}].{self.combo_type.currentText()}'
         except: return
 # Основное окно просмотра и редактирования таблиц
 class Window_update_sql(QWidget):
@@ -2834,7 +2840,7 @@ class Window_update_sql(QWidget):
         self.TableWidget.insertRow(rowPos)
         self.TableWidget.setItem(rowPos, 0, QTableWidgetItem (f'{int(text_cell) + 1}'))
 
-        self.edit_SQL.add_new_row(self.table_used)
+        self.edit_SQL.add_new_row(self.table_used, (rowPos + 1))
         # Logs
         self.logs_msg('В конец таблицы добавлена новая строка', 1)
     # Removing rows
@@ -2919,10 +2925,11 @@ class Window_update_sql(QWidget):
             while rowcount >= 0:
                 self.TableWidget.removeRow(rowcount)
                 rowcount -= 1
+                
+        self.req_base.clear()
 
         column, row, self.hat_name, value, msg = self.edit_SQL.editing_sql(self.table_used)
         self.logs_msg('default', 1, msg, True)
-
         self.tablew(column, row, self.hat_name, value)
     # Building the selected table
     def tablew(self, column, row, hat_name, value):
@@ -2933,20 +2940,7 @@ class Window_update_sql(QWidget):
         # Color header
         style = "::section {""background-color: #bbbabf; }"
         self.TableWidget.horizontalHeader().setStyleSheet(style)
-        # Подсказки к столбцам
-        #if column_tooltip is not None:
-        #    for col in range(self.TableWidget.columnCount()):
-        #        self.TableWidget.horizontalHeaderItem(col).setToolTip(column_tooltip[col])
-
         self.TableWidget.verticalHeader().setVisible(False)
-        
-        # Разрешить щелчок правой кнопкой мыши для создания меню
-        #self.TableWidget.setContextMenuPolicy(Qt.CustomContextMenu)
-        #self.TableWidget.customContextMenuRequested.connect(self.generateMenu)
-
-        # column size
-        #for size_column in list_size:
-        #   self.TableWidget.setColumnWidth(size_column[0], size_column[1])
 
         for row_t in range(row):
             for column_t in range(column):
@@ -2967,12 +2961,9 @@ class Window_update_sql(QWidget):
                     else: item.setToolTip('')
                     
                 if column_t == 0: item.setFlags(Qt.ItemIsEnabled)
-     
-                # center text
-                #item.setTextAlignment(Qt.AlignHCenter)
-                # Выравнивание все столбцов по общей ширине
-                #self.TableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
                 self.TableWidget.setItem(row_t, column_t, item)
+
+        self.TableWidget.setHorizontalScrollMode(QAbstractItemView.ScrollPerPixel)
         # Выравнивание по столбцов и строк по наибольшей длине
         self.TableWidget.resizeColumnsToContents()
         self.TableWidget.resizeRowsToContents()
@@ -2980,7 +2971,8 @@ class Window_update_sql(QWidget):
         self.TableWidget.itemChanged.connect(self.click_position)
         self.TableWidget.cellClicked.connect(self.click_transfer)
         self.TableWidget.horizontalScrollBar().valueChanged.connect(self.scrollToColumn)
-    # Building the selected table
+    
+    # Dubl windows
     def tablew_1(self, column, row, hat_name, value):
         # TableW
         self.TableWidget_1.setColumnCount(column)
@@ -2989,20 +2981,8 @@ class Window_update_sql(QWidget):
         # Color header
         style = "::section {""background-color: #bbbabf; }"
         self.TableWidget_1.horizontalHeader().setStyleSheet(style)
-        # Подсказки к столбцам
-        #if column_tooltip is not None:
-        #    for col in range(self.TableWidget.columnCount()):
-        #        self.TableWidget.horizontalHeaderItem(col).setToolTip(column_tooltip[col])
-
         self.TableWidget_1.verticalHeader().setVisible(False)
-        
-        # Разрешить щелчок правой кнопкой мыши для создания меню
-        #self.TableWidget.setContextMenuPolicy(Qt.CustomContextMenu)
-        #self.TableWidget.customContextMenuRequested.connect(self.generateMenu)
-
-        # column size
-        #for size_column in list_size:
-        #   self.TableWidget.setColumnWidth(size_column[0], size_column[1])
+        self.TableWidget_1.setFocusPolicy(Qt.NoFocus)
 
         for row_t in range(row):
             for column_t in range(column):
@@ -3010,29 +2990,14 @@ class Window_update_sql(QWidget):
                     item = QTableWidgetItem('')
                 else:
                     item = QTableWidgetItem(str(value[row_t][column_t]))
-                    # Подсказки к ячейкам
-                    if self.gen_func.str_find(str(value[row_t][column_t]).lower(), {'di'}):
-                        name_signal = self.edit_SQL.search_name("di", str(value[row_t][column_t]))
-                        item.setToolTip(name_signal)
-                    elif self.gen_func.str_find(str(value[row_t][column_t]).lower(), {'do'}):
-                        name_signal = self.edit_SQL.search_name("do", str(value[row_t][column_t]))
-                        item.setToolTip(name_signal)
-                    elif self.gen_func.str_find(str(value[row_t][column_t]).lower(), {'ai'}):
-                        name_signal = self.edit_SQL.search_name("ai", str(value[row_t][column_t]))
-                        item.setToolTip(name_signal)
-                    else: item.setToolTip('')
-                    
-                if column_t == 0: item.setFlags(Qt.ItemIsEnabled)
-     
-                # center text
-                #item.setTextAlignment(Qt.AlignHCenter)
-                # Выравнивание все столбцов по общей ширине
+                # Блокировка изменений столбцов
+                for i in range(column): 
+                    if column_t == i: item.setFlags(Qt.ItemIsEnabled)
+                # Выравнивание всех столбцов по общей ширине
                 self.TableWidget_1.setItem(row_t, column_t, item)
         # Выравнивание по столбцов и строк по наибольшей длине
         self.TableWidget_1.resizeColumnsToContents()
         self.TableWidget_1.resizeRowsToContents()
-
-    
     def scrollToColumn(self, item):
         def clear_widget():
             rowcount = self.TableWidget_1.rowCount()
@@ -3040,25 +3005,22 @@ class Window_update_sql(QWidget):
                 while rowcount >= 0:
                     self.TableWidget_1.removeRow(rowcount)
                     rowcount -= 1
-        
         width = 0
         for i in range(4): width += self.TableWidget.columnWidth(i) 
         self.TableWidget_1.resize(width, 662)
         self.TableWidget_1.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.TableWidget_1.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
-
-        if item > 0 and self.flag_once: 
+        if (item > 0) and self.flag_once and (self.req_base.text() == ''): 
             clear_widget()
-            self.tablew_1(self.column_tab1, self.row_tab1, self.hat_name, self.value_tab1)
+            column, row, hat_name, value, msg = self.edit_SQL.editing_sql(self.table_used)
+            self.tablew_1(column, row, hat_name, value)
             self.TableWidget_1.setVisible(True)
             self.flag_once = False
+            self.logs_msg('default', 1, msg, True)
         elif item == 0: 
             self.TableWidget_1.setVisible(False)
             self.flag_once = True
-        self.TableWidget.setHorizontalScrollMode(QAbstractItemView.ScrollPerPixel)
-
     def __chnge_position(self,index):
-        # slot to change the scroll bar position of all tables
         self.TableWidget.verticalScrollBar().setValue(index)
         self.TableWidget_1.verticalScrollBar().setValue(index)
 
@@ -3073,14 +3035,11 @@ class Window_update_sql(QWidget):
         column = self.TableWidget.currentColumn()
 
         if row == 0 and column == 0: return
-
         for currentQTableWidgetItem in self.TableWidget.selectedItems():
             text_cell = self.TableWidget.item(currentQTableWidgetItem.row(), column).text()
         # На случай, когда нет изменения в ячейке
-        try:
-            text_cell
-        except:
-            return
+        try   : text_cell
+        except: return
         
         check_cell = self.TableWidget.item(int(row), 0)
         if check_cell is None: return
