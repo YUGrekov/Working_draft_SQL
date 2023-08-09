@@ -2862,7 +2862,7 @@ class Window_update_sql(QWidget):
     def add_column(self):
         def letters(name):
             if len(name) == 0: name = 'newcolumn'
-            return ''.join(filter(str.isalnum, name))
+            return name#''.join(filter(str.isalnum, name))
         
         namecolumn = letters(self.namecolumn.text())
         hat_name = self.edit_SQL.column_names(self.table_used)
@@ -2941,6 +2941,7 @@ class Window_update_sql(QWidget):
         style = "::section {""background-color: #bbbabf; }"
         self.TableWidget.horizontalHeader().setStyleSheet(style)
         self.TableWidget.verticalHeader().setVisible(False)
+        self.TableWidget.setSelectionBehavior(QAbstractItemView.SelectRows)
 
         for row_t in range(row):
             for column_t in range(column):
@@ -2992,7 +2993,7 @@ class Window_update_sql(QWidget):
                     item = QTableWidgetItem(str(value[row_t][column_t]))
                 # Блокировка изменений столбцов
                 for i in range(column): 
-                    if column_t == i: item.setFlags(Qt.ItemIsEnabled)
+                   if column_t == i: item.setFlags(Qt.ItemIsEnabled)
                 # Выравнивание всех столбцов по общей ширине
                 self.TableWidget_1.setItem(row_t, column_t, item)
         # Выравнивание по столбцов и строк по наибольшей длине
@@ -3010,6 +3011,7 @@ class Window_update_sql(QWidget):
         self.TableWidget_1.resize(width, 662)
         self.TableWidget_1.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.TableWidget_1.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        currow = self.TableWidget.currentRow()
         if (item > 0) and self.flag_once and (self.req_base.text() == ''): 
             clear_widget()
             column, row, hat_name, value, msg = self.edit_SQL.editing_sql(self.table_used)
@@ -3017,16 +3019,29 @@ class Window_update_sql(QWidget):
             self.TableWidget_1.setVisible(True)
             self.flag_once = False
             self.logs_msg('default', 1, msg, True)
+            # Выделение в зафиксированных ячейках
+            self.setColortoRow(currow)
         elif item == 0: 
             self.TableWidget_1.setVisible(False)
             self.flag_once = True
     def __chnge_position(self,index):
         self.TableWidget.verticalScrollBar().setValue(index)
         self.TableWidget_1.verticalScrollBar().setValue(index)
-
+    def setColortoRow(self, rowIndex):
+        for i in range(self.TableWidget_1.rowCount()):
+            for j in range(4):
+                self.TableWidget_1.item(i, j).setBackground(QColor(229, 229, 229))
+                self.TableWidget_1.item(i, j).setForeground(QColor(0, 0, 0))
+        for j in range(4):
+            self.TableWidget_1.item(rowIndex, j).setBackground(QColor(0, 120, 215))
+            self.TableWidget_1.item(rowIndex, j).setForeground(QColor(255, 255, 255))
     def click_transfer(self):
         row    = self.TableWidget.currentRow()
         column = self.TableWidget.currentColumn()
+        # Выделение в зафиксированных ячейках
+        try: self.setColortoRow(row)
+        except: pass
+
         try   :  self.link_tabl.parent_click(row, column, self.TableWidget)
         except: return
     # Cell change on click

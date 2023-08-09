@@ -637,7 +637,7 @@ class Editing_table_SQL():
             return ''
     # Column names
     def column_names(self, table_used):
-        self.cursor.execute(f'SELECT * FROM {table_used}')
+        self.cursor.execute(f'SELECT * FROM "{table_used}"')
         return next(zip(*self.cursor.description))
     # Apply request 
     def apply_request_select(self, request, table_used):
@@ -711,7 +711,6 @@ class Editing_table_SQL():
         #table_used.get(table_used.id == text_cell_id).delete_instance()
     # Adding new column
     def add_new_column(self, table_used, new_column):
-        print(f'''ALTER TABLE "{table_used}" ADD "{new_column}" VARCHAR(255)''')
         self.cursor.execute(f'''ALTER TABLE "{table_used}" 
                                 ADD "{new_column}" VARCHAR(255)''')
     # Removing column
@@ -1010,12 +1009,12 @@ class Generate_database_SQL():
                 if tabl == 'Prj_tabl': 
                     msg.update(self.synh_tabl('tblprojecttimesetpoints', 'prj_tm', 'TblProjecttimeSetpoints'))
                     continue
-                # if tabl == 'PZ_tabl': 
-                #     msg.update(self.gen_table_general(flag_write_db, 'pz_tm', 'TblFirezonetimeSetpoints'))
-                #     continue
-                # if tabl == 'PumpTime_tabl': 
-                #     msg.update(self.gen_table_general(flag_write_db, 'umpna_narab_tm', 'TblOpTimeSetpoints'))
-                #     continue
+                if tabl == 'PZ_tabl': 
+                    msg.update(self.synh_tabl('tblfirezonetimesetpoints', 'pz_tm', 'TblFirezonetimeSetpoints'))
+                    continue
+                if tabl == 'PumpTime_tabl': 
+                    msg.update(self.synh_tabl('tbloptimesetpoints', 'umpna_narab_tm', 'TblOpTimeSetpoints'))
+                    continue
                 if tabl == 'KTPR_tabl':  
                     msg.update(self.synh_tabl('tblstationdefencessetpoints', 'ktpr', 'TblStationDefencesSetpoints'))
                     continue
