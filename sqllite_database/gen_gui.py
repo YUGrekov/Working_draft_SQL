@@ -2942,6 +2942,7 @@ class Window_update_sql(QWidget):
         self.TableWidget.horizontalHeader().setStyleSheet(style)
         self.TableWidget.verticalHeader().setVisible(False)
         self.TableWidget.setSelectionBehavior(QAbstractItemView.SelectRows)
+        self.TableWidget.installEventFilter(self)
 
         for row_t in range(row):
             for column_t in range(column):
@@ -2973,6 +2974,15 @@ class Window_update_sql(QWidget):
         self.TableWidget.cellClicked.connect(self.click_transfer)
         self.TableWidget.horizontalScrollBar().valueChanged.connect(self.scrollToColumn)
     
+    def eventFilter(self, obj: QObject, event: QEvent) -> bool:
+        row = self.TableWidget.currentRow()
+        count_row = self.TableWidget.rowCount()
+        if event.type() == QEvent.KeyPress:
+            if (event.key() == Qt.Key_Up): 
+                if row > 0: self.setColortoRow(row - 1)
+            elif (event.key() == Qt.Key_Down): 
+                if row < count_row-1: self.setColortoRow(row + 1)
+        return super().eventFilter(obj, event)
     # Dubl windows
     def tablew_1(self, column, row, hat_name, value):
         # TableW
@@ -2999,6 +3009,7 @@ class Window_update_sql(QWidget):
         # Выравнивание по столбцов и строк по наибольшей длине
         self.TableWidget_1.resizeColumnsToContents()
         self.TableWidget_1.resizeRowsToContents()
+    
     def scrollToColumn(self, item):
         def clear_widget():
             rowcount = self.TableWidget_1.rowCount()
@@ -3024,9 +3035,11 @@ class Window_update_sql(QWidget):
         elif item == 0: 
             self.TableWidget_1.setVisible(False)
             self.flag_once = True
+    
     def __chnge_position(self,index):
         self.TableWidget.verticalScrollBar().setValue(index)
         self.TableWidget_1.verticalScrollBar().setValue(index)
+    
     def setColortoRow(self, rowIndex):
         for i in range(self.TableWidget_1.rowCount()):
             for j in range(4):
