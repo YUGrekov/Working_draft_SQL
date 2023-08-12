@@ -772,6 +772,7 @@ class Alarm_map():
                                         base_type=f'{table.attrib_row_2}',
                                         base_type_id=f'{table.base_type_id_row}',
                                         ver='5'))
+                                    print('hello')
                                     
                                     object.append(uts)
                                     # Информация внутри каждого модуля
