@@ -2172,8 +2172,6 @@ class Generate_database_SQL():
         msg[f'{today} - {sign}: синхронизация завершена!'] = 1
         return(msg)
     
-
-
 # Filling attribute DevStudio
 class Filling_attribute_DevStudio():
     def __init__(self):

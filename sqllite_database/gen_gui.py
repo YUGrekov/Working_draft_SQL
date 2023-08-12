@@ -2890,7 +2890,6 @@ class Window_update_sql(QWidget):
         hat_name = self.edit_SQL.column_names(self.table_used)
         self.edit_SQL.delete_column(column, hat_name, self.table_used)
         self.logs_msg(f'Из таблицы: {self.table_used} удален столбец', 3)
-    
     # Changing a table while entering a query
     def apply_database_query(self):
         request = self.req_base.text()
@@ -3019,7 +3018,7 @@ class Window_update_sql(QWidget):
                     rowcount -= 1
         width = 0
         for i in range(4): width += self.TableWidget.columnWidth(i) 
-        self.TableWidget_1.resize(width, 662)
+        self.TableWidget_1.resize(width, 663)
         self.TableWidget_1.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.TableWidget_1.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         currow = self.TableWidget.currentRow()
@@ -3048,6 +3047,7 @@ class Window_update_sql(QWidget):
         for j in range(4):
             self.TableWidget_1.item(rowIndex, j).setBackground(QColor(0, 120, 215))
             self.TableWidget_1.item(rowIndex, j).setForeground(QColor(255, 255, 255))
+    
     def click_transfer(self):
         row    = self.TableWidget.currentRow()
         column = self.TableWidget.currentColumn()
