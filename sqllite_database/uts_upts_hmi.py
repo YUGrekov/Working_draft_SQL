@@ -755,50 +755,50 @@ class Alarm_map():
                                     counter_uts += 1
                                     count_uts_list += 1
                                     # Уровень второй, строчки - object
-                                    uts = etree.Element('object')
-                                    uts.attrib['access-modifier'] = 'private'
-                                    uts.attrib['name'] = attrib_row_1 + str(count_uts_list)
-                                    uts.attrib['display-name'] = attrib_row_1 + str(count_uts_list)
-                                    uts.attrib['uuid'] = str(uuid.uuid1())
-                                    uts.attrib['base-type'] = attrib_row_2
-                                    uts.attrib['base-type-id'] = base_type_id_row
-                                    uts.attrib['ver'] = '5'
-                                    uts = parser.new_rows(NewRowsParams(
-                                        object='object',
-                                        access_modifier='private',
-                                        name=f'{table.attrib_row_1}{str(count_uts_list)}',
-                                        display_name=f'{table.attrib_row_1}{str(count_uts_list)}',
-                                        uuid=str(uuid.uuid1()),
-                                        base_type=f'{table.attrib_row_2}',
-                                        base_type_id=f'{table.base_type_id_row}',
-                                        ver='5'))
+                                    # uts = etree.Element('object')
+                                    # uts.attrib['access-modifier'] = 'private'
+                                    # uts.attrib['name'] = attrib_row_1 + str(count_uts_list)
+                                    # uts.attrib['display-name'] = attrib_row_1 + str(count_uts_list)
+                                    # uts.attrib['uuid'] = str(uuid.uuid1())
+                                    # uts.attrib['base-type'] = attrib_row_2
+                                    # uts.attrib['base-type-id'] = base_type_id_row
+                                    # uts.attrib['ver'] = '5'
+                                    # uts = parser.new_rows(NewRowsParams(
+                                    #     object='object',
+                                    #     access_modifier='private',
+                                    #     name=f'{table.attrib_row_1}{str(count_uts_list)}',
+                                    #     display_name=f'{table.attrib_row_1}{str(count_uts_list)}',
+                                    #     uuid=str(uuid.uuid1()),
+                                    #     base_type=f'{table.attrib_row_2}',
+                                    #     base_type_id=f'{table.base_type_id_row}',
+                                    #     ver='5'))
                                     
-                                    object.append(uts)
-                                    # Информация внутри каждого модуля
-                                    for key, value in table.attrib_uts_row_design.items():
-                                        uts_info = etree.Element("designed")
-                                        uts_info.attrib['target'] = value[0]
-                                        if key == '2':
-                                            coord_Y = value[1] * (position_on_list)
-                                            uts_info.attrib['value'] = str(coord_Y)
-                                        else:
-                                            uts_info.attrib['value'] = value[1]
-                                        uts_info.attrib['ver'] = value[2]
-                                        uts.append(uts_info)
+                                    # object.append(uts)
+                                    # # Информация внутри каждого модуля
+                                    # for key, value in table.attrib_uts_row_design.items():
+                                    #     uts_info = etree.Element("designed")
+                                    #     uts_info.attrib['target'] = value[0]
+                                    #     if key == '2':
+                                    #         coord_Y = value[1] * (position_on_list)
+                                    #         uts_info.attrib['value'] = str(coord_Y)
+                                    #     else:
+                                    #         uts_info.attrib['value'] = value[1]
+                                    #     uts_info.attrib['ver'] = value[2]
+                                    #     uts.append(uts_info)
 
-                                    for key, value in table.attrib_row_init_UTS.items():
-                                        uts_init = etree.Element("init")
-                                        uts_init.attrib['target'] = value[0]
-                                        uts_init.attrib['ver'] = value[1]
-                                        if   key == '1':
-                                            uts_init.attrib['ref'] = table.attrib_data_1
-                                        elif key == '2':
-                                            uts_init.attrib['value'] = uts_tag
-                                        elif key == '3':
-                                            uts_init.attrib['value'] = 'false'
-                                        elif key == '4':
-                                            uts_init.attrib['value'] = 'false'
-                                        uts.append(uts_init)
+                                    # for key, value in table.attrib_row_init_UTS.items():
+                                    #     uts_init = etree.Element("init")
+                                    #     uts_init.attrib['target'] = value[0]
+                                    #     uts_init.attrib['ver'] = value[1]
+                                    #     if   key == '1':
+                                    #         uts_init.attrib['ref'] = table.attrib_data_1
+                                    #     elif key == '2':
+                                    #         uts_init.attrib['value'] = uts_tag
+                                    #     elif key == '3':
+                                    #         uts_init.attrib['value'] = 'false'
+                                    #     elif key == '4':
+                                    #         uts_init.attrib['value'] = 'false'
+                                    #     uts.append(uts_init)
 
                         # Добавляем кнопку переключения
                         if button_bool == True: button_click(new_pic_path, root, tree, max_value_1, max_value_2,
