@@ -755,6 +755,7 @@ class Alarm_map():
                                     counter_uts += 1
                                     count_uts_list += 1
                                     # Уровень второй, строчки - object
+
                                     uts = etree.Element('object')
                                     uts.attrib['access-modifier'] = 'private'
                                     uts.attrib['name'] = attrib_row_1 + str(count_uts_list)
@@ -772,7 +773,6 @@ class Alarm_map():
                                         base_type=f'{table.attrib_row_2}',
                                         base_type_id=f'{table.base_type_id_row}',
                                         ver='5'))
-                                    print('hello')
                                     
                                     object.append(uts)
                                     # Информация внутри каждого модуля
