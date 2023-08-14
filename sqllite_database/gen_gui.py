@@ -5,10 +5,12 @@ import sys
 # for path in sys.path:
 #     print(path)
 from main_base import *
-from defence_hmi import *
+from defence_hmi import gen_station_defence
+from uts_upts_hmi import Alarm_map
 
 # ГРАФИЧЕСКИЙ ИНТЕРФЕЙС ДЛЯ ЗАПУСКА ГЕНЕРАТОРА
 # Сформировать exe: в терминале добавить: auto-py-to-exe
+
 
 # Запуск файла для чтения
 class MainWin(QMainWindow):
@@ -1202,6 +1204,12 @@ class Widget(QWidget):
         self.q_check_hmi_ktprp = QCheckBox('HMI_KTPRP', tab_6)
         self.q_check_hmi_ktprp.move(410, 65) 
         self.q_check_hmi_ktprp.stateChanged.connect(self.check_hmi_ktprp)
+        self.q_check_hmi_uts = QCheckBox('HMI_UTS', tab_6)
+        self.q_check_hmi_uts.move(410, 80) 
+        self.q_check_hmi_uts.stateChanged.connect(self.check_hmi_uts)
+        self.q_check_hmi_upts = QCheckBox('HMI_UPTS', tab_6)
+        self.q_check_hmi_upts.move(410, 95) 
+        self.q_check_hmi_upts.stateChanged.connect(self.check_hmi_upts)
         # Установить все
         check_all_omx = QCheckBox('Установить/Снять', tab_6)
         check_all_omx.setToolTip('Установить или снять все флаги для заполнения атрибутов omx')
@@ -2228,6 +2236,12 @@ class Widget(QWidget):
     def check_hmi_gmpna(self, checked):
         if checked: self.list_gen_hmi.append('HMI_GMPNA')
         else      : self.list_gen_hmi.remove('HMI_GMPNA')
+    def check_hmi_uts(self, checked):
+        if checked: self.list_gen_hmi.append('HMI_UTS')
+        else      : self.list_gen_hmi.remove('HMI_UTS')
+    def check_hmi_upts(self, checked):
+        if checked: self.list_gen_hmi.append('HMI_UPTS')
+        else      : self.list_gen_hmi.remove('HMI_UPTS')
     # Button confirm
     def omx_list(self):
         msg = self.filing_attrib.write_in_omx(self.list_gen_vu)
@@ -2259,6 +2273,12 @@ class Widget(QWidget):
                 continue
             if tabl == 'HMI_GMPNA': 
                 msg.update(gen_station_defence('gmpna', True))
+                continue
+            if tabl == 'HMI_UTS': 
+                msg.update(Alarm_map('UTS'))
+                continue
+            if tabl == 'HMI_UPTS': 
+                msg.update(Alarm_map('UPTS'))
                 continue
         self.logs_msg('default', 1, msg, True)
     # ------------------------СУ-------------------------
