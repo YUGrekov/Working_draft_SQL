@@ -333,6 +333,8 @@ def gen_uts_upts(path_file, file_exel, list_uts_upts, verify):
     parser = etree.XMLParser(remove_blank_text=True, strip_cdata=False)
     tree   = etree.parse(new_pic_path, parser)
     root   = tree.getroot()
+
+    print(root)
     # Исправляем размеры главного листа
     # Размеры зависят от количества табло и сирен на 1 листе
     modification_list_uts_upts(max_value_2, new_pic_path, root, tree, list_active, button_bool)

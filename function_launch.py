@@ -164,7 +164,7 @@ New_copy = Equipment(path_to_exel, path_to_adressmap, path_to_adressmap_mb,
 #New_copy.gen_cfg_DI_imit('D:\Проекты\НПС-Аксинино_2\HMI\_Docs\SU\\')
 #New_copy.gen_cfg_AI_imit('D:\Проекты\НПС-Аксинино_2\HMI\_Docs\SU\\')
 #New_copy.gen_cfg_AI_sim('D:\Проекты\НПС-Аксинино_2\HMI\_Docs\SU\\') 
-New_copy.gen_cfg_DI_sim('D:\Проекты\НПС-Аксинино_2\HMI\_Docs\SU\\')
+#New_copy.gen_cfg_DI_sim('D:\Проекты\НПС-Аксинино_2\HMI\_Docs\SU\\')
 
 # Тренды
 #New_copy.trends1_xml()
@@ -192,7 +192,7 @@ New_copy.gen_cfg_DI_sim('D:\Проекты\НПС-Аксинино_2\HMI\_Docs\S
 #gen_station_defence(path_gen_station_defence, path_to_exel, list_defence)
 
 # Табло и сирены
-#gen_uts_upts('D:\Проекты\LPDS_Salim\HMI\_Docs\Defence\\', path_to_exel, 'UTS', 'false')
+gen_uts_upts('D:\Проекты\LPDS_Salim\HMI\_Docs\Defence\\', path_to_exel, 'UTS', 'false')
 
 # Поиск сигналов
 #gen_signals_viewer(path_to_exel, 'D:\Проекты\LPDS_Salim\HMI\_Docs\\')
