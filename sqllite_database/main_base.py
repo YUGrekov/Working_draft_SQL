@@ -8321,7 +8321,7 @@ class Filling_ZD():
                     for tag in array_di_tag_zd:
                         self.cursor.execute(f"""SELECT id, tag_eng, name 
                                                 FROM di
-                                                WHERE (name LIKE '%{name} %' or name LIKE '%{name}%') AND tag_eng LIKE '%{tag}%'""")
+                                                WHERE (name ~* '\m{name}\M') AND (tag_eng LIKE '%{tag}%')""")
                         
                         try: 
                             number_id = self.cursor.fetchall()[0][0]
@@ -8345,7 +8345,7 @@ class Filling_ZD():
                     for tag in array_do_tag_zd:    
                         self.cursor.execute(f"""SELECT id, tag_eng, name 
                                                 FROM "do"
-                                                WHERE name LIKE '%{name} %' AND tag_eng LIKE '%{tag}%'""")
+                                                WHERE (name ~* '\m{name}\M') AND (tag_eng LIKE '%{tag}%')""")
                         
                         try   : number_id = self.cursor.fetchall()[0][0]
                         except: continue
@@ -8575,7 +8575,7 @@ class Filling_VS():
                     for tag in array_di_tag_vs:
                         self.cursor.execute(f"""SELECT id, tag_eng, name
                                                 FROM di
-                                                WHERE name LIKE '%{name}%' AND tag_eng LIKE '%{tag}%'""")
+                                                WHERE (name ~* '\m{name}\M') AND tag_eng LIKE '%{tag}%'""")
                         
                         try   : number_id = self.cursor.fetchall()[0][0]
                         except: continue
@@ -8586,7 +8586,7 @@ class Filling_VS():
                     for tag in array_do_tag_vs:    
                         self.cursor.execute(f"""SELECT id, tag_eng, name 
                                                 FROM "do"
-                                                WHERE name LIKE '%{name}%' AND tag_eng LIKE '%{tag}%'""")
+                                                WHERE (name ~* '\m{name}\M') AND tag_eng LIKE '%{tag}%'""")
                         
                         try   : number_id = self.cursor.fetchall()[0][0]
                         except: continue

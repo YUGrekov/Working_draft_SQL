@@ -2455,6 +2455,7 @@ class Widget(QWidget):
             elif number_color == 2: self.logTextBox.append(errorFormat.format(f'{today} - {logs}'))
             elif number_color == 3: self.logTextBox.append(warningFormat.format(f'{today} - {logs}'))
             elif number_color == 0: self.logTextBox.append(newFormat.format(f'{today} - {logs}'))
+            
 # Тип таблицы
 class Window_type_tabl_sql(QWidget):
     def __init__(self, table_list):
@@ -3060,6 +3061,7 @@ class Window_update_sql(QWidget):
         self.TableWidget_1.verticalScrollBar().setValue(index)
     
     def setColortoRow(self, rowIndex):
+        if not self.TableWidget_1.isVisible(): return
         for i in range(self.TableWidget_1.rowCount()):
             for j in range(4):
                 self.TableWidget_1.item(i, j).setBackground(QColor(229, 229, 229))
