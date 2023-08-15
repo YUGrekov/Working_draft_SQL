@@ -3060,6 +3060,7 @@ class Window_update_sql(QWidget):
         self.TableWidget_1.verticalScrollBar().setValue(index)
     
     def setColortoRow(self, rowIndex):
+        if not self.TableWidget_1.isVisible(): return
         for i in range(self.TableWidget_1.rowCount()):
             for j in range(4):
                 self.TableWidget_1.item(i, j).setBackground(QColor(229, 229, 229))
